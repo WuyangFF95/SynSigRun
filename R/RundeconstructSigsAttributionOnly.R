@@ -84,7 +84,11 @@ RundeconstructSigsAttributeOnly <-
     ## Convert ICAMS-formatted spectra and signatures
     ## into deconstructSigs format
     convSpectra <- data.frame(t(spectra))
+    attr(convSpectra,"catalog.type") <- NULL
+    attr(convSpectra,"region") <- NULL
     gt.sigs.ds <- data.frame(t(gtSignatures))
+    attr(gt.sigs.ds,"catalog.type") <- NULL
+    attr(gt.sigs.ds,"region") <- NULL
 
     ## Obtain attributed exposures using whichSignatures function
     ## Note: deconstructSigs::whichSignatures() can only attribute ONE tumor at each run!

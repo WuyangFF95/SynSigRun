@@ -101,11 +101,18 @@ RunYAPSAAttributeOnly <-
 
     ## Derive exposure count attribution results.
 
-    in_signatures_df <- gtSignatures  ## Known signature matrix
+    ## Known signature matrix
+    in_signatures_df <- gtSignatures
+    class(in_signatures_df) <- "matrix"
+    attr(in_signatures_df,"catalog.type") <- NULL
+    attr(in_signatures_df,"region") <- NULL
 
     #### Tumor spectra matrix and related parameters
     in_mutation_catalogue_df <- spectra ## Converted spectra matrix
     size <- colSums(in_mutation_catalogue_df) ## Total mutation count of each spectrum
+    class(in_mutation_catalogue_df) <- "matrix"
+    attr(in_mutation_catalogue_df,"catalog.type") <- NULL
+    attr(in_mutation_catalogue_df,"region") <- NULL
 
     ## Plotting parameter - maximum height in the plot
     ymax <- rep(0.4,ncol(in_mutation_catalogue_df))
