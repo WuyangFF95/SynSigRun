@@ -109,6 +109,9 @@ RunsigneR <-
     ## Convert ICAMS-formatted spectra and signatures into signeR format.
     ## The program requires the input to be an TRANSPOSED mutation count matrix.
     convSpectra <- spectra
+    class(convSpectra) <- "matrix"
+    attr(convSpectra,"catalog.type") <- NULL
+    attr(convSpectra,"region") <- NULL
     dimnames(convSpectra) <- dimnames(spectra)
     sample.number <- dim(spectra)[2]
     convSpectra <- t(convSpectra)
@@ -151,6 +154,9 @@ RunsigneR <-
     ## Normalize the extracted signatures so that frequencies of each signature sums up to 1
     extractedSignatures <- apply(extractedSignaturesRaw,2, function(x) x/sum(x))
     rownames(extractedSignatures) <- rownames(spectra)
+    extractedSignatures <- as.catalog(extractedSignatures,
+                                      region = "unknown",
+                                      catalog.type = "counts.signature")
     ## Write extracted signatures
     write.catalog.function(extractedSignatures,
                            paste0(out.dir,"/extracted.signatures.csv"))
