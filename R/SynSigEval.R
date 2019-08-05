@@ -1,5 +1,6 @@
-#' SynSig: Create catalogs of synthetic mutational spectra and assess the
-#' performance of mutational-signature analysis programs on these.
+#' SynSigEval: Assess the performance of mutational-signature analysis
+#' programs Using catalogs of synthetic mutational spectra created
+#' by package \code{SynSigGen}.
 #'
 #' @section Overview:
 #'
@@ -20,6 +21,8 @@
 #'
 #' \preformatted{
 #'
+#' In \code{SynSigGen}:
+#'
 #' Input (based on SignatureAnalyzer or SigProfiler analysis of PCAWG tumors)
 #'   A, matrix of attributions (signatures x samples)
 #'   S, mutational signature profiles (mutation type x signature)
@@ -30,13 +33,15 @@
 #'
 #' synthetic.spectra <- CreateAndWRiteCatalog(S, synthetic.exposures, ...)
 #'
+#' In \code{SynSigEval}:
+#'
 #' T <- Signatures extracted by SignatureAnalzer or SigProfiler on synthetic.spectra
 #'
 #' SummarizeResults(T, S, synthetic.exposures, ...)
 #'
 #' }
 #'
-#' @section Creating Synthetic Mutational Catalogs:
+#' @section (In SynSigGen) Creating Synthetic Mutational Catalogs:
 #'
 #' These functions create synthetic mutational catalogs based
 #' on parameters derived from signature profiles

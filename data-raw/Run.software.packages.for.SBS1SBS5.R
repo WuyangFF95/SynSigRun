@@ -1,7 +1,7 @@
 
 ## Load required packages
 library(ICAMS)
-library(SynSig)
+library(SynSigEval)
 
 
 

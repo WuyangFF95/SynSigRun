@@ -1,5 +1,3 @@
-# PlotCatalogs.R
-
 #' Plot the SBS96 part of a SignatureAnalyzer COMPOSITE signature or catalog
 #'
 #' @param catalog Catalog or signature matrix
@@ -22,7 +20,8 @@ Plot96PartOfComposite <- function(catalog, name, type = "density") {
     cn[all.0] <- paste(cn[all.0], "WARNING all 0")
     colnames(cat96) <- cn
   }
-  PlotCatalogToPdf(catalog = cat96/sum(cat96), filename = name, type = type)
+  PlotCatalogToPdf(catalog = cat96/sum(cat96),
+                   file = name)
 }
 
 #' Plot the a SignatureAnalyzer COMPOSITE signature or catalog into separate pdfs
@@ -41,7 +40,7 @@ Plot96PartOfComposite <- function(catalog, name, type = "density") {
 #' @param id A vector containing the identifiers of the samples
 #' or signatures in \code{catalog}.
 #'
-#' @importFrom ICAMS PlotCatalogToPdf Collapse1536CatalogTo96
+#' @importFrom ICAMS Collapse1536CatalogTo96 PlotCatalogToPdf
 #'
 #' @export
 PlotCatCOMPOSITE <- function(catalog, filename.header, type, id = colnames(catalog)) {

@@ -1,9 +1,9 @@
 # Script to run SignatureAnalyzer on the exome-subset of PCAWG
 # COMPOSITE mutational spectra, *non-hyper-mutated specta only*.
-# Jaegil calls this "PRIMARY". Run this from SynSig/data-raw/
+# Jaegil calls this "PRIMARY". Run this from SynSigEval/data-raw/
 
 library(ICAMS)
-library(SynSig)
+library(SynSigEval)
 
 laptop.test <- FALSE
 
@@ -13,8 +13,8 @@ if (laptop.test) {
   test.only                  <- TRUE
   num.runs                   <- 2
   maxK                       <- 10
-  signatureanalyzer.code.dir <- "C:/Users/steve/Documents/SynSig/data-raw/SignatureAnalzyer.052418/"
-  stopifnot(getwd() == "C:/Users/steve/Documents/SynSig/data-raw")
+  signatureanalyzer.code.dir <- "C:/Users/steve/Documents/SynSigEval/data-raw/SignatureAnalzyer.052418/"
+  stopifnot(getwd() == "C:/Users/steve/Documents/SynSigEval/data-raw")
 } else {
   input.catalog              <- "sa.COMPOSITE.exome.subset/non-hyper-pcawg-as-exome-COMPOSITE.csv"
   out.dir                    <- "sa.COMPOSITE.exome.subset/PRIMARY/"
@@ -24,7 +24,7 @@ if (laptop.test) {
   signatureanalyzer.code.dir <- "/home/gmssgr/bin/SignatureAnalzyer.052418/"
 }
 
-read.catalog.function      <- SynSig:::ReadCatCOMPOSITE
+read.catalog.function      <- ReadCatCOMPOSITE
 write.signature.function   <- WriteCatCOMPOSITE
 delete.tmp.files           <- TRUE
 overwrite                  <- TRUE

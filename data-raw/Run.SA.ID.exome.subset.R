@@ -2,7 +2,7 @@
 # ID mutational spectra
 
 library(ICAMS)
-library(SynSig)
+library(SynSigEval)
 
 num.runs                   <- 20 # 2 for debugging
 # signatureanalyzer.code.dir <- "SignatureAnalzyer.052418" # for debugging on Laptop

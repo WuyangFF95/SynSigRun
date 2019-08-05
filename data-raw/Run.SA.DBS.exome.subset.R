@@ -2,7 +2,7 @@
 # DBS mutational spectra
 
 library(ICAMS)
-library(SynSig)
+library(SynSigEval)
 
 # num.runs                   <- 2 # 2 for debugging
 num.runs                   <- 20 # 20 for production
