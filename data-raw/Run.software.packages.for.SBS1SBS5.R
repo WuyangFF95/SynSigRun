@@ -13,6 +13,13 @@ for(slope in slopes)
   for(Rsq in Rsqs)
     datasetNames <- c(datasetNames, paste0("S.",slope,".Rsq.",Rsq))
 
+## Specify 20 seeds used in software running
+seedsInUse <- c(1, 691, 1999, 3511, 8009,
+                9902, 10163, 10509, 14476,
+                20897, 27847, 34637, 49081, 75679,
+                103333, 145879, 200437, 310111, 528401)
+
+
 
 ## Run Extraction and attribution packages
 ## sigproextractor (Python package) and MultiModalMuSig (Julia package)
@@ -21,13 +28,16 @@ extrAttrPackages <- c("signeR","sigfit","MutationalPatterns",
                       "SomaticSignatures","hdp")
 for(extrAttrPackage in extrAttrPackages){
   func <- get(paste0("Run",extrAttrPackage))
-  for(datasetName in datasetNames){
-    func(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-         read.catalog.function = ICAMS::ReadCatalog,
-         write.catalog.function = ICAMS::WriteCatalog,
-         out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrPackage,".results"),
-         K.range = c(1,10),
-         overwrite = T)
+  for(seedInUse in seedsInUse){
+    for(datasetName in datasetNames){
+      func(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
+           read.catalog.function = ICAMS::ReadCatalog,
+           write.catalog.function = ICAMS::WriteCatalog,
+           out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrPackage,".results/seed.",seedInUse),
+           seedNumber = seedInUse,
+           K.range = c(1,10),
+           overwrite = T)
+    }
   }
 }
 
