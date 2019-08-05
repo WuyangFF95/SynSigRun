@@ -50,10 +50,13 @@ attrOnlyPackages <- c("deconstructSigs","YAPSA")
 for(attrOnlyPackage in attrOnlyPackages){
   func <- get(paste0("Run",attrOnlyPackage,"AttributeOnly"))
   for(datasetName in datasetNames){
+    for(seedInUse in seedsInUse){
     func(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
          gt.sigs.file = paste0(datasetName,"/sp.sp/ground.truth.syn.sigs.csv"),
          read.catalog.function = ICAMS::ReadCatalog,
-         out.dir = paste0(datasetName,"/sp.sp/Attr/",attrOnlyPackage,".results"),
+         out.dir = paste0(datasetName,"/sp.sp/Attr/",attrOnlyPackage,".results/seed.",seedInUse),
+         seedNumber = seedInUse,
          overwrite = T)
+    }
   }
 }
