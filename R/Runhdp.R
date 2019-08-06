@@ -240,7 +240,7 @@ Runhdp <-
                                      n=50,	## n here refers to the times of posterior sampling after burnin. To be faster, n can be set to 50.
                                      space=50,	## space is the time of iterations between two samplings. In this case, I need to iterate 9000 times.
                                      cpiter=3,
-                                     seed= (seedNumber + 10^6) %% (10^7) ) ## Cannot choose the same seed for 4 chains!
+                                     seed= (seedNumber + i * 10^6) %% (10^7) ) ## Cannot choose the same seed for 4 chains!
       }
 
       ## Generate the original multi_chain for the sample
