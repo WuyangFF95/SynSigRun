@@ -159,7 +159,14 @@ Runhdp <-
     spectra <- read.catalog.function(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
+    ## convSpectra: convert the spectra catalog to matrix
+    ## which HDP accepts:
+    ## 1. Transpose the catalog
+    ## 2. Remove the catalog related attributes in convSpectra
     convSpectra <- t(spectra)
+    class(convSpectra) <- "matrix"
+    attr(convSpectra,"catalog.type") <- NULL
+    attr(convSpectra,"region") <- NULL
 
     number.channels <- dim(spectra)[1]
     number.samples <- dim(spectra)[2]
@@ -299,6 +306,9 @@ Runhdp <-
         ## Ans is 10(Components) 96(Mutational types) for hdp_500_10
         ## Ans is 9(Components) for hdp_500_12
         extractedSignatures <- t(extractedSignatures)
+        extractedSignatures <- as.catalog(extractedSignatures,
+                                          region = "unknown",
+                                          catalog.type = "counts.signature")
 
         ## Output the signatures extracted
         write.catalog.function(x = extractedSignatures,
@@ -336,7 +346,7 @@ Runhdp <-
       ## Next, write the exposureCounts to a file
       ## Write attributed exposures into a SynSig formatted exposure file.
       WriteExposures(exposureCounts,
-                     paste0(out.dir,"/attributed_exposures.csv"))
+                     paste0(out.dir,"/attributed.exposures.csv"))
     }
 
 
