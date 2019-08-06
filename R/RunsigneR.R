@@ -99,15 +99,11 @@ RunsigneR <-
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
-    ## Create output directory
-    if (dir.exists(out.dir)) {
-      if (!overwrite) stop(out.dir, " already exits")
-    } else {
-      dir.create(out.dir, recursive = T)
-    }
 
-    ## Convert ICAMS-formatted spectra and signatures into signeR format.
-    ## The program requires the input to be an TRANSPOSED mutation count matrix.
+    ## convSpectra: convert the ICAMS-formatted spectra catalog
+    ## into a matrix which signeR accepts:
+    ## 1. Remove the catalog related attributes in convSpectra
+    ## 2. Transpose the catalog
     convSpectra <- spectra
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
@@ -115,6 +111,13 @@ RunsigneR <-
     dimnames(convSpectra) <- dimnames(spectra)
     sample.number <- dim(spectra)[2]
     convSpectra <- t(convSpectra)
+
+    ## Create output directory
+    if (dir.exists(out.dir)) {
+      if (!overwrite) stop(out.dir, " already exits")
+    } else {
+      dir.create(out.dir, recursive = T)
+    }
 
     ## Determine the best number of signatures (K.best).
     ## If K is provided, use K as the K.best.
@@ -154,9 +157,9 @@ RunsigneR <-
     ## Normalize the extracted signatures so that frequencies of each signature sums up to 1
     extractedSignatures <- apply(extractedSignaturesRaw,2, function(x) x/sum(x))
     rownames(extractedSignatures) <- rownames(spectra)
-    extractedSignatures <- as.catalog(extractedSignatures,
-                                      region = "unknown",
-                                      catalog.type = "counts.signature")
+    extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
+                                             region = "unknown",
+                                             catalog.type = "counts.signature")
     ## Write extracted signatures
     write.catalog.function(extractedSignatures,
                            paste0(out.dir,"/extracted.signatures.csv"))
