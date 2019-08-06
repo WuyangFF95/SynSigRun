@@ -346,8 +346,8 @@ Runhdp <-
 
       ## Next, write the exposureCounts to a file
       ## Write attributed exposures into a SynSig formatted exposure file.
-      WriteExposures(exposureCounts,
-                     paste0(out.dir,"/attributed.exposures.csv"))
+      WriteExposure(exposureCounts,
+                    paste0(out.dir,"/attributed.exposures.csv"))
     }
 
 
