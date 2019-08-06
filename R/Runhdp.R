@@ -306,6 +306,7 @@ Runhdp <-
         ## Ans is 10(Components) 96(Mutational types) for hdp_500_10
         ## Ans is 9(Components) for hdp_500_12
         extractedSignatures <- t(extractedSignatures)
+        rownames(extractedSignatures) <- rownames(spectra)
         extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                                  region = "unknown",
                                                  catalog.type = "counts.signature")
