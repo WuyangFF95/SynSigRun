@@ -328,7 +328,7 @@ Runhdp <-
       dim(exposureProbs)
       exposureProbs <- exposureProbs[3:dim(exposureProbs)[1],]
       rownames(exposureProbs) <- rownames(convSpectra)[1:dim(exposureProbs)[1]]
-      colnames(exposureProbs) <- colnames(extractedSignatures)[5:dim(extractedSignatures)[2]]
+      colnames(exposureProbs) <- colnames(extractedSignatures)
       dim(exposureProbs)
 
 
@@ -340,9 +340,8 @@ Runhdp <-
       dimnames(exposureCounts) <- dimnames(exposureProbs)
       for (sample in seq(1,dim(exposureProbs)[1])) exposureCounts[sample,] <- sample_mutation_count[[sample]] * exposureProbs[sample,]
 
-      ## Reshape exposureCounts matrix for better compatibility with plot_signatures.R
-      exposureCounts <- cbind(rownames(exposureCounts),exposureCounts)
-      colnames(exposureCounts)[1] <- "Samples"
+      ## Change exposure count matrix to SynSigEval format.
+      exposureCounts <- t(exposureCounts)
 
       ## Next, write the exposureCounts to a file
       ## Write attributed exposures into a SynSig formatted exposure file.
