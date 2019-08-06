@@ -79,13 +79,6 @@ RunhdpAttributeOnly <-
 #' abort if it already exits.  Log files will be in
 #' \code{paste0(out.dir, "/tmp")}.
 #'
-#' @param CPU.cores Number of CPUs to use in running
-#' hdp. For a server, 30 cores would be a good
-#' choice; while for a PC, you may only choose 2-4 cores.
-#' By default (CPU.cores = NULL), the CPU.cores would be equal
-#' to \code{(parallel::detectCores())/2}, total number of CPUs
-#' divided by 2.
-#'
 #' @param seedNumber Specify the pseudo-random seed number
 #' used to run hdp. Setting seed can make the
 #' attribution of hdp repeatable.
@@ -131,7 +124,6 @@ Runhdp <-
            read.catalog.function,
            write.catalog.function,
            out.dir,
-           CPU.cores = NULL,
            seedNumber = 1,
            K = NULL,
            K.range = NULL,
@@ -159,14 +151,16 @@ Runhdp <-
     spectra <- read.catalog.function(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
-    ## convSpectra: convert the spectra catalog to matrix
-    ## which HDP accepts:
-    ## 1. Transpose the catalog
-    ## 2. Remove the catalog related attributes in convSpectra
-    convSpectra <- t(spectra)
+    ## convSpectra: convert the ICAMS-formatted spectra catalog 
+    ## into a matrix which HDP accepts:
+    ## 1. Remove the catalog related attributes in convSpectra
+    ## 2. Transpose the catalog
+    convSpectra <- spectra
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
+    dimnames(convSpectra) <- dimnames(spectra)
+    convSpectra <- t(convSpectra)
 
     number.channels <- dim(spectra)[1]
     number.samples <- dim(spectra)[2]
@@ -313,7 +307,7 @@ Runhdp <-
 
         ## Output the signatures extracted
         write.catalog.function(extractedSignatures,
-                               file = paste0(out.dir,"/extracted.signatures.csv"))
+                               paste0(out.dir,"/extracted.signatures.csv"))
       }
 
 
