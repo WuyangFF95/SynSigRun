@@ -306,9 +306,9 @@ Runhdp <-
         ## Ans is 10(Components) 96(Mutational types) for hdp_500_10
         ## Ans is 9(Components) for hdp_500_12
         extractedSignatures <- t(extractedSignatures)
-        extractedSignatures <- as.catalog(extractedSignatures,
-                                          region = "unknown",
-                                          catalog.type = "counts.signature")
+        extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
+                                                 region = "unknown",
+                                                 catalog.type = "counts.signature")
 
         ## Output the signatures extracted
         write.catalog.function(x = extractedSignatures,
