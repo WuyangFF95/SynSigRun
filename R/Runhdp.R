@@ -311,7 +311,7 @@ Runhdp <-
                                                  catalog.type = "counts.signature")
 
         ## Output the signatures extracted
-        write.catalog.function(x = extractedSignatures,
+        write.catalog.function(extractedSignatures,
                                file = paste0(out.dir,"/extracted.signatures.csv"))
       }
 
