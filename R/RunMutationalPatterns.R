@@ -79,9 +79,23 @@ RunMutationalPatternsAttributeOnly <-
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
+    ## Remove the catalog related attributes in convSpectra
+    convSpectra <- spectra
+    class(convSpectra) <- "matrix"
+    attr(convSpectra,"catalog.type") <- NULL
+    attr(convSpectra,"region") <- NULL
+    dimnames(convSpectra) <- dimnames(spectra)
+
+
     ## Read in ground-truth signature file
     ## gt.sigs: signature data.frame in ICAMS format
     gtSignatures <- read.catalog.function(gt.sigs.file)
+    ## Remove the catalog related attributes in gtSignatures
+    tmp <- dimnames(gtSignatures)
+    class(gtSignatures) <- "matrix"
+    attr(gtSignatures,"catalog.type") <- NULL
+    attr(gtSignatures,"region") <- NULL
+    dimnames(gtSignatures) <- tmp
 
     ## Create output directory
     if (dir.exists(out.dir)) {
@@ -95,7 +109,7 @@ RunMutationalPatternsAttributeOnly <-
     ## WARNING: MutationalPatterns can only do exposure attribution
     ## using SBS96 spectra catalog and signature catalog!
     exposureObject <-
-      MutationalPatterns::fit_to_signatures(mut_matrix = spectra,
+      MutationalPatterns::fit_to_signatures(mut_matrix = convSpectra,
                                             signatures = gtSignatures)
     ## exposure attributions (in mutation counts)
     exposureCounts <- t(exposureObject$contribution)
@@ -219,6 +233,15 @@ RunMutationalPatterns <-
     spectra <- read.catalog.function(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
+    ## convSpectra: convert the ICAMS-formatted spectra catalog
+    ## into a matrix which HDP accepts:
+    ## 1. Remove the catalog related attributes in convSpectra
+    ## 2. Transpose the catalog
+    convSpectra <- spectra
+    class(convSpectra) <- "matrix"
+    attr(convSpectra,"catalog.type") <- NULL
+    attr(convSpectra,"region") <- NULL
+    dimnames(convSpectra) <- dimnames(spectra)
 
     ## Create output directory
     if (dir.exists(out.dir)) {
@@ -244,8 +267,8 @@ RunMutationalPatterns <-
     ## If K is provided, use K as the K.best.
     ## If K.range is provided, determine K.best by doing raw extraction.
     if(bool1){
-      gof_nmf <- NMF::nmf(spectra,
-                          rank = K.range,     ## Rank specifies number of signatures you want to assess
+      gof_nmf <- NMF::nmf(convSpectra,
+                          rank = K,     ## Rank specifies number of signatures you want to assess
                           method = "brunet",  ## "brunet" is the default NMF method in NMF package.
                           nrun = CPU.cores,
                           seed = seedNumber)
@@ -254,7 +277,7 @@ RunMutationalPatterns <-
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
-      gof_nmf <- NMF::nmf(spectra,
+      gof_nmf <- NMF::nmf(convSpectra,
                           rank = K.range,     ## Rank specifies number of signatures you want to assess
                           method = "brunet",  ## "brunet" is the default NMF method in NMF package.
                           nrun = CPU.cores,
@@ -287,7 +310,7 @@ RunMutationalPatterns <-
 
 
     ## Generates a list contain extracted signatures
-    sigs_nmf <- MutationalPatterns::extract_signatures(spectra,K.best,CPU.cores)
+    sigs_nmf <- MutationalPatterns::extract_signatures(convSpectra,K.best,CPU.cores)
     ## names(sigs_nmf)
     ## [1] "signatures"    "contribution"  "reconstructed"
     sigsRaw <- sigs_nmf$signatures ## un-normalized signature matrix
@@ -295,7 +318,12 @@ RunMutationalPatterns <-
     ## Add signature names for signature matrix extractedSignatures
     colnames(extractedSignatures) <-
       paste("MP",1:ncol(extractedSignatures),sep=".")
-    ## Output extracted signatures in Duke-NUS format
+    extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
+                                             region = "unknown",
+                                             catalog.type = "counts.signature")
+
+
+    ## Output extracted signatures in ICAMS format
     write.catalog.function(extractedSignatures,
                            paste0(out.dir,"/extracted.signatures.csv"))
 
@@ -303,7 +331,7 @@ RunMutationalPatterns <-
     ## Derive exposure count attribution results.
     ## WARNING: MutationalPatterns can only do exposure attribution
     ## using SBS96 spectra catalog and signature catalog!
-    exposureObject <- MutationalPatterns::fit_to_signatures(mut_matrix = spectra,
+    exposureObject <- MutationalPatterns::fit_to_signatures(mut_matrix = convSpectra,
                                                             signatures = extractedSignatures)
     ## exposure attributions (in mutation counts)
     exposureCounts <- t(exposureObject$contribution)
