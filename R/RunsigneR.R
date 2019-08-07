@@ -153,7 +153,7 @@ RunsigneR <-
 
     ## Output extracted signatures in Duke-NUS format
     extractedSignaturesRaw <- extractionObject$Phat
-    colnames(extractedSignaturesRaw) <- paste("sig",seq(1,K.best),sep = ".")
+    colnames(extractedSignaturesRaw) <- paste("signeR",seq(1,K.best),sep = ".")
     ## Normalize the extracted signatures so that frequencies of each signature sums up to 1
     extractedSignatures <- apply(extractedSignaturesRaw,2, function(x) x/sum(x))
     rownames(extractedSignatures) <- rownames(spectra)
@@ -167,7 +167,7 @@ RunsigneR <-
 
     ## Derive exposure count attribution results.
     exposureCounts <- extractionObject$Ehat ## Unnormalized exposures
-    rownames(exposureCounts) <- paste("sig",seq(1,K.best),sep = ".") ## Assign row names of exposure matrix as names of signatures
+    rownames(exposureCounts) <- paste("signeR",seq(1,K.best),sep = ".") ## Assign row names of exposure matrix as names of signatures
     colnames(exposureCounts) <- colnames(spectra) ## Assign column names of exposure matrix as names of tumors
     ## Normalize the attributed counts so that each column represents exposure of a signature
     for(ii in 1:ncol(exposureCounts)) {
