@@ -163,6 +163,8 @@ RunYAPSAAttributeOnly <-
     LCD_exposure_prob <- LCD_complex_object$norm_exposures
     ## Export attributed exposure counts
     exposureCounts <- LCD_complex_object$exposures ## Export exposure probs
+    ## Assign row names of exposure matrix as names of signatures
+    rownames(exposureCounts) <- paste("YAPSA",seq(1,nrow(exposureCounts)),sep = ".")
 
     ## Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,

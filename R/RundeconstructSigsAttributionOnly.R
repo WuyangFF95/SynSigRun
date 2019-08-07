@@ -121,8 +121,10 @@ RundeconstructSigsAttributeOnly <-
 
 
     ## Write exposure counts in ICAMS and SynSig format.
-    exposures <- t(exposures)
-    WriteExposure(exposures,
+    exposureCounts <- t(exposures)
+    ## Assign row names of exposure matrix as names of signatures
+    rownames(exposureCounts) <- paste("deconstructSigs",seq(1,nrow(exposureCounts)),sep = ".")
+    WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
 
     ## Copy ground.truth.sigs to out.dir
