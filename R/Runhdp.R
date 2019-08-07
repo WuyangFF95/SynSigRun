@@ -151,7 +151,7 @@ Runhdp <-
     spectra <- read.catalog.function(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
-    ## convSpectra: convert the ICAMS-formatted spectra catalog 
+    ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which HDP accepts:
     ## 1. Remove the catalog related attributes in convSpectra
     ## 2. Transpose the catalog
@@ -297,10 +297,13 @@ Runhdp <-
         ## Calculate the mutation composition in each signature:
         extractedSignatures <- hdp::comp_categ_distn(mut_example_multi_extracted)$mean
         dim(extractedSignatures)
-        ## Ans is 10(Components) 96(Mutational types) for hdp_500_10
-        ## Ans is 9(Components) for hdp_500_12
+        ## Add base context for extractedSignatures
         extractedSignatures <- t(extractedSignatures)
         rownames(extractedSignatures) <- rownames(spectra)
+        ## Change signature names in extractedSignatures
+        ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
+        colnames(extractedSignatures) <-
+          paste("hdp", colnames(extractedSignatures), sep = ".")
         extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                                  region = "unknown",
                                                  catalog.type = "counts.signature")
@@ -332,10 +335,15 @@ Runhdp <-
 
       exposureCounts <- matrix(nrow = dim(exposureProbs)[1], ncol = dim(exposureProbs)[2])
       dimnames(exposureCounts) <- dimnames(exposureProbs)
-      for (sample in seq(1,dim(exposureProbs)[1])) exposureCounts[sample,] <- sample_mutation_count[[sample]] * exposureProbs[sample,]
+      for (sample in seq(1,dim(exposureProbs)[1]))
+        exposureCounts[sample,] <- sample_mutation_count[[sample]] * exposureProbs[sample,]
 
       ## Change exposure count matrix to SynSigEval format.
       exposureCounts <- t(exposureCounts)
+      ## Change signature names in exposureCounts
+      ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
+      rownames(exposureCounts) <-
+        paste("hdp", rownames(exposureCounts), sep = ".")
 
       ## Next, write the exposureCounts to a file
       ## Write attributed exposures into a SynSig formatted exposure file.
