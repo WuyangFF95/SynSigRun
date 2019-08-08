@@ -108,7 +108,7 @@ RunSignatureEstimationQPAttributeOnly <-
       outputList <- SignatureEstimation::findSigExposures(
         M = convSpectra[, ii,drop = F],
         P = gtSignaturesSE,
-        decomposition.method = decomposeQP)
+        decomposition.method = SignatureEstimation::decomposeQP)
 
 
       ## Obtain absolute exposure counts for current tumor
@@ -240,7 +240,7 @@ RunSignatureEstimationSAAttributeOnly <-
       outputList <- SignatureEstimation::findSigExposures(
         M = convSpectra[, ii,drop = F],
         P = gtSignaturesSE,
-        decomposition.method = decomposeSA)
+        decomposition.method = SignatureEstimation::decomposeSA)
 
 
       ## Obtain absolute exposure counts for current tumor
