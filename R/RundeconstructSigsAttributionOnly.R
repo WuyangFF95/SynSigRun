@@ -132,8 +132,6 @@ RundeconstructSigsAttributeOnly <-
 
     ## Write exposure counts in ICAMS and SynSig format.
     exposureCounts <- t(exposures)
-    ## Assign row names of exposure matrix as names of signatures
-    rownames(exposureCounts) <- paste("deconstructSigs",seq(1,nrow(exposureCounts)),sep = ".")
     WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
 
@@ -149,5 +147,5 @@ RundeconstructSigsAttributeOnly <-
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
     ## Return attributed exposures
-    invisible(exposures)
+    invisible(exposureCounts)
   }
