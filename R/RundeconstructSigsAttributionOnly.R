@@ -83,12 +83,22 @@ RundeconstructSigsAttributeOnly <-
 
     ## Convert ICAMS-formatted spectra and signatures
     ## into deconstructSigs format
-    convSpectra <- data.frame(t(spectra))
+    ## Requires removal of redundant attributes.
+    convSpectra <- spectra
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
-    gt.sigs.ds <- data.frame(t(gtSignatures))
-    attr(gt.sigs.ds,"catalog.type") <- NULL
-    attr(gt.sigs.ds,"region") <- NULL
+    attr(convSpectra,"class") <- NULL
+    convSpectra <- as.matrix(convSpectra)
+    dimnames(convSpectra) <- dimnames(spectra)
+    convSpectra <- as.data.frame(t(convSpectra))
+
+    gtSignaturesDS <- gtSignatures
+    attr(gtSignaturesDS,"catalog.type") <- NULL
+    attr(gtSignaturesDS,"region") <- NULL
+    attr(gtSignaturesDS,"class") <- NULL
+    gtSignaturesDS <- as.matrix(gtSignaturesDS)
+    dimnames(convSpectra) <- dimnames(spectra)
+    gtSignaturesDS <- as.data.frame(t(gtSignaturesDS))
 
     ## Obtain attributed exposures using whichSignatures function
     ## Note: deconstructSigs::whichSignatures() can only attribute ONE tumor at each run!
@@ -98,14 +108,14 @@ RundeconstructSigsAttributeOnly <-
 
     for(ii in 1:num.tumors){
       output.list <- deconstructSigs::whichSignatures(tumor.ref = convSpectra[ii,,drop = FALSE],
-                                                      signatures.ref = gt.sigs.ds,
+                                                      signatures.ref = gtSignaturesDS,
                                                       contexts.needed = TRUE)
       ## names(output.list): [1] "weights" "tumor"   "product" "diff"    "unknown"
       ## $weights: attributed signature exposure (in relative percentage)
       ## Note: sum of all exposure may be smaller than 1
       ## $tumor: input tumor spectrum
       ## $product: Reconstructed catalog = product of signatures and exposures
-      ## = $weights %*% gt.sigs.ds
+      ## = $weights %*% gtSignaturesDS
       ## $diff: $product - $tumor
       ## $unknown: 100% - $weights
       ## (percentage of exposures not attributed by this program)
