@@ -91,16 +91,12 @@ RunSignatureEstimationQPAttributeOnly <-
     convSpectra <- spectra
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
-    attr(convSpectra,"class") <- NULL
-    convSpectra <- as.matrix(convSpectra)
-    dimnames(convSpectra) <- dimnames(spectra)
+    class(convSpectra) <- "matrix"
 
     gtSignaturesSE <- gtSignatures
     attr(gtSignaturesSE,"catalog.type") <- NULL
     attr(gtSignaturesSE,"region") <- NULL
-    attr(gtSignaturesSE,"class") <- NULL
-    gtSignaturesSE <- as.matrix(gtSignaturesSE)
-    dimnames(gtSignaturesSE) <- dimnames(gtSignatures)
+    class(gtSignaturesSE) <- "matrix"
 
     ## Obtain attributed exposures using decomposeQP/decomposeSA function
     ## Note: SignatureEstimation::decomposeQP/decomposeSA() can only attribute ONE tumor at each run!
@@ -227,16 +223,12 @@ RunSignatureEstimationSAAttributeOnly <-
     convSpectra <- spectra
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
-    attr(convSpectra,"class") <- NULL
-    convSpectra <- as.matrix(convSpectra)
-    dimnames(convSpectra) <- dimnames(spectra)
+    class(convSpectra) <- "matrix"
 
     gtSignaturesSE <- gtSignatures
     attr(gtSignaturesSE,"catalog.type") <- NULL
     attr(gtSignaturesSE,"region") <- NULL
-    attr(gtSignaturesSE,"class") <- NULL
-    gtSignaturesSE <- as.matrix(gtSignaturesSE)
-    dimnames(gtSignaturesSE) <- dimnames(gtSignatures)
+    class(gtSignaturesSE) <- "matrix"
 
     ## Obtain attributed exposures using decomposeQP/decomposeSA function
     ## Note: SignatureEstimation::decomposeQP/decomposeSA() can only attribute ONE tumor at each run!

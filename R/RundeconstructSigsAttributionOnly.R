@@ -87,17 +87,13 @@ RundeconstructSigsAttributeOnly <-
     convSpectra <- spectra
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
-    attr(convSpectra,"class") <- NULL
-    convSpectra <- as.matrix(convSpectra)
-    dimnames(convSpectra) <- dimnames(spectra)
+    class(convSpectra) <- "matrix"
     convSpectra <- as.data.frame(t(convSpectra))
 
     gtSignaturesDS <- gtSignatures
     attr(gtSignaturesDS,"catalog.type") <- NULL
     attr(gtSignaturesDS,"region") <- NULL
-    attr(gtSignaturesDS,"class") <- NULL
-    gtSignaturesDS <- as.matrix(gtSignaturesDS)
-    dimnames(convSpectra) <- dimnames(spectra)
+    class(gtSignaturesDS) <- "matrix"
     gtSignaturesDS <- as.data.frame(t(gtSignaturesDS))
 
     ## Obtain attributed exposures using whichSignatures function
