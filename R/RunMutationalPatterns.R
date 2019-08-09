@@ -112,8 +112,7 @@ RunMutationalPatternsAttributeOnly <-
       MutationalPatterns::fit_to_signatures(mut_matrix = convSpectra,
                                             signatures = gtSignatures)
     ## exposure attributions (in mutation counts)
-    exposureCounts <- t(exposureObject$contribution)
-    colnames(exposureCounts) <- paste("MP",1:ncol(exposureCounts),sep=".")
+    exposureCounts <- exposureObject$contribution
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
