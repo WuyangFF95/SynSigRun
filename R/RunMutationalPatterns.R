@@ -240,7 +240,6 @@ RunMutationalPatterns <-
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
-    dimnames(convSpectra) <- dimnames(spectra)
 
     ## Create output directory
     if (dir.exists(out.dir)) {
@@ -273,9 +272,11 @@ RunMutationalPatterns <-
                           seed = seedNumber)
 
       K.best <- K
+      K.range <- K
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
+      K.range <- seq.int(K.range[1],K.range[2]) ## Change K.range to a full vector
       gof_nmf <- NMF::nmf(convSpectra,
                           rank = K.range,     ## Rank specifies number of signatures you want to assess
                           method = "brunet",  ## "brunet" is the default NMF method in NMF package.
@@ -333,7 +334,7 @@ RunMutationalPatterns <-
     exposureObject <- MutationalPatterns::fit_to_signatures(mut_matrix = convSpectra,
                                                             signatures = extractedSignatures)
     ## exposure attributions (in mutation counts)
-    exposureCounts <- t(exposureObject$contribution)
+    exposureCounts <- (exposureObject$contribution)
     colnames(exposureCounts) <- paste("MP",1:ncol(exposureCounts),sep=".")
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
