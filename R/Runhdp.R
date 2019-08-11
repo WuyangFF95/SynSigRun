@@ -259,8 +259,6 @@ Runhdp <-
                      hdp::plot_lik, bty="L", start=500)
         p2 <- lapply(hdp::chains(mut_example_multi),
                      hdp::plot_numcluster, bty="L")
-        p3 <- lapply(hdp::chains(mut_example_multi),
-                     hdp::plot_data_assigned, bty="L")
 
         dev.off()
       }
@@ -279,8 +277,6 @@ Runhdp <-
                      hdp::plot_lik, bty="L", start=500)
         p2 <- lapply(hdp::chains(mut_example_multi_extracted),
                      hdp::plot_numcluster, bty="L")
-        p3 <- lapply(hdp::chains(mut_example_multi_extracted),
-                     hdp::plot_data_assigned, bty="L")
 
         ## Draw the computation size plot
         par(mfrow=c(1,1), mar=c(5, 4, 4, 2))
