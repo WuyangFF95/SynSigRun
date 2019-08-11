@@ -107,28 +107,28 @@ RundecompTumor2SigAttributeOnly <-
         convSpectraList[[currentSpectrumName]] / sum(convSpectraList[[currentSpectrumName]])
     }
 
-    gtSignaturesDE <- gtSignatures
-    attr(gtSignaturesDE,"catalog.type") <- NULL
-    attr(gtSignaturesDE,"region") <- NULL
-    class(gtSignaturesDE) <- "matrix"
+    gtSignaturesDT <- gtSignatures
+    attr(gtSignaturesDT,"catalog.type") <- NULL
+    attr(gtSignaturesDT,"region") <- NULL
+    class(gtSignaturesDT) <- "matrix"
 
     ## To analyze Alexandrov-like signatures,
     ## decompoTumor2Sig requires signatures to be a LIST of
     ## probability vectors (sum equals to 1, tolerance is 1e-5!)
-    gtSignaturesDEList <- list()
-    K <- ncol(gtSignaturesDE)
+    gtSignaturesDTList <- list()
+    K <- ncol(gtSignaturesDT)
     for (Kcurrent in 1:K){
-      currentSigName <- colnames(gtSignaturesDE)[Kcurrent]
-      gtSignaturesDEList[[currentSigName]] <- gtSignaturesDE[,Kcurrent]
-      gtSignaturesDEList[[currentSigName]] <-
-        gtSignaturesDEList[[currentSigName]] / sum(gtSignaturesDEList[[currentSigName]])
+      currentSigName <- colnames(gtSignaturesDT)[Kcurrent]
+      gtSignaturesDTList[[currentSigName]] <- gtSignaturesDT[,Kcurrent]
+      gtSignaturesDTList[[currentSigName]] <-
+        gtSignaturesDTList[[currentSigName]] / sum(gtSignaturesDTList[[currentSigName]])
     }
 
     exposureList <- decompTumor2Sig::decomposeTumorGenomes(genomes = convSpectraList,
-                                                       signatures = gtSignaturesDEList)
+                                                       signatures = gtSignaturesDTList)
     ## Convert exposureList to exposureProb.
     exposureProb <- matrix(nrow = K, ncol = G)
-    rownames(exposureProb) <- colnames(gtSignaturesDE)
+    rownames(exposureProb) <- colnames(gtSignaturesDT)
     colnames(exposureProb) <- colnames(convSpectra)
     for(Gcurrent in 1:G){
       currentSpectrumName <- names(exposureList)[Gcurrent]
