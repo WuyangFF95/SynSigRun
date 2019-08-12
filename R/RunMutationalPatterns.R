@@ -317,7 +317,7 @@ RunMutationalPatterns <-
     extractedSignatures <- t(t(sigsRaw) / colSums(sigsRaw))   ## normalize each signature's sum to 1
     ## Add signature names for signature matrix extractedSignatures
     colnames(extractedSignatures) <-
-      paste("MP",1:ncol(extractedSignatures),sep=".")
+      paste("MutationalPatterns",1:ncol(extractedSignatures),sep=".")
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                              region = "unknown",
                                              catalog.type = "counts.signature")
@@ -335,7 +335,7 @@ RunMutationalPatterns <-
                                                             signatures = extractedSignatures)
     ## exposure attributions (in mutation counts)
     exposureCounts <- (exposureObject$contribution)
-    colnames(exposureCounts) <- paste("MP",1:ncol(exposureCounts),sep=".")
+    colnames(exposureCounts) <- paste("MutationalPatterns",1:ncol(exposureCounts),sep=".")
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))

@@ -1,58 +1,60 @@
-# MultiModalMuSigInteraction.R
-# Interacting functions for running MultiModalMuSig julia package
+# helmsmanMuSigInteraction.R
+# Interacting functions for running helmsman Python package
 
-#' Convert Catalogs from ICAMS format to MM format
+
+#' Convert Catalogs from ICAMS format to helmsman format
 #'
 #' @param catalog A catalog matrix in ICAMS format. (SNS/DNS/ID)
 #'
-#' @return a catalog matrix in MultiModalMuSig format.
-ICAMSCatalog2MM <- function(catalog) {
+#' @return a catalog matrix in helmsman format.
+ICAMSCatalog2helmsman <- function(catalog) {
   # Read catalog. From matrix-like
   stopifnot(is.data.frame(catalog) | is.matrix(catalog))
 
-  catalog <- data.frame("term" = rownames(catalog),
-                          catalog)
+  catalog <- t(catalog)
+  catalog <- data.frame("ID" = rownames(catalog),
+                        catalog)
   return(catalog)
 }
 
 
 
-#' Read Catalog files in MM format
+#' Read Catalog files in helmsman format
 #' @param cat Input catalog, can be a tab-delimited text
-#' file in MultiModalMuSig format.
+#' file in helmsman format.
 #' @return a catalog matrix in ICAMS format.
-ReadCatMM <- function(cat){
+ReadCathelmsman <- function(cat){
 
- catMatrix <- read.table(file = cat, header = T,
-                         sep = "\t", as.is = T)
- rownames(catMatrix) <- catMatrix[,1]
- catMatrix <- catMatrix[,-1]
+  catMatrix <- read.table(file = cat, header = T,
+                          sep = "\t", as.is = T)
+  rownames(catMatrix) <- catMatrix[,1]
+  catMatrix <- t(catMatrix[,-1])
 
  return(catMatrix)
 }
 
 
 
-#' Convert Catalogs from MM format to ICAMS format
+#' Convert Catalogs from helmsman format to ICAMS format
 #'
 #' @param cat Input catalog, can be a tab-delimited file
-#' or matrix in MultiModalMuSig format.
+#' or matrix in helmsman format.
 #'
 #' @return a catalog matrix in ICAMS format.
 
-MMCatalog2ICAMS <- function(cat) {
+helmsmanCatalog2ICAMS <- function(cat) {
 
-  # Read MM-formatted catalog. Either from file or matrix-like
+  # Read helmsman-formatted catalog. Either from file or matrix-like
   stopifnot(is.character(cat) | is.data.frame(cat) | is.matrix(cat))
   if(class(cat) == "character") {
-    catMatrix <- ReadCatMM(cat)
+    catMatrix <- ReadCathelmsman(cat)
   } else {
     catMatrix <- cat
     rownames(catMatrix) <- cat[,1]
     catMatrix <- catMatrix[,-1]
   }
   # For some SNS96 catalogs,
-  # rownames of catMatrix may be in MM format
+  # rownames of catMatrix may be in helmsman format
   # (A[C->A]G) rather than in ICAMS format (ACGA).
   # In this case, the format will be changed.
   if(nrow(catMatrix)==96 & grepl("->",rownames(catMatrix)[1])){
@@ -85,8 +87,8 @@ MMCatalog2ICAMS <- function(cat) {
   return(catMatrix)
 }
 
-#' Prepare input file for MultiModalMuSig from a
-#' MultiModalMuSig formatted catalog file.
+#' Prepare input file for helmsman from a
+#' helmsman formatted catalog file.
 #'
 #' @param catalog a catalog in ICAMS format. It can be
 #' a .csv file, or a matrix or data.frame.
@@ -97,42 +99,42 @@ MMCatalog2ICAMS <- function(cat) {
 #'
 #' @param out.dir Directory that will be created for the output;
 #' abort if it already exists. Usually, the \code{out.dir} will
-#' be a \code{MultiModalMuSig.results} folder directly under the
+#' be a \code{helmsman.results} folder directly under the
 #' folder storing \code{catalog}.
 #'
 #' @param overwrite If TRUE, overwrite existing output
 #'
 #' @return \code{invisible(catMatrix)},
-#' original catalog in MultiModalMuSig format
+#' original catalog in helmsman format
 #'
-#' @details Creates folder named \code{MultiModalMuSig.results} containing catalogs
-#' in MultiModalMuSig-formatted catalogs: Rows are signatures;
+#' @details Creates folder named \code{helmsman.results} containing catalogs
+#' in helmsman-formatted catalogs: Rows are signatures;
 #' the first column is the name of the mutation type, while the remaining
 #' columns are samples (tumors).
-#' These MM-formated catalogs will the input when running MultiModalMuSig program
-#' later on Julia platform.
+#' These helmsman-formated catalogs will the input when running helmsman program
+#' later on Python platform.
 #'
 #' @export
 #'
 #' @importFrom utils capture.output
 
-CreateMultiModalMuSigOutput <-
+CreatehelmsmanOutput <-
   function(catalog,
            read.catalog.function = NULL,
-           out.dir = paste0(dirname(catalog),"/ExtrAttr/MultiModalMuSig.results"),
+           out.dir = paste0(dirname(catalog),"/ExtrAttr/helmsman.results"),
            overwrite = FALSE) {
 
   ## If catalog is a string of file path
   if(is.character(catalog)){
     ## Read in catalog matrix using read.catalog.function.
     catMatrix <- read.catalog.function(catalog, strict = FALSE)
-    ## Convert catalog to MM format
-    catMatrix <- ICAMSCatalog2MM(catMatrix)
+    ## Convert catalog to helmsman format
+    catMatrix <- ICAMSCatalog2helmsman(catMatrix)
     ## Fetch the name of catalog file without extension
     oldFileName <- tools::file_path_sans_ext(basename(catalog))
   } else if(is.data.frame(catalog) | is.matrix(catalog)){
-    ## Convert catalog to MM format
-    catMatrix <- ICAMSCatalog2MM(catalog)
+    ## Convert catalog to helmsman format
+    catMatrix <- ICAMSCatalog2helmsman(catalog)
     ## Fetch the name of catalog file
     oldFileName <- "ground.truth.syn.catalog"
   }
@@ -148,5 +150,3 @@ CreateMultiModalMuSigOutput <-
 
   invisible(catMatrix)
 }
-
-
