@@ -8,7 +8,7 @@ ReadCathelmsman(cat)
 }
 \arguments{
 \item{cat}{Input catalog, can be a tab-delimited text
-file in helmsman format.}
+file in helmsman format, or a matrix/data.frame object.}
 }
 \value{
 a catalog matrix in ICAMS format.

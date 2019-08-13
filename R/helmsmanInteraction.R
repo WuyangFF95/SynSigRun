@@ -4,16 +4,38 @@
 
 #' Convert Catalogs from ICAMS format to helmsman format
 #'
-#' @param catalog A catalog matrix in ICAMS format. (SNS/DNS/ID)
+#' @param catalog A catalog matrix in ICAMS format. (SNS only!)
+#'
+#' @param type Whether it is a spectra catalog ("spectra") or
+#' a signature catalog ("signature").
 #'
 #' @return a catalog matrix in helmsman format.
-ICAMSCatalog2helmsman <- function(catalog) {
+ICAMSCatalog2helmsman <- function(catalog, type = "spectra") {
   # Read catalog. From matrix-like
   stopifnot(is.data.frame(catalog) | is.matrix(catalog))
 
   catalog <- t(catalog)
-  catalog <- data.frame("ID" = rownames(catalog),
-                        catalog)
+  ICAMSBaseContext <- colnames(catalog)
+  baseContextLength <- nchar(ICAMSBaseContext[1])
+  Var <- substr(ICAMSBaseContext,baseContextLength,baseContextLength)
+  if(baseContextLength == 4){
+    BeforeRefAfter <- substr(ICAMSBaseContext,1,3)
+    Ref <- substr(ICAMSBaseContext,2,2)
+    helmsmanBaseContext <- paste0(Ref,"_",Var,".",BeforeRefAfter)
+  } else if(baseContextLength == 6){
+    BeforeRefAfter <- substr(ICAMSBaseContext,1,5)
+    Ref <- substr(ICAMSBaseContext,3,3)
+    helmsmanBaseContext <- paste0(Ref,"_",Var,".",BeforeRefAfter)
+  }
+  colnames(catalog) <- helmsmanBaseContext
+
+  if(type == "spectra"){
+    catalog <- data.frame("ID" = rownames(catalog),
+                          catalog)
+  } else if(type == "signature"){
+    catalog <- data.frame("Sig" = rownames(catalog),
+                          catalog)
+  }
   return(catalog)
 }
 
@@ -21,14 +43,34 @@ ICAMSCatalog2helmsman <- function(catalog) {
 
 #' Read Catalog files in helmsman format
 #' @param cat Input catalog, can be a tab-delimited text
-#' file in helmsman format.
+#' file in helmsman format, or a matrix/data.frame object.
 #' @return a catalog matrix in ICAMS format.
 ReadCathelmsman <- function(cat){
 
-  catMatrix <- read.table(file = cat, header = T,
-                          sep = "\t", as.is = T)
+  stopifnot(is.character(cat) | is.data.frame(cat) | is.matrix(cat))
+  if(class(cat) == "character") {
+    catMatrix <- read.table(file = cat, header = T,
+                            sep = "\t", as.is = T)
+  } else {
+    catMatrix <- cat
+  }
+
   rownames(catMatrix) <- catMatrix[,1]
   catMatrix <- t(catMatrix[,-1])
+  helmsmanBaseContext <- rownames(catMatrix)
+  baseContextLength <- nchar(helmsmanBaseContext[1])
+  if(baseContextLength == 7){ ## trinucleotide base context
+    BeforeRefAfter <- substr(helmsmanBaseContext,5,7)
+    Ref <- substr(helmsmanBaseContext,1,1)
+    Var <- substr(helmsmanBaseContext,3,3)
+
+  }else if(baseContextLength == 9){ ## pendanucleotide base context
+    BeforeRefAfter <- substr(helmsmanBaseContext,5,9)
+    Ref <- substr(helmsmanBaseContext,1,1)
+    Var <- substr(helmsmanBaseContext,3,3)
+  }
+  ICAMSBaseContext <- paste0(BeforeRefAfter,Var)
+  rownames(catMatrix) <- ICAMSBaseContext
 
  return(catMatrix)
 }

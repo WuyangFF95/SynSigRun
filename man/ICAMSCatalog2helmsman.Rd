@@ -4,10 +4,13 @@
 \alias{ICAMSCatalog2helmsman}
 \title{Convert Catalogs from ICAMS format to helmsman format}
 \usage{
-ICAMSCatalog2helmsman(catalog)
+ICAMSCatalog2helmsman(catalog, type = "spectra")
 }
 \arguments{
-\item{catalog}{A catalog matrix in ICAMS format. (SNS/DNS/ID)}
+\item{catalog}{A catalog matrix in ICAMS format. (SNS only!)}
+
+\item{type}{Whether it is a spectra catalog ("spectra") or
+a signature catalog ("signature").}
 }
 \value{
 a catalog matrix in helmsman format.
