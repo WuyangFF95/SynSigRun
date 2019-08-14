@@ -93,7 +93,7 @@ RunsigfitAttributeOnly <-
     ## Transpose spectra catalog and ground-truth
     ## signature catalog so that sigfit can analyse them.
     convSpectra <- t(spectra)
-	convGtSigs <- t(gtSignatures)
+    convGtSigs <- t(gtSignatures)
 
 
     ## Derive exposure count attribution results.
@@ -299,13 +299,14 @@ Runsigfit <-
       ## The first Nsig.min number of elements are NULL elements
       ## Nsig.min+1 to Nsig.max elements are list elements of two elements: $data and $result
       ## The last element is the best signature number
+      pdf(paste0(out.dir,"/sigfit.find.bestK.pdf"))
       mcmc_samples_extr <-
         sigfit::extract_signatures(counts = convSpectra,   ## The spectra matrix required in signature extraction
                                    nsignatures = K.range,  ## The possible number of signatures a spectra may have.
                                    model = "nmf",          ## Method to use: we choose "nmf" by default. We can also choose "emu"
                                    iter = 1000,            ## Number of iterations in the run
                                    seed = seedNumber)
-
+      dev.off()
       K.best <- mcmc_samples_extr$best ## Choose K.best
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
@@ -320,13 +321,14 @@ Runsigfit <-
     ## Precise extraction:
     ## Specifying number of signatures, and iterating more times to get more precise extraction
     ## Return a list with two elements: $data and $result
-
+    pdf(paste0(out.dir,"/sigfit.precise.extraction.pdf"))
     mcmc_samples_extr_precise <-
       sigfit::extract_signatures(counts = convSpectra,   ## The spectra matrix required in signature extraction
                                  nsignatures = K.best,   ## The possible number of signatures a spectra may have.
                                  model = "nmf",          ## Method to use: we choose "nmf" by default. We can also choose "emu"
                                  iter = 5000,            ## Number of iterations in the run
                                  seed = seedNumber)
+    dev.off()
 
     extrSigsObject <- sigfit::retrieve_pars(mcmc_samples_extr_precise,
                                             par = "signatures")
