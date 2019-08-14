@@ -139,6 +139,9 @@ Runmaftools <-
       if(CPU.cores > 30) CPU.cores = 30
     }
 
+    ## Before running NMF packge,
+    ## Load it explicitly to prevent errors.
+    require(NMF)
 
     ## Run NMF using ICAMS-formatted spectra catalog
     ## Determine the best number of signatures (K.best).
