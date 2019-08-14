@@ -99,6 +99,12 @@ RunsigneR <-
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
+    ## Create output directory
+    if (dir.exists(out.dir)) {
+      if (!overwrite) stop(out.dir, " already exits")
+    } else {
+      dir.create(out.dir, recursive = T)
+    }
 
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which signeR accepts:
@@ -112,12 +118,7 @@ RunsigneR <-
     sample.number <- dim(spectra)[2]
     convSpectra <- t(convSpectra)
 
-    ## Create output directory
-    if (dir.exists(out.dir)) {
-      if (!overwrite) stop(out.dir, " already exits")
-    } else {
-      dir.create(out.dir, recursive = T)
-    }
+
 
     ## Determine the best number of signatures (K.best).
     ## If K is provided, use K as the K.best.
