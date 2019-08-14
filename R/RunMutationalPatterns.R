@@ -260,6 +260,10 @@ RunMutationalPatterns <-
     }
 
 
+    ## Before running NMF packge,
+    ## Load it explicitly to prevent errors.
+    require(NMF)
+
     ## Run NMF using ICAMS-formatted spectra catalog
     ## Determine the best number of signatures (K.best).
     ## If K is provided, use K as the K.best.
