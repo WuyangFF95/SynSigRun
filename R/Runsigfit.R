@@ -80,8 +80,23 @@ RunsigfitAttributeOnly <-
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
+    ## Remove the catalog related attributes in convSpectra
+    convSpectra <- spectra
+    class(convSpectra) <- "matrix"
+    attr(convSpectra,"catalog.type") <- NULL
+    attr(convSpectra,"region") <- NULL
+    dimnames(convSpectra) <- dimnames(spectra)
+    convSpectra <- t(convSpectra)
+
     ## Read in ground-truth signature file
     gtSignatures <- read.catalog.function(gt.sigs.file)
+    ## Remove the catalog related attributes in gtSignatures
+    tmp <- dimnames(gtSignatures)
+    class(gtSignatures) <- "matrix"
+    attr(gtSignatures,"catalog.type") <- NULL
+    attr(gtSignatures,"region") <- NULL
+    dimnames(gtSignatures) <- tmp
+    convGtSigs <- t(gtSignatures)
 
     ## Create output directory
     if (dir.exists(out.dir)) {
@@ -89,11 +104,7 @@ RunsigfitAttributeOnly <-
     } else {
       dir.create(out.dir, recursive = T)
     }
-
-    ## Transpose spectra catalog and ground-truth
-    ## signature catalog so that sigfit can analyse them.
-    convSpectra <- t(spectra)
-    convGtSigs <- t(gtSignatures)
+    
 
 
     ## Derive exposure count attribution results.
@@ -342,6 +353,9 @@ Runsigfit <-
     ## E.g., replace "Signature A" with "sigfit.A".
     colnames(extractedSignatures) <-
       gsub(pattern = "Signature ",replacement = "sigfit.",colnames(extractedSignatures))
+    extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
+                                             region = "unknown",
+                                             catalog.type = "counts.signature")
 
     ## Write extracted signatures into a ICAMS signature catalog file.
     write.catalog.function(extractedSignatures,
