@@ -117,9 +117,9 @@ RunsigfitAttributeOnly <-
     exposureCounts <- exposuresObj$mean * sum_mutation_count ## i-th row will be multiplied by i-th element (row) of sum_mutation_count
 
     ## Change signature names for exposure matrix exposureCounts:
-    ## E.g., replace "Signature A" with "Signature.A".
+    ## E.g., replace "Signature A" with "sigfit.A".
     colnames(exposureCounts) <-
-      gsub(pattern = " ",replacement = ".",colnames(exposureCounts))
+      gsub(pattern = "Signature ",replacement = "sigfit.",colnames(exposureCounts))
 
 
 
@@ -269,9 +269,18 @@ Runsigfit <-
     ## Use CPU.cores cores for parallel computing
     options(mc.cores = CPU.cores)
 
-    ## Transpose spectra catalog so that sigfit
-    ## can analyse it.
-    convSpectra <- t(spectra)
+    ## convSpectra: convert the ICAMS-formatted spectra catalog
+    ## into a matrix which sigfit accepts:
+    ## 1. Remove the catalog related attributes in convSpectra
+    ## 2. Transpose the catalog
+
+    convSpectra <- spectra
+    class(convSpectra) <- "matrix"
+    attr(convSpectra,"catalog.type") <- NULL
+    attr(convSpectra,"region") <- NULL
+    dimnames(convSpectra) <- dimnames(spectra)
+    sample.number <- dim(spectra)[2]
+    convSpectra <- t(convSpectra)
 
     ## Determine the best number of signatures (K.best).
     ## If K is provided, use K as the K.best.
@@ -325,9 +334,9 @@ Runsigfit <-
     extractedSignatures <- t(extrSigsObject$mean)
 
     ## Change signature names for signature matrix extractedSignatures:
-    ## E.g., replace "Signature A" with "Signature.A".
+    ## E.g., replace "Signature A" with "sigfit.A".
     colnames(extractedSignatures) <-
-      gsub(pattern = " ",replacement = ".",colnames(extractedSignatures))
+      gsub(pattern = "Signature ",replacement = "sigfit.",colnames(extractedSignatures))
 
     ## Write extracted signatures into a ICAMS signature catalog file.
     write.catalog.function(extractedSignatures,
@@ -357,9 +366,9 @@ Runsigfit <-
     exposureCounts <- exposuresObj$mean * sum_mutation_count ## i-th row will be multiplied by i-th element (row) of sum_mutation_count
 
     ## Change signature names for exposure matrix exposureCounts:
-    ## E.g., replace "Signature A" with "Signature.A".
+    ## E.g., replace "Signature A" with "sigfit.A".
     colnames(exposureCounts) <-
-      gsub(pattern = " ",replacement = ".",colnames(exposureCounts))
+      gsub(pattern = "Signature ",replacement = "sigfit.",colnames(exposureCounts))
 
     ## Write attributed exposures into a SynSig formatted exposure file.
     WriteExposure(exposure_counts_dukenus,
