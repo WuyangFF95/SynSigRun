@@ -185,6 +185,7 @@ RunsigfitAttributeOnly <-
 #' signature number active in spectra, K, in this range of Ks.
 #' Specify \code{K.range} if you don't know how many signatures
 #' are active in the \code{input.catalog}.
+#' K.max - K.min >= 3, otherwise an error will be thrown.
 #'
 #' WARNING: You must specify only one of \code{K} or \code{K.range}!
 #'
@@ -299,6 +300,8 @@ Runsigfit <-
       ## The first Nsig.min number of elements are NULL elements
       ## Nsig.min+1 to Nsig.max elements are list elements of two elements: $data and $result
       ## The last element is the best signature number
+      K.range <- seq.int(K.range[1],K.range[2])
+
       pdf(paste0(out.dir,"/sigfit.find.bestK.pdf"))
       mcmc_samples_extr <-
         sigfit::extract_signatures(counts = convSpectra,   ## The spectra matrix required in signature extraction
