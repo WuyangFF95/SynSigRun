@@ -148,20 +148,21 @@ Runmaftools <-
     ## If K is provided, use K as the K.best.
     ## If K.range is provided, determine K.best by doing raw extraction.
     if(bool1){
+      pdf(paste0(out.dir,"/maftools.plots.pdf"))
       gof_nmf <- maftools::extractSignatures(mat = convSpectra,
                           n = K,     ## n specifies number of signatures you want to assess
                           parallel  = paste0("p",CPU.cores))
-
+      dev.off()
       K.best <- K
       K.range <- K
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
-
+      pdf(paste0(out.dir,"/maftools.plots.pdf"))
       sigs_nmf <- maftools::extractSignatures(convSpectra,
                           nTry = K.range[2],     ## nTry specifies maximal number of signatures you want to assess
                           parallel  = paste0("p",CPU.cores))
-
+      dev.off()
 
       K.best <- ncol(sigs_nmf$signatures) ## extractSignatures() will pick up K.best automatically.
       print(paste0("The best number of signatures is found.",
