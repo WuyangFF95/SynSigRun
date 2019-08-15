@@ -32,6 +32,10 @@ Installsigfit <- function(){
 #' abort if it already exits.  Log files will be in
 #' \code{paste0(out.dir, "/tmp")}.
 #'
+#' @param model Algorithm to be used to extract signatures and
+#' attribute exposures. Only "nmf" or "emu" is valid.
+#' Default: "nmf".
+#'
 #' @param seedNumber Specify the pseudo-random seed number
 #' used to run sigfit. Setting seed can make the
 #' attribution of sigfit repeatable.
@@ -59,6 +63,7 @@ RunsigfitAttributeOnly <-
            gt.sigs.file,
            read.catalog.function,
            out.dir,
+           model = "nmf",
            seedNumber = 1,
            test.only = FALSE,
            overwrite = FALSE) {
@@ -110,6 +115,7 @@ RunsigfitAttributeOnly <-
     ## Derive exposure count attribution results.
     mcmc_samples_fit <- sigfit::fit_signatures(counts = convSpectra,
                                                signatures = convGtSigs,
+                                               model = model,
                                                iter = 2000,
                                                warmup = 1000,
                                                chains = 1,
@@ -173,6 +179,10 @@ RunsigfitAttributeOnly <-
 #' abort if it already exits.  Log files will be in
 #' \code{paste0(out.dir, "/tmp")}.
 #'
+#' @param model Algorithm to be used to extract signatures and
+#' attribute exposures. Only "nmf" or "emu" is valid.
+#' Default: "nmf".
+#'
 #' @param CPU.cores Number of CPUs to use in running
 #' sigfit. For a server, 30 cores would be a good
 #' choice; while for a PC, you may only choose 2-4 cores.
@@ -226,6 +236,7 @@ Runsigfit <-
            read.catalog.function,
            write.catalog.function,
            out.dir,
+           model = "nmf",
            CPU.cores = NULL,
            seedNumber = 1,
            K = NULL,
@@ -317,7 +328,7 @@ Runsigfit <-
       mcmc_samples_extr <-
         sigfit::extract_signatures(counts = convSpectra,   ## The spectra matrix required in signature extraction
                                    nsignatures = K.range,  ## The possible number of signatures a spectra may have.
-                                   model = "nmf",          ## Method to use: we choose "nmf" by default. We can also choose "emu"
+                                   model = model,          ## Method to use: we choose "nmf" by default. We can also choose "emu"
                                    iter = 1000,            ## Number of iterations in the run
                                    seed = seedNumber)
       dev.off()
@@ -339,7 +350,7 @@ Runsigfit <-
     mcmc_samples_extr_precise <-
       sigfit::extract_signatures(counts = convSpectra,   ## The spectra matrix required in signature extraction
                                  nsignatures = K.best,   ## The possible number of signatures a spectra may have.
-                                 model = "nmf",          ## Method to use: we choose "nmf" by default. We can also choose "emu"
+                                 model = model,          ## Method to use: we choose "nmf" by default. We can also choose "emu"
                                  iter = 5000,            ## Number of iterations in the run
                                  seed = seedNumber)
     dev.off()
@@ -371,6 +382,7 @@ Runsigfit <-
     ## using SBS96 spectra catalog and signature catalog!
     mcmc_samples_fit <- sigfit::fit_signatures(counts = convSpectra,
                                                signatures = extrSigsObject$mean,
+                                               model = model,
                                                iter = 2000,
                                                warmup = 1000,
                                                chains = 1,
@@ -394,7 +406,7 @@ Runsigfit <-
       gsub(pattern = "Signature ",replacement = "sigfit.",colnames(exposureCounts))
 
     ## Write attributed exposures into a SynSig formatted exposure file.
-    WriteExposure(exposure_counts_dukenus,
+    WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
 
 

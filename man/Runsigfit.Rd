@@ -5,8 +5,8 @@
 \title{Run sigfit extraction and attribution on a spectra catalog file}
 \usage{
 Runsigfit(input.catalog, read.catalog.function, write.catalog.function,
-  out.dir, CPU.cores = NULL, seedNumber = 1, K = NULL,
-  K.range = NULL, test.only = FALSE, overwrite = FALSE)
+  out.dir, model = "nmf", CPU.cores = NULL, seedNumber = 1,
+  K = NULL, K.range = NULL, test.only = FALSE, overwrite = FALSE)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.
@@ -21,6 +21,10 @@ its only argument and returning a catalog as a numeric matrix.}
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exits.  Log files will be in
 \code{paste0(out.dir, "/tmp")}.}
+
+\item{model}{Algorithm to be used to extract signatures and
+attribute exposures. Only "nmf" or "emu" is valid.
+Default: "nmf".}
 
 \item{CPU.cores}{Number of CPUs to use in running
 sigfit. For a server, 30 cores would be a good
@@ -45,6 +49,7 @@ of length 2 which tell sigfit to search the best
 signature number active in spectra, K, in this range of Ks.
 Specify \code{K.range} if you don't know how many signatures
 are active in the \code{input.catalog}.
+K.max - K.min >= 3, otherwise an error will be thrown.
 
 WARNING: You must specify only one of \code{K} or \code{K.range}!
 

@@ -6,7 +6,8 @@
 and known signatures.}
 \usage{
 RunsigfitAttributeOnly(input.catalog, gt.sigs.file, read.catalog.function,
-  out.dir, seedNumber = 1, test.only = FALSE, overwrite = FALSE)
+  out.dir, model = "nmf", seedNumber = 1, test.only = FALSE,
+  overwrite = FALSE)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.
@@ -22,6 +23,10 @@ its only argument and returning a catalog as a numeric matrix.}
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exits.  Log files will be in
 \code{paste0(out.dir, "/tmp")}.}
+
+\item{model}{Algorithm to be used to extract signatures and
+attribute exposures. Only "nmf" or "emu" is valid.
+Default: "nmf".}
 
 \item{seedNumber}{Specify the pseudo-random seed number
 used to run sigfit. Setting seed can make the
