@@ -104,7 +104,7 @@ RunsigfitAttributeOnly <-
     } else {
       dir.create(out.dir, recursive = T)
     }
-    
+
 
 
     ## Derive exposure count attribution results.
@@ -346,8 +346,12 @@ Runsigfit <-
 
     extrSigsObject <- sigfit::retrieve_pars(mcmc_samples_extr_precise,
                                             par = "signatures")
-    ## mean extracted signatures
+    ## Fetch mean extracted signatures
     extractedSignatures <- t(extrSigsObject$mean)
+    ## When catalog is a SBS96 or SBS192 catalog,
+    ## sigfit will change the names of the channels.
+    ## The names of channels need to be recovered to ICAMS format.
+    rownames(extractedSignatures) <- rownames(spectra)
 
     ## Change signature names for signature matrix extractedSignatures:
     ## E.g., replace "Signature A" with "sigfit.A".
