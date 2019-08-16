@@ -2,7 +2,7 @@ Package: SynSigEval
 Type: Package
 Title: Evaluate Performances of Mutational Signature Analysis Software 
   Using Catalogs of Synthetic Mutational Spectra Created by package SynSigGen.
-Version: 0.0.1.9001
+Version: 0.0.2.9001
 Author: Steven G. Rozen, Yang Wu
 Maintainer: Steven G. Rozen <steverozen@gmail.com>
 Description: Create catalogs of synthetic mutational spectra and assess the
@@ -12,7 +12,7 @@ Language: en-US
 Encoding: UTF-8
 LazyData: true
 Imports: lsa, data.table, ICAMS
-Depends: R (>= 2.10)
+Depends: R (>= 3.5)
 RoxygenNote: 6.1.1
 Suggests: 
     testthat,

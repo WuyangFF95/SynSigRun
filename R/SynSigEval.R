@@ -70,6 +70,6 @@
 #' \code{\link{MatchSigsAndRelabel}}
 #'
 #' @docType package
-#' @name SynSig
+#' @name SynSigEval
 
 NULL
