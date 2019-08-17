@@ -10,54 +10,6 @@ Installhdp <- function(){
 
 
 }
-#' Run hdp attribution on a spectra catalog file
-#' and known signatures.
-#'
-#' @param input.catalog File containing input spectra catalog.
-#' Columns are samples (tumors), rows are mutation types.
-#'
-#' @param gt.sigs.file File containing input mutational signatures.
-#' Columns are signatures, rows are mutation types.
-#'
-#' @param read.catalog.function Function to read a catalog
-#' (can be spectra or signature catalog): it takes a file path as
-#' its only argument and returning a catalog as a numeric matrix.
-#'
-#' @param out.dir Directory that will be created for the output;
-#' abort if it already exits.  Log files will be in
-#' \code{paste0(out.dir, "/tmp")}.
-#'
-#' @param seedNumber Specify the pseudo-random seed number
-#' used to run hdp. Setting seed can make the
-#' attribution of hdp repeatable.
-#' Default: 1.
-#'
-#' @param test.only If TRUE, only analyze the first 10 columns
-#' read in from \code{input.catalog}.
-#' Default: FALSE
-#'
-#' @param overwrite If TRUE, overwrite existing output.
-#' Default: FALSE
-#'
-#' @return The attributed exposure of \code{hdp}, invisibly.
-#'
-#' @details Creates several
-#'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
-#'  TODO(Steve): list the files
-#'
-#' @importFrom utils capture.output
-#'
-#' @export
-#'
-RunhdpAttributeOnly <-
-  function(input.catalog,
-           gt.sigs.file,
-           read.catalog.function,
-           out.dir,
-           seedNumber = 1,
-           test.only = FALSE,
-           overwrite = FALSE) {
-  }
 
 
 
