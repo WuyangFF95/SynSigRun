@@ -4,27 +4,26 @@
 \alias{SummarizeSigOneSubdir}
 \title{Assess/evaluate results from Multiple software packages}
 \usage{
-SummarizeSigOneSubdir(third.level.dir, ground.truth.exposure.name,
+SummarizeSigOneSubdir(result.dir, ground.truth.exposure.dir,
   extracted.sigs.path, attributed.exp.path = NULL,
   read.extracted.sigs.fn, read.ground.truth.sigs.fn, write.cat.fn,
   plot.pdf.fn, overwrite = FALSE, summary.folder.name = "summary")
 }
 \arguments{
-\item{third.level.dir}{Lowest level path to results, that is,
+\item{result.dir}{Lowest level path to results, that is,
 \code{top.dir}/sp.sp/sa.results/. or
 \code{top.dir}/sa.sa.96/sa.results/
 Here, \code{top.dir} refers to a top-level directory which contains the
 full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
 This code depends on a conventional directory structure documented
-elsewhere. However there should be a directory within the \code{third.level.dir}
+elsewhere. However there should be a directory within the \code{result.dir}
 which stores the software output.}
 
-\item{ground.truth.exposure.name}{File name which stores ground-truth exposures.
-It defaults to be "ground.truth.syn.exposures.csv". This file can be found
-in the \code{sub.dir}, i.e. \code{third.level.dir}/../}
+\item{ground.truth.exposure.dir}{Folder which stores ground-truth exposures.
+It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../}
 
 \item{extracted.sigs.path}{Path to extracted sigs file, e.g.
-\code{<third.level.dir>/SBS96/Selected_Solution/De_Novo_Solution/signatures.PCAWG.format.csv}.}
+\code{<result.dir>/SBS96/Selected_Solution/De_Novo_Solution/signatures.PCAWG.format.csv}.}
 
 \item{attributed.exp.path}{Path to attributed exposures file.}
 
@@ -48,7 +47,7 @@ Usually, it equals to "summary", but it shall be changed in case a software
 (e.g. SignatureEstimation) has results from 2 or more different methods
 (e.g. QP - Quadratic Programming; SA - Simulated Annealing). In this case,
 the summary folder name shall be different (e.g. "summary.QP" and "summary.SA").
-summary folder will be created under the \code{third.level.dir}.}
+summary folder will be created under the \code{result.dir}.}
 }
 \description{
 Note: Users should use sigproextractor(SigProfiler-Python) v0.0.5.43

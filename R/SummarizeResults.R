@@ -15,21 +15,20 @@ CopyWithChecks <- function(from, to.dir, overwrite = FALSE) {
 #' Note: Users should use sigproextractor(SigProfiler-Python) v0.0.5.43
 #' and SignatureAnalyzer 2018-Apr-18
 #'
-#' @param third.level.dir Lowest level path to results, that is,
+#' @param result.dir Lowest level path to results, that is,
 #' \code{top.dir}/sp.sp/sa.results/. or
 #' \code{top.dir}/sa.sa.96/sa.results/
 #' Here, \code{top.dir} refers to a top-level directory which contains the
 #' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
 #' This code depends on a conventional directory structure documented
-#' elsewhere. However there should be a directory within the \code{third.level.dir}
+#' elsewhere. However there should be a directory within the \code{result.dir}
 #' which stores the software output.
 #'
-#' @param ground.truth.exposure.name File name which stores ground-truth exposures.
-#' It defaults to be "ground.truth.syn.exposures.csv". This file can be found
-#' in the \code{sub.dir}, i.e. \code{third.level.dir}/../
+#' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
+#' It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../
 #'
 #' @param extracted.sigs.path Path to extracted sigs file, e.g.
-#' \code{<third.level.dir>/SBS96/Selected_Solution/De_Novo_Solution/signatures.PCAWG.format.csv}.
+#' \code{<result.dir>/SBS96/Selected_Solution/De_Novo_Solution/signatures.PCAWG.format.csv}.
 #'
 #' @param attributed.exp.path Path to attributed exposures file.
 #'
@@ -53,15 +52,15 @@ CopyWithChecks <- function(from, to.dir, overwrite = FALSE) {
 #' (e.g. SignatureEstimation) has results from 2 or more different methods
 #' (e.g. QP - Quadratic Programming; SA - Simulated Annealing). In this case,
 #' the summary folder name shall be different (e.g. "summary.QP" and "summary.SA").
-#' summary folder will be created under the \code{third.level.dir}.
+#' summary folder will be created under the \code{result.dir}.
 #'
 #' @keywords internal
 #'
 #' @importFrom utils capture.output sessionInfo
 
 SummarizeSigOneSubdir <-
-  function(third.level.dir,
-           ground.truth.exposure.name,
+  function(result.dir,
+           ground.truth.exposure.dir,
            extracted.sigs.path,
            attributed.exp.path = NULL,
            # TODO(Steve): copy this to the summary and do analysis on how much
@@ -74,16 +73,16 @@ SummarizeSigOneSubdir <-
            summary.folder.name = "summary") {
 
     ## Output path - path to dump the ReadAndAnalyzeSigs() results
-    outputPath <- paste0(third.level.dir, "/", summary.folder.name)
+    outputPath <- paste0(result.dir, "/", summary.folder.name)
 
     ## Analyze signature extraction similarity
     sigAnalysis <-
       ReadAndAnalyzeSigs(
         extracted.sigs = extracted.sigs.path,
         ground.truth.sigs =
-          paste0(third.level.dir,"/../ground.truth.syn.sigs.csv"),
+          paste0(ground.truth.exposure.dir,"/ground.truth.syn.sigs.csv"),
         ground.truth.exposures =
-          paste0(third.level.dir,"/../", ground.truth.exposure.name),
+          paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv"),
         read.extracted.sigs.fn = read.ground.truth.sigs.fn,
         read.ground.truth.sigs.fn = read.ground.truth.sigs.fn)
 
@@ -93,9 +92,9 @@ SummarizeSigOneSubdir <-
     suppressWarnings(dir.create(outputPath))
 
     # Copies ground.truth exposures from second.level.dir
-    # to outputPath == third.level.dir/<summary.folder.name>.
+    # to outputPath == result.dir/<summary.folder.name>.
     CopyWithChecks(
-      from = paste0(third.level.dir,"/../ground.truth.syn.exposures.csv"),
+      from = paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv"),
       to.dir = outputPath,
       overwrite = TRUE)
 
@@ -108,10 +107,10 @@ SummarizeSigOneSubdir <-
     # Writes ground truth and extracted signatures
     write.cat.fn(
       sigAnalysis$gt.sigs,
-      path = paste(outputPath,"ground.truth.sigs.csv",sep = "/"))
+      paste(outputPath,"ground.truth.sigs.csv",sep = "/"))
     write.cat.fn(
       sigAnalysis$ex.sigs,
-      path = paste(outputPath,"extracted.sigs.csv",sep = "/"))
+      paste(outputPath,"extracted.sigs.csv",sep = "/"))
 
     # Dumps other outputs into "other.results.txt"
     capture.output(
@@ -130,13 +129,11 @@ SummarizeSigOneSubdir <-
     if (class(plot.pdf.fn) == "function") {
       # Output ground-truth sigs to a PDF file
       plot.pdf.fn(sigAnalysis$gt.sigs,
-                  paste0(outputPath,"/ground.truth.sigs.pdf"),
-                  type = "signature")
+                  paste0(outputPath,"/ground.truth.sigs.pdf"))
 
       # Output extracted sigs to a PDF file
       plot.pdf.fn(sigAnalysis$ex.sigs,
-                  paste0(outputPath,"/extracted.sigs.pdf"),
-                  type = "signature")
+                  paste0(outputPath,"/extracted.sigs.pdf"))
     }
 
     ## Analyze exposure attribution
@@ -152,10 +149,10 @@ SummarizeSigOneSubdir <-
         expDifference <- ReadAndAnalyzeExposures(
           extracted.sigs = extracted.sigs.path,
           ground.truth.sigs =
-            paste0(third.level.dir,"/../ground.truth.syn.sigs.csv"),
+            paste0(ground.truth.exposure.dir,"/ground.truth.syn.sigs.csv"),
           attributed.exp.path = attributed.exp.path,
           ground.truth.exposures =
-            paste0(third.level.dir,"/../", ground.truth.exposure.name),
+            paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv"),
           read.extracted.sigs.fn = read.ground.truth.sigs.fn,
           read.ground.truth.sigs.fn = read.ground.truth.sigs.fn)
 

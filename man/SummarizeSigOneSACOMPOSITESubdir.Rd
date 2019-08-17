@@ -4,12 +4,12 @@
 \alias{SummarizeSigOneSACOMPOSITESubdir}
 \title{Summarize COMPOSITE results from SignatureAnalyzer.}
 \usage{
-SummarizeSigOneSACOMPOSITESubdir(third.level.dir,
-  ground.truth.exposure.name = "ground.truth.syn.exposures.csv",
+SummarizeSigOneSACOMPOSITESubdir(result.dir,
+  ground.truth.exposure.dir = paste0(result.dir, "/../../../"),
   which.run = "/best.run/", overwrite = FALSE)
 }
 \arguments{
-\item{third.level.dir}{Lowest level path to results, that is
+\item{result.dir}{Lowest level path to results, that is
 \code{<top.dir>}\code{/sa.sa.96/sa.results/},
 \code{<top.dir>}\code{/sp.sp/sa.results/},
 \code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
@@ -19,9 +19,8 @@ full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
 This code depends on a conventional directory structure documented
 elsewhere.}
 
-\item{ground.truth.exposure.name}{File name which stores ground-truth exposures;
-defaults to \code{"ground.truth.syn.exposures.csv"}.
-This file can be found in the \code{sub.dir}, i.e. \code{<third.level.dir>/../}}
+\item{ground.truth.exposure.dir}{Folder which stores ground-truth exposures.
+It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../}
 
 \item{which.run}{Name of subdirectory containing the run to summarize.}
 

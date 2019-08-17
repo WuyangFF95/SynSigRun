@@ -6,7 +6,7 @@
 #' HDP, MutationalPatterns, sigfit,
 #' SigneR, SomaticSignatures.
 #'
-#' @param third.level.dir Lowest level path to results, e.g.
+#' @param result.dir Lowest level path to results, e.g.
 #' \code{<top.dir>}\code{/sa.sa.96/SomaticSignatures.results/}
 #' Here, \code{<top.dir>} refers to a top-level directory which contains the
 #' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
@@ -15,9 +15,8 @@
 #' we expect two files, \code{extracted.signatures.csv}
 #' and \code{attributed.exposures.csv} are in the folder.
 #'
-#' @param ground.truth.exposure.name File name which stores ground-truth exposures;
-#' defaults to \code{"ground.truth.syn.exposures.csv"}.
-#' This file can be found in the \code{sub.dir}, i.e. \code{<third.level.dir>/../}
+#' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
+#' It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../../
 #'
 #' @param overwrite If TRUE overwrite existing directories and files.
 #'
@@ -29,13 +28,13 @@
 #' @importFrom graphics par
 #'
 SummarizeSigOneExtrAttr96Subdir <-
-  function(third.level.dir,
-           ground.truth.exposure.name = "ground.truth.syn.exposures.csv",
+  function(result.dir,
+           ground.truth.exposure.dir = paste0(result.dir,"/../../../"),
            overwrite = FALSE) {
 
     # Location of SigProfiler output, which is our input
     # inputPath may change if sigproextractor updates!
-    inputPath <- third.level.dir
+    inputPath <- result.dir
     stopifnot(dir.exists(inputPath))
 
     # Specify the path of extracted signatures in ICAMS csv format.
@@ -45,12 +44,12 @@ SummarizeSigOneExtrAttr96Subdir <-
     attributed.exp.path <- paste0(inputPath,"/attributed.exposures.csv")
 
     # SummarizeSigOneSubdir will generate a "/summary" folder
-    # under third.level.dir. Summarized results are dumped into
+    # under result.dir. Summarized results are dumped into
     # this folder.
     retval <-
       SummarizeSigOneSubdir(
-        third.level.dir = third.level.dir,
-        ground.truth.exposure.name = ground.truth.exposure.name,
+        result.dir = inputPath,
+        ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = extracted.sigs.path,
         attributed.exp.path = attributed.exp.path,
         read.extracted.sigs.fn = ICAMS::ReadCatalog,
@@ -77,7 +76,7 @@ SummarizeSigOneExtrAttr96Subdir <-
 #' algorithms. Therefore the naming of the results are slightly
 #' different from the other two packages.
 #'
-#' @param third.level.dir Lowest level path to results, e.g.
+#' @param result.dir Lowest level path to results, e.g.
 #' \code{<top.dir>}\code{/sa.sa.96/SomaticSignatures.results/}
 #' Here, \code{<top.dir>} refers to a top-level directory which contains the
 #' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
@@ -86,9 +85,8 @@ SummarizeSigOneExtrAttr96Subdir <-
 #' we expect two files, \code{ground.truth.signatures.csv}
 #' and \code{attributed.exposures.csv} are in the folder.
 #'
-#' @param ground.truth.exposure.name File name which stores ground-truth exposures;
-#' defaults to \code{"ground.truth.syn.exposures.csv"}.
-#' This file can be found in the \code{sub.dir}, i.e. \code{<third.level.dir>/../}
+#' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
+#' It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../
 #'
 #' @param overwrite If TRUE overwrite existing directories and files.
 #'
@@ -100,25 +98,25 @@ SummarizeSigOneExtrAttr96Subdir <-
 #' @importFrom graphics par
 #'
 SummarizeSigOneAttr96Subdir <-
-  function(third.level.dir,
-           ground.truth.exposure.name = "ground.truth.syn.exposures.csv",
+  function(result.dir,
+           ground.truth.exposure.dir = paste0(result.dir,"/../../../"),
            overwrite = FALSE) {
 
     # Location of SigProfiler output, which is our input
     # inputPath may change if sigproextractor updates!
-    inputPath <- third.level.dir
+    inputPath <- result.dir
     stopifnot(dir.exists(inputPath))
 
     # Specify the path of extracted signatures in ICAMS csv format.
-    ground.truth.sigs.path <- paste0(inputPath,"/../ground.truth.syn.sigs.csv")
+    ground.truth.sigs.path <- paste0(ground.truth.exposure.dir,"/ground.truth.syn.sigs.csv")
 
     # SummarizeSigOneSubdir will generate a "/summary" folder
-    # under third.level.dir. Summarized results are dumped into
+    # under result.dir. Summarized results are dumped into
     # this folder.
     retval <-
       SummarizeSigOneSubdir(
-        third.level.dir = third.level.dir,
-        ground.truth.exposure.name = ground.truth.exposure.name,
+        result.dir = inputPath,
+        ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = ground.truth.sigs.path,
         attributed.exp.path = paste0(inputPath,"/attributed.exposures.csv"),
         read.extracted.sigs.fn = ReadCatalog,
