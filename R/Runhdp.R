@@ -252,10 +252,17 @@ Runhdp <-
         ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
         colnames(extractedSignatures) <-
           paste("hdp", colnames(extractedSignatures), sep = ".")
+        ## Remove "hdp.0" (noise signature) if it is a null signature or NA signature
+        signatureToBeRemoved <- numeric(0)
+        for(sigIndex in 1:ncol(extractedSignatures)){
+          if(is.null(extractedSignatures[1,sigIndex]) | is.na(extractedSignatures[1,sigIndex]))
+            signatureToBeRemoved <- c(signatureToBeRemoved,sigIndex)
+        }
+        extractedSignatures <- extractedSignatures[,-(signaturesToBeRemoved)]
+        ## Convert extractedSignatures to ICAMS-formatted catalog.
         extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                                  region = "unknown",
                                                  catalog.type = "counts.signature")
-
         ## Output the signatures extracted
         write.catalog.function(extractedSignatures,
                                paste0(out.dir,"/extracted.signatures.csv"))
@@ -273,6 +280,10 @@ Runhdp <-
       dim(exposureProbs)
       exposureProbs <- exposureProbs[3:dim(exposureProbs)[1],]
       rownames(exposureProbs) <- rownames(convSpectra)[1:dim(exposureProbs)[1]]
+      ## Remove NA or NULL signature in exposureProbs matrix.
+      exposureProbs <- exposureProbs[,-(signaturesToBeRemoved)]
+      ## Change signature names in exposureCounts
+      ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
       colnames(exposureProbs) <- colnames(extractedSignatures)
       dim(exposureProbs)
 
@@ -288,10 +299,6 @@ Runhdp <-
 
       ## Change exposure count matrix to SynSigEval format.
       exposureCounts <- t(exposureCounts)
-      ## Change signature names in exposureCounts
-      ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
-      rownames(exposureCounts) <-
-        paste("hdp", rownames(exposureCounts), sep = ".")
 
       ## Next, write the exposureCounts to a file
       ## Write attributed exposures into a SynSig formatted exposure file.
