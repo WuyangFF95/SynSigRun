@@ -2,7 +2,7 @@
 % Please edit documentation in R/SummarizeResults.R
 \name{SummarizeSigOneSubdir}
 \alias{SummarizeSigOneSubdir}
-\title{Assess/evaluate results from Multiple software packages}
+\title{Assess/evaluate one result subfolder from a software package}
 \usage{
 SummarizeSigOneSubdir(result.dir, ground.truth.exposure.dir,
   extracted.sigs.path, attributed.exp.path = NULL,
@@ -50,7 +50,7 @@ the summary folder name shall be different (e.g. "summary.QP" and "summary.SA").
 summary folder will be created under the \code{result.dir}.}
 }
 \description{
-Note: Users should use sigproextractor(SigProfiler-Python) v0.0.5.43
+Note: Users should use sigproextractor(SigProfiler-Python) v0.0.5.43+
 and SignatureAnalyzer 2018-Apr-18
 }
 \keyword{internal}

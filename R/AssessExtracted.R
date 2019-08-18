@@ -199,12 +199,13 @@ ReadAndAnalyzeExposures <-
   gtSigsNames <- colnames(sigMatch$gt.sigs)
 
   ## Initialize an empty data.frame for exposure difference
-  exposureSim <- data.frame(matrix(0,nrow = length(gtSigsNames),ncol = 3))
-  rownames(exposureSim) <- gtSigsNames
-  colnames(exposureSim) <- c("Ground.truth.exposure", ## Sum of all tumor's ground-truth exposure to gtSigsName
+  exposureDiff <- data.frame(matrix(0,nrow = length(gtSigsNames),ncol = 4))
+  rownames(exposureDiff) <- gtSigsNames
+  colnames(exposureDiff) <- c("Ground.truth.exposure", ## Sum of all tumor's ground-truth exposure to gtSigsName
                              "Attributed.exposure", ## Sum of all tumor's attributed exposure to gtSigsName
-                             "Absolute.difference") ## Sum of absolute difference of two exposure values for each tumor
-
+                             "Absolute.difference", ## Sum of absolute difference of two exposure values for each tumor
+                             "Manhattan.distance") ## L1-difference betwen ground-truth exposure and attributed exposure.
+                                                   ## = Absolute.difference/Ground.truth.Exposure
 
   ## For each of the ground-truth signature, calculate the absolute difference
   ## between its input (ground-truth) exposure and its attributed exposure.
@@ -227,14 +228,16 @@ ReadAndAnalyzeExposures <-
       attrExposureOneTumor <- ifelse(length(matchedExtrSigIndex) > 0,
                                      yes = sum(attrExposures[matchedExtrSigName,index]),
                                      no = 0)
-      exposureSim[gtSigName,1] <- exposureSim[gtSigName,1] + gtExposureOneTumor
-      exposureSim[gtSigName,2] <- exposureSim[gtSigName,2] + attrExposureOneTumor
-      exposureSim[gtSigName,3] <- exposureSim[gtSigName,3] +
+      exposureDiff[gtSigName,1] <- exposureDiff[gtSigName,1] + gtExposureOneTumor
+      exposureDiff[gtSigName,2] <- exposureDiff[gtSigName,2] + attrExposureOneTumor
+      exposureDiff[gtSigName,3] <- exposureDiff[gtSigName,3] +
         abs(gtExposureOneTumor - attrExposureOneTumor)
     }
 
+      exposureDiff[gtSigName,4] <- exposureDiff[gtSigName,3] / sum(exposureDiff[,1])
+
   }
 
-  return(exposureSim)
+  return(exposureDiff)
 }
 

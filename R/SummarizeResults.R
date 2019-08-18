@@ -10,9 +10,9 @@ CopyWithChecks <- function(from, to.dir, overwrite = FALSE) {
 }
 
 
-#' Assess/evaluate results from Multiple software packages
+#' Assess/evaluate one result subfolder from a software package
 #'
-#' Note: Users should use sigproextractor(SigProfiler-Python) v0.0.5.43
+#' Note: Users should use sigproextractor(SigProfiler-Python) v0.0.5.43+
 #' and SignatureAnalyzer 2018-Apr-18
 #'
 #' @param result.dir Lowest level path to results, that is,
@@ -146,7 +146,7 @@ SummarizeSigOneSubdir <-
     if(!is.null(attributed.exp.path)) {
 
       if(file.exists(attributed.exp.path)) {
-        expDifference <- ReadAndAnalyzeExposures(
+        exposureDiff <- ReadAndAnalyzeExposures(
           extracted.sigs = extracted.sigs.path,
           ground.truth.sigs =
             paste0(ground.truth.exposure.dir,"/ground.truth.syn.sigs.csv"),
@@ -157,7 +157,7 @@ SummarizeSigOneSubdir <-
           read.ground.truth.sigs.fn = read.ground.truth.sigs.fn)
 
         # Write results of exposure attribution analysis
-        write.csv(expDifference,
+        write.csv(exposureDiff,
                   file = paste0(outputPath,"/exposureDifference.csv"),
                   quote = T)
 
@@ -175,10 +175,138 @@ SummarizeSigOneSubdir <-
     capture.output(Sys.time(), sessionInfo(),
                    file = paste0(outputPath,"/log.txt"))
 
+    ## Save Signature extraction summary into RDa file,
+    ## for reuse in SummarizeMultiRuns().
+    save(sigAnalysis,
+         file = paste0(outputPath,"/sigAnalysis.RDa"))
+    ## Save exposure attribution summary into RDa file,
+    ## for reuse in SummarizeMultiRuns().
+    save(exposureDiff,
+         file = paste0(outputPath,"/exposureDiff.RDa"))
+
     invisible(sigAnalysis) # So we have something to check in tests
   }
 
 
+#' Assess/evaluate multiple summarized result subfolders from a software package.
+#'
+#' @param result.dir Fourth level path from the \code{top.dir}. Expected to have
+#' multiple runs with different names (e.g. "seed.1")
+#' That is,
+#' \code{top.dir}/sp.sp/ExtrAttr/sa.results/. or
+#' \code{top.dir}/sa.sa.96/Attr/deconstructSigs.results/
+#'
+#' Here, \code{top.dir} refers to a top-level directory which contains the
+#' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
+#' This code depends on a conventional directory structure documented
+#' elsewhere. However there should be a directory within the \code{result.dir}
+#' which stores the software output.
+#'
+#' @param run.names A character vector records the lists of run.dir, or fifth level
+#' directories from the dataset top-level folder.
+#' E.g., c("seed.1","seed.691")
+#'
+#' @param overwrite If TRUE overwrite existing directories and files.
+#'
+#' @return A list contain c(\code{mean},\code{sd}) of multiple runs:
+#' \item Cosine similarity
+#' \item True Positives(TP): Ground-truth signatures which are active in
+#' the spectra, and extracted.
+#' \item False Negatives(FN): Ground-truth signatures not extracted.
+#' \item False Positives(FP): Signatures wrongly extracted, not resembling
+#' any ground-truth signatures.
+#' \item True Positive Rate (TPR, Sensitivity): TP / (TP + FN)
+#' \item False Discovery Rate (FDR): FP / (FP + TP)
+#'
+#' @export
+#'
+#' @importFrom utils capture.output sessionInfo
+SummarizeMultiRuns <-
+  function(result.dir,run.names,overwrite){
+
+    ## Indexes for signature extraction in multiple runs
+    cosSim <- numeric(0)
+    truePos <- numeric(0)
+    falsePos <- numeric(0)
+    falseNeg <- numeric(0)
+    TPR <- numeric(0)
+    FDR <- numeric(0)
+    manhattan.dist <- data.frame()
 
 
+    for(run in run.names){
+      ## Load directories
+      runDir <- paste0(result.dir,"/",run.names)
+      summaryDir <- paste0(runDir,"/summary")
+      sigAnalysisFile <- load(paste0(summaryDir,"sigAnalysis.RDa"))
+      load(sigAnalysisFile)
+
+      cosSim <- c(cosSim,sigAnalysis$avg)
+
+      gtSigsNames <- rownames(sigAnalysis$match2)
+      falseNegNames <- sigAnalysis$ground.truth.with.no.best.match
+      falsePosNames <- sigAnalysis$extracted.with.no.best.match
+      truePosNames <- setdiff(gtSigsNames,falseNegNames)
+
+      falseNeg <- c(falseNeg,length(falseNegNames))
+      falsePos <- c(truePos,length(falsePosNames))
+      truePos <- c(truePos, length(truePosNames))
+
+      currentTPR <- length(truePosNames) / length(gtSigsNames)
+      currentFDR <- length(falsePosNames) / (length(truePosNames) + length(falsePosNames))
+      TPR <- c(TPR, currentTPR)
+      FDR <- c(FDR, currentFDR)
+    }
+
+
+  multiRun <- list()
+  multiRun$cosSim <- cosSim
+  multiRun$falseNeg <- falseNeg
+  multiRun$falsePos <- falsePos
+  multiRun$truePos <- truePos
+  multiRun$TPR <- TPR
+  multiRun$FDR <- FDR
+
+  multiRun$meanSD <- matrix(nrow = 6, ncol = 2)
+  toCalculate <- c("cosSim","falseNeg","falsePos",
+                   "truePos","TPR","FDR")
+  rownames(multiRun$meanSD) <- toCalculate
+  colnames(multiRun$meanSD) <- c("mean","stdev")
+  for(current in toCalculate){
+    currentMean <- mean(multiRun[[current]])
+    currentStdev <- stats::sd(multiRun[[current]])
+    multiRun$meanSD[current,] <- c(currentMean, currentStdev)
+  }
+
+  exposureDiffFile <- load(paste0(summaryDir,"exposureDiff.RDa"))
+
+
+  ## Indexes for exposure attribution in multiple runs
+  ManhattanDist <- matrix(nrow = length(gtSigsNames), ncol = length(run.names))
+  rownames(ManhattanDist) <- gtSigsNames
+  colnames(ManhattanDist) <- run.names
+  for(run in run.names){
+    if(file.exists(exposureDiffFile)) load(exposureDiffFile)
+    ManhattanDist[gtSigsNames,run] <- exposureDiff[gtSigsNames,"Manhattan.distance"]
+  }
+  multiRun$ManhattanDist <- ManhattanDist
+
+  meanSDMD <- matrix(nrow = length(gtSigsNames), ncol = 2)
+  rownames(meanSDMD) <- gtSigsNames
+  colnames(meanSDMD) <- c("mean","stdev")
+  for(sig in gtSigsNames){
+    meanSDMD[sig,"mean"] <- mean(ManhattanDist[sig,])
+    meanSDMD[sig,"stdev"] <- stats::sd(ManhattanDist[sig,])
+  }
+  multiRun$meanSDMD <- meanSDMD
+
+  save(multiRun,file = paste0(result.dir,"/multiRun.RDa"))
+  write.csv(x = multiRun$ManhattanDist,
+            file = paste0(result.dir,"/ManhattanDist.csv"),quote = F)
+  write.csv(x = multiRun$meanSD,
+            file = paste0(result.dir,"/meanSD.csv"),quote = F)
+  write.csv(x = multiRun$meanSDMD,
+            file = paste0(result.dir,"/meanSD.Manhattan.dist.csv"),quote = F)
+  invisible(multiRun)
+}
 
