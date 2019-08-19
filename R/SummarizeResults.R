@@ -225,7 +225,9 @@ SummarizeSigOneSubdir <-
 #'
 #' @export
 SummarizeMultiRuns <-
-  function(tool.dir,run.names,overwrite){
+  function(tool.dir,
+           run.names,
+           overwrite = T){
 
     ## Indexes for signature extraction in multiple runs
     cosSim <- numeric(0)
@@ -351,7 +353,9 @@ SummarizeMultiRuns <-
 #' @export
 #'
 #' @importFrom utils capture.output sessionInfo
-SummarizeMultiTools <- function(third.level.dir, tool.dirnames){
+SummarizeMultiTools <- function(third.level.dir,
+                                tool.dirnames,
+                                overwrite = T){
 
   multiTools <- list()
   combMeanSD <- NULL
