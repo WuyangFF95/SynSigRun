@@ -69,6 +69,31 @@
 #' \code{\link{MatchSigs2Directions}},
 #' \code{\link{MatchSigsAndRelabel}}
 #'
+#' @section Folder structure for SynSigEval v0.2:
+#'
+#' Summary function will fit to the new 5-level folder structure:
+#'
+#' First Level - \code{top.level.dir}: dataset folder (e.g. "S.0.1.Rsq.0.1", "syn.prancreas").
+#' All spectra datasets under any top.level.dir have the same exposure.
+#'
+#' Second Level - \code{ground.truth.exposure.dir}: spectra folder: (e.g. "sp.sp", "sa.sa.96").
+#' All spectra datasets under any second.level.dir have the same signature and
+#' the same exposure counts.
+#'
+#' Third Level - \code{third.level.dir}: It can be ("Attr") for storing results of packages
+#' which can only do exposure attribution of known signatures ("Attr");
+#' it can also be ("ExtrAttr"), folder to store results of software packages which
+#' can do de-novo extraction and following attribution.
+#'
+#' Fourth Level - \code{tool.dir}: The results of a software package
+#' (e.g. "sigproextractor.results","SignatureEstimation.QP.results").
+#' Under this level, \code{tool.dir} may contain multiple \code{run.dir},
+#' each is a run of the software package using a specific number of seed.
+#'
+#' Fifth level - \code{run.dir}: contains results from a run of the software package
+#' using a specific number of seed. (e.g. "seed.1")
+#'
+#'
 #' @docType package
 #' @name SynSigEval
 

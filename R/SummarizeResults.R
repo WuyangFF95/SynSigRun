@@ -188,9 +188,9 @@ SummarizeSigOneSubdir <-
   }
 
 
-#' Assess/evaluate multiple summarized result subfolders from a software package.
+#' Assess/evaluate multiple summarized runs from a software package.
 #'
-#' @param result.dir Fourth level path from the \code{top.dir}. Expected to have
+#' @param tool.dir Fourth level path from the \code{top.dir}. Expected to have
 #' multiple runs with different names (e.g. "seed.1")
 #' That is,
 #' \code{top.dir}/sp.sp/ExtrAttr/sa.results/. or
@@ -199,30 +199,33 @@ SummarizeSigOneSubdir <-
 #' Here, \code{top.dir} refers to a top-level directory which contains the
 #' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
 #' This code depends on a conventional directory structure documented
-#' elsewhere. However there should be a directory within the \code{result.dir}
+#' elsewhere. However there should be a directory within the \code{tool.dir}
 #' which stores the software output.
 #'
-#' @param run.names A character vector records the lists of run.dir, or fifth level
-#' directories from the dataset top-level folder.
+#' @param run.names A character vector records the list of \code{run.dir},
+#' or fifth level directories from the dataset top-level folder.
 #' E.g., c("seed.1","seed.691")
 #'
 #' @param overwrite If TRUE overwrite existing directories and files.
 #'
 #' @return A list contain c(\code{mean},\code{sd}) of multiple runs:
-#' \item Cosine similarity
-#' \item True Positives(TP): Ground-truth signatures which are active in
+#' Cosine similarity
+#' True Positives(TP): Ground-truth signatures which are active in
 #' the spectra, and extracted.
-#' \item False Negatives(FN): Ground-truth signatures not extracted.
-#' \item False Positives(FP): Signatures wrongly extracted, not resembling
+#' False Negatives(FN): Ground-truth signatures not extracted.
+#' False Positives(FP): Signatures wrongly extracted, not resembling
 #' any ground-truth signatures.
-#' \item True Positive Rate (TPR, Sensitivity): TP / (TP + FN)
-#' \item False Discovery Rate (FDR): FP / (FP + TP)
+#' True Positive Rate (TPR, Sensitivity): TP / (TP + FN)
+#' False Discovery Rate (FDR): FP / (FP + TP)
 #'
-#' @export
+#' @details Also writes multiple files into folder \code{tool.dir}:
+#'
 #'
 #' @importFrom utils capture.output sessionInfo
+#'
+#' @export
 SummarizeMultiRuns <-
-  function(result.dir,run.names,overwrite){
+  function(tool.dir,run.names,overwrite){
 
     ## Indexes for signature extraction in multiple runs
     cosSim <- numeric(0)
@@ -231,15 +234,14 @@ SummarizeMultiRuns <-
     falseNeg <- numeric(0)
     TPR <- numeric(0)
     FDR <- numeric(0)
-    manhattan.dist <- data.frame()
 
 
-    for(run in run.names){
+    for(runName in run.names){
       ## Load directories
-      runDir <- paste0(result.dir,"/",run.names)
+      runDir <- paste0(tool.dir,"/",runName)
       summaryDir <- paste0(runDir,"/summary")
-      sigAnalysisFile <- load(paste0(summaryDir,"sigAnalysis.RDa"))
-      load(sigAnalysisFile)
+      sigAnalysisFile <- paste0(summaryDir,"/sigAnalysis.RDa")
+      load(file = sigAnalysisFile)
 
       cosSim <- c(cosSim,sigAnalysis$avg)
 
@@ -278,16 +280,16 @@ SummarizeMultiRuns <-
     multiRun$meanSD[current,] <- c(currentMean, currentStdev)
   }
 
-  exposureDiffFile <- load(paste0(summaryDir,"exposureDiff.RDa"))
-
-
   ## Indexes for exposure attribution in multiple runs
   ManhattanDist <- matrix(nrow = length(gtSigsNames), ncol = length(run.names))
   rownames(ManhattanDist) <- gtSigsNames
   colnames(ManhattanDist) <- run.names
-  for(run in run.names){
-    if(file.exists(exposureDiffFile)) load(exposureDiffFile)
-    ManhattanDist[gtSigsNames,run] <- exposureDiff[gtSigsNames,"Manhattan.distance"]
+  for(runName in run.names){
+    runDir <- paste0(tool.dir,"/",runName)
+    summaryDir <- paste0(runDir,"/summary")
+    exposureDiffFile <- paste0(summaryDir,"/exposureDiff.RDa")
+    load(file = exposureDiffFile)
+    ManhattanDist[gtSigsNames,runName] <- exposureDiff[gtSigsNames,"Manhattan.distance"]
   }
   multiRun$ManhattanDist <- ManhattanDist
 
@@ -298,15 +300,92 @@ SummarizeMultiRuns <-
     meanSDMD[sig,"mean"] <- mean(ManhattanDist[sig,])
     meanSDMD[sig,"stdev"] <- stats::sd(ManhattanDist[sig,])
   }
+  rownames(meanSDMD) <- paste0(rownames(meanSDMD),".Manhattan.Dist")
   multiRun$meanSDMD <- meanSDMD
 
-  save(multiRun,file = paste0(result.dir,"/multiRun.RDa"))
+  save(multiRun,file = paste0(tool.dir,"/multiRun.RDa"))
   write.csv(x = multiRun$ManhattanDist,
-            file = paste0(result.dir,"/ManhattanDist.csv"),quote = F)
+            file = paste0(tool.dir,"/ManhattanDist.csv"))
   write.csv(x = multiRun$meanSD,
-            file = paste0(result.dir,"/meanSD.csv"),quote = F)
+            file = paste0(tool.dir,"/meanSD.csv"))
   write.csv(x = multiRun$meanSDMD,
-            file = paste0(result.dir,"/meanSD.Manhattan.dist.csv"),quote = F)
+            file = paste0(tool.dir,"/meanSD.Manhattan.dist.csv"))
   invisible(multiRun)
 }
 
+
+
+#' Combine \code{\link{SummarizeMultiRuns}} folders from a software package.
+#'
+#' @param third.level.dir Third level path distinguishing de-novo extraction
+#' + attribution packages from attribution-only packages.
+#' Examples:
+#' \code{top.dir}/sp.sp/ExtrAttr/
+#' \code{top.dir}/sa.sa/Attr/
+#'
+#' @param tool.dirnames Third level path from the \code{top.dir}. Expected to have
+#' summarized results generated by \code{\link{SummarizeMultiRuns}}.
+#' (multiRun.RDa, ManhattanDist.csv, meanSD.csv, meanSD.Manhattan.dist.csv)
+#' Examples:
+#' \code{"signeR.results"} (Under \code{third.level.dir} "ExtrAttr")
+#' \code{"deconstructSigs.results"} (Under \code{third.level.dir} "Attr")
+#'
+#' Here, \code{top.dir} refers to a top-level directory which contains the
+#' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
+#' This code depends on a conventional directory structure documented
+#' elsewhere. However there should be a directory within the \code{tool.names}
+#' which stores the software output.
+#'
+#' @param overwrite If TRUE overwrite existing directories and files.
+#'
+#' @return A list contain c(\code{mean},\code{sd}) of multiple runs:
+#' Cosine similarity
+#' True Positives(TP): Ground-truth signatures which are active in
+#' the spectra, and extracted.
+#' False Negatives(FN): Ground-truth signatures not extracted.
+#' False Positives(FP): Signatures wrongly extracted, not resembling
+#' any ground-truth signatures.
+#' True Positive Rate (TPR, Sensitivity): TP / (TP + FN)
+#' False Discovery Rate (FDR): FP / (FP + TP)
+#'
+#' @export
+#'
+#' @importFrom utils capture.output sessionInfo
+SummarizeMultiTools <- function(third.level.dir, tool.dirnames){
+
+  multiTools <- list()
+  combMeanSD <- NULL
+  combMeanSDMD <- NULL
+
+  for(toolDirName in tool.dirnames){
+
+    toolPath <- paste0(third.level.dir,"/",toolDirName)
+    load(paste0(toolPath,"/multiRun.RDa"))
+
+    meanSD <- multiRun$meanSD
+    colnames(meanSD) <- paste0(toolDirName,".", colnames(meanSD))
+    if(is.null(meanSD)){
+      combMeanSD <- meanSD
+    } else{
+      combMeanSD <- cbind(combMeanSD,meanSD)
+    }
+
+    meanSDMD <- multiRun$meanSDMD
+    colnames(meanSDMD) <- paste0(toolDirName,".", colnames(meanSDMD))
+    if(is.null(meanSDMD)){
+      combMeanSDMD <- meanSDMD
+    } else{
+      combMeanSDMD <- cbind(combMeanSDMD,meanSDMD)
+    }
+  }
+
+  multiTools$combMeanSD <- combMeanSD
+  multiTools$combMeanSDMD <- combMeanSDMD
+
+  save(multiTools,file = paste0(tool.dir,"/multiTools.RDa"))
+  write.csv(x = multiTools$meanSD,
+            file = paste0(tool.dir,"/combined.meanSD.csv"))
+  write.csv(x = multiTools$meanSDMD,
+            file = paste0(tool.dir,"/combined.meanSD.Manhattan.dist.csv"))
+  invisible(multiTools)
+}

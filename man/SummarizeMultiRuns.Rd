@@ -2,12 +2,12 @@
 % Please edit documentation in R/SummarizeResults.R
 \name{SummarizeMultiRuns}
 \alias{SummarizeMultiRuns}
-\title{Assess/evaluate multiple summarized result subfolders from a software package.}
+\title{Assess/evaluate multiple summarized runs from a software package.}
 \usage{
-SummarizeMultiRuns(result.dir, run.names, overwrite)
+SummarizeMultiRuns(tool.dir, run.names, overwrite)
 }
 \arguments{
-\item{result.dir}{Fourth level path from the \code{top.dir}. Expected to have
+\item{tool.dir}{Fourth level path from the \code{top.dir}. Expected to have
 multiple runs with different names (e.g. "seed.1")
 That is,
 \code{top.dir}/sp.sp/ExtrAttr/sa.results/. or
@@ -16,26 +16,29 @@ That is,
 Here, \code{top.dir} refers to a top-level directory which contains the
 full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
 This code depends on a conventional directory structure documented
-elsewhere. However there should be a directory within the \code{result.dir}
+elsewhere. However there should be a directory within the \code{tool.dir}
 which stores the software output.}
 
-\item{run.names}{A character vector records the lists of run.dir, or fifth level
-directories from the dataset top-level folder.
+\item{run.names}{A character vector records the list of \code{run.dir},
+or fifth level directories from the dataset top-level folder.
 E.g., c("seed.1","seed.691")}
 
 \item{overwrite}{If TRUE overwrite existing directories and files.}
 }
 \value{
 A list contain c(\code{mean},\code{sd}) of multiple runs:
-\item Cosine similarity
-\item True Positives(TP): Ground-truth signatures which are active in
+Cosine similarity
+True Positives(TP): Ground-truth signatures which are active in
 the spectra, and extracted.
-\item False Negatives(FN): Ground-truth signatures not extracted.
-\item False Positives(FP): Signatures wrongly extracted, not resembling
+False Negatives(FN): Ground-truth signatures not extracted.
+False Positives(FP): Signatures wrongly extracted, not resembling
 any ground-truth signatures.
-\item True Positive Rate (TPR, Sensitivity): TP / (TP + FN)
-\item False Discovery Rate (FDR): FP / (FP + TP)
+True Positive Rate (TPR, Sensitivity): TP / (TP + FN)
+False Discovery Rate (FDR): FP / (FP + TP)
 }
 \description{
-Assess/evaluate multiple summarized result subfolders from a software package.
+Assess/evaluate multiple summarized runs from a software package.
+}
+\details{
+Also writes multiple files into folder \code{tool.dir}:
 }
