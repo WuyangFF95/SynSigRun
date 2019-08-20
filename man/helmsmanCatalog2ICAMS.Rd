@@ -2,17 +2,26 @@
 % Please edit documentation in R/helmsmanInteraction.R
 \name{helmsmanCatalog2ICAMS}
 \alias{helmsmanCatalog2ICAMS}
-\title{Convert Catalogs from helmsman format to ICAMS format}
+\title{Read Catalog files or matrices in helmsman format.}
 \usage{
-helmsmanCatalog2ICAMS(cat)
+helmsmanCatalog2ICAMS(cat, region = "unknown",
+  catalog.type = "counts.signature")
 }
 \arguments{
-\item{cat}{Input catalog, can be a tab-delimited file
-or matrix in helmsman format.}
+\item{cat}{Input catalog, can be a tab-delimited text
+file in helmsman format, or a matrix/data.frame object.}
+
+\item{region}{Catalog region. Can be a specific genomic
+or exonic region, or "unknown".
+Default: "unknown"}
+
+\item{catalog.type}{Is the catalog a signature catalog,
+or a spectrum catalog?
+Default: "counts.signature"}
 }
 \value{
 a catalog matrix in ICAMS format.
 }
 \description{
-Convert Catalogs from helmsman format to ICAMS format
+Read Catalog files or matrices in helmsman format.
 }
