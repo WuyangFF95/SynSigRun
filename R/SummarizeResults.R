@@ -12,23 +12,24 @@ CopyWithChecks <- function(from, to.dir, overwrite = FALSE) {
 
 #' Assess/evaluate one result subfolder from a software package
 #'
-#' Note: Users should use sigproextractor(SigProfiler-Python) v0.0.5.43+
-#' and SignatureAnalyzer 2018-Apr-18
+#' Note: For summarizing sigproextractor or SignatureAnalyzer,
+#' users should use sigproextractor(SigProfiler-Python) v0.0.5.43+
+#' and SignatureAnalyzer 2018-Apr-18.
 #'
-#' @param result.dir Lowest level path to results, that is,
-#' \code{top.dir}/sp.sp/sa.results/. or
-#' \code{top.dir}/sa.sa.96/sa.results/
+#' @param run.dir Lowest level path to result of a run. That is,
+#' \code{top.dir}/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.1/. or
+#' \code{top.dir}/sa.sa.96/Attr/YAPSA.results/seed.691/
 #' Here, \code{top.dir} refers to a top-level directory which contains the
 #' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
 #' This code depends on a conventional directory structure documented
-#' elsewhere. However there should be a directory within the \code{result.dir}
+#' elsewhere. However there should be a directory within the \code{run.dir}
 #' which stores the software output.
 #'
 #' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
-#' It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../
+#' It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../
 #'
 #' @param extracted.sigs.path Path to extracted sigs file, e.g.
-#' \code{<result.dir>/SBS96/Selected_Solution/De_Novo_Solution/signatures.PCAWG.format.csv}.
+#' \code{<run.dir>/SBS96/Selected_Solution/De_Novo_Solution/signatures.PCAWG.format.csv}.
 #'
 #' @param attributed.exp.path Path to attributed exposures file.
 #'
@@ -48,18 +49,14 @@ CopyWithChecks <- function(from, to.dir, overwrite = FALSE) {
 #' @param overwrite If TRUE overwrite existing directories and files.
 #'
 #' @param summary.folder.name The name of the folder containing summary results.
-#' Usually, it equals to "summary", but it shall be changed in case a software
-#' (e.g. SignatureEstimation) has results from 2 or more different methods
-#' (e.g. QP - Quadratic Programming; SA - Simulated Annealing). In this case,
-#' the summary folder name shall be different (e.g. "summary.QP" and "summary.SA").
-#' summary folder will be created under the \code{result.dir}.
+#' Usually, it equals to "summary".
 #'
 #' @keywords internal
 #'
 #' @importFrom utils capture.output sessionInfo
 
 SummarizeSigOneSubdir <-
-  function(result.dir,
+  function(run.dir,
            ground.truth.exposure.dir,
            extracted.sigs.path,
            attributed.exp.path = NULL,
@@ -73,7 +70,7 @@ SummarizeSigOneSubdir <-
            summary.folder.name = "summary") {
 
     ## Output path - path to dump the ReadAndAnalyzeSigs() results
-    outputPath <- paste0(result.dir, "/", summary.folder.name)
+    outputPath <- paste0(run.dir, "/", summary.folder.name)
 
     ## Analyze signature extraction similarity
     sigAnalysis <-
@@ -92,7 +89,7 @@ SummarizeSigOneSubdir <-
     suppressWarnings(dir.create(outputPath))
 
     # Copies ground.truth exposures from second.level.dir
-    # to outputPath == result.dir/<summary.folder.name>.
+    # to outputPath == run.dir/<summary.folder.name>.
     CopyWithChecks(
       from = paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv"),
       to.dir = outputPath,
@@ -386,10 +383,10 @@ SummarizeMultiTools <- function(third.level.dir,
   multiTools$combMeanSD <- combMeanSD
   multiTools$combMeanSDMD <- combMeanSDMD
 
-  save(multiTools,file = paste0(tool.dir,"/multiTools.RDa"))
-  write.csv(x = multiTools$meanSD,
-            file = paste0(tool.dir,"/combined.meanSD.csv"))
-  write.csv(x = multiTools$meanSDMD,
-            file = paste0(tool.dir,"/combined.meanSD.Manhattan.dist.csv"))
+  save(multiTools,file = paste0(third.level.dir,"/multiTools.RDa"))
+  write.csv(x = multiTools$combMeanSD,
+            file = paste0(third.level.dir,"/combined.meanSD.csv"))
+  write.csv(x = multiTools$combMeanSDMD,
+            file = paste0(third.level.dir,"/combined.meanSD.Manhattan.dist.csv"))
   invisible(multiTools)
 }

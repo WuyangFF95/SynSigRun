@@ -4,7 +4,7 @@
 \alias{SummarizeMultiRuns}
 \title{Assess/evaluate multiple summarized runs from a software package.}
 \usage{
-SummarizeMultiRuns(tool.dir, run.names, overwrite)
+SummarizeMultiRuns(tool.dir, run.names, overwrite = T)
 }
 \arguments{
 \item{tool.dir}{Fourth level path from the \code{top.dir}. Expected to have

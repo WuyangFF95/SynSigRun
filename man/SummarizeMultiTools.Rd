@@ -4,7 +4,7 @@
 \alias{SummarizeMultiTools}
 \title{Combine \code{\link{SummarizeMultiRuns}} folders from a software package.}
 \usage{
-SummarizeMultiTools(third.level.dir, tool.dirnames)
+SummarizeMultiTools(third.level.dir, tool.dirnames, overwrite = T)
 }
 \arguments{
 \item{third.level.dir}{Third level path distinguishing de-novo extraction

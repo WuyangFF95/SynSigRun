@@ -4,12 +4,12 @@
 \alias{SummarizeSigOneSA96Subdir}
 \title{Summarize SNS 96-channel results from SignatureAnalyzer}
 \usage{
-SummarizeSigOneSA96Subdir(result.dir,
-  ground.truth.exposure.dir = paste0(result.dir, "/../../../"),
+SummarizeSigOneSA96Subdir(run.dir,
+  ground.truth.exposure.dir = paste0(run.dir, "/../../../"),
   which.run = "/best.run/", overwrite = FALSE)
 }
 \arguments{
-\item{result.dir}{Lowest level path to results, that is
+\item{run.dir}{Lowest level path to results, that is
 \code{<top.dir>}\code{/sa.sa.96/sa.results/},
 \code{<top.dir>}\code{/sp.sp/sa.results/},
 \code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
@@ -20,7 +20,7 @@ This code depends on a conventional directory structure documented
 elsewhere.}
 
 \item{ground.truth.exposure.dir}{Folder which stores ground-truth exposures.
-It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../}
+It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../}
 
 \item{which.run}{Name of subdirectory containing the run to summarize.}
 

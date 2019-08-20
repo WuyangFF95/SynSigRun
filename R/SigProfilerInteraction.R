@@ -23,7 +23,7 @@ ReadSigProfilerSig96 <- function(file) {
 
   rownames(x) <- new.n
 
-  x <- x[ICAMS::catalog.row.order[["SNS96"]], ,drop = FALSE]
+  x <- x[ICAMS::catalog.row.order[["SBS96"]], ,drop = FALSE]
 
   return(x)
 

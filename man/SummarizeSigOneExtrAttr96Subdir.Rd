@@ -6,13 +6,13 @@
 BOTH extraction and attribution,
 excluding SigProfiler-Python and SignatureAnalyzer.}
 \usage{
-SummarizeSigOneExtrAttr96Subdir(result.dir,
-  ground.truth.exposure.dir = paste0(result.dir, "/../../../"),
+SummarizeSigOneExtrAttr96Subdir(run.dir,
+  ground.truth.exposure.dir = paste0(run.dir, "/../../../"),
   overwrite = FALSE)
 }
 \arguments{
-\item{result.dir}{Lowest level path to results, e.g.
-\code{<top.dir>}\code{/sa.sa.96/SomaticSignatures.results/}
+\item{run.dir}{Lowest level path to result of a run. E.g.
+\code{<top.dir>}\code{/sa.sa.96/ExtrAttr/SomaticSignatures.results/seed.1/}
 Here, \code{<top.dir>} refers to a top-level directory which contains the
 full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
 This code depends on a conventional directory structure documented
@@ -21,7 +21,7 @@ we expect two files, \code{extracted.signatures.csv}
 and \code{attributed.exposures.csv} are in the folder.}
 
 \item{ground.truth.exposure.dir}{Folder which stores ground-truth exposures.
-It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../../}
+It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../}
 
 \item{overwrite}{If TRUE overwrite existing directories and files.}
 }

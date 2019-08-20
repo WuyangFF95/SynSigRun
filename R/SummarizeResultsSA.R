@@ -1,6 +1,6 @@
 #' Summarize COMPOSITE results from SignatureAnalyzer.
 #'
-#' @param result.dir Lowest level path to results, that is
+#' @param run.dir Lowest level path to results, that is
 #' \code{<top.dir>}\code{/sa.sa.96/sa.results/},
 #' \code{<top.dir>}\code{/sp.sp/sa.results/},
 #'\code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
@@ -11,7 +11,7 @@
 #' elsewhere.
 #'
 #' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
-#' It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../
+#' It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../
 #'
 #' @param which.run Name of subdirectory containing the run to summarize.
 #'
@@ -23,18 +23,18 @@
 #' @importFrom utils capture.output sessionInfo
 
 SummarizeSigOneSACOMPOSITESubdir <-
-  function(result.dir,
-           ground.truth.exposure.dir = paste0(result.dir,"/../../../"),
+  function(run.dir,
+           ground.truth.exposure.dir = paste0(run.dir,"/../../../"),
            which.run = "/best.run/",
            overwrite = FALSE) {
     # Location of SigProfiler output, which is our input
     # inputPath may change if sigproextractor updates!
-    inputPath <- paste0(result.dir, which.run)
+    inputPath <- paste0(run.dir, which.run)
     stopifnot(dir.exists(inputPath))
 
     retval <-
       SummarizeSigOneSubdir(
-        result.dir = result.dir,
+        run.dir = run.dir,
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
         attributed.exp.path = paste0(inputPath,"/sa.output.sigs.csv"),
@@ -50,7 +50,7 @@ SummarizeSigOneSACOMPOSITESubdir <-
 
 #' Summarize SNS 96-channel results from SignatureAnalyzer
 #'
-#' @param result.dir Lowest level path to results, that is
+#' @param run.dir Lowest level path to results, that is
 #' \code{<top.dir>}\code{/sa.sa.96/sa.results/},
 #' \code{<top.dir>}\code{/sp.sp/sa.results/},
 #'\code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
@@ -61,7 +61,7 @@ SummarizeSigOneSACOMPOSITESubdir <-
 #' elsewhere.
 #'
 #' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
-#' It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../
+#' It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../
 #'
 #' @param which.run Name of subdirectory containing the run to summarize.
 #'
@@ -73,19 +73,19 @@ SummarizeSigOneSACOMPOSITESubdir <-
 #' @importFrom utils capture.output sessionInfo
 
 SummarizeSigOneSA96Subdir <-
-  function(result.dir,
-           ground.truth.exposure.dir = paste0(result.dir,"/../../../"),
+  function(run.dir,
+           ground.truth.exposure.dir = paste0(run.dir,"/../../../"),
            which.run = "/best.run/",
            overwrite = FALSE) {
     # Location of SigProfiler output, which is our input
     # inputPath may change if sigproextractor updates!
-    inputPath <- paste0(result.dir, which.run)
+    inputPath <- paste0(run.dir, which.run)
 
     if (!dir.exists(inputPath)) stop(inputPath, "does not exist")
 
     retval <-
       SummarizeSigOneSubdir(
-        result.dir = result.dir,
+        run.dir = run.dir,
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
         attributed.exp.path = paste0(inputPath,"/sa.output.raw.exp.csv"),
@@ -100,7 +100,7 @@ SummarizeSigOneSA96Subdir <-
 
 #' Summarize DNS (Double Nucleotide Substitution) 78-channel results from SignatureAnalyzer
 #'
-#' @param result.dir Lowest level path to results, that is
+#' @param run.dir Lowest level path to results, that is
 #' \code{<top.dir>}\code{/sa.sa.96/sa.results/},
 #' \code{<top.dir>}\code{/sp.sp/sa.results/},
 #'\code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
@@ -111,7 +111,7 @@ SummarizeSigOneSA96Subdir <-
 #' elsewhere.
 #'
 #' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
-#' It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../
+#' It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../
 #'
 #' @param which.run Name of subdirectory containing the run to summarize.
 #'
@@ -123,19 +123,19 @@ SummarizeSigOneSA96Subdir <-
 #' @importFrom utils capture.output sessionInfo
 
 SummarizeSigOneSADNSSubdir <-
-  function(result.dir,
-           ground.truth.exposure.dir = paste0(result.dir,"/../../../"),
+  function(run.dir,
+           ground.truth.exposure.dir = paste0(run.dir,"/../../../"),
            which.run = "/best.run/",
            overwrite = FALSE) {
     # Location of SigProfiler output, which is our input
     # inputPath may change if sigproextractor updates!
-    inputPath <- paste0(result.dir, which.run)
+    inputPath <- paste0(run.dir, which.run)
 
     if (!dir.exists(inputPath)) stop(inputPath, "does not exist")
 
     retval <-
       SummarizeSigOneSubdir(
-        result.dir = result.dir,
+        run.dir = run.dir,
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
         attributed.exp.path = paste0(inputPath,"/sa.output.raw.exp.csv"),
@@ -150,7 +150,7 @@ SummarizeSigOneSADNSSubdir <-
 
 #' Summarize ID (Indel) results from SignatureAnalyzer
 #'
-#' @param result.dir Lowest level path to results, that is
+#' @param run.dir Lowest level path to results, that is
 #' \code{<top.dir>}\code{/sa.sa.96/sa.results/},
 #' \code{<top.dir>}\code{/sp.sp/sa.results/},
 #'\code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
@@ -161,7 +161,7 @@ SummarizeSigOneSADNSSubdir <-
 #' elsewhere.
 #'
 #' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
-#' It defaults to be \code{sub.dir}, i.e. \code{result.dir}/../../
+#' It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../
 #'
 #' @param which.run Name of subdirectory containing the run to summarize.
 #'
@@ -173,19 +173,19 @@ SummarizeSigOneSADNSSubdir <-
 #' @importFrom utils capture.output sessionInfo
 
 SummarizeSigOneSAIDSubdir <-
-  function(result.dir,
-           ground.truth.exposure.dir = paste0(result.dir,"/../../../"),
+  function(run.dir,
+           ground.truth.exposure.dir = paste0(run.dir,"/../../../"),
            which.run = "/best.run/",
            overwrite = FALSE) {
     # Location of SigProfiler output, which is our input
     # inputPath may change if sigproextractor updates!
-    inputPath <- paste0(result.dir, which.run)
+    inputPath <- paste0(run.dir, which.run)
 
     if (!dir.exists(inputPath)) stop(inputPath, "does not exist")
 
     retval <-
       SummarizeSigOneSubdir(
-        result.dir = result.dir,
+        run.dir = run.dir,
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
         attributed.exp.path = paste0(inputPath,"/sa.output.raw.exp.csv"),
