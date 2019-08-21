@@ -253,10 +253,10 @@ Runhdp <-
         colnames(extractedSignatures) <-
           paste("hdp", colnames(extractedSignatures), sep = ".")
         ## Remove "hdp.0" (noise signature) if it is a null signature or NA signature
-        signatureToBeRemoved <- numeric(0)
+        signaturesToBeRemoved <- numeric(0)
         for(sigIndex in 1:ncol(extractedSignatures)){
           if(is.null(extractedSignatures[1,sigIndex]) | is.na(extractedSignatures[1,sigIndex]))
-            signatureToBeRemoved <- c(signatureToBeRemoved,sigIndex)
+            signaturesToBeRemoved <- c(signaturesToBeRemoved,sigIndex)
         }
         extractedSignatures <- extractedSignatures[,-(signaturesToBeRemoved)]
         ## Convert extractedSignatures to ICAMS-formatted catalog.
