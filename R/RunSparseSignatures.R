@@ -197,7 +197,9 @@ RunSparseSignatures <-
     extractedSignatures <- t(extractionObject$beta)
     rownames(extractedSignatures) <- rownames(spectra)
     colnames(extractedSignatures) <- paste0("SparseSignatures.",seq(1,ncol(extractedSignatures)))
-
+    extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
+                                             region = "unknown",
+                                             catalog.type = "counts.signature")
     ## Write extracted signatures
     write.catalog.function(extractedSignatures,
                            paste0(out.dir,"/extracted.signatures.csv"))
