@@ -26,6 +26,13 @@ InstallSparseSignatures <- function(){
 #' abort if it already exits.  Log files will be in
 #' \code{paste0(out.dir, "/tmp")}.
 #'
+#' @param CPU.cores Number of CPUs to use in running
+#' MutationalPatterns. For a server, 30 cores would be a good
+#' choice; while for a PC, you may only choose 2-4 cores.
+#' By default (CPU.cores = NULL), the CPU.cores would be equal
+#' to \code{(parallel::detectCores())/2}, total number of CPUs
+#' divided by 2.
+#'
 #' @param seedNumber Specify the pseudo-random seed number
 #' used to run SparseSignatures. Setting seed can make the
 #' attribution of SparseSignatures repeatable.
@@ -71,6 +78,7 @@ RunSparseSignatures <-
            read.catalog.function,
            write.catalog.function,
            out.dir,
+           CPU.cores = NULL,
            seedNumber = 1,
            K = NULL,
            K.range = NULL,
@@ -98,14 +106,6 @@ RunSparseSignatures <-
     spectra <- read.catalog.function(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
-
-    ## Create output directory
-    if (dir.exists(out.dir)) {
-      if (!overwrite) stop(out.dir, " already exits")
-    } else {
-      dir.create(out.dir, recursive = T)
-    }
-
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which SparseSignatures accepts:
     ## 1. Remove the catalog related attributes in convSpectra
@@ -117,6 +117,26 @@ RunSparseSignatures <-
     dimnames(convSpectra) <- dimnames(spectra)
     sample.number <- dim(spectra)[2]
     convSpectra <- t(convSpectra)
+
+    ## Create output directory
+    if (dir.exists(out.dir)) {
+      if (!overwrite) stop(out.dir, " already exits")
+    } else {
+      dir.create(out.dir, recursive = T)
+    }
+
+    ## CPU.cores specifies number of CPU cores to use.
+    ## CPU.cores will be capped at 30.
+    ## If CPU.cores is not specified, CPU.cores will
+    ## be equal to the minimum of 30 or (total cores)/2
+    if(is.null(CPU.cores)){
+      CPU.cores = min(30,(parallel::detectCores())/2)
+    } else {
+      stopifnot(is.numeric(CPU.cores))
+      if(CPU.cores > 30) CPU.cores = 30
+    }
+
+
 
 
 
