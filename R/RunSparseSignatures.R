@@ -149,7 +149,9 @@ RunSparseSignatures <-
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
       LassoCVObject <- SparseSignatures::nmf.LassoCV(
         x = convSpectra,
-        K = K.best)
+        K = K.best,
+        num_processes = CPU.cores,
+        seed = seedNumber)
       res = as.mean.squared.error(cv_example)$median
       resBest = which(res==min(res),arr.ind=TRUE)
       ## Record best Lambda number
@@ -165,7 +167,9 @@ RunSparseSignatures <-
       ## and another hyperparameter, Lambda.
       LassoCVObject <- SparseSignatures::nmf.LassoCV(
         x = convSpectra,
-        K = seq(K.range[1],K.range[2]))
+        K = seq(K.range[1],K.range[2]),
+        num_processes = CPU.cores,
+        seed = seedNumber)
       res = as.mean.squared.error(cv_example)$median
       resBest = which(res==min(res),arr.ind=TRUE)
       ## Record best number of signatures and Lambda number
@@ -188,7 +192,8 @@ RunSparseSignatures <-
       x = convSpectra,
       K = K.best,
       lambda_rate = Lambda.best,
-      num_processes = CPU.cores)
+      num_processes = CPU.cores,
+      seed = seedNumber)
     extractedSignatures <- t(extractionObject$beta)
     rownames(extractedSignatures) <- rownames(spectra)
     colnames(extractedSignatures) <- paste0("SparseSignatures.",seq(1,ncol(extractedSignatures)))
