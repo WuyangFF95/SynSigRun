@@ -156,7 +156,7 @@ RunSparseSignatures <-
       Lambda.best = colnames(res)[resBest[2]]
       Lambda.best = as.numeric(
         gsub(pattern="_.*",replacement = "",x = Lambda.best))
-      
+
       print(paste0("The best number of signatures is found.",
                "It equals to: ",Lambda.best))
     }
@@ -165,7 +165,7 @@ RunSparseSignatures <-
       ## and another hyperparameter, Lambda.
       LassoCVObject <- SparseSignatures::nmf.LassoCV(
         x = convSpectra,
-        K = K.range)
+        K = seq(K.range[1],K.range[2]))
       res = as.mean.squared.error(cv_example)$median
       resBest = which(res==min(res),arr.ind=TRUE)
       ## Record best number of signatures and Lambda number
@@ -192,7 +192,7 @@ RunSparseSignatures <-
     extractedSignatures <- t(extractionObject$beta)
     rownames(extractedSignatures) <- rownames(spectra)
     colnames(extractedSignatures) <- paste0("SparseSignatures.",seq(1,ncol(extractedSignatures)))
-      
+
     ## Write extracted signatures
     write.catalog.function(extractedSignatures,
                            paste0(out.dir,"/extracted.signatures.csv"))
@@ -202,7 +202,7 @@ RunSparseSignatures <-
     exposureCounts <- t(extractionObject$alpha)
     rownames(exposureCounts) <- paste0("SparseSignatures.",seq(1,nrow(exposureCounts)))
     colnames(exposureCounts) <- colnames(spectra) ## Assign column names of exposure matrix as names of tumors
-    
+
     ## Save exposure attribution results
     WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
