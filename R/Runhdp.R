@@ -253,12 +253,15 @@ Runhdp <-
         colnames(extractedSignatures) <-
           paste("hdp", colnames(extractedSignatures), sep = ".")
         ## Remove "hdp.0" (noise signature) if it is a null signature or NA signature
-        signaturesToBeRemoved <- numeric(0)
-        for(sigIndex in 1:ncol(extractedSignatures)){
-          if(is.null(extractedSignatures[1,sigIndex]) | is.na(extractedSignatures[1,sigIndex]))
-            signaturesToBeRemoved <- c(signaturesToBeRemoved,sigIndex)
+        flagRemoveHDP0 <- FALSE
+        if(is.null(extractedSignatures[1,"hdp.0"]) | is.na(extractedSignatures[1,"hdp.0"]))
+          flagRemoveHDP0 <- TRUE
+        if(flagRemoveHDP0){
+            sigToBeRemoved <- which(colnames(extractedSignatures) == "hdp.0")
+            extractedSignatures <- extractedSignatures[,-(sigToBeRemoved),drop = FALSE]
         }
-        extractedSignatures <- extractedSignatures[,-(signaturesToBeRemoved)]
+
+
         ## Convert extractedSignatures to ICAMS-formatted catalog.
         extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                                  region = "unknown",
@@ -280,8 +283,9 @@ Runhdp <-
       dim(exposureProbs)
       exposureProbs <- exposureProbs[3:dim(exposureProbs)[1],]
       rownames(exposureProbs) <- rownames(convSpectra)[1:dim(exposureProbs)[1]]
-      ## Remove NA or NULL signature in exposureProbs matrix.
-      exposureProbs <- exposureProbs[,-(signaturesToBeRemoved)]
+      ## Remove NA or NULL "hdp.0" signature in exposureProbs matrix.
+      if(flagRemoveHDP0)
+        exposureProbs <- exposureProbs[,-(signaturesToBeRemoved),drop = FALSE]
       ## Change signature names in exposureCounts
       ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
       colnames(exposureProbs) <- colnames(extractedSignatures)
