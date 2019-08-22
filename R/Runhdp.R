@@ -285,7 +285,7 @@ Runhdp <-
       rownames(exposureProbs) <- rownames(convSpectra)[1:dim(exposureProbs)[1]]
       ## Remove NA or NULL "hdp.0" signature in exposureProbs matrix.
       if(flagRemoveHDP0)
-        exposureProbs <- exposureProbs[,-(signaturesToBeRemoved),drop = FALSE]
+        exposureProbs <- exposureProbs[,-(sigToBeRemoved),drop = FALSE]
       ## Change signature names in exposureCounts
       ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
       colnames(exposureProbs) <- colnames(extractedSignatures)
