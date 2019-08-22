@@ -339,7 +339,6 @@ RunMutationalPatterns <-
                                                             signatures = extractedSignatures)
     ## exposure attributions (in mutation counts)
     exposureCounts <- (exposureObject$contribution)
-    colnames(exposureCounts) <- paste("MutationalPatterns",1:ncol(exposureCounts),sep=".")
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
