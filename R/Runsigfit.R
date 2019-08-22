@@ -407,6 +407,7 @@ Runsigfit <-
       gsub(pattern = "Signature ",replacement = "sigfit.",colnames(exposureCounts))
 
     ## Write attributed exposures into a SynSig formatted exposure file.
+    exposureCounts <- t(exposureCounts)
     WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
 
