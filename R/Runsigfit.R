@@ -141,6 +141,7 @@ RunsigfitAttributeOnly <-
 
 
     ## Write exposure counts in ICAMS and SynSig format.
+    exposureCounts <- t(exposureCounts)
     WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
 
