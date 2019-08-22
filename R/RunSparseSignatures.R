@@ -130,7 +130,6 @@ RunSparseSignatures <-
         x = convSpectra,
         K = K.best,
         num_processes = NA,
-        parallel = NULL,
         seed = seedNumber)
       res = as.mean.squared.error(cv_example)$median
       resBest = which(res==min(res),arr.ind=TRUE)
@@ -149,7 +148,6 @@ RunSparseSignatures <-
         x = convSpectra,
         K = seq(K.range[1],K.range[2]),
         num_processes = NA,
-        parallel = NULL,
         seed = seedNumber)
       res = as.mean.squared.error(cv_example)$median
       resBest = which(res==min(res),arr.ind=TRUE)
@@ -174,7 +172,6 @@ RunSparseSignatures <-
       K = K.best,
       lambda_rate = Lambda.best,
       num_processes = NA,
-      parallel = NULL,
       seed = seedNumber)
     extractedSignatures <- t(extractionObject$beta)
     rownames(extractedSignatures) <- rownames(spectra)
