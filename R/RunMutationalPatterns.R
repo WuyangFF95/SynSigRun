@@ -274,6 +274,9 @@ RunMutationalPatterns <-
                           method = "brunet",  ## "brunet" is the default NMF method in NMF package.
                           nrun = CPU.cores,
                           seed = seedNumber)
+      gc()
+      gc()
+      gc()
 
       K.best <- K
       K.range <- K
@@ -286,6 +289,9 @@ RunMutationalPatterns <-
                           method = "brunet",  ## "brunet" is the default NMF method in NMF package.
                           nrun = CPU.cores,
                           seed = seedNumber)
+      gc()
+      gc()
+      gc()
 
 
       ## Choose the best signature number (K.best) active in the spectra
@@ -315,6 +321,9 @@ RunMutationalPatterns <-
 
     ## Generates a list contain extracted signatures
     sigs_nmf <- MutationalPatterns::extract_signatures(convSpectra,K.best,CPU.cores)
+    gc()
+    gc()
+    gc()
     ## names(sigs_nmf)
     ## [1] "signatures"    "contribution"  "reconstructed"
     sigsRaw <- sigs_nmf$signatures ## un-normalized signature matrix
@@ -337,6 +346,9 @@ RunMutationalPatterns <-
     ## using SBS96 spectra catalog and signature catalog!
     exposureObject <- MutationalPatterns::fit_to_signatures(mut_matrix = convSpectra,
                                                             signatures = extractedSignatures)
+    gc()
+    gc()
+    gc()
     ## exposure attributions (in mutation counts)
     exposureCounts <- (exposureObject$contribution)
     ## Write exposure counts in ICAMS and SynSig format.
