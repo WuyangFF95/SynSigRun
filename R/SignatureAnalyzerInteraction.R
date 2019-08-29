@@ -145,14 +145,14 @@ RunSignatureAnalyzerOnFile <-
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
-      dir.create(out.dir)
+      dir.create(out.dir, recursive = TRUE)
     }
     # TEMPORARY is a global required by SignatureAnalyzer
     TEMPORARY <<- paste0(out.dir, "/tmp/")
     if (dir.exists(TEMPORARY)) {
       if (!overwrite) stop("Directory ", TEMPORARY, " already exists")
     } else {
-      dir.create(TEMPORARY)
+      dir.create(TEMPORARY, recursive = TRUE)
     }
 
     suppressWarnings(
@@ -394,7 +394,7 @@ SAMultiRunOneCatalog <-
            seed = NULL) {
 
     if (!dir.exists(out.dir)) {
-     if (!dir.create(out.dir)) {
+     if (!dir.create(out.dir, recursive = TRUE)) {
        stop("Failed to create ", out.dir,
             "when getwd() == ", getwd())
      }
