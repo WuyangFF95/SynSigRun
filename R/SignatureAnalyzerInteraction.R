@@ -210,9 +210,14 @@ RunSignatureAnalyzerOnFile <-
     WriteExposure(exp.raw,
                   file = paste0(out.dir, "/sa.output.raw.exp.csv"))
 
-    # Output raw attributions / exposures under another name
-    # to avoid breaking other code
-    WriteExposure(exp.raw,
+    # Output exposure attribution in mutation counts
+    exp.normalized <- exp.raw
+    for(ii in 1:ncol(exp.normalized)){
+      exp.normalized[,ii] <- exp.normalized[,ii] / sum(exp.normalized[,ii])
+      exp.normalized[,ii] <- exp.normalized[,ii] * sum(syn.data[,ii])
+    }
+
+    WriteExposure(exp.normalized,
                   file = paste0(out.dir, "/sa.output.exp.csv"))
 
     if (!is.null(input.exposures)) {
