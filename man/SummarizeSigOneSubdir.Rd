@@ -20,7 +20,7 @@ elsewhere. However there should be a directory within the \code{run.dir}
 which stores the software output.}
 
 \item{ground.truth.exposure.dir}{Folder which stores ground-truth exposures.
-It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../}
+Usually, it refers to \code{sub.dir}, i.e. \code{run.dir}/../../../}
 
 \item{extracted.sigs.path}{Path to extracted sigs file, e.g.
 \code{<run.dir>/SBS96/Selected_Solution/De_Novo_Solution/signatures.PCAWG.format.csv}.}

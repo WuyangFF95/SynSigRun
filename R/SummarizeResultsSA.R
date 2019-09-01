@@ -48,7 +48,7 @@ SummarizeSigOneSACOMPOSITESubdir <-
   }
 
 
-#' Summarize SNS 96-channel results from SignatureAnalyzer
+#' Summarize Non-COMPOSITE results (SBS96, DBS, ID) from SignatureAnalyzer
 #'
 #' @param run.dir Lowest level path to results, that is
 #' \code{<top.dir>}\code{/sa.sa.96/sa.results/},
@@ -61,59 +61,10 @@ SummarizeSigOneSACOMPOSITESubdir <-
 #' elsewhere.
 #'
 #' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
-#' It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../
+#' It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../
 #'
-#' @param which.run Name of subdirectory containing the run to summarize.
-#'
-#' @param overwrite If TRUE overwrite existing directories and files.
-#'
-#' @keywords internal
-#'
-#' @importFrom ICAMS WriteCatalog ReadCatalog PlotCatalogToPdf
-#' @importFrom utils capture.output sessionInfo
-
-SummarizeSigOneSA96Subdir <-
-  function(run.dir,
-           ground.truth.exposure.dir = paste0(run.dir,"/../../../"),
-           which.run = "/best.run/",
-           overwrite = FALSE) {
-    # Location of SigProfiler output, which is our input
-    # inputPath may change if sigproextractor updates!
-    inputPath <- paste0(run.dir, which.run)
-
-    if (!dir.exists(inputPath)) stop(inputPath, "does not exist")
-
-    retval <-
-      SummarizeSigOneSubdir(
-        run.dir = run.dir,
-        ground.truth.exposure.dir = ground.truth.exposure.dir,
-        extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
-        attributed.exp.path = paste0(inputPath,"/sa.output.raw.exp.csv"),
-        read.extracted.sigs.fn = ReadCatalog,
-        read.ground.truth.sigs.fn = ReadCatalog,
-        write.cat.fn = WriteCatalog,
-        plot.pdf.fn = PlotCatalogToPdf,
-        overwrite = overwrite)
-
-    invisible(retval)
-  }
-
-#' Summarize DNS (Double Nucleotide Substitution) 78-channel results from SignatureAnalyzer
-#'
-#' @param run.dir Lowest level path to results, that is
-#' \code{<top.dir>}\code{/sa.sa.96/sa.results/},
-#' \code{<top.dir>}\code{/sp.sp/sa.results/},
-#'\code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
-#' \code{<top.dir>}\code{/sp.sa.COMPOSITE/sa.results/}.
-#' Here, \code{<top.dir>} refers to a top-level directory which contains the
-#' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
-#' This code depends on a conventional directory structure documented
-#' elsewhere.
-#'
-#' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
-#' It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../
-#'
-#' @param which.run Name of subdirectory containing the run to summarize.
+#' @param which.run Name of subdirectory under \code{run.dir}
+#' containing the run to summarize.
 #'
 #' @param overwrite If TRUE overwrite existing directories and files.
 #'
@@ -122,59 +73,9 @@ SummarizeSigOneSA96Subdir <-
 #' @importFrom ICAMS WriteCatalog ReadCatalog PlotCatalogToPdf
 #' @importFrom utils capture.output sessionInfo
 
-SummarizeSigOneSADNSSubdir <-
+SummarizeSigOneSASubdir <-
   function(run.dir,
-           ground.truth.exposure.dir = paste0(run.dir,"/../../../"),
-           which.run = "/best.run/",
-           overwrite = FALSE) {
-    # Location of SigProfiler output, which is our input
-    # inputPath may change if sigproextractor updates!
-    inputPath <- paste0(run.dir, which.run)
-
-    if (!dir.exists(inputPath)) stop(inputPath, "does not exist")
-
-    retval <-
-      SummarizeSigOneSubdir(
-        run.dir = run.dir,
-        ground.truth.exposure.dir = ground.truth.exposure.dir,
-        extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
-        attributed.exp.path = paste0(inputPath,"/sa.output.raw.exp.csv"),
-        read.extracted.sigs.fn = ReadCatalog,
-        read.ground.truth.sigs.fn = ReadCatalog,
-        write.cat.fn = WriteCatalog,
-        plot.pdf.fn = PlotCatalogToPdf,
-        overwrite = overwrite)
-
-    invisible(retval)
-  }
-
-#' Summarize ID (Indel) results from SignatureAnalyzer
-#'
-#' @param run.dir Lowest level path to results, that is
-#' \code{<top.dir>}\code{/sa.sa.96/sa.results/},
-#' \code{<top.dir>}\code{/sp.sp/sa.results/},
-#'\code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
-#' \code{<top.dir>}\code{/sp.sa.COMPOSITE/sa.results/}.
-#' Here, \code{<top.dir>} refers to a top-level directory which contains the
-#' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
-#' This code depends on a conventional directory structure documented
-#' elsewhere.
-#'
-#' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
-#' It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../
-#'
-#' @param which.run Name of subdirectory containing the run to summarize.
-#'
-#' @param overwrite If TRUE overwrite existing directories and files.
-#'
-#' @keywords internal
-#'
-#' @importFrom ICAMS WriteCatalog ReadCatalog PlotCatalogToPdf
-#' @importFrom utils capture.output sessionInfo
-
-SummarizeSigOneSAIDSubdir <-
-  function(run.dir,
-           ground.truth.exposure.dir = paste0(run.dir,"/../../../"),
+           ground.truth.exposure.dir = paste0(run.dir,"/../../"),
            which.run = "/best.run/",
            overwrite = FALSE) {
     # Location of SigProfiler output, which is our input
@@ -249,10 +150,10 @@ SignatureAnalyzerSummarizeTopLevel <-
 
     retval <-
       list(sa.sa.96 =
-             SummarizeSigOneSA96Subdir(
+             SummarizeSigOneSASubdir(
                sa.sa.96.dir, overwrite = overwrite),
            sp.sp =
-             SummarizeSigOneSA96Subdir(
+             SummarizeSigOneSASubdir(
                sp.sp.dir, overwrite = overwrite),
            sa.sa.COMPOSITE =
              SummarizeSigOneSACOMPOSITESubdir(
@@ -297,7 +198,7 @@ SignatureAnalyzerSummarizeSBS1SBS5 <-
       sa.results.path <- paste0(sp.sp.path, "sa.results/")
       if (!dir.exists(sa.results.path)) stop(sa.results.path, "does not exist")
       CopyBestSignatureAnalyzerResult(sa.results.path, overwrite = overwrite)
-      SummarizeSigOneSA96Subdir(sa.results.path, overwrite = overwrite)
+      SummarizeSigOneSASubdir(sa.results.path, overwrite = overwrite)
     }
 
     retval <- lapply(subdirs, Summarize1)
