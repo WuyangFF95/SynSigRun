@@ -89,7 +89,7 @@ SummarizeSigOneSASubdir <-
         run.dir = run.dir,
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
-        attributed.exp.path = paste0(inputPath,"/sa.output.raw.exp.csv"),
+        attributed.exp.path = paste0(inputPath,"/sa.output.exp.csv"),
         read.extracted.sigs.fn = ReadCatalog,
         read.ground.truth.sigs.fn = ReadCatalog,
         write.cat.fn = WriteCatalog,
