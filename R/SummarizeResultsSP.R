@@ -36,14 +36,27 @@ SummarizeSigOneSPSubdir <-
 
     # Location of SigProfiler output, which is our input
     # inputPath may change if sigproextractor updates!
-    inputPath <- paste0(run.dir,"/SBS96/Suggested_Solution/De_Novo_Solution")
+    if(dir.exists(paste0(run.dir,"/SBS96/"))){
+      flagSBS96 <- TRUE
+      inputPath <- paste0(run.dir,"/SBS96/Suggested_Solution/De_Novo_Solution")
+    } else if(dir.exists(paste0(run.dir,"/DBS78/"))) {
+      flagDBS78 <- TRUE
+      inputPath <- paste0(run.dir,"/DBS78/Suggested_Solution/De_Novo_Solution")
+    }
+
     stopifnot(dir.exists(inputPath))
 
     # Read in extracted signatures in sigproextractor txt format,
     # and convert it to ICAMS csv format.
     # Need special function to read in extracted signatures
     # Converted signatures will be included in the /summary folder.
-    extractedSigs <- ReadSigProfilerSig96(paste0(inputPath,"/De_Novo_Solution_Signatures_SBS96.txt"))
+    if(flagSBS96)
+      extractedSigs <- ReadSigProfilerSig96(paste0(inputPath,"/De_Novo_Solution_Signatures_SBS96.txt"))
+    if(flagDBS78)
+      extractedSigs <- ReadSigProfilerSig96(paste0(inputPath,"/De_Novo_Solution_Signatures_SBS96.txt"))
+
+
+
     extractedSigs <- ICAMS::as.catalog(object = extractedSigs,
                                        region = "unknown",
                                        catalog.type = "counts.signature")
