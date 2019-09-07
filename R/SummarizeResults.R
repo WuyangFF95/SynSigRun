@@ -72,7 +72,7 @@ SummarizeSigOneSubdir <-
     if(is.null(read.extracted.sigs.fn)) read.extracted.sigs.fn = ICAMS::ReadCatalog
     if(is.null(read.ground.truth.sigs.fn)) read.ground.truth.sigs.fn = ICAMS::ReadCatalog
     if(is.null(write.cat.fn)) write.cat.fn = ICAMS::WriteCatalog
-    if(is.null(plot.pdf.fn)) plot.pdf.fn = ICAMS::WriteCatalog
+    if(is.null(plot.pdf.fn)) plot.pdf.fn = ICAMS::PlotCatalogToPdf
 
 
     ## Output path - path to dump the ReadAndAnalyzeSigs() results
