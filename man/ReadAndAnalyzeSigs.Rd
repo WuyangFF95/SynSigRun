@@ -8,8 +8,7 @@ We assume that in many cases extraction programs will be run
 outside of R on file inputs and will generate fill outputs.}
 \usage{
 ReadAndAnalyzeSigs(extracted.sigs, ground.truth.sigs,
-  ground.truth.exposures, read.extracted.sigs.fn = NULL,
-  read.ground.truth.sigs.fn)
+  ground.truth.exposures)
 }
 \arguments{
 \item{extracted.sigs}{Path to file containing the extracted signature profiles.}
@@ -21,13 +20,6 @@ synthetic data were generated.}
 the synthetic catalogs were generated.  This file is used to restrict
 assessment to only those signatures in \code{ground.truth.sigs}
 that were actually represented in the exposures.}
-
-\item{read.extracted.sigs.fn}{Function to read the extracted signatures
-into the appropriate standard internal representation. If NULL then
-\code{read.ground.truth.sigs.fn} is used.}
-
-\item{read.ground.truth.sigs.fn}{Function to read the ground truth
-signatures into the appropriate standard internal representation.}
 }
 \value{
 See \code{\link{MatchSigsAndRelabel}}

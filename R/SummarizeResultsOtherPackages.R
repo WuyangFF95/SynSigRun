@@ -52,10 +52,10 @@ SummarizeSigOneExtrAttr96Subdir <-
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = extracted.sigs.path,
         attributed.exp.path = attributed.exp.path,
-        read.extracted.sigs.fn = ICAMS::ReadCatalog,
-        read.ground.truth.sigs.fn = ICAMS::ReadCatalog,
-        write.cat.fn = ICAMS::WriteCatalog,
-        plot.pdf.fn = ICAMS::PlotCatalogToPdf,
+        # read.extracted.sigs.fn = ICAMS::ReadCatalog,
+        # read.ground.truth.sigs.fn = ICAMS::ReadCatalog,
+        # write.cat.fn = ICAMS::WriteCatalog,
+        # plot.pdf.fn = ICAMS::PlotCatalogToPdf,
         overwrite = overwrite)
 
     invisible(retval) # So we can test without looking at a file.
@@ -119,10 +119,10 @@ SummarizeSigOneAttr96Subdir <-
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = ground.truth.sigs.path,
         attributed.exp.path = paste0(inputPath,"/attributed.exposures.csv"),
-        read.extracted.sigs.fn = ReadCatalog,
-        read.ground.truth.sigs.fn = ReadCatalog,
-        write.cat.fn = WriteCatalog,
-        plot.pdf.fn = PlotCatalogToPdf,
+        # read.extracted.sigs.fn = ReadCatalog,
+        # read.ground.truth.sigs.fn = ReadCatalog,
+        # write.cat.fn = WriteCatalog,
+        # plot.pdf.fn = PlotCatalogToPdf,
         overwrite = overwrite)
 
     invisible(retval) # So we can test without looking at a file.

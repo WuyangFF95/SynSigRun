@@ -33,19 +33,6 @@ CopyWithChecks <- function(from, to.dir, overwrite = FALSE) {
 #'
 #' @param attributed.exp.path Path to attributed exposures file.
 #'
-#' @param read.extracted.sigs.fn Function to read the extracted sigs file.
-#' e.g. [ICAMS]\code{ReadCatalog}
-#'
-#' @param read.ground.truth.sigs.fn Function to read the ground-truth sigs file.
-#' e.g. [ICAMS]\code{ReadCatalog}
-#'
-#' @param plot.pdf.fn If a function, use it to plot PDFs of the ground truth and
-#' extracted signatures.
-#' e.g. [ICAMS]\code{PlotCatalogToPdf}
-#'
-#' @param write.cat.fn Function to write a catalog to disk, for example
-#' [ICAMS]\code{WriteCatalog}
-#'
 #' @param overwrite If TRUE overwrite existing directories and files.
 #'
 #' @param summary.folder.name The name of the folder containing summary results.
@@ -62,17 +49,17 @@ SummarizeSigOneSubdir <-
            attributed.exp.path = NULL,
            # TODO(Steve): copy this to the summary and do analysis on how much
            # extracted signature contributes to exposures.
-           read.extracted.sigs.fn = NULL,
-           read.ground.truth.sigs.fn = NULL,
-           write.cat.fn = NULL,
-           plot.pdf.fn = NULL,
+           # read.extracted.sigs.fn = NULL,
+           # read.ground.truth.sigs.fn = NULL,
+           # write.cat.fn = NULL,
+           # plot.pdf.fn = NULL,
            overwrite = FALSE,
            summary.folder.name = "summary") {
     ## Specify default catalog treatment functions
-    if(is.null(read.extracted.sigs.fn)) read.extracted.sigs.fn = ICAMS::ReadCatalog
-    if(is.null(read.ground.truth.sigs.fn)) read.ground.truth.sigs.fn = ICAMS::ReadCatalog
-    if(is.null(write.cat.fn)) write.cat.fn = ICAMS::WriteCatalog
-    if(is.null(plot.pdf.fn)) plot.pdf.fn = ICAMS::PlotCatalogToPdf
+    # if(is.null(read.extracted.sigs.fn)) read.extracted.sigs.fn = ICAMS::ReadCatalog
+    # if(is.null(read.ground.truth.sigs.fn)) read.ground.truth.sigs.fn = ICAMS::ReadCatalog
+    # if(is.null(write.cat.fn)) write.cat.fn = ICAMS::WriteCatalog
+    # if(is.null(plot.pdf.fn)) plot.pdf.fn = ICAMS::PlotCatalogToPdf
 
 
     ## Output path - path to dump the ReadAndAnalyzeSigs() results
@@ -85,9 +72,10 @@ SummarizeSigOneSubdir <-
         ground.truth.sigs =
           paste0(ground.truth.exposure.dir,"/ground.truth.syn.sigs.csv"),
         ground.truth.exposures =
-          paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv"),
-        read.extracted.sigs.fn = read.ground.truth.sigs.fn,
-        read.ground.truth.sigs.fn = read.ground.truth.sigs.fn)
+          paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv") # ,
+        # read.extracted.sigs.fn = read.ground.truth.sigs.fn,
+        # read.ground.truth.sigs.fn = read.ground.truth.sigs.fn
+        )
 
     if (dir.exists(outputPath)) {
       if (!overwrite) stop(outputPath, " already exists")
@@ -108,9 +96,11 @@ SummarizeSigOneSubdir <-
               file = paste(outputPath,"match2.csv",sep = "/"))
 
     # Writes ground truth and extracted signatures
-    write.cat.fn(
+    # write.cat.fn(
+    ICAMS::WriteCatalog(
       sigAnalysis$gt.sigs,
-      paste(outputPath,"ground.truth.sigs.csv",sep = "/"))
+      paste(outputPath,"ground.truth.sigs.csv",sep = "/"),
+      )
     write.cat.fn(
       sigAnalysis$ex.sigs,
       paste(outputPath,"extracted.sigs.csv",sep = "/"))

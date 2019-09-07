@@ -5,9 +5,8 @@
 \title{Assess/evaluate one result subfolder from a software package}
 \usage{
 SummarizeSigOneSubdir(run.dir, ground.truth.exposure.dir,
-  extracted.sigs.path, attributed.exp.path = NULL,
-  read.extracted.sigs.fn, read.ground.truth.sigs.fn, write.cat.fn,
-  plot.pdf.fn, overwrite = FALSE, summary.folder.name = "summary")
+  extracted.sigs.path, attributed.exp.path = NULL, overwrite = FALSE,
+  summary.folder.name = "summary")
 }
 \arguments{
 \item{run.dir}{Lowest level path to result of a run. That is,
@@ -26,19 +25,6 @@ Usually, it refers to \code{sub.dir}, i.e. \code{run.dir}/../../../}
 \code{<run.dir>/SBS96/Selected_Solution/De_Novo_Solution/signatures.PCAWG.format.csv}.}
 
 \item{attributed.exp.path}{Path to attributed exposures file.}
-
-\item{read.extracted.sigs.fn}{Function to read the extracted sigs file.
-e.g. [ICAMS]\code{ReadCatalog}}
-
-\item{read.ground.truth.sigs.fn}{Function to read the ground-truth sigs file.
-e.g. [ICAMS]\code{ReadCatalog}}
-
-\item{write.cat.fn}{Function to write a catalog to disk, for example
-[ICAMS]\code{WriteCatalog}}
-
-\item{plot.pdf.fn}{If a function, use it to plot PDFs of the ground truth and
-extracted signatures.
-e.g. [ICAMS]\code{PlotCatalogToPdf}}
 
 \item{overwrite}{If TRUE overwrite existing directories and files.}
 

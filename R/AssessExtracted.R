@@ -87,13 +87,6 @@ MatchSigsAndRelabel <-
 #' @param ground.truth.sigs File containing signature profiles from which the
 #'  synthetic data were generated.
 #'
-#' @param read.extracted.sigs.fn Function to read the extracted signatures
-#' into the appropriate standard internal representation. If NULL then
-#' \code{read.ground.truth.sigs.fn} is used.
-#'
-#' @param read.ground.truth.sigs.fn Function to read the ground truth
-#' signatures into the appropriate standard internal representation.
-#'
 #' @param ground.truth.exposures File containing the exposures from which
 #'  the synthetic catalogs were generated.  This file is used to restrict
 #'  assessment to only those signatures in \code{ground.truth.sigs}
@@ -109,14 +102,20 @@ MatchSigsAndRelabel <-
 ReadAndAnalyzeSigs <-
   function(extracted.sigs,
            ground.truth.sigs,
-           ground.truth.exposures,
-           read.extracted.sigs.fn = NULL,
-           read.ground.truth.sigs.fn) {
-  if (is.null(read.extracted.sigs.fn))
-    read.extracted.sigs.fn <- read.ground.truth.sigs.fn
+           ground.truth.exposures
+           # read.extracted.sigs.fn = NULL,
+           # read.ground.truth.sigs.fn
+           ) {
+  # if (is.null(read.extracted.sigs.fn))
+  #   read.extracted.sigs.fn <- read.ground.truth.sigs.fn
 
-  ex.sigs <- read.extracted.sigs.fn(extracted.sigs)
-  gt.sigs <- read.ground.truth.sigs.fn(ground.truth.sigs)
+  ex.sigs <- ICAMS::ReadCatalog(extracted.sigs,
+                                region = "genome",
+                                catalog.type = "counts.signature")
+  # read.extracted.sigs.fn(extracted.sigs)
+  gt.sigs <- ICAMS::ReadCatalog(ground.truth.sigs, region = "genome",
+                                catalog.type = "counts.signature")
+  # read.ground.truth.sigs.fn(ground.truth.sigs)
   exposure <- ReadExposure(ground.truth.exposures)
   # Rows are signatures, columns are samples.
 
@@ -142,13 +141,6 @@ ReadAndAnalyzeSigs <-
 #'  the synthetic catalogs were generated.  This file is used to restrict
 #'  assessment of signature exposures to only those signatures in
 #'  \code{ground.truth.sigs} that were actually represented in the exposures.
-#'
-#' @param read.extracted.sigs.fn Function to read the extracted signatures
-#' into the appropriate standard internal representation. If NULL then
-#' \code{read.ground.truth.sigs.fn} is used.
-#'
-#' @param read.ground.truth.sigs.fn Function to read the ground truth
-#' signatures into the appropriate standard internal representation.
 #'
 #' @return A \code{\link{data.frame}} recording:
 #'
@@ -179,16 +171,18 @@ ReadAndAnalyzeExposures <-
   function(extracted.sigs,
            ground.truth.sigs,
            attributed.exp.path,
-           ground.truth.exposures,
-           read.extracted.sigs.fn = NULL,
-           read.ground.truth.sigs.fn) {
+           ground.truth.exposures
+           # read.extracted.sigs.fn = NULL,
+           # read.ground.truth.sigs.fn
+           ) {
 
   ## Bilaterally matching between ground-truth and extracted signatures
   sigMatch <- ReadAndAnalyzeSigs(extracted.sigs,
               ground.truth.sigs,
-              ground.truth.exposures,
-              read.extracted.sigs.fn = NULL,
-              read.ground.truth.sigs.fn)
+              ground.truth.exposures
+              # read.extracted.sigs.fn = NULL,
+              # read.ground.truth.sigs.fn
+              )
 
 
   ## Read in ground-truth and attributed exposures in ICAMS format
@@ -212,16 +206,17 @@ ReadAndAnalyzeExposures <-
   ## Attributed exposure of a input signature equals to the sum of
   ## exposures of all extracted signatures which matches to
   ## this input signature.
-  for(gtSigName in gtSigsNames){
+  for (gtSigName in gtSigsNames) {
 
     matchedExtrSigIndex <- which(sigMatch$match1[,1] == gtSigName)
 
-    if(length(matchedExtrSigIndex) > 0) ## 1 or more extracted signatures match to gtSigName in match1
+    if (length(matchedExtrSigIndex) > 0)
+      ## 1 or more extracted signatures match to gtSigName in match1
       matchedExtrSigName <- rownames(sigMatch$match1)[matchedExtrSigIndex]
     else ## No extracted signatures match to gtSigName
       matchedExtrSigName <- NULL
 
-    for(index in 1:ncol(attrExposures)) { ## index refers to which tumor we are scrutinizing
+    for (index in 1:ncol(attrExposures)) { ## index refers to which tumor we are scrutinizing
       ## Each cycle traverses one tumor, and calculate the absolute difference
       ## between its attributed exposures and ground-truth exposures.
       gtExposureOneTumor <- gtExposures[gtSigName,index]

@@ -8,8 +8,7 @@ We assume that in many cases attribution programs will be run
 outside of R on file inputs and will generate fill outputs.}
 \usage{
 ReadAndAnalyzeExposures(extracted.sigs, ground.truth.sigs,
-  attributed.exp.path, ground.truth.exposures,
-  read.extracted.sigs.fn = NULL, read.ground.truth.sigs.fn)
+  attributed.exp.path, ground.truth.exposures)
 }
 \arguments{
 \item{extracted.sigs}{Path to file containing the extracted signature profiles.}
@@ -24,13 +23,6 @@ of synthetic tumors which are attributed to extracted or input signatures.}
 the synthetic catalogs were generated.  This file is used to restrict
 assessment of signature exposures to only those signatures in
 \code{ground.truth.sigs} that were actually represented in the exposures.}
-
-\item{read.extracted.sigs.fn}{Function to read the extracted signatures
-into the appropriate standard internal representation. If NULL then
-\code{read.ground.truth.sigs.fn} is used.}
-
-\item{read.ground.truth.sigs.fn}{Function to read the ground truth
-signatures into the appropriate standard internal representation.}
 }
 \value{
 A \code{\link{data.frame}} recording:
