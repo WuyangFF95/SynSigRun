@@ -62,12 +62,18 @@ SummarizeSigOneSubdir <-
            attributed.exp.path = NULL,
            # TODO(Steve): copy this to the summary and do analysis on how much
            # extracted signature contributes to exposures.
-           read.extracted.sigs.fn,
-           read.ground.truth.sigs.fn,
-           write.cat.fn,
-           plot.pdf.fn,
+           read.extracted.sigs.fn = NULL,
+           read.ground.truth.sigs.fn = NULL,
+           write.cat.fn = NULL,
+           plot.pdf.fn = NULL,
            overwrite = FALSE,
            summary.folder.name = "summary") {
+    ## Specify default catalog treatment functions
+    if(is.null(read.extracted.sigs.fn)) read.extracted.sigs.fn = ICAMS::ReadCatalog
+    if(is.null(read.ground.truth.sigs.fn)) read.ground.truth.sigs.fn = ICAMS::ReadCatalog
+    if(is.null(write.cat.fn)) write.cat.fn = ICAMS::WriteCatalog
+    if(is.null(plot.pdf.fn)) plot.pdf.fn = ICAMS::WriteCatalog
+
 
     ## Output path - path to dump the ReadAndAnalyzeSigs() results
     outputPath <- paste0(run.dir, "/", summary.folder.name)
@@ -301,6 +307,27 @@ SummarizeMultiRuns <-
     multiRun$fivenum[current,] <- currentFiveNum
   }
 
+  ## Plot boxplot for signature extraction
+  pdf(paste0(tool.dir,"/boxplot.extraction.indexes.pdf"))
+  toCalculate <- c("cosSim","falseNeg","falsePos",
+                   "truePos","TPR","FDR")
+  titles <- c("Average cosine similarity",
+              "False negatives",
+              "False positives",
+              "True positives",
+              "True Positive Rate (sensitivity)",
+              "False Discovery Rate (FDR)")
+  subtitles <- c("","Number of ground-truth signatures not extracted",
+                 "Number of signatures extracted, but different from ground-truth signatures",
+                 "Number of ground-truth signatures extracted",
+                 "True Positives / (True Positives + False Negatives)",
+                 "False Positives / (True Positives + False Positives)")
+  for(ii in seq(1,length(toCalculate))){
+    boxplot(multiRun[[ toCalculate[ii] ]],
+            main = titles[ii],
+            sub = subtitles[ii])
+  }
+  dev.off()
 
 
   ## Indexes for exposure attribution in multiple runs
@@ -335,7 +362,15 @@ SummarizeMultiRuns <-
     multiRun$fivenumMD[sig,] <- fivenum(ManhattanDist[sig,])
   }
 
+  ## Plot boxplot for exposure attribution
+  pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"))
+  for(sig in gtSigsNames){
+    boxplot(ManhattanDist[sig,],
+            main = paste0("L1-difference of exposure of signature ",sig))
+  }
+  dev.off()
 
+  ## Save data and results
   save(multiRun,file = paste0(tool.dir,"/multiRun.RDa"))
   write.csv(x = multiRun$ManhattanDist,
             file = paste0(tool.dir,"/ManhattanDist.csv"))
@@ -574,23 +609,74 @@ SummarizeOneToolMultiDatasets <-
     ## Combine extraction assessment for multiple datasets
     ## in multiple runs onto 1 sheet:
     OneToolSummary[["extraction"]] <- data.frame()
+    for(index in indexes){
+      OneToolSummary[[index]] <- data.frame()
+    }
 
     for(datasetDir in dataset.dirs){
       thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
       load(paste0(thirdLevelDir,"/multiRun.RDa"))
-
       indexNum <- nrow(multiRun$meanSD)
+      indexes <- rownames(multiRun$meanSD)
 
-      current <- data.frame()
-
-      current <- list()
-      for(index in seq(1,indexNum)){
-        current[[index]] <- multiTools$combMeanSD[index,,drop = F]
-        rownames(current[[index]]) <- datasetDir
-        OneToolSummary[[index]] <- rbind(OneToolSummary[[index]],current[[index]])
+      for(index in indexes){
+        tmp <- multiRun$meanSD[index,,drop = F]
+        rownames(tmp) <- datasetDir
+        OneToolSummary[[index]] <- rbind(OneToolSummary[[index]],tmp)
       }
     }
 
+    for(index in indexes){
+      colnames(OneToolSummary[[index]]) <- paste0(index,colnames(OneToolSummary[[index]]))
+      if( dim(OneToolSummary[["extraction"]]) == c(0,0) ) {
+        OneToolSummary[["extraction"]] <- OneToolSummary[[index]]
+      } else{
+        OneToolSummary[["extraction"]] <- cbind(OneToolSummary[["extraction"]], OneToolSummary[[index]])
+      }
+    }
+
+    ## Draw boxplot for extraction indexes
+    pdf(paste0(out.dir,"/boxplot.onetool.extraction.indexes.pdf"))
+
+    toCalculate <- c("cosSim","falseNeg","falsePos",
+                     "truePos","TPR","FDR")
+    titles <- c("Average cosine similarity",
+                "False negatives",
+                "False positives",
+                "True positives",
+                "True Positive Rate (sensitivity)",
+                "False Discovery Rate (FDR)")
+    subtitles <- c("","Number of ground-truth signatures not extracted",
+                   "Number of signatures extracted, but different from ground-truth signatures",
+                   "Number of ground-truth signatures extracted",
+                   "True Positives / (True Positives + False Negatives)",
+                   "False Positives / (True Positives + False Positives)")
+
+
+    for(datasetDir in dataset.dirs){
+
+      ## Load multiRun for each dataset.
+      thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
+      load(paste0(thirdLevelDir,"/multiRun.RDa"))
+      indexNum <- nrow(multiRun$meanSD)
+      indexes <- rownames(multiRun$meanSD)
+
+      ## Build a dataframe contain two columns:
+      ## Column 1: the value of index (e.g. 1)
+      ## Column 2: the name of index (e.g. cosSim, TPR)
+      boxplotDF <- data.frame()
+      for(index in indexes){
+        tmpDF <- data.frame(value = unname(multiRun[[index]]),type = index)
+        boxplotDF <- rbind(boxplotDF,tmpDF)
+      }
+      boxplot(value~type,
+              data = boxplotDF)
+    }
+    dev.off()
+
+
+
+    ## Write Summary tables
     for(summaryFileName in names(OneToolSummary)){
       write.csv(OneToolSummary[[summaryFileName]],
                 file = paste0(out.dir,"/",summaryFileName,".csv"))
