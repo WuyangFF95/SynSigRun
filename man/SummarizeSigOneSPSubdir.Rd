@@ -20,15 +20,16 @@ elsewhere. However there should be a directory
 \code{<run.dir>}\code{/SBS96} which
 stores SigProfiler results.}
 
+\item{ground.truth.exposure.dir}{TODO(Wu Yang): Fix this
+File name which stores ground-truth exposures;
+defaults to \code{"ground.truth.syn.exposures.csv"}.
+This file can be found in the \code{sub.dir}, i.e. \code{<run.dir>/../../../}}
+
 \item{overwrite}{If TRUE overwrite existing directories and files.}
 
 \item{hierarchy}{Whether the user have enabled hierarchy = True when running sigproextractor.
 specifying True or False into sigproextractor will cause the program
 to generate different folder structure. (Default: \code{FALSE})}
-
-\item{ground.truth.exposure.name}{File name which stores ground-truth exposures;
-defaults to \code{"ground.truth.syn.exposures.csv"}.
-This file can be found in the \code{sub.dir}, i.e. \code{<run.dir>/../../../}}
 }
 \description{
 Assess/evaluate results from SigProfiler-python (a.k.a. sigproextractor)

@@ -56,7 +56,8 @@ SummarizeSigOnehelmsmanSubdir <-
       paste0(inputPath,"/W_components.txt")
     attributedExposures <- ReadhelmsmanExposure(attributed.exp.path.helmsman.format)
     attributed.exp.path <- paste0(run.dir,"/attributed.exposures.csv")
-    WriteExposure(exposure.matrix = attributedExposures, file = attributed.exp.path)
+    WriteExposure(exposure.matrix = attributedExposures,
+                  file = attributed.exp.path)
 
 
     # SummarizeSigOneSubdir will generate a "/summary" folder
@@ -68,10 +69,10 @@ SummarizeSigOnehelmsmanSubdir <-
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = extracted.sigs.path,
         attributed.exp.path = attributed.exp.path,
-        read.extracted.sigs.fn = ReadCatalog,
-        read.ground.truth.sigs.fn = ReadCatalog,
-        write.cat.fn = WriteCatalog,
-        plot.pdf.fn = PlotCatalogToPdf,
+        # read.extracted.sigs.fn = ReadCatalog,
+        # read.ground.truth.sigs.fn = ReadCatalog,
+        # write.cat.fn = WriteCatalog,
+        # plot.pdf.fn = PlotCatalogToPdf,
         overwrite = overwrite)
 
     invisible(retval) # So we can test without looking at a file.
