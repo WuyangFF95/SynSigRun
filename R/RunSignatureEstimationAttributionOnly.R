@@ -3,7 +3,6 @@
 #' @keywords internal
 InstallSignatureEstimation <- function(){
   message("Installing SignatureEstimation from URL source...\n")
-
   devtools::install_url("https://www.ncbi.nlm.nih.gov/CBBresearch/Przytycka/software/signatureestimation/SignatureEstimation.tar.gz")
 }
 
@@ -57,7 +56,7 @@ RunSignatureEstimationQPAttributeOnly <-
            overwrite = FALSE) {
 
     ## Install SignatureEstimation from Bioconductor, if not found in library.
-    if("SignatureEstimation" %in% rownames(installed.packages()) == FALSE)
+    if("SignatureEstimation" %in% rownames(utils::installed.packages()) == FALSE)
       InstallSignatureEstimation()
 
 
@@ -189,7 +188,7 @@ RunSignatureEstimationSAAttributeOnly <-
            overwrite = FALSE) {
 
     ## Install SignatureEstimation from Bioconductor, if not found in library.
-    if("SignatureEstimation" %in% rownames(installed.packages()) == FALSE)
+    if("SignatureEstimation" %in% rownames(utils::installed.packages()) == FALSE)
       InstallSignatureEstimation()
 
 

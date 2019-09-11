@@ -9,3 +9,4 @@ InstallmSigAct()
 \description{
 Install mSigAct from GitHub
 }
+\keyword{internal}

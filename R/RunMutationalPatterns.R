@@ -6,11 +6,11 @@ InstallMutationalPatterns <- function(){
   message("Installing MutationalPatterns from Bioconductor...")
 
   if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+    utils::install.packages("BiocManager")
   BiocManager::install("MutationalPatterns")
 
-  if ("NMF" %in% rownames(installed.packages()) == FALSE)
-    install.packages("NMF")
+  if ("NMF" %in% rownames(utils::installed.packages()) == FALSE)
+    utils::install.packages("NMF")
 }
 
 
@@ -63,7 +63,7 @@ RunMutationalPatternsAttributeOnly <-
            overwrite = FALSE) {
 
     ## Install MutationalPatterns, if not found in library
-    if ("MutationalPatterns" %in% rownames(installed.packages()) == FALSE)
+    if ("MutationalPatterns" %in% rownames(utils::installed.packages()) == FALSE)
       InstallMutationalPatterns()
 
 
@@ -217,7 +217,7 @@ RunMutationalPatterns <-
     stopifnot(bool1 | bool2)
 
     ## Install MutationalPatterns, if not found in library
-    if ("MutationalPatterns" %in% rownames(installed.packages()) == FALSE)
+    if ("MutationalPatterns" %in% rownames(utils::installed.packages()) == FALSE)
       InstallMutationalPatterns()
 
 
@@ -262,7 +262,7 @@ RunMutationalPatterns <-
 
     ## Before running NMF packge,
     ## Load it explicitly to prevent errors.
-    require(NMF)
+    requireNamespace(NMF)
 
     ## Run NMF using ICAMS-formatted spectra catalog
     ## Determine the best number of signatures (K.best).

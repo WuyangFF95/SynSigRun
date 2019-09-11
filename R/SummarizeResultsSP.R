@@ -83,10 +83,10 @@ SummarizeSigOneSPSubdir <-
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = extracted.sigs.path,
         attributed.exp.path = attributed.exp.path,
-        read.extracted.sigs.fn = ReadCatalog,
-        read.ground.truth.sigs.fn = ReadCatalog,
-        write.cat.fn = WriteCatalog,
-        plot.pdf.fn = PlotCatalogToPdf,
+        #read.extracted.sigs.fn = ReadCatalog,
+        #read.ground.truth.sigs.fn = ReadCatalog,
+        #write.cat.fn = WriteCatalog,
+        #plot.pdf.fn = PlotCatalogToPdf,
         overwrite = overwrite)
 
     # Copy stability.pdf and result_stat.csv
@@ -144,14 +144,14 @@ SummarizeSigProfiler <-
   if("sa.sa.96" %in% sub.dir) {
     SummarizeSigOneSPSubdir(
       run.dir = paste0(top.dir, "/sa.sa.96/sp.results"),
-      ground.truth.exposure.name = "ground.truth.syn.exposures.csv",
+      ground.truth.exposure.dir = paste0(top.dir,"/sa.sa.96/"),
 	    overwrite = overwrite)
   }
 
   if("sp.sp" %in% sub.dir) {
     SummarizeSigOneSPSubdir(
       run.dir = paste0(top.dir, "/sp.sp/sp.results"),
-      ground.truth.exposure.name = "ground.truth.syn.exposures.csv",
-	  overwrite = overwrite)
+      ground.truth.exposure.dir = paste0(top.dir,"/sp.sp/"),
+	    overwrite = overwrite)
   }
 }

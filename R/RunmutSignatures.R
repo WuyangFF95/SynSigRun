@@ -2,13 +2,11 @@
 InstallmutSignatures <- function(){
   message("Installing mutSignatures from github...\n")
   # Install dependent package: corpor from CRAN
-  install.packages("corpcor")
-
-  if(!"devtools" %in% rownames(installed.packages()))
-    install.packages("devtools")
+  utils::install.packages("corpcor")
+  if(!"devtools" %in% rownames(utils::installed.packages()))
+    utils::install.packages("devtools")
   # install mutSignatures
-  library(devtools)
-  install_github("dami82/mutSignatures")
+  devtools::install_github("dami82/mutSignatures")
 }
 #' Run deconstructSigs attribution on a spectra catalog file
 #' and known signatures.
@@ -59,7 +57,7 @@ RunmutSignaturesAttributeOnly <-
            overwrite = FALSE) {
 
     ## Install deconstructSigs, if not found in library.
-    if("mutSignatures" %in% rownames(installed.packages()) == FALSE)
+    if("mutSignatures" %in% rownames(utils::installed.packages()) == FALSE)
       InstallmutSignatures()
 
 

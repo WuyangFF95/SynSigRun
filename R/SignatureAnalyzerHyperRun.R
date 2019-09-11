@@ -68,8 +68,7 @@ SignatureAnalyzerPrepHyper1Secondary <-
     # This would break on composite signatures
     PlotCatalogToPdf(
       pseudo.catalog,
-      "pseudo.catalog.pdf",
-      type = "counts")
+      "pseudo.catalog.pdf")
   }
 
   # Make sure the number of mutations in pseudo.catalog is close
@@ -168,8 +167,7 @@ SignatureAnalyzerPrepHyper4 <-
       # This would break on composite signatures
       PlotCatalogToPdf(
         pseudo.catalog,
-        paste0(dir2, "/pseudo.catalog.pdf"),
-        type = "counts")
+        paste0(dir2, "/pseudo.catalog.pdf"))
     }
 
     # Make sure the number of mutations in pseudo.catalog is close

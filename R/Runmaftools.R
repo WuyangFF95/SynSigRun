@@ -4,13 +4,11 @@
 #' @keywords internal
 Installmaftools <- function(){
   message("Installing maftools from Bioconductor...")
-
   if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+    utils::install.packages("BiocManager")
   BiocManager::install("maftools")
-
-  if ("NMF" %in% rownames(installed.packages()) == FALSE)
-    install.packages("NMF")
+  if ("NMF" %in% rownames(utils::installed.packages()) == FALSE)
+    utils::install.packages("NMF")
 }
 
 
@@ -96,7 +94,7 @@ Runmaftools <-
     stopifnot(bool1 | bool2)
 
     ## Install maftools, if not found in library
-    if ("maftools" %in% rownames(installed.packages()) == FALSE)
+    if ("maftools" %in% rownames(utils::installed.packages()) == FALSE)
       Installmaftools()
 
 
@@ -141,28 +139,28 @@ Runmaftools <-
 
     ## Before running NMF packge,
     ## Load it explicitly to prevent errors.
-    require(NMF)
+    requireNamespace(NMF)
 
     ## Run NMF using ICAMS-formatted spectra catalog
     ## Determine the best number of signatures (K.best).
     ## If K is provided, use K as the K.best.
     ## If K.range is provided, determine K.best by doing raw extraction.
     if(bool1){
-      pdf(paste0(out.dir,"/maftools.plots.pdf"))
+      grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
       gof_nmf <- maftools::extractSignatures(mat = convSpectra,
                           n = K,     ## n specifies number of signatures you want to assess
                           parallel  = paste0("p",CPU.cores))
-      dev.off()
+      grDevices::dev.off()
       K.best <- K
       K.range <- K
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
-      pdf(paste0(out.dir,"/maftools.plots.pdf"))
+      grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
       sigs_nmf <- maftools::extractSignatures(convSpectra,
                           nTry = K.range[2],     ## nTry specifies maximal number of signatures you want to assess
                           parallel  = paste0("p",CPU.cores))
-      dev.off()
+      grDevices::dev.off()
 
       K.best <- ncol(sigs_nmf$signatures) ## extractSignatures() will pick up K.best automatically.
       print(paste0("The best number of signatures is found.",

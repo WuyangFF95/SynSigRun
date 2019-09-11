@@ -3,9 +3,8 @@
 #' @keywords internal
 InstallsigneR <- function(){
   message("Installing signeR from Bioconductor...\n")
-
   if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+    utils::install.packages("BiocManager")
   BiocManager::install("signeR")
 }
 
@@ -83,7 +82,7 @@ RunsigneR <-
     stopifnot(bool1 | bool2)
 
     ## Install signeR, if not found in library
-    if ("signeR" %in% rownames(installed.packages()) == FALSE)
+    if ("signeR" %in% rownames(utils::installed.packages()) == FALSE)
       InstallsigneR()
 
 
@@ -146,9 +145,9 @@ RunsigneR <-
       K.best <- extractionObject$Nsign
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
-      pdf(paste0(out.dir,"/Nsig.BIC.plot.pdf"))
+      grDevices::pdf(paste0(out.dir,"/Nsig.BIC.plot.pdf"))
       signeR::BICboxplot(extractionObject)
-      dev.off()
+      grDevices::dev.off()
     }
 
 

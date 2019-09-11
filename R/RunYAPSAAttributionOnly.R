@@ -3,9 +3,8 @@
 #' @keywords internal
 InstallYAPSA <- function(){
   message("Installing YAPSA from Bioconductor...\n")
-
   if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+    utils::install.packages("BiocManager")
   BiocManager::install("YAPSA")
 }
 
@@ -66,7 +65,7 @@ RunYAPSAAttributeOnly <-
            overwrite = FALSE) {
 
     ## Install YAPSA from Bioconductor, if not found in library.
-    if("YAPSA" %in% rownames(installed.packages()) == FALSE)
+    if("YAPSA" %in% rownames(utils::installed.packages()) == FALSE)
       InstallYAPSA()
 
 

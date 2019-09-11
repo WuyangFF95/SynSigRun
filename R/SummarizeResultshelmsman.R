@@ -11,13 +11,13 @@
 #' \code{<run.dir>}\code{/SBS96} which
 #' stores SigProfiler results.
 #'
-#' @param ground.truth.exposure.name File name which stores ground-truth exposures;
-#' defaults to \code{"ground.truth.syn.exposures.csv"}.
-#' This file can be found in the \code{sub.dir}, i.e. \code{<run.dir>/../../../}
+#' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
+#' Usually, it refers to \code{sub.dir}, i.e. \code{run.dir}/../../../
 #'
 #' @param overwrite If TRUE overwrite existing directories and files.
 #'
-#' @param hierarchy Whether the user have enabled hierarchy = True when running sigproextractor.
+#' @param hierarchy Whether the user have enabled hierarchy = True
+#' when running sigproextractor.
 #' specifying True or False into sigproextractor will cause the program
 #' to generate different folder structure. (Default: \code{FALSE})
 #'

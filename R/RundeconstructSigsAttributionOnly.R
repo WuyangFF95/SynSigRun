@@ -1,7 +1,7 @@
 #' Install deconstructSigs from CRAN
 InstalldeconstructSigs <- function(){
   message("Installing deconstructSigs from CRAN...\n")
-  install.packages("deconstructSigs")
+  utils::install.packages("deconstructSigs")
 }
 
 #' Run deconstructSigs attribution on a spectra catalog file
@@ -53,9 +53,8 @@ RundeconstructSigsAttributeOnly <-
            overwrite = FALSE) {
 
     ## Install deconstructSigs, if not found in library.
-    if("deconstructSigs" %in% rownames(installed.packages()) == FALSE)
+    if("deconstructSigs" %in% rownames(utils::installed.packages()) == FALSE)
       InstalldeconstructSigs()
-
 
     ## Set seed
     set.seed(seedNumber)

@@ -4,14 +4,15 @@
 #' @keywords internal
 Installsigfit <- function(){
   message("Installing sigfit from GitHub kgori/sigfit ...\n")
-
-  if ("devtools" %in% rownames(installed.packages()) == FALSE)
-    install.packages("devtools")
-  devtools::install_github("kgori/sigfit", args = "--preclean", build_vignettes = TRUE)
-
+  devtools::install_github(
+    "kgori/sigfit",
+    args = "--preclean",
+    build_vignettes = TRUE)
   ## Install package rstan, which is required in the run.
-  if ("rstan" %in% rownames(installed.packages()) == FALSE)
-    install.packages("rstan", repos = "https://cloud.r-project.org/", dependencies = TRUE)
+  if ("rstan" %in% rownames(utils::installed.packages()) == FALSE)
+    utils::install.packages(
+      "rstan", repos = "https://cloud.r-project.org/",
+      dependencies = TRUE)
 }
 
 
@@ -69,7 +70,7 @@ RunsigfitAttributeOnly <-
            overwrite = FALSE) {
 
     ## Install MutationalPatterns, if not found in library
-    if ("sigfit" %in% rownames(installed.packages()) == FALSE)
+    if ("sigfit" %in% rownames(utils::installed.packages()) == FALSE)
       Installsigfit()
 
 
@@ -251,7 +252,7 @@ Runsigfit <-
     stopifnot(bool1 | bool2)
 
     ## Install sigfit, if not found in library
-    if ("sigfit" %in% rownames(installed.packages()) == FALSE)
+    if ("sigfit" %in% rownames(utils::installed.packages()) == FALSE)
       Installsigfit()
 
 
@@ -325,14 +326,14 @@ Runsigfit <-
       ## The last element is the best signature number
       K.range <- seq.int(K.range[1],K.range[2])
 
-      pdf(paste0(out.dir,"/sigfit.find.bestK.pdf"))
+      grDevices::pdf(paste0(out.dir,"/sigfit.find.bestK.pdf"))
       mcmc_samples_extr <-
         sigfit::extract_signatures(counts = convSpectra,   ## The spectra matrix required in signature extraction
                                    nsignatures = K.range,  ## The possible number of signatures a spectra may have.
                                    model = model,          ## Method to use: we choose "nmf" by default. We can also choose "emu"
                                    iter = 1000,            ## Number of iterations in the run
                                    seed = seedNumber)
-      dev.off()
+      grDevices::dev.off()
       K.best <- mcmc_samples_extr$best ## Choose K.best
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
@@ -347,14 +348,14 @@ Runsigfit <-
     ## Precise extraction:
     ## Specifying number of signatures, and iterating more times to get more precise extraction
     ## Return a list with two elements: $data and $result
-    pdf(paste0(out.dir,"/sigfit.precise.extraction.pdf"))
+    grDevices::pdf(paste0(out.dir,"/sigfit.precise.extraction.pdf"))
     mcmc_samples_extr_precise <-
       sigfit::extract_signatures(counts = convSpectra,   ## The spectra matrix required in signature extraction
                                  nsignatures = K.best,   ## The possible number of signatures a spectra may have.
                                  model = model,          ## Method to use: we choose "nmf" by default. We can also choose "emu"
                                  iter = 5000,            ## Number of iterations in the run
                                  seed = seedNumber)
-    dev.off()
+    grDevices::dev.off()
 
     extrSigsObject <- sigfit::retrieve_pars(mcmc_samples_extr_precise,
                                             par = "signatures")

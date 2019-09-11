@@ -11,7 +11,15 @@ License: GPL-3
 Language: en-US
 Encoding: UTF-8
 LazyData: true
-Imports: lsa, data.table, ICAMS, stats
+Imports: 
+    lsa, 
+    data.table, 
+    ICAMS, 
+    stats, 
+    devtools, 
+    utils, 
+    graphics,
+    grDevices
 Depends: R (>= 3.5)
 RoxygenNote: 6.1.1
 Suggests: 
@@ -19,8 +27,19 @@ Suggests:
     knitr,
     rmarkdown,
     DelayedArray,
-    devtools,
+    BiocManager,
     NMF,
-    grDevices,
-    graphics
+    SparseSignatures,
+    YAPSA,
+    decompTumor2Sig,
+    deconstructSigs,
+    hdp,
+    maftools,
+    MutationalPatterns,
+    mutSignatures,
+    rstan,
+    sigfit,
+    SignatureEstimation,
+    signeR
+    
 

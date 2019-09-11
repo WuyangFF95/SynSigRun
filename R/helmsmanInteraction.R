@@ -51,8 +51,9 @@ ICAMSCatalog2helmsman <- function(catalog, type = "spectra") {
 #' @export
 ReadhelmsmanExposure <- function(exposure){
 
-  exposure <- read.table(file = exposure, header = T,
-                         sep = "\t", as.is = T)
+  exposure <- utils::read.table(
+    file = exposure, header = T,
+    sep = "\t", as.is = T)
   ## Assign the contents in first column "ID"
   ## as the names of samples.
   rownames(exposure) <- exposure[,1]
@@ -83,8 +84,9 @@ helmsmanCatalog2ICAMS <- function(cat,
 
   stopifnot(is.character(cat) | is.data.frame(cat) | is.matrix(cat))
   if(class(cat) == "character") {
-    catMatrix <- read.table(file = cat, header = T,
-                            sep = "\t", as.is = T)
+    catMatrix <- utils::read.table(
+      file = cat, header = T,
+      sep = "\t", as.is = T)
   } else {
     catMatrix <- cat
   }
@@ -169,8 +171,9 @@ CreatehelmsmanOutput <-
 
   ## Dump catMatrix into out.dir
   newFileName <- paste0(out.dir,"/",oldFileName,".tsv")
-  write.table(catMatrix, file = newFileName,
-              sep = "\t", quote = F, row.names = F)
+  utils::write.table(
+    catMatrix, file = newFileName,
+    sep = "\t", quote = F, row.names = F)
 
 
   invisible(catMatrix)

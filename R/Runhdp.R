@@ -3,12 +3,7 @@
 #' @keywords internal
 Installhdp <- function(){
   message("Installing hdp from GitHub nicolaroberts/hdp ...\n")
-
-  if ("devtools" %in% rownames(installed.packages()) == FALSE)
-    install.packages("devtools")
   devtools::install_github("nicolaroberts/hdp", build_vignettes = TRUE)
-
-
 }
 
 
@@ -88,7 +83,7 @@ Runhdp <-
     stopifnot(bool1 | bool2)
 
     ## Install hdp, if not found in library
-    if ("hdp" %in% rownames(installed.packages()) == FALSE)
+    if ("hdp" %in% rownames(utils::installed.packages()) == FALSE)
       Installhdp()
 
 
@@ -204,15 +199,15 @@ Runhdp <-
 
       ## Draw the DP oscillation plot for mut_example_multi(original_sample)
       {
-        pdf(file = paste0(out.dir,"/original_sample.pdf"))
+        grDevices::pdf(file = paste0(out.dir,"/original_sample.pdf"))
 
-        par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
+        graphics::par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
         p1 <- lapply(hdp::chains(mut_example_multi),
                      hdp::plot_lik, bty="L", start=500)
         p2 <- lapply(hdp::chains(mut_example_multi),
                      hdp::plot_numcluster, bty="L")
 
-        dev.off()
+        grDevices::dev.off()
       }
 
       ## Extract components(here is signature) with cosine.merge = 0.90 (default)
@@ -222,20 +217,20 @@ Runhdp <-
 
       ## Generate a pdf for mut_example_multi_extracted
       {
-        pdf(file = paste0(out.dir,"/signature_hdp_embedded_func.pdf"))
+        grDevices::pdf(file = paste0(out.dir,"/signature_hdp_embedded_func.pdf"))
         ## Draw the DP oscillation plot for mut_example_multi_extracted
-        par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
+        graphics::par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
         p1 <- lapply(hdp::chains(mut_example_multi_extracted),
                      hdp::plot_lik, bty="L", start=500)
         p2 <- lapply(hdp::chains(mut_example_multi_extracted),
                      hdp::plot_numcluster, bty="L")
 
         ## Draw the computation size plot
-        par(mfrow=c(1,1), mar=c(5, 4, 4, 2))
+        graphics::par(mfrow=c(1,1), mar=c(5, 4, 4, 2))
         hdp::plot_comp_size(mut_example_multi_extracted, bty="L")
 
         ## Close the PDF device so that the plots are exported to PDF
-        dev.off()
+        grDevices::dev.off()
       }
     }
 

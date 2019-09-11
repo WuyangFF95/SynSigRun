@@ -12,7 +12,9 @@
 #' @export
 
 ReadSigProfilerSig96 <- function(file) {
-  x <- read.table(file, sep = "\t", as.is = TRUE, header = TRUE)
+  x <- utils::read.table(
+    file, sep = "\t",
+    as.is = TRUE, header = TRUE)
   n <- x[ ,1]
   x <- x[ , -1, drop = FALSE] ## x will still be a data.frame if x has only 2 columns
                               ## i.e. Only one signature has been extracted
@@ -46,7 +48,9 @@ ReadSigProfilerSig96 <- function(file) {
 
 ReadSigProfilerExposure <- function(file) {
 
-  x <- read.table(file = file, sep = "\t", as.is = TRUE, header = TRUE)
+  x <- utils::read.table(
+    file = file, sep = "\t",
+    as.is = TRUE, header = TRUE)
 
   y <- t(x)
   colnames(y) <- y[1,,drop = F]

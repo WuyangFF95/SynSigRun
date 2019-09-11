@@ -29,4 +29,7 @@ It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../}
 \description{
 Summarize COMPOSITE results from SignatureAnalyzer.
 }
+\keyword{Clean}
+\keyword{TODO(Wuyang):}
+\keyword{Up}
 \keyword{internal}

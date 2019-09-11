@@ -25,8 +25,9 @@ ICAMSCatalog2EMu <- function(catalog) {
 #' @export
 ReadEMuExposure <- function(exposure){
 
-  exposure <- read.table(file = exposure, header = T,
-                         sep = "\t", as.is = T)
+  exposure <- utils::read.table(
+    file = exposure, header = T,
+    sep = "\t", as.is = T)
   return(exposure)
 }
 
@@ -52,9 +53,10 @@ EMuCatalog2ICAMS <- function(cat,
 
   stopifnot(is.character(cat) | is.data.frame(cat) | is.matrix(cat))
   if(class(cat) == "character") {
-    catMatrix <- read.table(file = cat, header = T,
-                            sep = "\t", as.is = T,
-                            check.names = FALSE)
+    catMatrix <- utils::read.table(
+      file = cat, header = T,
+      sep = "\t", as.is = T,
+      check.names = FALSE)
   } else {
     catMatrix <- cat
   }
@@ -121,8 +123,9 @@ CreateEMuOutput <-
 
   ## Dump catMatrix into out.dir
   newFileName <- paste0(out.dir,"/",oldFileName,".tsv")
-  write.table(catMatrix, file = newFileName,
-              sep = "\t")
+  utils::write.table(
+    catMatrix, file = newFileName,
+    sep = "\t")
 
   ## Return catMatrix, invisibly.
   invisible(catMatrix)

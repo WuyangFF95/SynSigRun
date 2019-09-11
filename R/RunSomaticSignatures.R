@@ -4,9 +4,8 @@
 #' @keywords internal
 InstallSomaticSignatures <- function(){
   message("Installing SomaticSignatures from Bioconductor...\n")
-
   if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+    utils::install.packages("BiocManager")
   BiocManager::install("SomaticSignatures")
 }
 
@@ -84,7 +83,7 @@ RunSomaticSignatures <-
     stopifnot(bool1 | bool2)
 
     ## Install SomaticSignatures, if not found in library
-    if ("SomaticSignatures" %in% rownames(installed.packages()) == FALSE)
+    if ("SomaticSignatures" %in% rownames(utils::installed.packages()) == FALSE)
       InstallSomaticSignatures()
 
 

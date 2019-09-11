@@ -19,6 +19,8 @@
 #'
 #' @keywords internal
 #'
+#' TODO(Wuyang): Clean Up
+#'
 #' @importFrom ICAMS WriteCatalog ReadCatalog
 #' @importFrom utils capture.output sessionInfo
 
@@ -38,10 +40,10 @@ SummarizeSigOneSACOMPOSITESubdir <-
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
         attributed.exp.path = paste0(inputPath,"/sa.output.sigs.csv"),
-        read.extracted.sigs.fn = ReadCatCOMPOSITE,
-        read.ground.truth.sigs.fn = ReadCatCOMPOSITE,
-        write.cat.fn = WriteCatCOMPOSITE,
-        plot.pdf.fn =  Plot96PartOfComposite, # NA, # Does not exist for COMPOSITE # maybe Plot96PartOfComposite
+        #read.extracted.sigs.fn = ReadCatCOMPOSITE,
+        #read.ground.truth.sigs.fn = ReadCatCOMPOSITE,
+        #write.cat.fn = WriteCatCOMPOSITE,
+        #plot.pdf.fn =  Plot96PartOfComposite, # NA, # Does not exist for COMPOSITE # maybe Plot96PartOfComposite
         overwrite = overwrite)
 
     invisible(retval)
@@ -90,10 +92,10 @@ SummarizeSigOneSASubdir <-
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
         attributed.exp.path = paste0(inputPath,"/sa.output.exp.csv"),
-        read.extracted.sigs.fn = ReadCatalog,
-        read.ground.truth.sigs.fn = ReadCatalog,
-        write.cat.fn = WriteCatalog,
-        plot.pdf.fn = PlotCatalogToPdf,
+        #read.extracted.sigs.fn = ReadCatalog,
+        #read.ground.truth.sigs.fn = ReadCatalog,
+        #write.cat.fn = WriteCatalog,
+        #plot.pdf.fn = PlotCatalogToPdf,
         overwrite = overwrite)
 
     invisible(retval)

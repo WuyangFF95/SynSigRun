@@ -43,8 +43,9 @@ ICAMSCatalog2tcsm <- function(catalog) {
 #' @export
 ReadtcsmExposure <- function(exposure){
 
-  exposure <- read.table(file = exposure, header = T,
-                         sep = "\t", as.is = T)
+  exposure <- utils::read.table(
+    file = exposure, header = T,
+    sep = "\t", as.is = T)
   return(exposure)
 }
 
@@ -156,8 +157,9 @@ CreatetcsmOutput <-
 
   ## Dump catMatrix into out.dir
   newFileName <- paste0(out.dir,"/",oldFileName,".tsv")
-  write.table(catMatrix, file = newFileName,
-              sep = "\t")
+  utils::write.table(
+    catMatrix, file = newFileName,
+    sep = "\t")
 
   ## Return catMatrix, invisibly.
   invisible(catMatrix)

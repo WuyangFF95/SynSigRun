@@ -1,4 +1,6 @@
 #' Install mSigAct from GitHub
+#'
+#' @keywords internal
 InstallmSigAct <- function(){
   message("Installing mSigAct from master...\n")
   devtools::install_github(repo = "steverozen/mSigAct",
@@ -63,7 +65,7 @@ RunmSigActAttributeOnly <-
            overwrite = FALSE) {
 
     ## Install mSigAct, if not found in library.
-    if("mSigAct" %in% rownames(installed.packages()) == FALSE)
+    if("mSigAct" %in% rownames(utils::installed.packages()) == FALSE)
       InstallmSigAct()
 
 
@@ -105,9 +107,10 @@ RunmSigActAttributeOnly <-
     ## mSigAct accepts ICAMS-formatted spectra and signature catalog.
     ## No need to convert. to convert catalog
     estimatedExposure <-
-    SparseAssignActivity(spectra = spectra,
-                         sigs = gtSignatures,
-                         mc.cores = CPU.cores)
+    mSigAct::SparseAssignActivity(
+      spectra = spectra,
+      sigs = gtSignatures,
+      mc.cores = CPU.cores)
     exposureCounts <- estimatedExposure$exposure
 
     ## Write exposure counts in ICAMS and SynSig format.

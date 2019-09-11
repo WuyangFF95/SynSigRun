@@ -3,9 +3,8 @@
 #' @keywords internal
 InstallSparseSignatures <- function(){
   message("Installing SparseSignatures from Bioconductor...\n")
-
   if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+    utils::install.packages("BiocManager")
   BiocManager::install("SparseSignatures")
 }
 
@@ -83,7 +82,7 @@ RunSparseSignatures <-
     stopifnot(bool1 | bool2)
 
     ## Install SparseSignatures, if not found in library
-    if ("SparseSignatures" %in% rownames(installed.packages()) == FALSE)
+    if ("SparseSignatures" %in% rownames(utils::installed.packages()) == FALSE)
       InstallSparseSignatures()
 
 
@@ -131,11 +130,12 @@ RunSparseSignatures <-
         K = K.best,
         num_processes = NA,
         seed = seedNumber)
-      res = as.mean.squared.error(cv_example)$median
-      resBest = which(res==min(res),arr.ind=TRUE)
+      res <- SparseSignatures::as.mean.squared.error(
+        SparseSignatures::cv_example)$median
+      resBest <- which(res==min(res),arr.ind=TRUE)
       ## Record best Lambda number
-      Lambda.best = colnames(res)[resBest[2]]
-      Lambda.best = as.numeric(
+      Lambda.best <- colnames(res)[resBest[2]]
+      Lambda.best <- as.numeric(
         gsub(pattern="_.*",replacement = "",x = Lambda.best))
 
       print(paste0("The best number of signatures is found.",

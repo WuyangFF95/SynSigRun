@@ -101,7 +101,8 @@ SummarizeSigOneSubdir <-
       sigAnalysis$gt.sigs,
       paste(outputPath,"ground.truth.sigs.csv",sep = "/"),
       )
-    write.cat.fn(
+    # write.cat.fn
+    ICAMS::WriteCatalog(
       sigAnalysis$ex.sigs,
       paste(outputPath,"extracted.sigs.csv",sep = "/"))
 
@@ -119,7 +120,9 @@ SummarizeSigOneSubdir <-
       sigAnalysis$ground.truth.with.no.best.match,
       file = paste0(outputPath,"/other.results.txt"))
 
-    if (class(plot.pdf.fn) == "function") {
+    ## Obsolete
+    if(FALSE){
+      #if (class(plot.pdf.fn) == "function") {
       # Output ground-truth sigs to a PDF file
       plot.pdf.fn(sigAnalysis$gt.sigs,
                   paste0(outputPath,"/ground.truth.sigs.pdf"))
@@ -128,6 +131,15 @@ SummarizeSigOneSubdir <-
       plot.pdf.fn(sigAnalysis$ex.sigs,
                   paste0(outputPath,"/extracted.sigs.pdf"))
     }
+
+    ## Plot signatures as "counts.signatures" typed catalog
+    # Output ground-truth sigs to a PDF file
+    ICAMS::PlotCatalogToPdf(sigAnalysis$gt.sigs,
+                paste0(outputPath,"/ground.truth.sigs.pdf"))
+    # Output extracted sigs to a PDF file
+    ICAMS::PlotCatalogToPdf(sigAnalysis$ex.sigs,
+                paste0(outputPath,"/extracted.sigs.pdf"))
+
 
     ## Analyze exposure attribution
     # To be compatible with PCAWG project which only studies
@@ -146,8 +158,9 @@ SummarizeSigOneSubdir <-
           attributed.exp.path = attributed.exp.path,
           ground.truth.exposures =
             paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv"),
-          read.extracted.sigs.fn = read.ground.truth.sigs.fn,
-          read.ground.truth.sigs.fn = read.ground.truth.sigs.fn)
+          #read.extracted.sigs.fn = read.ground.truth.sigs.fn,
+          #read.ground.truth.sigs.fn = read.ground.truth.sigs.fn
+          )
 
         # Write results of exposure attribution analysis
         write.csv(exposureDiff,
@@ -293,12 +306,12 @@ SummarizeMultiRuns <-
   rownames(multiRun$fivenum) <- toCalculate
   colnames(multiRun$fivenum) <- c("min","lower-hinge","median","upperhinge","max")
   for(current in toCalculate){
-    currentFiveNum <- fivenum(multiRun[[current]])
+    currentFiveNum <- stats::fivenum(multiRun[[current]])
     multiRun$fivenum[current,] <- currentFiveNum
   }
 
   ## Plot boxplot for signature extraction
-  pdf(paste0(tool.dir,"/boxplot.extraction.indexes.pdf"))
+  grDevices::pdf(paste0(tool.dir,"/boxplot.extraction.indexes.pdf"))
   toCalculate <- c("cosSim","falseNeg","falsePos",
                    "truePos","TPR","FDR")
   titles <- c("Average cosine similarity",
@@ -313,11 +326,12 @@ SummarizeMultiRuns <-
                  "True Positives / (True Positives + False Negatives)",
                  "False Positives / (True Positives + False Positives)")
   for(ii in seq(1,length(toCalculate))){
-    boxplot(multiRun[[ toCalculate[ii] ]],
-            main = titles[ii],
-            sub = subtitles[ii])
+    graphics::boxplot(
+      multiRun[[ toCalculate[ii] ]],
+      main = titles[ii],
+      sub = subtitles[ii])
   }
-  dev.off()
+  grDevices::dev.off()
 
 
   ## Indexes for exposure attribution in multiple runs
@@ -349,16 +363,17 @@ SummarizeMultiRuns <-
   rownames(multiRun$fivenumMD) <- gtSigsNames
   colnames(multiRun$fivenumMD) <- c("min","lower-hinge","median","upperhinge","max")
   for(sig in gtSigsNames){
-    multiRun$fivenumMD[sig,] <- fivenum(ManhattanDist[sig,])
+    multiRun$fivenumMD[sig,] <- stats::fivenum(ManhattanDist[sig,])
   }
 
   ## Plot boxplot for exposure attribution
-  pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"))
+  grDevices::pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"))
   for(sig in gtSigsNames){
-    boxplot(ManhattanDist[sig,],
-            main = paste0("L1-difference of exposure of signature ",sig))
+    graphics::boxplot(
+      ManhattanDist[sig,],
+      main = paste0("L1-difference of exposure of signature ",sig))
   }
-  dev.off()
+  grDevices::dev.off()
 
   ## Save data and results
   save(multiRun,file = paste0(tool.dir,"/multiRun.RDa"))
@@ -626,7 +641,7 @@ SummarizeOneToolMultiDatasets <-
     }
 
     ## Draw boxplot for extraction indexes
-    pdf(paste0(out.dir,"/boxplot.onetool.extraction.indexes.pdf"))
+    grDevices::pdf(paste0(out.dir,"/boxplot.onetool.extraction.indexes.pdf"))
 
     toCalculate <- c("cosSim","falseNeg","falsePos",
                      "truePos","TPR","FDR")
@@ -659,10 +674,9 @@ SummarizeOneToolMultiDatasets <-
         tmpDF <- data.frame(value = unname(multiRun[[index]]),type = index)
         boxplotDF <- rbind(boxplotDF,tmpDF)
       }
-      boxplot(value~type,
-              data = boxplotDF)
+      graphics::boxplot(value~type,data = boxplotDF)
     }
-    dev.off()
+    grDevices::dev.off()
 
 
 
