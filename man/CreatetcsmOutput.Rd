@@ -5,17 +5,13 @@
 \title{Prepare input file for tcsm from a
 tcsm formatted catalog file.}
 \usage{
-CreatetcsmOutput(catalog, read.catalog.function = NULL,
-  out.dir = paste0(dirname(catalog), "/ExtrAttr/tcsm.results"),
-  overwrite = FALSE)
+CreatetcsmOutput(catalog, out.dir = paste0(dirname(catalog),
+  "/ExtrAttr/tcsm.results"), overwrite = FALSE)
 }
 \arguments{
 \item{catalog}{a catalog in ICAMS format. It can be
 a .csv file, or a matrix or data.frame.
 Usually, it refers to \code{"ground.truth.syn.catalog.csv"}.}
-
-\item{read.catalog.function}{Function taking a file path as
-its only argument and returning a catalog as a numeric matrix.}
 
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exists. Usually, the \code{out.dir} will

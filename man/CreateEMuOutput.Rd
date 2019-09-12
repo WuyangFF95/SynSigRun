@@ -5,27 +5,28 @@
 \title{Prepare input file for EMu from a
 EMu formatted catalog file.}
 \usage{
-CreateEMuOutput(catalog, read.catalog.function = NULL,
-  out.dir = paste0(dirname(catalog), "/ExtrAttr/EMu.results"),
-  overwrite = FALSE)
+CreateEMuOutput(catalog, out.dir = paste0(dirname(catalog),
+  "/ExtrAttr/EMu.results"), overwrite = FALSE)
 }
 \arguments{
 \item{catalog}{a catalog in ICAMS format. It can be
 a .csv file, or a matrix or data.frame.
 Usually, it refers to \code{"ground.truth.syn.catalog.csv"}.}
 
-\item{read.catalog.function}{Function taking a file path as
-its only argument and returning a catalog as a numeric matrix.}
-
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exists. Usually, the \code{out.dir} will
-be a \code{EMu.results} folder directly under the
-folder storing \code{catalog}.}
+be a \code{EMu.results} folder directly under the folder
+storing \code{catalog}.}
 
 \item{overwrite}{If TRUE, overwrite existing output}
+
+\item{seedsInUse}{seed numbers to be used in data creation.
+The function will create directories /seed.\code{seedsInUse}
+under out.dir, and store EMu ground-truth spectra catalog
+under it.}
 }
 \value{
-\code{invisible(catMatrix)},
+\code{invisible(catalog)},
 original catalog in EMu format
 }
 \description{
@@ -38,5 +39,5 @@ in EMu-formatted catalogs: Rows are signatures;
 the first column is the name of the mutation type, while the remaining
 columns are samples (tumors).
 These EMu-formated catalogs will the input when running EMu program
-later on Python platform.
+later on compiled binary.
 }

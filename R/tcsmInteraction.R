@@ -107,9 +107,6 @@ tcsmCatalog2ICAMS <- function(cat,
 #' a .csv file, or a matrix or data.frame.
 #' Usually, it refers to \code{"ground.truth.syn.catalog.csv"}.
 #'
-#' @param read.catalog.function Function taking a file path as
-#' its only argument and returning a catalog as a numeric matrix.
-#'
 #' @param out.dir Directory that will be created for the output;
 #' abort if it already exists. Usually, the \code{out.dir} will
 #' be a \code{tcsm.results} folder directly under the
@@ -132,14 +129,13 @@ tcsmCatalog2ICAMS <- function(cat,
 #' @importFrom utils capture.output
 CreatetcsmOutput <-
   function(catalog,
-           read.catalog.function = NULL,
            out.dir = paste0(dirname(catalog),"/ExtrAttr/tcsm.results"),
            overwrite = FALSE) {
 
   ## If catalog is a string of file path
   if(is.character(catalog)){
-    ## Read in catalog matrix using read.catalog.function.
-    catMatrix <- read.catalog.function(catalog, strict = FALSE)
+    ## Read in catalog matrix using ICAMS::ReadCatalog.
+    catMatrix <- ICAMS::ReadCatalog(catalog, strict = FALSE)
     ## Convert catalog to tcsm format
     catMatrix <- ICAMSCatalog2tcsm(catMatrix)
     ## Fetch the name of catalog file without extension

@@ -10,7 +10,8 @@ ICAMSCatalog2EMu(catalog)
 \item{catalog}{A catalog matrix in ICAMS format. (SNS only!)}
 }
 \value{
-a catalog matrix in EMu format.
+a matrix without any dimnames, but the values are the
+transposition of the values in \code{catalog}.
 }
 \description{
 Convert Catalogs from ICAMS format to EMu format
