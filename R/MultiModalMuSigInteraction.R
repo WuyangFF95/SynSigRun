@@ -10,8 +10,10 @@ ICAMSCatalog2MM <- function(catalog) {
   # Read catalog. From matrix-like
   stopifnot(is.data.frame(catalog) | is.matrix(catalog))
 
-  catalog <- data.frame("term" = rownames(catalog),
-                          catalog)
+  catalog <- data.frame(
+    "term" = rownames(catalog),
+    catalog,
+    check.names = FALSE)
   return(catalog)
 }
 
@@ -24,7 +26,8 @@ ICAMSCatalog2MM <- function(catalog) {
 ReadCatMM <- function(cat){
 
  catMatrix <- read.table(file = cat, header = T,
-                         sep = "\t", as.is = T)
+                         sep = "\t", as.is = T,
+                         check.names = FALSE)
  rownames(catMatrix) <- catMatrix[,1]
  catMatrix <- catMatrix[,-1]
 
