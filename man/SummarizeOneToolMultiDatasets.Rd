@@ -4,13 +4,27 @@
 \alias{SummarizeOneToolMultiDatasets}
 \title{Combine results for multiple datasets, from one software tools.}
 \usage{
-SummarizeOneToolMultiDatasets(dataset.dirs, tool.dirname, out.dir,
-  overwrite = FALSE)
+SummarizeOneToolMultiDatasets(dataset.dirs, dataset.groups = NULL,
+  dataset.subgroups = NULL, tool.dirname, out.dir, overwrite = FALSE,
+  ...)
 }
 \arguments{
 \item{dataset.dirs}{Paths of top-level dataset directories trees you want
 to investigate.
 E.g. "./S.0.1.Rsq.0.1"}
+
+\item{dataset.groups}{Numeric or character vector specifying the group
+each dataset belong to.
+E.g. For SBS1-SBS5 correlated datasets, we can consider slope as the group:
+c("slope=0.1","slope=0.5","slope=1","slope=2","slope=5","slope=10")
+Default: "Default"}
+
+\item{dataset.subgroups}{Numeric or character vector differentiating
+datasets within each group.
+E.g. For SBS1-SBS5 correlated datasets, we can consider Pearson's R^2
+as the subgroup:
+c("Rsq=0.1","Rsq=0.2","Rsq=0.3","Rsq=0.6")
+Default: Names of datasets, which are \code{basename(dataset.dirs)}}
 
 \item{tool.dirname}{Name of the second.level.dir (e.g. "sp.sp"),
 third.level.dir (e.g. "ExtrAttr") and tool.dir

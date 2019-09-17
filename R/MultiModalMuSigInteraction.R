@@ -6,6 +6,8 @@
 #' @param catalog A catalog matrix in ICAMS format. (SNS/DNS/ID)
 #'
 #' @return a catalog matrix in MultiModalMuSig format.
+#'
+#' @export
 ICAMSCatalog2MM <- function(catalog) {
   # Read catalog. From matrix-like
   stopifnot(is.data.frame(catalog) | is.matrix(catalog))
@@ -19,36 +21,34 @@ ICAMSCatalog2MM <- function(catalog) {
 
 
 
-#' Read Catalog files in MM format
-#' @param cat Input catalog, can be a tab-delimited text
-#' file in MultiModalMuSig format.
-#' @return a catalog matrix in ICAMS format.
-ReadCatMM <- function(cat){
-
- catMatrix <- read.table(file = cat, header = T,
-                         sep = "\t", as.is = T,
-                         check.names = FALSE)
- rownames(catMatrix) <- catMatrix[,1]
- catMatrix <- catMatrix[,-1]
-
- return(catMatrix)
-}
-
-
-
-#' Convert Catalogs from MM format to ICAMS format
+#' Convert Catalogs (File or Matrix) from MM format to ICAMS format
 #'
 #' @param cat Input catalog, can be a tab-delimited file
 #' or matrix in MultiModalMuSig format.
 #'
+#' @param region Catalog region. Can be a specific genomic
+#' or exonic region, or "unknown".
+#' Default: "unknown"
+#'
+#' @param catalog.type Is the catalog a signature catalog,
+#' or a spectrum catalog?
+#' Default: "counts.signature"
+#'
 #' @return a catalog matrix in ICAMS format.
-
-MMCatalog2ICAMS <- function(cat) {
+#'
+#' @export
+MMCatalog2ICAMS <- function(
+  cat,
+  region = "unknown",
+  catalog.type = "counts.signature") {
 
   # Read MM-formatted catalog. Either from file or matrix-like
   stopifnot(is.character(cat) | is.data.frame(cat) | is.matrix(cat))
   if(class(cat) == "character") {
-    catMatrix <- ReadCatMM(cat)
+    catMatrix <- read.table(
+      file = cat, header = T,
+      sep = "\t", row.names = 1,
+      as.is = T, check.names = FALSE)
   } else {
     catMatrix <- cat
     rownames(catMatrix) <- cat[,1]
@@ -84,9 +84,29 @@ MMCatalog2ICAMS <- function(cat) {
     rownames(catMatrix) <- newrowNames
   }
 
+  catalog <- ICAMS::as.catalog(
+    catMatrix,
+    region = region,
+    catalog.type = catalog.type)
 
-  return(catMatrix)
+  return(catalog)
 }
+
+
+#' Read Catalog files in MM format
+#' @param exposureFile Input exposure file, can be a tab-delimited
+#' text file in MultiModalMuSig format.
+#' @return a exposure matrix in ICAMS format.
+#'
+#' @export
+ReadExposureMM <- function(exposureFile){
+  exposure <- read.table(
+    exposureFile, header = T,
+    sep = "\t", row.names = 1,
+    as.is = T, check.names = FALSE)
+  return(exposure)
+}
+
 
 #' Prepare input file for MultiModalMuSig from a
 #' MultiModalMuSig formatted catalog file.
@@ -118,7 +138,6 @@ MMCatalog2ICAMS <- function(cat) {
 #' @export
 #'
 #' @importFrom utils capture.output
-
 CreateMultiModalMuSigOutput <-
   function(catalog,
            read.catalog.function = NULL,
@@ -147,7 +166,6 @@ CreateMultiModalMuSigOutput <-
 	newFileName <- paste0(out.dir,"/",oldFileName,".tsv")
   write.table(catMatrix, file = newFileName,
               sep = "\t", quote = F, row.names = F)
-
 
   invisible(catMatrix)
 }

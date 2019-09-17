@@ -2,17 +2,26 @@
 % Please edit documentation in R/MultiModalMuSigInteraction.R
 \name{MMCatalog2ICAMS}
 \alias{MMCatalog2ICAMS}
-\title{Convert Catalogs from MM format to ICAMS format}
+\title{Convert Catalogs (File or Matrix) from MM format to ICAMS format}
 \usage{
-MMCatalog2ICAMS(cat)
+MMCatalog2ICAMS(cat, region = "unknown",
+  catalog.type = "counts.signature")
 }
 \arguments{
 \item{cat}{Input catalog, can be a tab-delimited file
 or matrix in MultiModalMuSig format.}
+
+\item{region}{Catalog region. Can be a specific genomic
+or exonic region, or "unknown".
+Default: "unknown"}
+
+\item{catalog.type}{Is the catalog a signature catalog,
+or a spectrum catalog?
+Default: "counts.signature"}
 }
 \value{
 a catalog matrix in ICAMS format.
 }
 \description{
-Convert Catalogs from MM format to ICAMS format
+Convert Catalogs (File or Matrix) from MM format to ICAMS format
 }
