@@ -78,9 +78,10 @@ ReadhelmsmanExposure <- function(exposure){
 #' @return a catalog matrix in ICAMS format.
 #'
 #' @export
-helmsmanCatalog2ICAMS <- function(cat,
-                            region = "unknown",
-                            catalog.type = "counts.signature"){
+helmsmanCatalog2ICAMS <- function(
+  cat,
+  region = "unknown",
+  catalog.type = "counts.signature"){
 
   stopifnot(is.character(cat) | is.data.frame(cat) | is.matrix(cat))
   if(class(cat) == "character") {
