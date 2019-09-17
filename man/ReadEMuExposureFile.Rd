@@ -13,7 +13,9 @@ Usually, it is called "W_components.txt".}
 \item{sigNames}{Names of signatures. These will be
 served as the rownames of the exposure matrix.}
 
-\item{sampleNames}{Return ICAMS/SynSigEval formatted exposure matrix.}
+\item{sampleNames}{Names of samples in exposure file.
+
+Return ICAMS/SynSigEval formatted exposure matrix.}
 }
 \description{
 Read Exposure files in EMu format.
