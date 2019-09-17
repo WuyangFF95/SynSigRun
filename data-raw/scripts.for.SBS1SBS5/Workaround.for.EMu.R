@@ -29,7 +29,53 @@ for(datasetName in datasetNames){
   }
 }
 
-## Run EMu
+## Run EMu in C++
+## Using Run.EMu.py
 reticulate::py_run_file("Run.EMu.py")
+
+
+## After running, convert EMu-formatted tsv files
+## to SynSigEval/ICAMS-formatted csv files.
+for(datasetName in datasetNames){
+  for(nrun in 1:20){
+    ## Grep the names of EMu-formatted files.
+    ## When the K is different, the output file would be different.
+    ## Extracted signature file name:
+    ## _{K}_ml_spectra.txt
+    ## Attributed exposure file name:
+    ## _{K}_assigned.txt
+    resultDir <-
+      paste0(datasetName,
+            "/sp.sp/ExtrAttr/EMu.results/",
+            "run.",nrun,"/")
+
+    files <- list.files(resultDir)
+
+    signatureFile <- files[grep(pattern = "_ml_spectra.txt",x = files)]
+    exposureFile <- files[grep(pattern = "_assigned.txt",x = files)]
+
+
+    ## Convert signatures
+    signatures <- SynSigEval::ReadEMuCatalog(
+      paste0(resultDir,"/",signatureFile),
+      mutTypes = ICAMS::catalog.row.order$SBS96,
+      sampleOrSigNames = NULL,
+      region = "unknown",
+      catalog.type = "counts.signature")
+    ICAMS::WriteCatalog(
+      signatures,
+      paste0(resultDir,"/extracted.signatures.csv"))
+
+    ## Convert exposures
+    exposure <- SynSigEval::ReadEMuExposureFile(
+      exposureFile = paste0(resultDir,"/",exposureFile),
+      sigNames = NULL,
+      sampleNames = paste0("TwoCorreSigsGen::",1:500))
+    SynSigEval::WriteExposure(
+      exposure,
+      paste0(resultDir,"/attributed.exposures.csv"))
+
+  }
+}
 
 

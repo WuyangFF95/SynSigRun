@@ -31,7 +31,7 @@ ICAMSCatalog2EMu <- function(catalog) {
 #' @param sigNames Names of signatures. These will be
 #' served as the rownames of the exposure matrix.
 #'
-#' @param sampleNames
+#' @param sampleNames Names of samples in exposure file.
 #'
 #' Return ICAMS/SynSigEval formatted exposure matrix.
 #'
@@ -40,16 +40,25 @@ ReadEMuExposureFile <-
   function(exposureFile,
            sigNames,
            sampleNames){
-
   exposure <- utils::read.table(
-    file = exposure, header = T,
-    sep = "\t", as.is = T)
-
-  ## We need to fetch the sigNames and exposureNames
-  if(FALSE){
-    rownames(exposure) <- sigNames
-    colnames(exposure) <- sampleNames
+    file = exposureFile, sep = " ",
+    as.is = T)
+  last <- ncol(exposure)
+  ## Since the exposure is space-separated,
+  ## We may need to remove NA in the last column.
+  if(any(is.na(exposure[,last]))){
+    exposure <- exposure[,1:(last-1),drop = FALSE]
   }
+
+  ## Read in EMu exposure file;
+  ## add rownames and colnames.
+  exposure <- t(exposure)
+  ## We need to fetch the sigNames and sampleNames
+  if(is.null(sigNames)){
+    sigNames <- paste0("EMu.",1:nrow(exposure))
+  }
+  rownames(exposure) <- sigNames
+  colnames(exposure) <- sampleNames
 
   return(exposure)
 }
@@ -92,9 +101,14 @@ ReadEMuCatalog <-
     stopifnot(is.character(cat) | is.data.frame(cat) | is.matrix(cat))
     if(class(cat) == "character") {
       catalog <- utils::read.table(
-        file = cat, header = T,
-        sep = "\t", as.is = T,
-        check.names = FALSE)
+        file = cat, sep = " ",
+        as.is = T)
+      last <- ncol(catalog)
+      ## Since the catalog is space-separated,
+      ## We may need to remove NA in the last column.
+      if(any(is.na(catalog[,last]))){
+        catalog <- catalog[,1:(last-1),drop = FALSE]
+      }
     } else {
       catalog <- cat
     }
@@ -103,6 +117,9 @@ ReadEMuCatalog <-
     ## add rownames and colnames.
     catalog <- t(catalog)
     rownames(catalog) <- mutTypes
+    if(is.null(sampleOrSigNames)){
+      sampleOrSigNames <- paste0("EMu.",1:ncol(catalog))
+    }
     colnames(catalog) <- sampleOrSigNames
     ## Convert to ICAMS-formatted catalog
     catalog <-
