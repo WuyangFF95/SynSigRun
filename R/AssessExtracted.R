@@ -102,13 +102,7 @@ MatchSigsAndRelabel <-
 ReadAndAnalyzeSigs <-
   function(extracted.sigs,
            ground.truth.sigs,
-           ground.truth.exposures
-           # read.extracted.sigs.fn = NULL,
-           # read.ground.truth.sigs.fn
-           ) {
-  # if (is.null(read.extracted.sigs.fn))
-  #   read.extracted.sigs.fn <- read.ground.truth.sigs.fn
-
+           ground.truth.exposures) {
   ex.sigs <- ICAMS::ReadCatalog(extracted.sigs,
                                 region = "genome",
                                 catalog.type = "counts.signature")
@@ -171,18 +165,12 @@ ReadAndAnalyzeExposures <-
   function(extracted.sigs,
            ground.truth.sigs,
            attributed.exp.path,
-           ground.truth.exposures
-           # read.extracted.sigs.fn = NULL,
-           # read.ground.truth.sigs.fn
-           ) {
+           ground.truth.exposures) {
 
   ## Bilaterally matching between ground-truth and extracted signatures
   sigMatch <- ReadAndAnalyzeSigs(extracted.sigs,
               ground.truth.sigs,
-              ground.truth.exposures
-              # read.extracted.sigs.fn = NULL,
-              # read.ground.truth.sigs.fn
-              )
+              ground.truth.exposures)
 
 
   ## Read in ground-truth and attributed exposures in ICAMS format

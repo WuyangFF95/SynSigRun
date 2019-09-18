@@ -157,10 +157,7 @@ SummarizeSigOneSubdir <-
             paste0(ground.truth.exposure.dir,"/ground.truth.syn.sigs.csv"),
           attributed.exp.path = attributed.exp.path,
           ground.truth.exposures =
-            paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv"),
-          #read.extracted.sigs.fn = read.ground.truth.sigs.fn,
-          #read.ground.truth.sigs.fn = read.ground.truth.sigs.fn
-          )
+            paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv"))
 
         # Write results of exposure attribution analysis
         write.csv(exposureDiff,
@@ -578,6 +575,19 @@ SummarizeMultiToolsMultiDatasets <-
 #' to investigate.
 #' E.g. "./S.0.1.Rsq.0.1"
 #'
+#' @param dataset.groups Numeric or character vector specifying the group
+#' each dataset belong to.
+#' E.g. For SBS1-SBS5 correlated datasets, we can consider slope as the group:
+#' c("slope=0.1","slope=0.5","slope=1","slope=2","slope=5","slope=10")
+#' Default: "Default"
+#'
+#' @param dataset.subgroups Numeric or character vector differentiating
+#' datasets within each group.
+#' E.g. For SBS1-SBS5 correlated datasets, we can consider Pearson's R^2
+#' as the subgroup:
+#' c("Rsq=0.1","Rsq=0.2","Rsq=0.3","Rsq=0.6")
+#' Default: Names of datasets, which are \code{basename(dataset.dirs)}
+#'
 #' @param tool.dirname Name of the second.level.dir (e.g. "sp.sp"),
 #' third.level.dir (e.g. "ExtrAttr") and tool.dir
 #' (e.g. "sigproextractor.results") to be investigated.
@@ -596,88 +606,143 @@ SummarizeMultiToolsMultiDatasets <-
 #'
 SummarizeOneToolMultiDatasets <-
   function(dataset.dirs,
+           dataset.groups = NULL,
+           dataset.subgroups = NULL,
            tool.dirname,
            out.dir,
-           overwrite = FALSE){
+           overwrite = FALSE,
+           ...){
 
     ## Create output directory
     if (dir.exists(out.dir)) {
-      if (!overwrite) stop(out.dir, " already exits")
+      if (!overwrite) stop(out.dir, " already exists")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
+    ## Wrap all datasets into one group, if dataset.groups is NULL.
+    datasetNames <- basename(dataset.dirs)
+    if(is.null(dataset.groups))
+      dataset.groups <- rep("Default",length(dataset.dirs))
+    if(is.numeric(dataset.groups))
+      dataset.groups <- as.factor(datset.groups)
+    names(dataset.groups) <- datasetNames
+    if(is.null(dataset.subgroups))
+      dataset.subgroups <- datasetNames
+    if(is.numeric(dataset.subgroups))
+      dataset.subgroups <- as.factor(dataset.subgroups)
+    names(dataset.subgroups) <- datasetNames
+
     ## Summarizing extraction results for one software package.
     OneToolSummary <- list()
-
 
     ## Combine extraction assessment for multiple datasets
     ## in multiple runs onto 1 sheet:
     OneToolSummary[["extraction"]] <- data.frame()
-    for(index in indexes){
-      OneToolSummary[[index]] <- data.frame()
-    }
 
     for(datasetDir in dataset.dirs){
       thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
+      toolName <- strsplit(basename(tool.dirname),".results")[[1]]
       load(paste0(thirdLevelDir,"/multiRun.RDa"))
       indexNum <- nrow(multiRun$meanSD)
       indexes <- rownames(multiRun$meanSD)
+      datasetName <- basename(datasetDir)
 
       for(index in indexes){
-        tmp <- multiRun$meanSD[index,,drop = F]
-        rownames(tmp) <- datasetDir
+        tmp <- data.frame(seed = names(multiRun[[index]]),
+                          value = multiRun[[index]],
+                          toolName = toolName,
+                          datasetName = datasetName,
+                          datasetGroup = dataset.groups[datasetName],
+                          datasetSubGroup = dataset.subgroups[datasetName],
+                          stringsAsFactors = FALSE)
+
+        rownames(tmp) <- NULL
+
+        ## Create a data.frame for each index,
+        ## and summarize multi-Run, multiDataset values
+        ## for each index.
+        if(is.null(OneToolSummary[[index]])){
+          OneToolSummary[[index]] <- data.frame()
+        }
         OneToolSummary[[index]] <- rbind(OneToolSummary[[index]],tmp)
       }
     }
 
     for(index in indexes){
-      colnames(OneToolSummary[[index]]) <- paste0(index,colnames(OneToolSummary[[index]]))
-      if( dim(OneToolSummary[["extraction"]]) == c(0,0) ) {
-        OneToolSummary[["extraction"]] <- OneToolSummary[[index]]
-      } else{
-        OneToolSummary[["extraction"]] <- cbind(OneToolSummary[["extraction"]], OneToolSummary[[index]])
+      tmp <- data.frame(OneToolSummary[[index]],
+                        index = index,
+                        stringsAsFactors = FALSE)
+      rownames(tmp) <- NULL
+
+      if(nrow(OneToolSummary[["extraction"]]) == 0 |
+         ncol(OneToolSummary[["extraction"]]) == 0 |
+         is.null(dim(OneToolSummary[["extraction"]])) ) {
+        OneToolSummary[["extraction"]] <- tmp
+      } else {
+        OneToolSummary[["extraction"]] <-
+          rbind(OneToolSummary[["extraction"]],tmp)
       }
     }
+
 
     ## Draw boxplot for extraction indexes
     grDevices::pdf(paste0(out.dir,"/boxplot.onetool.extraction.indexes.pdf"))
 
-    toCalculate <- c("cosSim","falseNeg","falsePos",
-                     "truePos","TPR","FDR")
+    ## Designate titles and subtitles for each page
     titles <- c("Average cosine similarity",
                 "False negatives",
                 "False positives",
                 "True positives",
                 "True Positive Rate (sensitivity)",
                 "False Discovery Rate (FDR)")
+    names(titles) <- indexes
+
     subtitles <- c("","Number of ground-truth signatures not extracted",
                    "Number of signatures extracted, but different from ground-truth signatures",
                    "Number of ground-truth signatures extracted",
                    "True Positives / (True Positives + False Negatives)",
                    "False Positives / (True Positives + False Positives)")
+    names(subtitles) <- indexes
 
+    ## Plot a general boxplot for multiple indexes
+    ggplotObj <- ggplot2::ggplot(
+      OneToolSummary[["extraction"]],
+      ggplot2::aes(x = toolName, y = value))
+    ggplotObj <- ggplotObj +
+      ggplot2::geom_boxplot(
+        notch = FALSE,
+        position = ggplot2::position_dodge(0.9),
+        ggplot2::aes(fill = index)) +
+      ggplot2::scale_fill_manual(
+        values = grDevices::topo.colors(length(indexes)))
+    ## Add title for general boxplot
+    ggplotObj <- ggplotObj +
+      ggplot2::ggtitle(label = "Boxplot for multiple indexes and multiple datasets.")
+    print(ggplotObj)
 
-    for(datasetDir in dataset.dirs){
+    ## Plot a value~datasetSubGroup boxplot for each index.
+    for(index in indexes){
+      indexNum <- which(indexes == index)
+      ggplotObj <- ggplot2::ggplot(
+        OneToolSummary[[index]],
+        ggplot2::aes(x = datasetSubGroup, y = value))
+      ggplotObj <- ggplotObj +
+        ggplot2::geom_boxplot(
+          notch = FALSE,
+          position = ggplot2::position_dodge(0.9),
+          ggplot2::aes(fill = index)) +
+        ggplot2::scale_fill_manual(
+          values = grDevices::topo.colors(length(indexes))[indexNum]) +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
+        ggplot2::facet_wrap(~datasetGroup)
+      ## Add title for value~datasetSubGroup boxplot
+      ggplotObj <- ggplotObj +
+        ggplot2::ggtitle(label = titles[index],subtitle = subtitles[index])
 
-      ## Load multiRun for each dataset.
-      thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
-      load(paste0(thirdLevelDir,"/multiRun.RDa"))
-      indexNum <- nrow(multiRun$meanSD)
-      indexes <- rownames(multiRun$meanSD)
-
-      ## Build a dataframe contain two columns:
-      ## Column 1: the value of index (e.g. 1)
-      ## Column 2: the name of index (e.g. cosSim, TPR)
-      boxplotDF <- data.frame()
-      for(index in indexes){
-        tmpDF <- data.frame(value = unname(multiRun[[index]]),type = index)
-        boxplotDF <- rbind(boxplotDF,tmpDF)
-      }
-      graphics::boxplot(value~type,data = boxplotDF)
+      print(ggplotObj)
     }
-    grDevices::dev.off()
-
+    dev.off()
 
 
     ## Write Summary tables

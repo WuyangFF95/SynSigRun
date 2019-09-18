@@ -1,4 +1,4 @@
-#' Assess/evaluate SBS96 results from packages which can do
+#' Assess/evaluate results from packages which can do
 #' BOTH extraction and attribution,
 #' excluding SigProfiler-Python and SignatureAnalyzer.
 #'
@@ -27,7 +27,7 @@
 #' @importFrom grDevices dev.off
 #' @importFrom graphics par
 #'
-SummarizeSigOneExtrAttr96Subdir <-
+SummarizeSigOneExtrAttrSubdir <-
   function(run.dir,
            ground.truth.exposure.dir = paste0(run.dir,"/../../../"),
            overwrite = FALSE) {
@@ -52,10 +52,6 @@ SummarizeSigOneExtrAttr96Subdir <-
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = extracted.sigs.path,
         attributed.exp.path = attributed.exp.path,
-        # read.extracted.sigs.fn = ICAMS::ReadCatalog,
-        # read.ground.truth.sigs.fn = ICAMS::ReadCatalog,
-        # write.cat.fn = ICAMS::WriteCatalog,
-        # plot.pdf.fn = ICAMS::PlotCatalogToPdf,
         overwrite = overwrite)
 
     invisible(retval) # So we can test without looking at a file.
@@ -65,7 +61,7 @@ SummarizeSigOneExtrAttr96Subdir <-
 
 
 
-#' Assess/evaluate SBS96 results from packages which can
+#' Assess/evaluate results from packages which can
 #' ONLY do exposure attribution.
 #'
 #' Packages including but not limited to:
@@ -97,7 +93,7 @@ SummarizeSigOneExtrAttr96Subdir <-
 #' @importFrom grDevices dev.off
 #' @importFrom graphics par
 #'
-SummarizeSigOneAttr96Subdir <-
+SummarizeSigOneAttrSubdir <-
   function(run.dir,
            ground.truth.exposure.dir = paste0(run.dir,"/../../../"),
            overwrite = FALSE) {
@@ -119,10 +115,6 @@ SummarizeSigOneAttr96Subdir <-
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = ground.truth.sigs.path,
         attributed.exp.path = paste0(inputPath,"/attributed.exposures.csv"),
-        # read.extracted.sigs.fn = ReadCatalog,
-        # read.ground.truth.sigs.fn = ReadCatalog,
-        # write.cat.fn = WriteCatalog,
-        # plot.pdf.fn = PlotCatalogToPdf,
         overwrite = overwrite)
 
     invisible(retval) # So we can test without looking at a file.
