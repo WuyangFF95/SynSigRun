@@ -16,24 +16,21 @@ for(slope in slopes)
 }
 
 ## Specify tool Names
-# Tools which can do both extraction and attribution,
-# excluding SP and SA
-if(0){
-  extrAttrToolNames <- c("hdp","sigfit.nmf","signeR",
-                         "MutationalPatterns","SomaticSignatures")
-  # Tools can do attribution,
-  attrToolNames <- c("decompTumor2Sig","deconstructSigs","mSigAct",
-                     "MutationalPatterns","mutSignatures",
-                     "SignatureEstimation.QP","SignatureEstimation.SA",
-                     "YAPSA")
-} else{ ## Temporary workout
-  extrAttrToolNames <- c("signeR","hdp","sigfit.nmf")
-  # Tools can do attribution,
-  attrToolNames <- c("decompTumor2Sig","deconstructSigs","mSigAct",
-                     "MutationalPatterns","mutSignatures",
-                     "SignatureEstimation.QP","SignatureEstimation.SA",
-                     "YAPSA","sigfit.nmf")
-}
+# R-based tools which can do both extraction and attribution,
+# excluding SignatureAnalyzer (due to special folder structure)
+# and maftools (its seed is hard-coded)
+RBasedExtrAttrToolNames <- c("signeR","hdp","sigfit.nmf")
+# Python or other language based tools.
+# excluding SP (due to special folder structure)
+# and EMu (cannot designate seed)
+otherExtrAttrToolNames <- c("helmsman","MultiModalMuSig")
+# Tools can only do attribution
+attrToolNames <-
+  c("decompTumor2Sig","deconstructSigs","mSigAct",
+    "MutationalPatterns","mutSignatures",
+    "SignatureEstimation.QP","SignatureEstimation.SA",
+    "YAPSA","sigfit.nmf")
+
 
 ## Specify seeds used in analysis.
 ## Specify 20 seeds used in software running
@@ -47,8 +44,8 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
     ## Summarize R-based Extraction and attribution tools.
-    for(extrAttrToolName in extrAttrToolNames){
-      SynSigEval::SummarizeSigOneExtrAttr96Subdir(
+    for(extrAttrToolName in RBasedExtrAttrToolNames){
+      SynSigEval::SummarizeSigOneExtrAttrSubdir(
         run.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrToolName,
                             ".results/seed.",seedInUse,"/"),
         ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
@@ -56,9 +53,17 @@ for(datasetName in datasetNames){
     }
     ## Summarize R-based attribution-only tools.
     for(attrToolName in attrToolNames){
-      SynSigEval::SummarizeSigOneAttr96Subdir(
+      SynSigEval::SummarizeSigOneAttrSubdir(
         run.dir = paste0(datasetName,"/sp.sp/Attr/",attrToolName,
                             ".results/seed.",seedInUse,"/"),
+        ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+        overwrite = T)
+    }
+    ## Summarize non-R Extraction and attribution tools.
+    for(extrAttrToolName in otherExtrAttrToolNames){
+      SynSigEval::SummarizeSigOneExtrAttrSubdir(
+        run.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrToolName,
+                         ".results/seed.",seedInUse,"/"),
         ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
         overwrite = T)
     }
@@ -85,21 +90,40 @@ for(datasetName in datasetNames){
       which.run = "",overwrite = T)
   }
   ## Summarize maftools
-  SynSigEval::SummarizeSigOneExtrAttr96Subdir(
+  SynSigEval::SummarizeSigOneExtrAttrSubdir(
     run.dir = paste0(datasetName,
                      "/sp.sp/ExtrAttr/maftools.results/seed.123456","/"),
     ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
     overwrite = T)
+  ## Summarize EMu
+  for(nrun in 1:20){
+    SynSigEval::SummarizeSigOneExtrAttrSubdir(
+      run.dir = paste0(datasetName,"/sp.sp/ExtrAttr/","EMu",
+                       ".results/run.",nrun,"/"),
+      ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+      overwrite = T)
+  }
 }
 
 ## Part II: Write summary table for 20 seeds for each tool with each dataset
 for(datasetName in datasetNames){
-  for(extrAttrToolName in c(extrAttrToolNames,"sigproextractor","helmsman","SignatureAnalyzer")){
+  ## For each dataset, summarize 20 runs
+  ## using different seeds by EMu
+  for(extrAttrToolName in c(
+    RBasedExtrAttrToolNames,otherExtrAttrToolNames,
+    "sigproextractor","SignatureAnalyzer")){
     SynSigEval::SummarizeMultiRuns(
       tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrToolName,
                           ".results/"),
       run.names = paste0("seed.",seedsInUse))
   }
+  ## For each dataset, summarize 20 runs
+  ## (without seeds) by EMu
+  SynSigEval::SummarizeMultiRuns(
+    tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/","EMu",
+                      ".results/"),
+    run.names = paste0("run.",1:20))
+  ## For each dataset, summarize 1 run by maftools
   SynSigEval::SummarizeMultiRuns(
     tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/","maftools",
                       ".results/"),
@@ -116,14 +140,47 @@ for(datasetName in datasetNames){
 for(datasetName in datasetNames){
     SynSigEval::SummarizeMultiToolsOneDataset(
       third.level.dir = paste0(datasetName,"/sp.sp/ExtrAttr/"),
-      tool.dirnames = paste0(c("sigproextractor","SignatureAnalyzer","helmsman","maftools",
-                               extrAttrToolNames),".results"))
+      tool.dirnames = paste0(c("sigproextractor","SignatureAnalyzer",
+                               "maftools","EMu",
+                               otherExtrAttrToolNames,
+                               RBasedExtrAttrToolNames),".results"))
     SynSigEval::SummarizeMultiToolsOneDataset(
       third.level.dir = paste0(datasetName,"/sp.sp/Attr/"),
       tool.dirnames = paste0(attrToolNames,".results"))
 }
 
-## Part IV: Generate a combined summary table for results
+## Part IV: Generate a summary table and boxplot for results
+## of multiple datasets, from each separate tool.
+dataset.groups <- rep(paste0("SBS1:SBS5 ratio = ",c(0.1,0.5,1,2,10)),each = 4)
+names(dataset.groups) <- datasetNames
+dataset.subgroups <- rep(paste0("R^2 = ",c(0.1,0.2,0.3,0.6)),5)
+names(dataset.subgroups) <- datasetNames
+
+for(toolName in c(
+  RBasedExtrAttrToolNames,otherExtrAttrToolNames,
+  "sigproextractor","SignatureAnalyzer",
+  "maftools","EMu")){
+  SummarizeOneToolMultiDatasets(
+    dataset.dirs = datasetNames,
+    dataset.groups = dataset.groups,
+    dataset.subgroups = dataset.subgroups,
+    tool.dirname = paste0("sp.sp/ExtrAttr/",toolName,".results/"),
+    out.dir = paste0("FinalToolWiseSummary/",toolName,"/"),
+    overwrite = T)
+}
+for(toolName in attrToolNames){
+  SummarizeOneToolMultiDatasets(
+    dataset.dirs = datasetNames,
+    dataset.groups = dataset.groups,
+    dataset.subgroups = dataset.subgroups,
+    tool.dirname = paste0("sp.sp/ExtrAttr/",toolName,".results/"),
+    out.dir = paste0("FinalToolWiseSummary/",toolName,"/"),
+    overwrite = T)
+}
+
+
+
+## Part V: Generate a combined summary table for results
 ## of multiple datasets, from multiple tools
 SummarizeMultiToolsMultiDatasets(dataset.dirs = datasetNames,
                        second.third.level.dirname = "sp.sp/ExtrAttr",
