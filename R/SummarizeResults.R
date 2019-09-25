@@ -652,7 +652,8 @@ SummarizeMultiToolsMultiDatasets <-
 
 
 
-    return(list(FinalExtr,FinalAttr))
+    invisible(list(FinalExtr = FinalExtr,
+                FinalAttr = FinalAttr))
   }
 
 
