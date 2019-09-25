@@ -2,11 +2,16 @@
 % Please edit documentation in R/SummarizeResults.R
 \name{SummarizeMultiRuns}
 \alias{SummarizeMultiRuns}
-\title{Assess/evaluate multiple summarized runs from a software package.}
+\title{Assess/evaluate multiple summarized runs for one dataset from one software package.}
 \usage{
-SummarizeMultiRuns(tool.dir, run.names)
+SummarizeMultiRuns(datasetName, toolName, tool.dir, run.names)
 }
 \arguments{
+\item{datasetName}{Name of the dataset. (e.g. "S.0.1.Rsq.0.1").
+Usually, it is has the same name as \code{basename(top.dir)}.}
+
+\item{toolName}{Name of software package. (e.g. "sigproextractor")}
+
 \item{tool.dir}{Fourth level path from the \code{top.dir}. Expected to have
 multiple runs with different names (e.g. "seed.1")
 That is,

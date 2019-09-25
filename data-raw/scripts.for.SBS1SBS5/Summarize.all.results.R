@@ -113,6 +113,8 @@ for(datasetName in datasetNames){
     RBasedExtrAttrToolNames,otherExtrAttrToolNames,
     "sigproextractor","SignatureAnalyzer")){
     SynSigEval::SummarizeMultiRuns(
+      datasetName = datasetName,
+      toolName = extrAttrToolName,
       tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrToolName,
                           ".results/"),
       run.names = paste0("seed.",seedsInUse))
@@ -120,16 +122,22 @@ for(datasetName in datasetNames){
   ## For each dataset, summarize 20 runs
   ## (without seeds) by EMu
   SynSigEval::SummarizeMultiRuns(
+    datasetName = datasetName,
+    toolName = "EMu",
     tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/","EMu",
                       ".results/"),
     run.names = paste0("run.",1:20))
   ## For each dataset, summarize 1 run by maftools
   SynSigEval::SummarizeMultiRuns(
+    datasetName = datasetName,
+    toolName = "maftools",
     tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/","maftools",
                       ".results/"),
     run.names = paste0("seed.","123456"))
   for(attrToolName in attrToolNames){
     SynSigEval::SummarizeMultiRuns(
+      datasetName = datasetName,
+      toolName = attrToolName,
       tool.dir = paste0(datasetName,"/sp.sp/Attr/",attrToolName,
                         ".results/"),
       run.names = paste0("seed.",seedsInUse))
@@ -137,24 +145,33 @@ for(datasetName in datasetNames){
 }
 
 ## Part III: Write Summary table of multiple tools for each dataset
-for(datasetName in datasetNames){
+for(slope in slopes)
+  for(Rsq in Rsqs){
+    datasetName <- paste0("S.",slope,".Rsq.",Rsq)
     SynSigEval::SummarizeMultiToolsOneDataset(
       third.level.dir = paste0(datasetName,"/sp.sp/ExtrAttr/"),
-      tool.dirnames = paste0(c("sigproextractor","SignatureAnalyzer",
-                               "maftools","EMu",
-                               otherExtrAttrToolNames,
-                               RBasedExtrAttrToolNames),".results"))
+      toolName = c(RBasedExtrAttrToolNames,otherExtrAttrToolNames,
+                   "sigproextractor","SignatureAnalyzer",
+                   "EMu","maftools"),
+      tool.dirnames = paste0(c(RBasedExtrAttrToolNames,otherExtrAttrToolNames,
+                               "sigproextractor","SignatureAnalyzer",
+                               "EMu","maftools"),".results"),
+      datasetGroups = slope,
+      datasetSubGroups = Rsq)
     SynSigEval::SummarizeMultiToolsOneDataset(
       third.level.dir = paste0(datasetName,"/sp.sp/Attr/"),
-      tool.dirnames = paste0(attrToolNames,".results"))
+      toolName = attrToolNames,
+      tool.dirnames = paste0(attrToolNames,".results"),
+      datasetGroups =  slope,
+      datasetSubGroups = Rsq)
 }
 
 ## Part IV: Generate a summary table and boxplot for results
 ## of multiple datasets, from each separate tool.
-dataset.groups <- rep(paste0("SBS1:SBS5 ratio = ",c(0.1,0.5,1,2,10)),each = 4)
-names(dataset.groups) <- datasetNames
-dataset.subgroups <- rep(paste0("R^2 = ",c(0.1,0.2,0.3,0.6)),5)
-names(dataset.subgroups) <- datasetNames
+datasetGroups <- rep(paste0("SBS1:SBS5 ratio = ",c(0.1,0.5,1,2,10)),each = 4)
+names(datasetGroups) <- datasetNames
+datasetSubGroups <- rep(paste0("R^2 = ",c(0.1,0.2,0.3,0.6)),5)
+names(datasetSubGroups) <- datasetNames
 
 for(toolName in c(
   RBasedExtrAttrToolNames,otherExtrAttrToolNames,
@@ -162,8 +179,8 @@ for(toolName in c(
   "maftools","EMu")){
   SummarizeOneToolMultiDatasets(
     dataset.dirs = datasetNames,
-    dataset.groups = dataset.groups,
-    dataset.subgroups = dataset.subgroups,
+    datasetGroups = datasetGroups,
+    datasetSubGroups = datasetSubGroups,
     tool.dirname = paste0("sp.sp/ExtrAttr/",toolName,".results/"),
     out.dir = paste0("FinalToolWiseSummary/",toolName,"/"),
     overwrite = T)
@@ -171,9 +188,9 @@ for(toolName in c(
 for(toolName in attrToolNames){
   SummarizeOneToolMultiDatasets(
     dataset.dirs = datasetNames,
-    dataset.groups = dataset.groups,
-    dataset.subgroups = dataset.subgroups,
-    tool.dirname = paste0("sp.sp/ExtrAttr/",toolName,".results/"),
+    datasetGroups = datasetGroups,
+    datasetSubGroups = datasetSubGroups,
+    tool.dirname = paste0("sp.sp/Attr/",toolName,".results/"),
     out.dir = paste0("FinalToolWiseSummary/",toolName,"/"),
     overwrite = T)
 }

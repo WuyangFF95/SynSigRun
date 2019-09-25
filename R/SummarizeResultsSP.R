@@ -51,10 +51,11 @@ SummarizeSigOneSPSubdir <-
     # and convert it to ICAMS csv format.
     # Need special function to read in extracted signatures
     # Converted signatures will be included in the /summary folder.
-    if(flagSBS96)
+    if(flagSBS96){
       extractedSigs <- ReadSigProfilerSig96(paste0(inputPath,"/De_Novo_Solution_Signatures_SBS96.txt"))
-    if(flagDBS78)
-      extractedSigs <- ReadSigProfilerSig96(paste0(inputPath,"/De_Novo_Solution_Signatures_SBS96.txt"))
+    } else if(flagDBS78) {
+      extractedSigs <- ReadSigProfilerSig96(paste0(inputPath,"/De_Novo_Solution_Signatures_SBSDINUC.txt"))
+    }
 
 
 
@@ -66,8 +67,15 @@ SummarizeSigOneSPSubdir <-
 
     # Read in attributed exposures in SP format,
     # and convert it into our internal format
-    attributed.exp.path.SP.format <-
-      paste0(inputPath,"/De_Novo_Solution_Activities_SBS96.txt")
+    if(flagSBS96){
+      attributed.exp.path.SP.format <-
+        paste0(inputPath,"/De_Novo_Solution_Activities_SBS96.txt")
+    } else if(flagDBS78){
+      attributed.exp.path.SP.format <-
+        paste0(inputPath,"/De_Novo_Solution_Activities_DINUC.txt")
+    }
+
+
 
     attributedExposures <- ReadSigProfilerExposure(attributed.exp.path.SP.format)
     attributed.exp.path <- paste0(run.dir,"/attributed.exposures.csv")
