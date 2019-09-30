@@ -75,7 +75,7 @@ SummarizeSigOneSubdir <-
           paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv") # ,
         # read.extracted.sigs.fn = read.ground.truth.sigs.fn,
         # read.ground.truth.sigs.fn = read.ground.truth.sigs.fn
-        )
+      )
 
     if (dir.exists(outputPath)) {
       if (!overwrite) stop(outputPath, " already exists")
@@ -100,7 +100,7 @@ SummarizeSigOneSubdir <-
     ICAMS::WriteCatalog(
       sigAnalysis$gt.sigs,
       paste(outputPath,"ground.truth.sigs.csv",sep = "/"),
-      )
+    )
     # write.cat.fn
     ICAMS::WriteCatalog(
       sigAnalysis$ex.sigs,
@@ -135,10 +135,10 @@ SummarizeSigOneSubdir <-
     ## Plot signatures as "counts.signatures" typed catalog
     # Output ground-truth sigs to a PDF file
     ICAMS::PlotCatalogToPdf(sigAnalysis$gt.sigs,
-                paste0(outputPath,"/ground.truth.sigs.pdf"))
+                            paste0(outputPath,"/ground.truth.sigs.pdf"))
     # Output extracted sigs to a PDF file
     ICAMS::PlotCatalogToPdf(sigAnalysis$ex.sigs,
-                paste0(outputPath,"/extracted.sigs.pdf"))
+                            paste0(outputPath,"/extracted.sigs.pdf"))
 
 
     ## Analyze exposure attribution
@@ -274,109 +274,109 @@ SummarizeMultiRuns <-
       FDR <- c(FDR, currentFDR)
     }
 
-  names(cosSim) <- run.names
-  names(falseNeg) <- run.names
-  names(falsePos) <- run.names
-  names(truePos) <- run.names
-  names(TPR) <- run.names
-  names(FDR) <- run.names
+    names(cosSim) <- run.names
+    names(falseNeg) <- run.names
+    names(falsePos) <- run.names
+    names(truePos) <- run.names
+    names(TPR) <- run.names
+    names(FDR) <- run.names
 
-  multiRun <- list()
-  ## Save name of the software package and the dataset.
-  multiRun$datasetName <- datasetName
-  multiRun$toolName <- toolName
-  ## Save extraction indexes on multiple runs
-  multiRun$cosSim <- cosSim
-  multiRun$falseNeg <- falseNeg
-  multiRun$falsePos <- falsePos
-  multiRun$truePos <- truePos
-  multiRun$TPR <- TPR
-  multiRun$FDR <- FDR
-
-
-
-  ## Calculate mean and SD for indexes of signature extraction
-  multiRun$meanSD <- matrix(nrow = 6, ncol = 2)
-  indexes <- c("cosSim","falseNeg","falsePos",
-                   "truePos","TPR","FDR")
-  rownames(multiRun$meanSD) <- indexes
-  colnames(multiRun$meanSD) <- c("mean","stdev")
-  for(index in indexes){
-    currentMean <- mean(multiRun[[index]])
-    currentStdev <- stats::sd(multiRun[[index]])
-    multiRun$meanSD[index,] <- c(currentMean, currentStdev)
-  }
-
-  ## Calculate fivenums for signature extraction
-  multiRun$fivenum <- matrix(nrow = 6, ncol = 5)
-  indexes <- c("cosSim","falseNeg","falsePos",
-                   "truePos","TPR","FDR")
-  rownames(multiRun$fivenum) <- indexes
-  colnames(multiRun$fivenum) <- c("min","lower-hinge","median","upperhinge","max")
-  for(index in indexes){
-    currentFiveNum <- stats::fivenum(multiRun[[index]])
-    multiRun$fivenum[index,] <- currentFiveNum
-  }
-
-  ## Plot boxplot for signature extraction
-  grDevices::pdf(paste0(tool.dir,"/boxplot.extraction.indexes.pdf"))
-  indexes <- c("cosSim","falseNeg","falsePos",
-                   "truePos","TPR","FDR")
-  titles <- c("Average cosine similarity",
-              "False negatives",
-              "False positives",
-              "True positives",
-              "True Positive Rate (sensitivity)",
-              "False Discovery Rate (FDR)")
-  subtitles <- c("","Number of ground-truth signatures not extracted",
-                 "Number of signatures extracted, but different from ground-truth signatures",
-                 "Number of ground-truth signatures extracted",
-                 "True Positives / (True Positives + False Negatives)",
-                 "False Positives / (True Positives + False Positives)")
-  for(indexNum in seq(1,length(indexes))){
-    graphics::boxplot(
-      multiRun[[ indexes[indexNum] ]],
-      main = titles[indexNum],
-      sub = subtitles[indexNum])
-  }
-  grDevices::dev.off()
+    multiRun <- list()
+    ## Save name of the software package and the dataset.
+    multiRun$datasetName <- datasetName
+    multiRun$toolName <- toolName
+    ## Save extraction indexes on multiple runs
+    multiRun$cosSim <- cosSim
+    multiRun$falseNeg <- falseNeg
+    multiRun$falsePos <- falsePos
+    multiRun$truePos <- truePos
+    multiRun$TPR <- TPR
+    multiRun$FDR <- FDR
 
 
-  ## Indexes for exposure attribution in multiple runs
-  ManhattanDist <- matrix(nrow = length(gtSigsNames), ncol = length(run.names))
-  rownames(ManhattanDist) <- gtSigsNames
-  colnames(ManhattanDist) <- run.names
-  for(runName in run.names){
-    runDir <- paste0(tool.dir,"/",runName)
-    summaryDir <- paste0(runDir,"/summary")
-    exposureDiffFile <- paste0(summaryDir,"/exposureDiff.RDa")
-    load(file = exposureDiffFile)
-    ManhattanDist[gtSigsNames,runName] <- exposureDiff[gtSigsNames,"Manhattan.distance"]
-  }
-  multiRun$ManhattanDist <- ManhattanDist
 
-  ## Calculate mean and SD for indexes of exposure attribution
-  meanSDMD <- matrix(nrow = length(gtSigsNames), ncol = 2)
-  rownames(meanSDMD) <- gtSigsNames
-  colnames(meanSDMD) <- c("mean","stdev")
-  for(sig in gtSigsNames){
-    meanSDMD[sig,"mean"] <- mean(ManhattanDist[sig,])
-    meanSDMD[sig,"stdev"] <- stats::sd(ManhattanDist[sig,])
-  }
-  rownames(meanSDMD) <- paste0(rownames(meanSDMD),".Manhattan.Dist")
-  multiRun$meanSDMD <- meanSDMD
+    ## Calculate mean and SD for indexes of signature extraction
+    multiRun$meanSD <- matrix(nrow = 6, ncol = 2)
+    indexes <- c("cosSim","falseNeg","falsePos",
+                 "truePos","TPR","FDR")
+    rownames(multiRun$meanSD) <- indexes
+    colnames(multiRun$meanSD) <- c("mean","stdev")
+    for(index in indexes){
+      currentMean <- mean(multiRun[[index]])
+      currentStdev <- stats::sd(multiRun[[index]])
+      multiRun$meanSD[index,] <- c(currentMean, currentStdev)
+    }
 
-  ## Calculate fivenums for exposure attribution
-  multiRun$fivenumMD <- matrix(nrow = length(gtSigsNames), ncol = 5)
-  rownames(multiRun$fivenumMD) <- gtSigsNames
-  colnames(multiRun$fivenumMD) <- c("min","lower-hinge","median","upperhinge","max")
-  for(sig in gtSigsNames){
-    multiRun$fivenumMD[sig,] <- stats::fivenum(ManhattanDist[sig,])
-  }
+    ## Calculate fivenums for signature extraction
+    multiRun$fivenum <- matrix(nrow = 6, ncol = 5)
+    indexes <- c("cosSim","falseNeg","falsePos",
+                 "truePos","TPR","FDR")
+    rownames(multiRun$fivenum) <- indexes
+    colnames(multiRun$fivenum) <- c("min","lower-hinge","median","upperhinge","max")
+    for(index in indexes){
+      currentFiveNum <- stats::fivenum(multiRun[[index]])
+      multiRun$fivenum[index,] <- currentFiveNum
+    }
 
-  ## Plot boxplot for exposure attribution
-  grDevices::pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"))
-  for(sig in gtSigsNames){
+    ## Plot boxplot for signature extraction
+    grDevices::pdf(paste0(tool.dir,"/boxplot.extraction.indexes.pdf"))
+    indexes <- c("cosSim","falseNeg","falsePos",
+                 "truePos","TPR","FDR")
+    titles <- c("Average cosine similarity",
+                "False negatives",
+                "False positives",
+                "True positives",
+                "True Positive Rate (sensitivity)",
+                "False Discovery Rate (FDR)")
+    subtitles <- c("","Number of ground-truth signatures not extracted",
+                   "Number of signatures extracted, but different from ground-truth signatures",
+                   "Number of ground-truth signatures extracted",
+                   "True Positives / (True Positives + False Negatives)",
+                   "False Positives / (True Positives + False Positives)")
+    for(indexNum in seq(1,length(indexes))){
+      graphics::boxplot(
+        multiRun[[ indexes[indexNum] ]],
+        main = titles[indexNum],
+        sub = subtitles[indexNum])
+    }
+    grDevices::dev.off()
+
+
+    ## Indexes for exposure attribution in multiple runs
+    ManhattanDist <- matrix(nrow = length(gtSigsNames), ncol = length(run.names))
+    rownames(ManhattanDist) <- gtSigsNames
+    colnames(ManhattanDist) <- run.names
+    for(runName in run.names){
+      runDir <- paste0(tool.dir,"/",runName)
+      summaryDir <- paste0(runDir,"/summary")
+      exposureDiffFile <- paste0(summaryDir,"/exposureDiff.RDa")
+      load(file = exposureDiffFile)
+      ManhattanDist[gtSigsNames,runName] <- exposureDiff[gtSigsNames,"Manhattan.distance"]
+    }
+    multiRun$ManhattanDist <- ManhattanDist
+
+    ## Calculate mean and SD for indexes of exposure attribution
+    meanSDMD <- matrix(nrow = length(gtSigsNames), ncol = 2)
+    rownames(meanSDMD) <- gtSigsNames
+    colnames(meanSDMD) <- c("mean","stdev")
+    for(sig in gtSigsNames){
+      meanSDMD[sig,"mean"] <- mean(ManhattanDist[sig,])
+      meanSDMD[sig,"stdev"] <- stats::sd(ManhattanDist[sig,])
+    }
+    rownames(meanSDMD) <- paste0(rownames(meanSDMD),".Manhattan.Dist")
+    multiRun$meanSDMD <- meanSDMD
+
+    ## Calculate fivenums for exposure attribution
+    multiRun$fivenumMD <- matrix(nrow = length(gtSigsNames), ncol = 5)
+    rownames(multiRun$fivenumMD) <- gtSigsNames
+    colnames(multiRun$fivenumMD) <- c("min","lower-hinge","median","upperhinge","max")
+    for(sig in gtSigsNames){
+      multiRun$fivenumMD[sig,] <- stats::fivenum(ManhattanDist[sig,])
+    }
+
+    ## Plot boxplot for exposure attribution
+    grDevices::pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"))
+    for(sig in gtSigsNames){
 
 
       ggplotObj <- ggplot2::ggplot(
@@ -389,23 +389,23 @@ SummarizeMultiRuns <-
         ggplot2::geom_boxplot(
           notch = FALSE,
           position = ggplot2::position_dodge(0.9))
-  }
-  grDevices::dev.off()
+    }
+    grDevices::dev.off()
 
-  ## Save data and results
-  save(multiRun,file = paste0(tool.dir,"/multiRun.RDa"))
-  write.csv(x = multiRun$ManhattanDist,
-            file = paste0(tool.dir,"/ManhattanDist.csv"))
-  write.csv(x = multiRun$meanSD,
-            file = paste0(tool.dir,"/meanSD.csv"))
-  write.csv(x = multiRun$meanSDMD,
-            file = paste0(tool.dir,"/meanSD.Manhattan.dist.csv"))
-  write.csv(x = multiRun$fivenum,
-            file = paste0(tool.dir,"/fivenum.csv"))
-  write.csv(x = multiRun$fivenumMD,
-            file = paste0(tool.dir,"/fivenum.Manhattan.dist.csv"))
-  invisible(multiRun)
-}
+    ## Save data and results
+    save(multiRun,file = paste0(tool.dir,"/multiRun.RDa"))
+    write.csv(x = multiRun$ManhattanDist,
+              file = paste0(tool.dir,"/ManhattanDist.csv"))
+    write.csv(x = multiRun$meanSD,
+              file = paste0(tool.dir,"/meanSD.csv"))
+    write.csv(x = multiRun$meanSDMD,
+              file = paste0(tool.dir,"/meanSD.Manhattan.dist.csv"))
+    write.csv(x = multiRun$fivenum,
+              file = paste0(tool.dir,"/fivenum.csv"))
+    write.csv(x = multiRun$fivenumMD,
+              file = paste0(tool.dir,"/fivenum.Manhattan.dist.csv"))
+    invisible(multiRun)
+  }
 
 
 
@@ -579,23 +579,28 @@ SummarizeMultiToolsMultiDatasets <-
 
     ## Summarizing extraction results.
     FinalExtr <- list()
+    toolNames <- character(0)
+
     ## Combine extraction assessment onto 7 sheets:
     for(datasetDir in dataset.dirs){
       thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
       load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
-      indexNum <- nrow(multiTools$combMeanSD)
+      ## Find tool names
+      toolNames <- unique(multiTools[["cosSim"]][,"toolName"])
+
+      indexNums <- nrow(multiTools$combMeanSD)
       if(length(FinalExtr) == 0){
-        for(index in seq(1,indexNum)) {
-          FinalExtr[[index]] <- data.frame()
+        for(indexNum in seq(1,indexNums)) {
+          FinalExtr[[indexNum]] <- data.frame()
         }
         names(FinalExtr) <- rownames(multiTools$combMeanSD)
       }
       current <- list()
-      for(index in seq(1,indexNum)){
-        current[[index]] <- multiTools$combMeanSD[index,,drop = F]
-        rownames(current[[index]]) <- datasetDir
-        FinalExtr[[index]] <- rbind(FinalExtr[[index]],current[[index]])
+      for(indexNum in seq(1,indexNums)){
+        current[[indexNum]] <- multiTools$combMeanSD[indexNum,,drop = F]
+        rownames(current[[indexNum]]) <- datasetDir
+        FinalExtr[[indexNum]] <- rbind(FinalExtr[[indexNum]],current[[indexNum]])
       }
     }
     for(summaryFileName in names(FinalExtr)){
@@ -605,21 +610,101 @@ SummarizeMultiToolsMultiDatasets <-
 
     ## Plot general png and pdf for extraction summary
     ## Plot a general boxplot for multiple indexes
-    if(FALSE){
-      ggplotObj <- ggplot2::ggplot(
-        OneToolSummary[["extraction"]],
-        ggplot2::aes(x = toolName, y = value))
-      ggplotObj <- ggplotObj +
-        ggplot2::geom_boxplot(
-          notch = FALSE,
-          position = ggplot2::position_dodge(0.9),
-          ggplot2::aes(fill = index)) +
-        ggplot2::scale_fill_manual(
-          values = grDevices::topo.colors(length(indexes)))
-      ## Add title for general boxplot
-      ggplotObj <- ggplotObj +
-        ggplot2::ggtitle(label = "Boxplot for multiple indexes and multiple datasets.")
-      print(ggplotObj)
+    ## in all runs and in all datasets.
+    {
+      plotDFList <- list()
+
+      ## For each index,
+      ## Create a data.frame integrating results of
+      ## all runs and for all datasets
+      indexes <- c("cosSim","falseNeg","falsePos",
+                   "truePos","TPR","FDR")
+      indexNums <- length(indexes)
+
+      for(indexNum in seq(1,indexNums)){
+        plotDFList[[indexNum]] <- data.frame()
+      }
+      names(plotDFList) <- indexes
+
+      ## For each dataset, combine the index values into plotDFList[[indexNum]]
+      for(datasetDir in dataset.dirs){
+        thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        load(paste0(thirdLevelDir,"/multiTools.RDa"))
+
+        for(indexNum in seq(1,indexNums)){
+          plotDFList[[indexNum]] <- rbind(plotDFList[[indexNum]],multiTools[[indexNum]])
+        }
+      }
+
+      ## Combine all plotDFList[[index]] into plotDFList$Combined
+      plotDFList$combined <- data.frame()
+      for(index in indexes){
+        plotDFList$combined <- rbind(plotDFList$combined,plotDFList[[index]])
+      }
+
+      ggplotList <- list()
+      ## Plot a multi-facet ggplot for all indexes and all runs.
+      {
+        ## Generate a ggplot object based on plotDFList$combined
+        ggplotList$general <- ggplot2::ggplot(
+          plotDFList$combined,
+          ggplot2::aes(x = toolName, y = value))
+        ## Draw geom_boxplot
+        ggplotList$general <- ggplotList$general +
+          ggplot2::geom_boxplot(
+            notch = FALSE,
+            position = ggplot2::position_dodge(0.9),
+            ggplot2::aes(fill = index))
+        ## Rotate the names of tools,
+        ## and remove legends
+        ggplotList$general <- ggplotList$general +
+          ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 1),
+                         legend.position = "none")
+        ## Split the plot into multiple facets,
+        ## according to different indexes
+        ggplotList$general <- ggplotList$general +
+          ggplot2::facet_wrap(ggplot2::vars(index),scales = "free")
+        ## Add title for general boxplot
+        ggplotList$general <- ggplotList$general +
+          ggplot2::ggtitle(label = "Boxplot for multiple indexes and all runs.")
+        print(ggplotList$general)
+      }
+      ## Plot a multi-facet ggplot,
+      ## facets are separated by indexes and datasetGroups
+      ## (in example, it refers to slope.)
+      for(by in c("datasetGroups","datasetSubGroups"))  {
+        ## Generate a ggplot object based on plotDFList$combined
+        ggplotList[[by]] <- ggplot2::ggplot(
+          plotDFList$combined,
+          ggplot2::aes(x = toolName, y = value))
+        ## Draw geom_boxplot
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::geom_boxplot(
+            notch = FALSE,
+            position = ggplot2::position_dodge(0.9),
+            ggplot2::aes(fill = index))
+        ## Rotate the names of tools,
+        ## and remove legends
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 1),
+                         legend.position = "none")
+        ## Split the plot into multiple facets,
+        ## according to different indexes
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::facet_grid(rows =  ggplot2::vars(index),
+                              cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
+                              scales = "free")
+        ## Add title for general boxplot
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::ggtitle(
+            label = paste0("Boxplot separated by indexes and groups."))
+      }
+
+      for(by in names(ggplotList)){
+        grDevices::png(paste0(out.dir,"/boxplot.by.",by,".png"))
+        print(ggplotList[[by]])
+        grDevices::dev.off()
+      }
     }
 
 
@@ -631,18 +716,18 @@ SummarizeMultiToolsMultiDatasets <-
       thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
       load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
-      indexNum <- nrow(multiTools$combMeanSDMD)
+      indexNums <- nrow(multiTools$combMeanSDMD)
       if(length(FinalAttr) == 0){
-        for(index in seq(1,indexNum)) {
-          FinalAttr[[index]] <- data.frame()
+        for(indexNum in seq(1,indexNums)) {
+          FinalAttr[[indexNum]] <- data.frame()
         }
         names(FinalAttr) <- rownames(multiTools$combMeanSDMD)
       }
       current <- list()
-      for(index in seq(1,indexNum)){
-        current[[index]] <- multiTools$combMeanSDMD[index,,drop = F]
-        rownames(current[[index]]) <- datasetDir
-        FinalAttr[[index]] <- rbind(FinalAttr[[index]],current[[index]])
+      for(indexNum in seq(1,indexNums)){
+        current[[indexNum]] <- multiTools$combMeanSDMD[indexNum,,drop = F]
+        rownames(current[[indexNum]]) <- datasetDir
+        FinalAttr[[indexNum]] <- rbind(FinalAttr[[indexNum]],current[[indexNum]])
       }
     }
     for(summaryFileName in names(FinalAttr)){
@@ -651,9 +736,8 @@ SummarizeMultiToolsMultiDatasets <-
     }
 
 
-
     invisible(list(FinalExtr = FinalExtr,
-                FinalAttr = FinalAttr))
+                   FinalAttr = FinalAttr))
   }
 
 
@@ -742,7 +826,7 @@ SummarizeOneToolMultiDatasets <-
       thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
       toolName <- strsplit(basename(tool.dirname),".results")[[1]]
       load(paste0(thirdLevelDir,"/multiRun.RDa"))
-      indexNum <- nrow(multiRun$meanSD)
+      indexNums <- nrow(multiRun$meanSD)
       indexes <- rownames(multiRun$meanSD)
       datasetName <- basename(datasetDir)
 
@@ -802,13 +886,13 @@ SummarizeOneToolMultiDatasets <-
 
 
     ## Create a list to store ggplot2 boxplot objects
-    ggplotObj <- list()
+    ggplotList <- list()
     ## Plot a general boxplot for multiple indexes
     if(FALSE){
-      ggplotObj[["general"]] <- ggplot2::ggplot(
+      ggplotList[["general"]] <- ggplot2::ggplot(
         OneToolSummary[["extraction"]],
         ggplot2::aes(x = toolName, y = value))
-      ggplotObj[["general"]] <- ggplotObj[["general"]] +
+      ggplotList[["general"]] <- ggplotList[["general"]] +
         ggplot2::geom_boxplot(
           notch = FALSE,
           position = ggplot2::position_dodge(0.9),
@@ -816,16 +900,16 @@ SummarizeOneToolMultiDatasets <-
         ggplot2::scale_fill_manual(
           values = grDevices::topo.colors(length(indexes)))
       ## Add title for general boxplot
-      ggplotObj[["general"]] <- ggplotObj[["general"]] +
+      ggplotList[["general"]] <- ggplotList[["general"]] +
         ggplot2::ggtitle(label = "Boxplot for multiple indexes and multiple datasets.")
     }
     ## Plot a value~datasetSubGroups boxplot for each index.
     for(index in indexes){
       indexNum <- which(indexes == index)
-      ggplotObj[[index]] <- ggplot2::ggplot(
+      ggplotList[[index]] <- ggplot2::ggplot(
         OneToolSummary[[index]],
         ggplot2::aes(x = datasetSubGroups, y = value))
-      ggplotObj[[index]] <- ggplotObj[[index]] +
+      ggplotList[[index]] <- ggplotList[[index]] +
         ggplot2::geom_boxplot(
           notch = FALSE,
           position = ggplot2::position_dodge(0.9),
@@ -839,22 +923,21 @@ SummarizeOneToolMultiDatasets <-
           legend.position = "none") +
         ggplot2::facet_wrap(~datasetGroups)
       ## Add title for value~datasetSubGroups boxplot
-      ggplotObj[[index]] <- ggplotObj[[index]] +
+      ggplotList[[index]] <- ggplotList[[index]] +
         ggplot2::ggtitle(label = titles[index],subtitle = subtitles[index])
 
-      print(ggplotObj[[index]])
+      print(ggplotList[[index]])
     }
 
 
     ## Output average cosine similarity in a png file
     grDevices::png(paste0(out.dir,"/boxplot.onetool.cosine.similarity.png"))
-    print(ggplotObj[["cosSim"]])
+    print(ggplotList[["cosSim"]])
     grDevices::dev.off()
 
     ## Output multiple extractionindexes in a pdf file
     grDevices::pdf(paste0(out.dir,"/boxplot.onetool.extraction.indexes.pdf"))
-    if(FALSE) print(ggplotObj[["general"]])
-    for(index in indexes) print(ggplotObj[[index]])
+    for(index in indexes) print(ggplotList[[index]])
     grDevices::dev.off()
 
 
@@ -865,5 +948,5 @@ SummarizeOneToolMultiDatasets <-
                 quote = F, row.names = F)
     }
 
-  invisible(NULL)
-}
+    invisible(NULL)
+  }

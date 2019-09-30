@@ -19,7 +19,7 @@ for(slope in slopes)
 # R-based tools which can do both extraction and attribution,
 # excluding SignatureAnalyzer (due to special folder structure)
 # and maftools (its seed is hard-coded)
-RBasedExtrAttrToolNames <- c("signeR","hdp","sigfit.nmf")
+RBasedExtrAttrToolNames <- c("signeR","hdp","sigfit.nmf","sigfit.emu")
 # Python or other language based tools.
 # excluding SP (due to special folder structure)
 # and EMu (cannot designate seed)
@@ -29,7 +29,7 @@ attrToolNames <-
   c("decompTumor2Sig","deconstructSigs","mSigAct",
     "MutationalPatterns","mutSignatures",
     "SignatureEstimation.QP","SignatureEstimation.SA",
-    "YAPSA","sigfit.nmf")
+    "YAPSA","sigfit.nmf","sigfit.emu")
 
 
 ## Specify seeds used in analysis.
@@ -156,22 +156,23 @@ for(slope in slopes)
       tool.dirnames = paste0(c(RBasedExtrAttrToolNames,otherExtrAttrToolNames,
                                "sigproextractor","SignatureAnalyzer",
                                "EMu","maftools"),".results"),
-      datasetGroups = slope,
-      datasetSubGroups = Rsq)
+      datasetGroups = paste0("R^2 = ",Rsq),
+      datasetSubGroups = paste0("SBS1:SBS5 ratio = ",slope))
     SynSigEval::SummarizeMultiToolsOneDataset(
       third.level.dir = paste0(datasetName,"/sp.sp/Attr/"),
       toolName = attrToolNames,
       tool.dirnames = paste0(attrToolNames,".results"),
-      datasetGroups =  slope,
-      datasetSubGroups = Rsq)
+      datasetGroups =  paste0("R^2 = ",Rsq),
+      datasetSubGroups = paste0("SBS1:SBS5 ratio = ",slope))
 }
 
 ## Part IV: Generate a summary table and boxplot for results
 ## of multiple datasets, from each separate tool.
-datasetGroups <- rep(paste0("SBS1:SBS5 ratio = ",c(0.1,0.5,1,2,10)),each = 4)
+datasetGroups <- rep(paste0("R^2 = ",c(0.1,0.2,0.3,0.6)),5)
 names(datasetGroups) <- datasetNames
-datasetSubGroups <- rep(paste0("R^2 = ",c(0.1,0.2,0.3,0.6)),5)
+datasetSubGroups <- rep(paste0("SBS1:SBS5 ratio = ",c(0.1,0.5,1,2,10)),each = 4)
 names(datasetSubGroups) <- datasetNames
+
 
 for(toolName in c(
   RBasedExtrAttrToolNames,otherExtrAttrToolNames,
@@ -182,7 +183,7 @@ for(toolName in c(
     datasetGroups = datasetGroups,
     datasetSubGroups = datasetSubGroups,
     tool.dirname = paste0("sp.sp/ExtrAttr/",toolName,".results/"),
-    out.dir = paste0("FinalToolWiseSummary/",toolName,"/"),
+    out.dir = paste0("FinalToolWiseSummary/ExtrAttr/",toolName,"/"),
     overwrite = T)
 }
 for(toolName in attrToolNames){
@@ -191,7 +192,7 @@ for(toolName in attrToolNames){
     datasetGroups = datasetGroups,
     datasetSubGroups = datasetSubGroups,
     tool.dirname = paste0("sp.sp/Attr/",toolName,".results/"),
-    out.dir = paste0("FinalToolWiseSummary/",toolName,"/"),
+    out.dir = paste0("FinalToolWiseSummary/Attr/",toolName,"/"),
     overwrite = T)
 }
 
