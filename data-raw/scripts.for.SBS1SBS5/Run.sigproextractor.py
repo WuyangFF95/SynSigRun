@@ -41,7 +41,7 @@ from sigproSS import spss, spss_pcwag
 minK = 1
 maxK = 10
 totalIterations = 100
-numcpus = 30
+numcpus = 10
 
 ## Run sigproextractor for each dataset for each seed.
 for seedNumber in seedNumbers:

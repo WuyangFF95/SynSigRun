@@ -59,6 +59,12 @@ for(datasetName in datasetNames){
         ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
         overwrite = T)
     }
+    ## Summarize sigproSS (a Python-based attribution-only tool)
+    SynSigEval::SummarizeSigOneSigProSSSubdir(
+      run.dir = paste0(datasetName,"/sp.sp/Attr/sigproextractor.results/seed.",
+                       seedInUse,"/"),
+      ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+      overwrite = T)
     ## Summarize non-R Extraction and attribution tools.
     for(extrAttrToolName in otherExtrAttrToolNames){
       SynSigEval::SummarizeSigOneExtrAttrSubdir(
@@ -67,8 +73,8 @@ for(datasetName in datasetNames){
         ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
         overwrite = T)
     }
-    ## Summarize sigproextractor
-    SynSigEval::SummarizeSigOneSPSubdir(
+    ## Summarize SigProExtractor
+    SynSigEval::SummarizeSigOneSigProExtractorSubdir(
       run.dir = paste0(datasetName,
                        "/sp.sp/ExtrAttr/sigproextractor.results/seed.",
                        seedInUse,"/"),

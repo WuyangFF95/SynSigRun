@@ -51,7 +51,7 @@
 #'
 #' Relevant functions are: \enumerate{
 #'
-#' \item \code{\link{SummarizeSigProfiler}}
+#' \item \code{\link{SummarizeSigProExtractor}}
 #' \item \code{\link{SignatureAnalyzerSummarizeTopLevel}}
 #' \item \code{\link{SignatureAnalyzerSummarizeSBS1SBS5}}
 #'
