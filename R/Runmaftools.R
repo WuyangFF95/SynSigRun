@@ -188,7 +188,7 @@ Runmaftools <-
 
     ## exposure attributions (in mutation counts)
     exposureCounts <- (sigs_nmf$contributions)
-    rownames(exposureCounts) <- paste("maftools",1:row(exposureCounts),sep=".")
+    rownames(exposureCounts) <- paste("maftools",1:nrow(exposureCounts),sep=".")
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
