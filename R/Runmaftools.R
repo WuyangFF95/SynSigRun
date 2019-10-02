@@ -139,7 +139,7 @@ Runmaftools <-
 
     ## Before running NMF packge,
     ## Load it explicitly to prevent errors.
-    requireNamespace(NMF)
+    requireNamespace("NMF")
 
     ## Run NMF using ICAMS-formatted spectra catalog
     ## Determine the best number of signatures (K.best).
@@ -188,7 +188,7 @@ Runmaftools <-
 
     ## exposure attributions (in mutation counts)
     exposureCounts <- (sigs_nmf$contributions)
-    colnames(exposureCounts) <- paste("maftools",1:ncol(exposureCounts),sep=".")
+    rownames(exposureCounts) <- paste("maftools",1:row(exposureCounts),sep=".")
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
