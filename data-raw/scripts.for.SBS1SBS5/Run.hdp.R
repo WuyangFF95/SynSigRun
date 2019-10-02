@@ -36,6 +36,11 @@ for(seedInUse in seedsInUse){
   }
 }
 
+## Clean up "hdp.0" noise signatures in hdp runs (if any)
+## Cleaned results would be placed in "hdp.clean.results"
+CleanHDP <- function(){
+  NULL
+}
 
 
 

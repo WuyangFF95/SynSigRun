@@ -17,10 +17,6 @@ InstallmutSignatures <- function(){
 #' @param gt.sigs.file File containing input mutational signatures. Columns are
 #' signatures, rows are mutation types.
 #'
-#' @param read.catalog.function Function to read a catalog
-#' (can be spectra or signature catalog): it takes a file path as
-#' its only argument and returning a catalog as a numeric matrix.
-#'
 #' @param out.dir Directory that will be created for the output;
 #' abort if it already exits.  Log files will be in
 #' \code{paste0(out.dir, "/tmp")}.
@@ -50,7 +46,6 @@ InstallmutSignatures <- function(){
 RunmutSignaturesAttributeOnly <-
   function(input.catalog,
            gt.sigs.file,
-           read.catalog.function,
            out.dir,
            seedNumber = 1,
            test.only = FALSE,
@@ -69,14 +64,14 @@ RunmutSignaturesAttributeOnly <-
 
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
-    spectra <- read.catalog.function(input.catalog,
-                                     strict = FALSE)
+    spectra <- ICAMS::ReadCatalog(input.catalog,
+                                  strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
 
     ## Read in ground-truth signature file
     ## gt.sigs: signature data.frame in ICAMS format
-    gtSignatures <- read.catalog.function(gt.sigs.file)
+    gtSignatures <- ICAMS::ReadCatalog(gt.sigs.file)
 
     ## Create output directory
     if (dir.exists(out.dir)) {

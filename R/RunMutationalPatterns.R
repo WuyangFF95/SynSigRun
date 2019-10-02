@@ -23,10 +23,6 @@ InstallMutationalPatterns <- function(){
 #' @param gt.sigs.file File containing input mutational signatures.
 #' Columns are signatures, rows are mutation types.
 #'
-#' @param read.catalog.function Function to read a catalog
-#' (can be spectra or signature catalog): it takes a file path as
-#' its only argument and returning a catalog as a numeric matrix.
-#'
 #' @param out.dir Directory that will be created for the output;
 #' abort if it already exits.  Log files will be in
 #' \code{paste0(out.dir, "/tmp")}.
@@ -56,7 +52,6 @@ InstallMutationalPatterns <- function(){
 RunMutationalPatternsAttributeOnly <-
   function(input.catalog,
            gt.sigs.file,
-           read.catalog.function,
            out.dir,
            seedNumber = 1,
            test.only = FALSE,
@@ -75,7 +70,7 @@ RunMutationalPatternsAttributeOnly <-
 
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
-    spectra <- read.catalog.function(input.catalog,
+    spectra <-ICAMS::ReadCatalog(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
@@ -89,7 +84,7 @@ RunMutationalPatternsAttributeOnly <-
 
     ## Read in ground-truth signature file
     ## gt.sigs: signature data.frame in ICAMS format
-    gtSignatures <- read.catalog.function(gt.sigs.file)
+    gtSignatures <-ICAMS::ReadCatalog(gt.sigs.file)
     ## Remove the catalog related attributes in gtSignatures
     tmp <- dimnames(gtSignatures)
     class(gtSignatures) <- "matrix"
@@ -141,12 +136,6 @@ RunMutationalPatternsAttributeOnly <-
 #'
 #' @param input.catalog File containing input spectra catalog.
 #' Columns are samples (tumors), rows are mutation types.
-#'
-#' @param read.catalog.function Function to read a catalog
-#' (can be spectra or signature catalog): it takes a file path as
-#' its only argument and returning a catalog as a numeric matrix.
-#'
-#' @param write.catalog.function Function to write a catalog.
 #'
 #' @param out.dir Directory that will be created for the output;
 #' abort if it already exits.  Log files will be in
@@ -201,8 +190,6 @@ RunMutationalPatternsAttributeOnly <-
 
 RunMutationalPatterns <-
   function(input.catalog,
-           read.catalog.function,
-           write.catalog.function,
            out.dir,
            CPU.cores = NULL,
            seedNumber = 1,
@@ -262,7 +249,7 @@ RunMutationalPatterns <-
 
     ## Before running NMF packge,
     ## Load it explicitly to prevent errors.
-    requireNamespace(NMF)
+    requireNamespace("NMF")
 
     ## Run NMF using ICAMS-formatted spectra catalog
     ## Determine the best number of signatures (K.best).
@@ -337,7 +324,7 @@ RunMutationalPatterns <-
 
 
     ## Output extracted signatures in ICAMS format
-    write.catalog.function(extractedSignatures,
+    ICAMS::WriteCatalog(extractedSignatures,
                            paste0(out.dir,"/extracted.signatures.csv"))
 
 

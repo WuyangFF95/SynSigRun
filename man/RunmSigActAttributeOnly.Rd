@@ -5,8 +5,8 @@
 \title{Run mSigAct attribution on a spectra catalog file
 and known signatures.}
 \usage{
-RunmSigActAttributeOnly(input.catalog, gt.sigs.file, read.catalog.function,
-  out.dir, CPU.cores = NULL, seedNumber = 1, test.only = FALSE,
+RunmSigActAttributeOnly(input.catalog, gt.sigs.file, out.dir,
+  CPU.cores = NULL, seedNumber = 1, test.only = FALSE,
   overwrite = FALSE)
 }
 \arguments{
@@ -15,10 +15,6 @@ samples (tumors), rows are mutation types.}
 
 \item{gt.sigs.file}{File containing input mutational signatures. Columns are
 signatures, rows are mutation types.}
-
-\item{read.catalog.function}{Function to read a catalog
-(can be spectra or signature catalog): it takes a file path as
-its only argument and returning a catalog as a numeric matrix.}
 
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exits.  Log files will be in

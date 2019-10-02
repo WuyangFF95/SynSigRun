@@ -15,12 +15,6 @@ InstallSparseSignatures <- function(){
 #' @param input.catalog File containing input spectra catalog.
 #' Columns are samples (tumors), rows are mutation types.
 #'
-#' @param read.catalog.function Function to read a catalog
-#' (can be spectra or signature catalog): it takes a file path as
-#' its only argument and returning a catalog as a numeric matrix.
-#'
-#' @param write.catalog.function Function to write a catalog.
-#'
 #' @param out.dir Directory that will be created for the output;
 #' abort if it already exits.  Log files will be in
 #' \code{paste0(out.dir, "/tmp")}.
@@ -67,8 +61,6 @@ InstallSparseSignatures <- function(){
 
 RunSparseSignatures <-
   function(input.catalog,
-           read.catalog.function,
-           write.catalog.function,
            out.dir,
            seedNumber = 1,
            K = NULL,
@@ -94,7 +86,7 @@ RunSparseSignatures <-
 
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
-    spectra <- read.catalog.function(input.catalog,
+    spectra <- ICAMS::ReadCatalog(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
     ## convSpectra: convert the ICAMS-formatted spectra catalog
@@ -180,7 +172,7 @@ RunSparseSignatures <-
                                              region = "unknown",
                                              catalog.type = "counts.signature")
     ## Write extracted signatures
-    write.catalog.function(extractedSignatures,
+    ICAMS::WriteCatalog(extractedSignatures,
                            paste0(out.dir,"/extracted.signatures.csv"))
 
 

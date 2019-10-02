@@ -4,19 +4,12 @@
 \alias{RunsigneR}
 \title{Run signeR extraction and attribution on a spectra catalog file}
 \usage{
-RunsigneR(input.catalog, read.catalog.function, write.catalog.function,
-  out.dir, seedNumber = 1, K = NULL, K.range = NULL,
-  test.only = FALSE, overwrite = FALSE)
+RunsigneR(input.catalog, out.dir, seedNumber = 1, K = NULL,
+  K.range = NULL, test.only = FALSE, overwrite = FALSE)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.
 Columns are samples (tumors), rows are mutation types.}
-
-\item{read.catalog.function}{Function to read a catalog
-(can be spectra or signature catalog): it takes a file path as
-its only argument and returning a catalog as a numeric matrix.}
-
-\item{write.catalog.function}{Function to write a catalog.}
 
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exits.  Log files will be in
