@@ -49,10 +49,6 @@ SummarizeSigOneSubdir <-
            attributed.exp.path = NULL,
            # TODO(Steve): copy this to the summary and do analysis on how much
            # extracted signature contributes to exposures.
-           # read.extracted.sigs.fn = NULL,
-           # read.ground.truth.sigs.fn = NULL,
-           # write.cat.fn = NULL,
-           # plot.pdf.fn = NULL,
            overwrite = FALSE,
            summary.folder.name = "summary") {
     ## Specify default catalog treatment functions
@@ -119,18 +115,6 @@ SummarizeSigOneSubdir <-
       cat("\nsigAnalysis$ground.truth.with.no.best.match\n"),
       sigAnalysis$ground.truth.with.no.best.match,
       file = paste0(outputPath,"/other.results.txt"))
-
-    ## Obsolete
-    if(FALSE){
-      #if (class(plot.pdf.fn) == "function") {
-      # Output ground-truth sigs to a PDF file
-      plot.pdf.fn(sigAnalysis$gt.sigs,
-                  paste0(outputPath,"/ground.truth.sigs.pdf"))
-
-      # Output extracted sigs to a PDF file
-      plot.pdf.fn(sigAnalysis$ex.sigs,
-                  paste0(outputPath,"/extracted.sigs.pdf"))
-    }
 
     ## Plot signatures as "counts.signatures" typed catalog
     # Output ground-truth sigs to a PDF file
@@ -235,11 +219,10 @@ SummarizeSigOneSubdir <-
 #'
 #' @export
 SummarizeMultiRuns <-
-  function(
-    datasetName,
-    toolName,
-    tool.dir,
-    run.names){
+  function(datasetName,
+           toolName,
+           tool.dir,
+           run.names){
 
     ## Indexes for signature extraction in multiple runs
     cosSim <- numeric(0)
@@ -333,12 +316,32 @@ SummarizeMultiRuns <-
                    "Number of ground-truth signatures extracted",
                    "True Positives / (True Positives + False Negatives)",
                    "False Positives / (True Positives + False Positives)")
-    for(indexNum in seq(1,length(indexes))){
-      graphics::boxplot(
-        multiRun[[ indexes[indexNum] ]],
-        main = titles[indexNum],
-        sub = subtitles[indexNum])
+    ## Obsolete base boxplot
+    if(FALSE){
+      for(index in indexes){
+        indexNum <- which(index == indexes)
+        graphics::boxplot(
+          multiRun[[index]],
+          main = titles[indexNum],
+          sub = subtitles[indexNum])
+      }
     }
+    ## ggplot2 boxplot
+    for(index in indexes){
+      indexNum <- which(index == indexes)
+      ggplotObj <- ggplot2::ggplot(
+        data.frame(value = multiRun[[index]],
+                   indexName = index),
+        ggplot2::aes(x = indexName, y = value))
+      ggplotObj <- ggplotObj +
+        ggplot2::ggtitle(titles[indexNum],subtitle = subtitles[indexNum])
+      ggplotObj <- ggplotObj +
+        ggplot2::geom_boxplot(
+          notch = FALSE,
+          position = ggplot2::position_dodge(0.9))
+      print(ggplotObj)
+    }
+
     grDevices::dev.off()
 
 
@@ -377,8 +380,6 @@ SummarizeMultiRuns <-
     ## Plot boxplot for exposure attribution
     grDevices::pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"))
     for(sig in gtSigsNames){
-
-
       ggplotObj <- ggplot2::ggplot(
         data.frame(value = ManhattanDist[sig,],
                    sigName = sig),
@@ -389,6 +390,7 @@ SummarizeMultiRuns <-
         ggplot2::geom_boxplot(
           notch = FALSE,
           position = ggplot2::position_dodge(0.9))
+      print(ggplotObj)
     }
     grDevices::dev.off()
 
@@ -569,6 +571,9 @@ SummarizeMultiToolsMultiDatasets <-
            second.third.level.dirname,
            out.dir,
            overwrite = FALSE){
+    indexes <- c("cosSim","falseNeg","falsePos",
+                 "truePos","TPR","FDR")
+    indexNums <- length(indexes)
 
     ## Create output directory
     if (dir.exists(out.dir)) {
@@ -589,18 +594,16 @@ SummarizeMultiToolsMultiDatasets <-
       ## Find tool names
       toolNames <- unique(multiTools[["cosSim"]][,"toolName"])
 
-      indexNums <- nrow(multiTools$combMeanSD)
       if(length(FinalExtr) == 0){
-        for(indexNum in seq(1,indexNums)) {
-          FinalExtr[[indexNum]] <- data.frame()
+        for(index in indexes) {
+          FinalExtr[[index]] <- data.frame()
         }
-        names(FinalExtr) <- rownames(multiTools$combMeanSD)
       }
       current <- list()
-      for(indexNum in seq(1,indexNums)){
-        current[[indexNum]] <- multiTools$combMeanSD[indexNum,,drop = F]
-        rownames(current[[indexNum]]) <- datasetDir
-        FinalExtr[[indexNum]] <- rbind(FinalExtr[[indexNum]],current[[indexNum]])
+      for(index in indexes){
+        current[[index]] <- multiTools$combMeanSD[index,,drop = F]
+        rownames(current[[index]]) <- datasetDir
+        FinalExtr[[index]] <- rbind(FinalExtr[[index]],current[[index]])
       }
     }
     for(summaryFileName in names(FinalExtr)){
@@ -621,10 +624,9 @@ SummarizeMultiToolsMultiDatasets <-
                    "truePos","TPR","FDR")
       indexNums <- length(indexes)
 
-      for(indexNum in seq(1,indexNums)){
-        plotDFList[[indexNum]] <- data.frame()
+      for(index in indexes){
+        plotDFList[[indexes]] <- data.frame()
       }
-      names(plotDFList) <- indexes
 
       ## For each dataset, combine the index values into plotDFList[[indexNum]]
       for(datasetDir in dataset.dirs){
@@ -716,18 +718,18 @@ SummarizeMultiToolsMultiDatasets <-
       thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
       load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
-      indexNums <- nrow(multiTools$combMeanSDMD)
+      sigNums <- nrow(multiTools$combMeanSDMD)
       if(length(FinalAttr) == 0){
-        for(indexNum in seq(1,indexNums)) {
-          FinalAttr[[indexNum]] <- data.frame()
+        for(sigNum in seq(1,sigNums)) {
+          FinalAttr[[sigNum]] <- data.frame()
         }
         names(FinalAttr) <- rownames(multiTools$combMeanSDMD)
       }
       current <- list()
-      for(indexNum in seq(1,indexNums)){
-        current[[indexNum]] <- multiTools$combMeanSDMD[indexNum,,drop = F]
-        rownames(current[[indexNum]]) <- datasetDir
-        FinalAttr[[indexNum]] <- rbind(FinalAttr[[indexNum]],current[[indexNum]])
+      for(sigNum in seq(1,sigNums)){
+        current[[sigNum]] <- multiTools$combMeanSDMD[sigNum,,drop = F]
+        rownames(current[[sigNum]]) <- datasetDir
+        FinalAttr[[sigNum]] <- rbind(FinalAttr[[sigNum]],current[[sigNum]])
       }
     }
     for(summaryFileName in names(FinalAttr)){
@@ -826,8 +828,8 @@ SummarizeOneToolMultiDatasets <-
       thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
       toolName <- strsplit(basename(tool.dirname),".results")[[1]]
       load(paste0(thirdLevelDir,"/multiRun.RDa"))
-      indexNums <- nrow(multiRun$meanSD)
       indexes <- rownames(multiRun$meanSD)
+      indexNums <- length(indexes)
       datasetName <- basename(datasetDir)
 
       for(index in indexes){

@@ -140,7 +140,7 @@ for(datasetName in datasetNames){
     tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/","maftools",
                       ".results/"),
     run.names = paste0("seed.","123456"))
-  for(attrToolName in attrToolNames){
+  for(attrToolName in c(attrToolNames,"sigproextractor")){
     SynSigEval::SummarizeMultiRuns(
       datasetName = datasetName,
       toolName = attrToolName,
@@ -166,8 +166,8 @@ for(slope in slopes)
       datasetSubGroups = paste0("SBS1:SBS5 ratio = ",slope))
     SynSigEval::SummarizeMultiToolsOneDataset(
       third.level.dir = paste0(datasetName,"/sp.sp/Attr/"),
-      toolName = attrToolNames,
-      tool.dirnames = paste0(attrToolNames,".results"),
+      toolName = c(attrToolNames,"sigproextractor"),
+      tool.dirnames = paste0(c(attrToolNames,"sigproextractor"),".results"),
       datasetGroups =  paste0("R^2 = ",Rsq),
       datasetSubGroups = paste0("SBS1:SBS5 ratio = ",slope))
 }
@@ -192,7 +192,7 @@ for(toolName in c(
     out.dir = paste0("FinalToolWiseSummary/ExtrAttr/",toolName,"/"),
     overwrite = T)
 }
-for(toolName in attrToolNames){
+for(toolName in c(attrToolNames,"sigproextractor")){
   SummarizeOneToolMultiDatasets(
     dataset.dirs = datasetNames,
     datasetGroups = datasetGroups,
