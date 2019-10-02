@@ -4,10 +4,16 @@
 \alias{ReadExposure}
 \title{Read an exposure matrix from a file}
 \usage{
-ReadExposure(file)
+ReadExposure(file, check.names = TRUE)
 }
 \arguments{
 \item{file}{CSV file containing an exposure matrix}
+
+\item{check.names}{logical. If TRUE then the names of the variables
+in the data frame are checked to ensure that they are syntactically
+valid variable names. If necessary they are adjusted (by make.names)
+so that they are, and also to ensure that there are no duplicates.
+Default: TRUE}
 }
 \value{
 Matrix of exposures

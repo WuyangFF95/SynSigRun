@@ -20,13 +20,19 @@ WriteExposure <- function(exposure.matrix, file) {
 #'
 #' @param file CSV file containing an exposure matrix
 #'
+#' @param check.names logical. If TRUE then the names of the variables
+#' in the data frame are checked to ensure that they are syntactically
+#' valid variable names. If necessary they are adjusted (by make.names)
+#' so that they are, and also to ensure that there are no duplicates.
+#' Default: TRUE
+#'
 #' @return Matrix of exposures
 #'
 #' @export
 #'
 #' @importFrom utils read.csv
-ReadExposure <- function(file) {
-  return(read.csv(file, row.names = 1))
+ReadExposure <- function(file, check.names = TRUE) {
+  return(read.csv(file, row.names = 1, check.names = check.names))
 }
 
 
