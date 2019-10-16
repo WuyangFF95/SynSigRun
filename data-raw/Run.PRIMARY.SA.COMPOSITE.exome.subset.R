@@ -24,8 +24,8 @@ if (laptop.test) {
   signatureanalyzer.code.dir <- "/home/gmssgr/bin/SignatureAnalzyer.052418/"
 }
 
-read.catalog.function      <- ReadCatCOMPOSITE
-write.signature.function   <- WriteCatCOMPOSITE
+#read.catalog.function      <- ReadCatCOMPOSITE
+#write.signature.function   <- WriteCatCOMPOSITE
 delete.tmp.files           <- TRUE
 overwrite                  <- TRUE
 mc.cores                   <- 20 # Will be overidden and set to 1 on Windows
@@ -41,9 +41,9 @@ sa.COMPOSITE.exome.subset.res <-
     num.runs                   = num.runs,
     signatureanalyzer.code.dir = signatureanalyzer.code.dir,
     input.catalog              = input.catalog,
-    read.catalog.function      = read.catalog.function,
+    #read.catalog.function      = read.catalog.function,
     out.dir                    = out.dir,
-    write.signature.function   = write.signature.function,
+    #write.signature.function   = write.signature.function,
     maxK                       = maxK,
     tol                        = 1e-7,
     test.only                  = test.only,
