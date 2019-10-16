@@ -54,9 +54,21 @@ SummarizeSigOnehelmsmanSubdir <-
     # and convert it into our internal format
     attributed.exp.path.helmsman.format <-
       paste0(inputPath,"/W_components.txt")
-    attributedExposures <- ReadhelmsmanExposure(attributed.exp.path.helmsman.format)
+    rawExposure <- ReadhelmsmanExposure(
+      attributed.exp.path.helmsman.format,
+      check.names = FALSE)
+
+    spectra <- ICAMS::ReadCatalog(
+      file = paste0(ground.truth.exposure.dir,"/ground.truth.syn.catalog.csv"),
+      catalog.type = "counts",
+      strict = FALSE)
+    exposureCounts <- rawExposure
+    for(sample in colnames(exposureCounts)){
+      exposureCounts[,sample] <- rawExposure[,sample] / sum(rawExposure[,sample]) * sum(spectra[,sample])
+    }
+
     attributed.exp.path <- paste0(run.dir,"/attributed.exposures.csv")
-    WriteExposure(exposure.matrix = attributedExposures,
+    WriteExposure(exposure.matrix = exposureCounts,
                   file = attributed.exp.path)
 
 
@@ -69,10 +81,6 @@ SummarizeSigOnehelmsmanSubdir <-
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = extracted.sigs.path,
         attributed.exp.path = attributed.exp.path,
-        # read.extracted.sigs.fn = ReadCatalog,
-        # read.ground.truth.sigs.fn = ReadCatalog,
-        # write.cat.fn = WriteCatalog,
-        # plot.pdf.fn = PlotCatalogToPdf,
         overwrite = overwrite)
 
     invisible(retval) # So we can test without looking at a file.
