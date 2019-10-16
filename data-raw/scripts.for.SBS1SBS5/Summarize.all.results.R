@@ -9,21 +9,20 @@ slopes <- c(0.1,0.5,1,2,10)
 Rsqs <- c(0.1,0.2,0.3,0.6)
 datasetNames <- character(0)
 
-for(slope in slopes)
+for(slope in slopes){
   for(Rsq in Rsqs){
     datasetNames <- c(datasetNames,
                       paste0("S.",slope,".Rsq.",Rsq))
+  }
 }
-
 ## Specify tool Names
 # R-based tools which can do both extraction and attribution,
 # excluding SignatureAnalyzer (due to special folder structure)
 # and maftools (its seed is hard-coded)
-RBasedExtrAttrToolNames <- c("signeR","hdp","sigfit.nmf","sigfit.emu")
+RBasedExtrAttrToolNames <- c("signeR","hdp","hdp.clean","sigfit.nmf","sigfit.emu")
 # Python or other language based tools.
-# excluding SP (due to special folder structure)
-# and EMu (cannot designate seed)
-otherExtrAttrToolNames <- c("helmsman","MultiModalMuSig")
+# excluding maftools (seed is fixed) and EMu (cannot designate seed)
+otherExtrAttrToolNames <- c("MultiModalMuSig")
 # Tools can only do attribution
 attrToolNames <-
   c("decompTumor2Sig","deconstructSigs","mSigAct",
@@ -112,12 +111,12 @@ for(datasetName in datasetNames){
 }
 
 ## Part II: Write summary table for 20 seeds for each tool with each dataset
+otherExtrAttrToolNames <- c("helmsman","MultiModalMuSig","sigproextractor","SignatureAnalyzer")
 for(datasetName in datasetNames){
   ## For each dataset, summarize 20 runs
   ## using different seeds by EMu
   for(extrAttrToolName in c(
-    RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-    "sigproextractor","SignatureAnalyzer")){
+    RBasedExtrAttrToolNames,otherExtrAttrToolNames)){
     SynSigEval::SummarizeMultiRuns(
       datasetName = datasetName,
       toolName = extrAttrToolName,
@@ -151,43 +150,42 @@ for(datasetName in datasetNames){
 }
 
 ## Part III: Write Summary table of multiple tools for each dataset
-for(slope in slopes)
+for(slope in slopes){
   for(Rsq in Rsqs){
     datasetName <- paste0("S.",slope,".Rsq.",Rsq)
     SynSigEval::SummarizeMultiToolsOneDataset(
       third.level.dir = paste0(datasetName,"/sp.sp/ExtrAttr/"),
       toolName = c(RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-                   "sigproextractor","SignatureAnalyzer",
                    "EMu","maftools"),
       tool.dirnames = paste0(c(RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-                               "sigproextractor","SignatureAnalyzer",
                                "EMu","maftools"),".results"),
-      datasetGroups = paste0("R^2 = ",Rsq),
-      datasetSubGroups = paste0("SBS1:SBS5 ratio = ",slope))
+      datasetGroups = Rsq,
+      datasetSubGroups = slope)
     SynSigEval::SummarizeMultiToolsOneDataset(
       third.level.dir = paste0(datasetName,"/sp.sp/Attr/"),
       toolName = c(attrToolNames,"sigproextractor"),
       tool.dirnames = paste0(c(attrToolNames,"sigproextractor"),".results"),
-      datasetGroups =  paste0("R^2 = ",Rsq),
-      datasetSubGroups = paste0("SBS1:SBS5 ratio = ",slope))
+      datasetGroups =  Rsq,
+      datasetSubGroups = slope)
+  }
 }
-
 ## Part IV: Generate a summary table and boxplot for results
 ## of multiple datasets, from each separate tool.
-datasetGroups <- rep(paste0("R^2 = ",c(0.1,0.2,0.3,0.6)),5)
+datasetGroups <- rep(c(0.1,0.2,0.3,0.6),5)
 names(datasetGroups) <- datasetNames
-datasetSubGroups <- rep(paste0("SBS1:SBS5 ratio = ",c(0.1,0.5,1,2,10)),each = 4)
+datasetSubGroups <- rep(c(0.1,0.5,1,2,10),each = 4)
 names(datasetSubGroups) <- datasetNames
 
 
 for(toolName in c(
   RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-  "sigproextractor","SignatureAnalyzer",
   "maftools","EMu")){
   SummarizeOneToolMultiDatasets(
     dataset.dirs = datasetNames,
     datasetGroups = datasetGroups,
+    datasetGroupLabel = "Pearson's R^2",
     datasetSubGroups = datasetSubGroups,
+    datasetSubGroupLabel = "SBS1:SBS5 mutation count ratio",
     tool.dirname = paste0("sp.sp/ExtrAttr/",toolName,".results/"),
     out.dir = paste0("FinalToolWiseSummary/ExtrAttr/",toolName,"/"),
     overwrite = T)
@@ -196,7 +194,9 @@ for(toolName in c(attrToolNames,"sigproextractor")){
   SummarizeOneToolMultiDatasets(
     dataset.dirs = datasetNames,
     datasetGroups = datasetGroups,
+    datasetGroupLabel = "Pearson's R^2",
     datasetSubGroups = datasetSubGroups,
+    datasetSubGroupLabel = "SBS1:SBS5 mutation count ratio",
     tool.dirname = paste0("sp.sp/Attr/",toolName,".results/"),
     out.dir = paste0("FinalToolWiseSummary/Attr/",toolName,"/"),
     overwrite = T)
@@ -206,10 +206,10 @@ for(toolName in c(attrToolNames,"sigproextractor")){
 
 ## Part V: Generate a combined summary table for results
 ## of multiple datasets, from multiple tools
-SummarizeMultiToolsMultiDatasets(dataset.dirs = datasetNames,
+FinalExtrAttr <- SummarizeMultiToolsMultiDatasets(dataset.dirs = datasetNames,
                        second.third.level.dirname = "sp.sp/ExtrAttr",
                        out.dir = "./FinalExtrAttrSummary", overwrite = T)
-SummarizeMultiToolsMultiDatasets(dataset.dirs = datasetNames,
+FinalAttr <- SummarizeMultiToolsMultiDatasets(dataset.dirs = datasetNames,
                        second.third.level.dirname = "sp.sp/Attr",
                        out.dir = "./FinalAttrSummary", overwrite = T)
 

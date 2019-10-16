@@ -51,12 +51,6 @@ SummarizeSigOneSubdir <-
            # extracted signature contributes to exposures.
            overwrite = FALSE,
            summary.folder.name = "summary") {
-    ## Specify default catalog treatment functions
-    # if(is.null(read.extracted.sigs.fn)) read.extracted.sigs.fn = ICAMS::ReadCatalog
-    # if(is.null(read.ground.truth.sigs.fn)) read.ground.truth.sigs.fn = ICAMS::ReadCatalog
-    # if(is.null(write.cat.fn)) write.cat.fn = ICAMS::WriteCatalog
-    # if(is.null(plot.pdf.fn)) plot.pdf.fn = ICAMS::PlotCatalogToPdf
-
 
     ## Output path - path to dump the ReadAndAnalyzeSigs() results
     outputPath <- paste0(run.dir, "/", summary.folder.name)
@@ -68,9 +62,7 @@ SummarizeSigOneSubdir <-
         ground.truth.sigs =
           paste0(ground.truth.exposure.dir,"/ground.truth.syn.sigs.csv"),
         ground.truth.exposures =
-          paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv") # ,
-        # read.extracted.sigs.fn = read.ground.truth.sigs.fn,
-        # read.ground.truth.sigs.fn = read.ground.truth.sigs.fn
+          paste0(ground.truth.exposure.dir,"/ground.truth.syn.exposures.csv")
       )
 
     if (dir.exists(outputPath)) {
@@ -105,7 +97,9 @@ SummarizeSigOneSubdir <-
     # Dumps other outputs into "other.results.txt"
     capture.output(
       cat("Average cosine similarity\n"),
-      sigAnalysis$avg,
+      sigAnalysis$averCosSim,
+      cat("Average cosine similarity to each ground-truth signature\n"),
+      sigAnalysis$cosSim,
       cat("\nNumber of ground-truth signatures\n"),
       ncol(sigAnalysis$gt.sigs),
       cat("\nNumber of extracted signatures\n"),
@@ -225,12 +219,10 @@ SummarizeMultiRuns <-
            run.names){
 
     ## Indexes for signature extraction in multiple runs
-    cosSim <- numeric(0)
-    truePos <- numeric(0)
-    falsePos <- numeric(0)
-    falseNeg <- numeric(0)
-    TPR <- numeric(0)
-    FDR <- numeric(0)
+    indexes <- c("averCosSim","falseNeg","falsePos",
+                 "truePos","TPR","FDR")
+    for(index in indexes) assign(index,numeric(0))
+    cosSim <- list()
 
 
     for(runName in run.names){
@@ -240,47 +232,66 @@ SummarizeMultiRuns <-
       sigAnalysisFile <- paste0(summaryDir,"/sigAnalysis.RDa")
       load(file = sigAnalysisFile)
 
-      cosSim <- c(cosSim,sigAnalysis$avg)
+      ## Names of ground-truth signatures
+      ## Useful-in calculating the average of
+      ## one-signature cosine similarity.
+      gtSigNames <- rownames(sigAnalysis$match2)
 
-      gtSigsNames <- rownames(sigAnalysis$match2)
+      ## Concatenate average cosine similarity
+      averCosSim <- c(averCosSim,sigAnalysis$averCosSim)
+
+      ## Concatenate true positive, true negative and false positive signatures.
       falseNegNames <- sigAnalysis$ground.truth.with.no.best.match
       falsePosNames <- sigAnalysis$extracted.with.no.best.match
-      truePosNames <- setdiff(gtSigsNames,falseNegNames)
-
+      truePosNames <- setdiff(gtSigNames,falseNegNames)
       falseNeg <- c(falseNeg,length(falseNegNames))
       falsePos <- c(falsePos,length(falsePosNames))
       truePos <- c(truePos, length(truePosNames))
 
-      currentTPR <- length(truePosNames) / length(gtSigsNames)
+      ## Concatenate TPR (True Positive Rate) and FDR (False Discovery Rate)
+      currentTPR <- length(truePosNames) / length(gtSigNames)
       currentFDR <- length(falsePosNames) / (length(truePosNames) + length(falsePosNames))
       TPR <- c(TPR, currentTPR)
       FDR <- c(FDR, currentFDR)
+
+      ## Concatenating one-signature cosine similarity
+      for(gtSigName in gtSigNames) {
+        if(is.null(cosSim[[gtSigName]]))
+          cosSim[[gtSigName]] <- numeric(0)
+        cosSim[[gtSigName]] <- c(cosSim[[gtSigName]],sigAnalysis$cosSim[[gtSigName]])
+      }
     }
 
-    names(cosSim) <- run.names
+    ## Make every vector named by run names (e.g. "seed.1")
+    names(averCosSim) <- run.names
     names(falseNeg) <- run.names
     names(falsePos) <- run.names
     names(truePos) <- run.names
     names(TPR) <- run.names
     names(FDR) <- run.names
+    for(gtSigName in gtSigNames)
+      names(cosSim[[gtSigName]]) <- run.names
+
 
     multiRun <- list()
     ## Save name of the software package and the dataset.
     multiRun$datasetName <- datasetName
     multiRun$toolName <- toolName
     ## Save extraction indexes on multiple runs
-    multiRun$cosSim <- cosSim
+    multiRun$averCosSim <- averCosSim
     multiRun$falseNeg <- falseNeg
     multiRun$falsePos <- falsePos
     multiRun$truePos <- truePos
     multiRun$TPR <- TPR
     multiRun$FDR <- FDR
+    ## Save one-signature cosine similarity on multiple runs
+    multiRun$cosSim <- cosSim
 
 
 
     ## Calculate mean and SD for indexes of signature extraction
     multiRun$meanSD <- matrix(nrow = 6, ncol = 2)
-    indexes <- c("cosSim","falseNeg","falsePos",
+    indexes <- c("averCosSim","falseNeg","falsePos",
                  "truePos","TPR","FDR")
     rownames(multiRun$meanSD) <- indexes
     colnames(multiRun$meanSD) <- c("mean","stdev")
@@ -292,7 +303,7 @@ SummarizeMultiRuns <-
 
     ## Calculate fivenums for signature extraction
     multiRun$fivenum <- matrix(nrow = 6, ncol = 5)
-    indexes <- c("cosSim","falseNeg","falsePos",
+    indexes <- c("averCosSim","falseNeg","falsePos",
                  "truePos","TPR","FDR")
     rownames(multiRun$fivenum) <- indexes
     colnames(multiRun$fivenum) <- c("min","lower-hinge","median","upperhinge","max")
@@ -301,10 +312,7 @@ SummarizeMultiRuns <-
       multiRun$fivenum[index,] <- currentFiveNum
     }
 
-    ## Plot boxplot for signature extraction
-    grDevices::pdf(paste0(tool.dir,"/boxplot.extraction.indexes.pdf"))
-    indexes <- c("cosSim","falseNeg","falsePos",
-                 "truePos","TPR","FDR")
+    ## Plot boxplot + beeswarm plot for signature extraction
     titles <- c("Average cosine similarity",
                 "False negatives",
                 "False positives",
@@ -316,83 +324,157 @@ SummarizeMultiRuns <-
                    "Number of ground-truth signatures extracted",
                    "True Positives / (True Positives + False Negatives)",
                    "False Positives / (True Positives + False Positives)")
-    ## Obsolete base boxplot
-    if(FALSE){
-      for(index in indexes){
-        indexNum <- which(index == indexes)
-        graphics::boxplot(
-          multiRun[[index]],
-          main = titles[indexNum],
-          sub = subtitles[indexNum])
-      }
-    }
-    ## ggplot2 boxplot
+
+    ## ggplot2 boxplot + beeswarm plot
+    ggplotList <- list()
     for(index in indexes){
       indexNum <- which(index == indexes)
-      ggplotObj <- ggplot2::ggplot(
+      ggplotList[[index]] <- ggplot2::ggplot(
         data.frame(value = multiRun[[index]],
                    indexName = index),
         ggplot2::aes(x = indexName, y = value))
-      ggplotObj <- ggplotObj +
+      ggplotList[[index]] <- ggplotList[[index]] +
         ggplot2::ggtitle(titles[indexNum],subtitle = subtitles[indexNum])
-      ggplotObj <- ggplotObj +
-        ggplot2::geom_boxplot(
-          notch = FALSE,
-          position = ggplot2::position_dodge(0.9))
-      print(ggplotObj)
+      ggplotList[[index]] <- ggplotList[[index]] +
+        ggplot2::geom_boxplot() +
+        ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
+        ## Restrict the decimal numbers of values of indexes to be 3
+        ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+    }
+    for(gtSigName in gtSigNames){
+      ggplotList[[gtSigName]] <- ggplot2::ggplot(
+        data.frame(value = multiRun$cosSim[[gtSigName]],
+                   gtSigName = gtSigName),
+        ggplot2::aes(x = gtSigName, y = value))
+      ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+        ggplot2::ggtitle(label = paste0("Cosine similarity to signature ",gtSigName),
+                         subtitle = paste0("Considers all extracted signatures resembling ", gtSigName))
+      ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+        ggplot2::geom_boxplot() +
+        ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
+        ## Restrict the decimal numbers of values of indexes to be 3
+        ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
     }
 
+    ## Print high-resolution extraction indexes into one png file
+    ## Only include extraction index plots
+    ## in tempPlotList.
+    if(FALSE){
+      tempPlotList <- list()
+      for(index in indexes){
+        tempPlotList[[index]] <- ggplotList[[index]]
+      }
+      suppressMessages(
+        ggplot2::ggsave(
+          filename = paste0(tool.dir,"/boxplot.extraction.png"),
+          plot = ggpubr::ggarrange(plotlist = tempPlotList),
+          device = "png",
+          dpi = 1000
+        )
+      )
+    }
+
+    ## Print extraction indexes into one pdf file
+    grDevices::pdf(paste0(tool.dir,"/boxplot.extraction.indexes.pdf"), pointsize = 1)
+    for (index in indexes) print(ggplotList[[index]])
+    grDevices::dev.off()
+
+
+    ## Print high-resolution extraction indexes into one png file
+    ## Only include one-signature cosine similarity plots
+    ## in tempPlotList.
+    if(FALSE){
+      tempPlotList <- list()
+      for(gtSigName in gtSigNames){
+        tempPlotList[[gtSigName]] <- ggplotList[[gtSigName]]
+      }
+      suppressMessages(
+        ggplot2::ggsave(
+          filename = paste0(tool.dir,"/boxplot.onesig.cossim.png"),
+          plot = ggpubr::ggarrange(plotlist = tempPlotList),
+          device = "png",
+          dpi = 1000
+        )
+      )
+    }
+
+    ## Print extraction indexes into one pdf file
+    grDevices::pdf(paste0(tool.dir,"/boxplot.onesig.cossim.pdf"), pointsize = 1)
+    for (gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
     grDevices::dev.off()
 
 
     ## Indexes for exposure attribution in multiple runs
-    ManhattanDist <- matrix(nrow = length(gtSigsNames), ncol = length(run.names))
-    rownames(ManhattanDist) <- gtSigsNames
+    ManhattanDist <- matrix(nrow = length(gtSigNames), ncol = length(run.names))
+    rownames(ManhattanDist) <- gtSigNames
     colnames(ManhattanDist) <- run.names
     for(runName in run.names){
       runDir <- paste0(tool.dir,"/",runName)
       summaryDir <- paste0(runDir,"/summary")
       exposureDiffFile <- paste0(summaryDir,"/exposureDiff.RDa")
       load(file = exposureDiffFile)
-      ManhattanDist[gtSigsNames,runName] <- exposureDiff[gtSigsNames,"Manhattan.distance"]
+      ManhattanDist[gtSigNames,runName] <- exposureDiff[gtSigNames,"Manhattan.distance"]
     }
     multiRun$ManhattanDist <- ManhattanDist
 
     ## Calculate mean and SD for indexes of exposure attribution
-    meanSDMD <- matrix(nrow = length(gtSigsNames), ncol = 2)
-    rownames(meanSDMD) <- gtSigsNames
+    meanSDMD <- matrix(nrow = length(gtSigNames), ncol = 2)
+    rownames(meanSDMD) <- gtSigNames
     colnames(meanSDMD) <- c("mean","stdev")
-    for(sig in gtSigsNames){
-      meanSDMD[sig,"mean"] <- mean(ManhattanDist[sig,])
-      meanSDMD[sig,"stdev"] <- stats::sd(ManhattanDist[sig,])
+    for(gtSigName in gtSigNames){
+      meanSDMD[gtSigName,"mean"] <- mean(ManhattanDist[gtSigName,])
+      meanSDMD[gtSigName,"stdev"] <- stats::sd(ManhattanDist[gtSigName,])
     }
-    rownames(meanSDMD) <- paste0(rownames(meanSDMD),".Manhattan.Dist")
     multiRun$meanSDMD <- meanSDMD
 
-    ## Calculate fivenums for exposure attribution
-    multiRun$fivenumMD <- matrix(nrow = length(gtSigsNames), ncol = 5)
-    rownames(multiRun$fivenumMD) <- gtSigsNames
+    ## Calculate fivenums for exposure attribution Manhattan Distance
+    multiRun$fivenumMD <- matrix(nrow = length(gtSigNames), ncol = 5)
+    rownames(multiRun$fivenumMD) <- gtSigNames
     colnames(multiRun$fivenumMD) <- c("min","lower-hinge","median","upperhinge","max")
-    for(sig in gtSigsNames){
-      multiRun$fivenumMD[sig,] <- stats::fivenum(ManhattanDist[sig,])
+    for(gtSigName in gtSigNames){
+      multiRun$fivenumMD[gtSigName,] <- stats::fivenum(ManhattanDist[gtSigName,])
     }
 
-    ## Plot boxplot for exposure attribution
-    grDevices::pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"))
-    for(sig in gtSigsNames){
-      ggplotObj <- ggplot2::ggplot(
-        data.frame(value = ManhattanDist[sig,],
-                   sigName = sig),
-        ggplot2::aes(x = sigName, y = value))
-      ggplotObj <- ggplotObj +
-        ggplot2::ggtitle(paste0("L1-difference of exposure of signature ",sig))
-      ggplotObj <- ggplotObj +
-        ggplot2::geom_boxplot(
-          notch = FALSE,
-          position = ggplot2::position_dodge(0.9))
-      print(ggplotObj)
+    ## Plot boxplot + beeswarm plot for exposure attribution
+    ggplotList <- list()
+    for(gtSigName in gtSigNames){
+      ggplotList[[gtSigName]] <- ggplot2::ggplot(
+        data.frame(value = ManhattanDist[gtSigName,],
+                   gtSigName = gtSigName),
+        ggplot2::aes(x = gtSigName, y = value))
+      ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+        ggplot2::ggtitle(paste0("L1-difference of exposure of signature ",gtSigName))
+      ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+        ggplot2::geom_boxplot() +
+        ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
+        ## Restrict the decimal numbers of values of indexes to be 3
+        ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
     }
+
+
+    ## Print high-resolution extraction indexes into one single png file
+    if(FALSE){
+      tempPlotList <- list()
+      for(gtSigName in gtSigNames) {
+        tempPlotList[[gtSigName]] <- ggplotList[[gtSigName]]
+      }
+
+      suppressMessages(
+        ggplot2::ggsave(
+          filename = paste0(tool.dir,"/boxplot.Manhattan.Dist.png"),
+          plot = ggpubr::ggarrange(plotlist = tempPlotList),
+          device = "png",
+          dpi = 1000
+        )
+      )
+    }
+
+    ## Print extraction indexes into one pdf file
+    grDevices::pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"), pointsize = 1)
+    for(gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
     grDevices::dev.off()
+
+
 
     ## Save data and results
     save(multiRun,file = paste0(tool.dir,"/multiRun.RDa"))
@@ -477,56 +559,110 @@ SummarizeMultiToolsOneDataset <- function(
   combMeanSDMD <- NULL
 
   for(toolNumber in 1:length(toolNames)){
-
     toolName <- toolNames[toolNumber]
     toolDirName <- tool.dirnames[toolNumber]
     toolPath <- paste0(third.level.dir,"/",toolDirName)
     load(paste0(toolPath,"/multiRun.RDa"))
 
     ## Combine multi-runs and multi-tools for each index
-    indexes <- c("cosSim","falseNeg","falsePos",
-                 "truePos","TPR","FDR")
-    for(index in indexes){
-      tmp <- data.frame(seed = names(multiRun[[index]]),
-                        index = index,
-                        value = multiRun[[index]],
-                        toolName = toolName,
-                        datasetName = datasetName,
-                        datasetGroups = datasetGroups,
-                        datasetSubGroups = datasetSubGroups,
-                        stringsAsFactors = FALSE)
-
-      rownames(tmp) <- NULL
-
-      ## Create a data.frame for each index,
-      ## and summarize multi-Run, multiDataset values
-      ## for each index.
-      if(is.null(multiTools[[index]])){
-        multiTools[[index]] <- data.frame()
+    {
+      indexes <- c("averCosSim","falseNeg","falsePos",
+                   "truePos","TPR","FDR")
+      for(index in indexes){
+        tmp <- data.frame(seed = names(multiRun[[index]]),
+                          index = index,
+                          value = multiRun[[index]],
+                          toolName = toolName,
+                          datasetName = datasetName,
+                          datasetGroups = datasetGroups,
+                          datasetSubGroups = datasetSubGroups,
+                          stringsAsFactors = FALSE)
+        rownames(tmp) <- NULL
+        ## Create a data.frame for each index,
+        ## and summarize multi-Run, multiDataset values
+        ## for each index.
+        if(is.null(multiTools[[index]])){
+          multiTools[[index]] <- data.frame()
+        }
+        multiTools[[index]] <- rbind(multiTools[[index]],tmp)
       }
-      multiTools[[index]] <- rbind(multiTools[[index]],tmp)
+    }
+
+    ## Combine multi-runs and multi-tools for
+    ## one-signature cosine similarity.
+    {
+      gtSigNames <- rownames(multiRun$ManhattanDist)
+      multiTools$gtSigNames <- gtSigNames
+      if(is.null(multiTools$cosSim)) multiTools$cosSim <- list()
+
+      for(gtSigName in gtSigNames){
+        tmp <- data.frame(seed = names(multiRun$cosSim[[gtSigName]]),
+                          gtSigName = gtSigName,
+                          value = multiRun$cosSim[[gtSigName]],
+                          toolName = toolName,
+                          datasetName = datasetName,
+                          datasetGroups = datasetGroups,
+                          datasetSubGroups = datasetSubGroups,
+                          stringsAsFactors = FALSE)
+        rownames(tmp) <- NULL
+        ## Create a data.frame for each ground-truth signature,
+        ## and summarize multi-Run, multiDataset values
+        ## for each ground-truth signature.
+        if(is.null(multiTools$cosSim[[gtSigName]])){
+          multiTools$cosSim[[gtSigName]] <- data.frame()
+        }
+        multiTools$cosSim[[gtSigName]] <- rbind(multiTools$cosSim[[gtSigName]],tmp)
+      }
     }
 
 
+    ## Combine multi-runs and multi-tools for Manhattan
+    ## distance of each ground-truth signature
+    {
+      if(is.null(multiTools$ManhattanDist)) multiTools$ManhattanDist <- list()
+      for(gtSigName in gtSigNames){
+        tmp <- data.frame(seed = colnames(multiRun$ManhattanDist),
+                          gtSigName = gtSigName,
+                          value = multiRun$ManhattanDist[gtSigName,],
+                          toolName = toolName,
+                          datasetName = datasetName,
+                          datasetGroups = datasetGroups,
+                          datasetSubGroups = datasetSubGroups,
+                          stringsAsFactors = FALSE)
+        rownames(tmp) <- NULL
+        ## Create a data.frame for each ground-truth signature,
+        ## and summarize multi-Run, multiDataset values
+        ## for each ground-truth signature.
+        if(is.null(multiTools$ManhattanDist[[gtSigName]])){
+          multiTools$ManhattanDist[[gtSigName]] <- data.frame()
+        }
+        multiTools$ManhattanDist[[gtSigName]] <- rbind(multiTools$ManhattanDist[[gtSigName]],tmp)
+      }
+    }
+
     ## meanSDMD contains mean and standard deviation
     ## for each extraction index.
-    meanSD <- multiRun$meanSD
-    colnames(meanSD) <- paste0(toolDirName,".", colnames(meanSD))
-    if(is.null(meanSD)){
-      combMeanSD <- meanSD
-    } else{
-      combMeanSD <- cbind(combMeanSD,meanSD)
+    {
+      meanSD <- multiRun$meanSD
+      colnames(meanSD) <- paste0(toolDirName,".", colnames(meanSD))
+      if(is.null(meanSD)){
+        combMeanSD <- meanSD
+      } else{
+        combMeanSD <- cbind(combMeanSD,meanSD)
+      }
     }
 
     ## meanSDMD contains mean and standard deviation
     ## for Manhattan Distance between ground-truth exposures
     ## and attributed exposures for each ground-truth signature
-    meanSDMD <- multiRun$meanSDMD
-    colnames(meanSDMD) <- paste0(toolDirName,".", colnames(meanSDMD))
-    if(is.null(meanSDMD)){
-      combMeanSDMD <- meanSDMD
-    } else{
-      combMeanSDMD <- cbind(combMeanSDMD,meanSDMD)
+    {
+      meanSDMD <- multiRun$meanSDMD
+      colnames(meanSDMD) <- paste0(toolDirName,".", colnames(meanSDMD))
+      if(is.null(meanSDMD)){
+        combMeanSDMD <- meanSDMD
+      } else{
+        combMeanSDMD <- cbind(combMeanSDMD,meanSDMD)
+      }
     }
   }
 
@@ -571,7 +707,7 @@ SummarizeMultiToolsMultiDatasets <-
            second.third.level.dirname,
            out.dir,
            overwrite = FALSE){
-    indexes <- c("cosSim","falseNeg","falsePos",
+    indexes <- c("averCosSim","falseNeg","falsePos",
                  "truePos","TPR","FDR")
     indexNums <- length(indexes)
 
@@ -583,36 +719,40 @@ SummarizeMultiToolsMultiDatasets <-
     }
 
     ## Summarizing extraction results.
-    FinalExtr <- list()
-    toolNames <- character(0)
+    ## Showing individual values rather than
+    ## only showing mean and standard deviation of multiple runs
+    {
+      FinalExtr <- list()
+      toolNames <- character(0)
 
-    ## Combine extraction assessment onto 7 sheets:
-    for(datasetDir in dataset.dirs){
-      thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
-      load(paste0(thirdLevelDir,"/multiTools.RDa"))
+      ## Combine extraction assessment onto 7 sheets:
+      for(datasetDir in dataset.dirs){
+        thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
-      ## Find tool names
-      toolNames <- unique(multiTools[["cosSim"]][,"toolName"])
+        ## Find tool names
+        toolNames <- unique(multiTools[["averCosSim"]][,"toolName"])
 
-      if(length(FinalExtr) == 0){
-        for(index in indexes) {
-          FinalExtr[[index]] <- data.frame()
+        if(length(FinalExtr) == 0){
+          for(index in indexes) {
+            FinalExtr[[index]] <- data.frame()
+          }
+        }
+        current <- list()
+        for(index in indexes){
+          current[[index]] <- multiTools[[index]]
+          #rownames(current[[index]]) <- datasetDir
+          FinalExtr[[index]] <- rbind(FinalExtr[[index]],current[[index]])
         }
       }
-      current <- list()
       for(index in indexes){
-        current[[index]] <- multiTools$combMeanSD[index,,drop = F]
-        rownames(current[[index]]) <- datasetDir
-        FinalExtr[[index]] <- rbind(FinalExtr[[index]],current[[index]])
+        write.csv(FinalExtr[[index]],
+                  file = paste0(out.dir,"/",index,".csv"))
       }
-    }
-    for(summaryFileName in names(FinalExtr)){
-      write.csv(FinalExtr[[summaryFileName]],
-                file = paste0(out.dir,"/",summaryFileName,".csv"))
     }
 
     ## Plot general png and pdf for extraction summary
-    ## Plot a general boxplot for multiple indexes
+    ## Plot a general boxplot + beeswarm plot for multiple indexes
     ## in all runs and in all datasets.
     {
       plotDFList <- list()
@@ -620,21 +760,21 @@ SummarizeMultiToolsMultiDatasets <-
       ## For each index,
       ## Create a data.frame integrating results of
       ## all runs and for all datasets
-      indexes <- c("cosSim","falseNeg","falsePos",
+      indexes <- c("averCosSim","falseNeg","falsePos",
                    "truePos","TPR","FDR")
       indexNums <- length(indexes)
 
       for(index in indexes){
-        plotDFList[[indexes]] <- data.frame()
+        plotDFList[[index]] <- data.frame()
       }
 
-      ## For each dataset, combine the index values into plotDFList[[indexNum]]
+      ## For each dataset, combine the index values into plotDFList[[index]]
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
         load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
-        for(indexNum in seq(1,indexNums)){
-          plotDFList[[indexNum]] <- rbind(plotDFList[[indexNum]],multiTools[[indexNum]])
+        for(index in indexes){
+          plotDFList[[index]] <- rbind(plotDFList[[index]],multiTools[[index]])
         }
       }
 
@@ -651,25 +791,27 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList$general <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
-        ## Draw geom_boxplot
+        ## Draw geom_boxplot and geom_quasirandom
         ggplotList$general <- ggplotList$general +
-          ggplot2::geom_boxplot(
-            notch = FALSE,
-            position = ggplot2::position_dodge(0.9),
-            ggplot2::aes(fill = index))
+          ggplot2::geom_boxplot(ggplot2::aes(fill = index)) +
+          ggbeeswarm::geom_quasirandom(
+            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+          )
         ## Rotate the names of tools,
         ## and remove legends
         ggplotList$general <- ggplotList$general +
-          ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          ## Rotate the axis names 90 degrees
+          ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
                          legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
         ggplotList$general <- ggplotList$general +
           ggplot2::facet_wrap(ggplot2::vars(index),scales = "free")
-        ## Add title for general boxplot
+        ## Add title for general boxplot + beeswarm plot
         ggplotList$general <- ggplotList$general +
-          ggplot2::ggtitle(label = "Boxplot for multiple indexes and all runs.")
-        print(ggplotList$general)
+          ggplot2::ggtitle(label = "boxplot + beeswarm plot for multiple indexes and all runs.") +
+          ## Restrict the decimal numbers of values of indexes to be 3
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
       ## Plot a multi-facet ggplot,
       ## facets are separated by indexes and datasetGroups
@@ -679,16 +821,16 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList[[by]] <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
-        ## Draw geom_boxplot
+        ## Draw geom_boxplot and geom_quasirandom
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_boxplot(
-            notch = FALSE,
-            position = ggplot2::position_dodge(0.9),
-            ggplot2::aes(fill = index))
+          ggplot2::geom_boxplot(ggplot2::aes(fill = index)) +
+          ggbeeswarm::geom_quasirandom(
+            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+          )
         ## Rotate the names of tools,
         ## and remove legends
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
                          legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
@@ -696,50 +838,312 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::facet_grid(rows =  ggplot2::vars(index),
                               cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
                               scales = "free")
-        ## Add title for general boxplot
+        ## Add title for general boxplot + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
-            label = paste0("Boxplot separated by indexes and groups."))
+            label = paste0("boxplot + beeswarm plot separated by indexes and groups.")) +
+          ## Restrict the decimal numbers of values of indexes to be 3
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
-
+      ## Plot boxplot + beeswarm plots in png format
       for(by in names(ggplotList)){
-        grDevices::png(paste0(out.dir,"/boxplot.by.",by,".png"))
+        suppressMessages(
+          ggplot2::ggsave(filename = paste0(out.dir,"/extraction.boxplot.by.",by,".png"),
+                          plot = ggplotList[[by]], device = "png", dpi = 1000)
+        )
+      }
+      ## Plot boxplot + beeswarm plots in pdf format
+      grDevices::pdf(paste0(out.dir,"/extraction.boxplots.pdf"), pointsize = 1)
+      for(by in names(ggplotList)){
         print(ggplotList[[by]])
-        grDevices::dev.off()
       }
+      grDevices::dev.off()
     }
 
 
-    ## Summarizing attribution results.
-    FinalAttr <- list()
-    ## Combine attribution assessment onto multiple sheets.
-    ## Each sheet shows Manhattan distance for one mutational signature.
-    for(datasetDir in dataset.dirs){
-      thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
-      load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
-      sigNums <- nrow(multiTools$combMeanSDMD)
-      if(length(FinalAttr) == 0){
-        for(sigNum in seq(1,sigNums)) {
-          FinalAttr[[sigNum]] <- data.frame()
+    ## Summarizing one-signature cosine similarity results.
+    {
+      FinalExtr$cosSim <- list()
+      ## Combine assessment onto multiple sheets.
+      ## Each sheet shows cosine similarity for one mutational signature.
+      for(datasetDir in dataset.dirs){
+        thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        load(paste0(thirdLevelDir,"/multiTools.RDa"))
+
+        gtSigNames <- rownames(multiTools$combMeanSDMD)
+        sigNums <- length(gtSigNames)
+
+        if(length(FinalExtr$cosSim) == 0){
+          for(gtSigName in gtSigNames) {
+            FinalExtr$cosSim[[gtSigName]] <- data.frame()
+          }
         }
-        names(FinalAttr) <- rownames(multiTools$combMeanSDMD)
+
+        ## Combine one-signature cosine similarity
+        current <- list()
+        for(gtSigName in gtSigNames){
+          current[[gtSigName]] <- multiTools$cosSim[[gtSigName]]
+          FinalExtr$cosSim[[gtSigName]] <- rbind(FinalExtr$cosSim[[gtSigName]],current[[gtSigName]])
+        }
       }
-      current <- list()
-      for(sigNum in seq(1,sigNums)){
-        current[[sigNum]] <- multiTools$combMeanSDMD[sigNum,,drop = F]
-        rownames(current[[sigNum]]) <- datasetDir
-        FinalAttr[[sigNum]] <- rbind(FinalAttr[[sigNum]],current[[sigNum]])
+      for(gtSigName in gtSigNames){
+        write.csv(FinalExtr$cosSim[[gtSigName]],
+                  file = paste0(out.dir,"/onesig.cossim.",gtSigName,".csv"))
       }
     }
-    for(summaryFileName in names(FinalAttr)){
-      write.csv(FinalAttr[[summaryFileName]],
-                file = paste0(out.dir,"/",summaryFileName,".csv"))
+    ## Plot general png and pdf for one-signature cosine similarity summary
+    ## Plot a general boxplot + beeswarm plot for multiple signatures
+    ## in all runs and in all datasets.
+    {
+      plotDFList <- list()
+
+      ## For ground-truth signature,
+      ## Create a data.frame integrating results of
+      ## all runs and for all datasets
+      gtSigNames <- multiTools$gtSigNames
+      sigNums <- length(gtSigNames)
+
+      for(gtSigName in gtSigNames){
+        plotDFList[[gtSigName]] <- data.frame()
+      }
+
+      ## For each dataset, combine the gtSigName values into plotDFList[[gtSigName]]
+      for(datasetDir in dataset.dirs){
+        thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        load(paste0(thirdLevelDir,"/multiTools.RDa"))
+
+        for(gtSigName in gtSigNames){
+          plotDFList[[gtSigName]] <- rbind(plotDFList[[gtSigName]],multiTools$cosSim[[gtSigName]])
+        }
+      }
+
+      ## Combine all plotDFList[[gtSigName]] into plotDFList$Combined
+      plotDFList$combined <- data.frame()
+      for(gtSigName in gtSigNames){
+        plotDFList$combined <- rbind(plotDFList$combined,plotDFList[[gtSigName]])
+      }
+
+      ggplotList <- list()
+      ## Plot a multi-facet ggplot for all gtSigNames and all runs.
+      {
+        ## Generate a ggplot object based on plotDFList$combined
+        ggplotList$general <- ggplot2::ggplot(
+          plotDFList$combined,
+          ggplot2::aes(x = toolName, y = value))
+        ## Draw geom_boxplot and geom_quasirandom
+        ggplotList$general <- ggplotList$general +
+          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName)) +
+          ggbeeswarm::geom_quasirandom(
+            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+          )
+        ## Rotate the names of tools,
+        ## and remove legends
+        ggplotList$general <- ggplotList$general +
+          ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
+                         legend.position = "none")
+        ## Split the plot into multiple facets,
+        ## according to different gtSigNames
+        ggplotList$general <- ggplotList$general +
+          ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free")
+        ## Add title for general boxplot + beeswarm plot
+        ggplotList$general <- ggplotList$general +
+          ggplot2::ggtitle(label = "boxplot + beeswarm plot for one-signature cosine similarity of multiple signatures and all runs.") +
+          ## Restrict the decimal numbers of values of indexes to be 3
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+      }
+      ## Plot a multi-facet ggplot,
+      ## facets are separated by gtSigNames and datasetGroups
+      ## (in example, it refers to slope.)
+      for(by in c("datasetGroups","datasetSubGroups"))  {
+        ## Generate a ggplot object based on plotDFList$combined
+        ggplotList[[by]] <- ggplot2::ggplot(
+          plotDFList$combined,
+          ggplot2::aes(x = toolName, y = value))
+        ## Draw geom_boxplot and geom_quasirandom
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName)) +
+          ggbeeswarm::geom_quasirandom(
+            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+          )
+        ## Rotate the names of tools,
+        ## and remove legends
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
+                         legend.position = "none")
+        ## Split the plot into multiple facets,
+        ## according to different gtSigNames
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::facet_grid(rows =  ggplot2::vars(gtSigName),
+                              cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
+                              scales = "free")
+        ## Add title for general boxplot + beeswarm plot
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::ggtitle(
+            label = paste0("boxplot + beeswarm plot separated by gtSigNames and groups.")) +
+          ## Restrict the decimal numbers of values of indexes to be 3
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+      }
+      ## Plot boxplot + beeswarm plots in png format
+      for(by in names(ggplotList)){
+        suppressMessages(
+          ggplot2::ggsave(filename = paste0(out.dir,"/onesig.cossim.boxplot.by.",by,".png"),
+                          plot = ggplotList[[by]], device = "png", dpi = 1000)
+        )
+      }
+      ## Plot boxplot + beeswarm plots in pdf format
+      grDevices::pdf(paste0(out.dir,"/onesig.cossim.boxplots.pdf"), pointsize = 1)
+      for(by in names(ggplotList)){
+        print(ggplotList[[by]])
+      }
+      grDevices::dev.off()
     }
 
 
-    invisible(list(FinalExtr = FinalExtr,
-                   FinalAttr = FinalAttr))
+    ## Summarizing attribution Manhattan Distance results.
+    {
+      FinalAttr <- list()
+      ## Combine attribution assessment onto multiple sheets.
+      ## Each sheet shows Manhattan distance for one mutational signature.
+      for(datasetDir in dataset.dirs){
+        thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        load(paste0(thirdLevelDir,"/multiTools.RDa"))
+
+        gtSigNames <- rownames(multiTools$combMeanSDMD)
+        sigNums <- length(gtSigNames)
+
+        if(length(FinalAttr) == 0){
+          for(gtSigName in gtSigNames) {
+            FinalAttr[[gtSigName]] <- data.frame()
+          }
+        }
+
+        ## Combine Manhattan Distance
+        current <- list()
+        for(gtSigName in gtSigNames){
+          current[[gtSigName]] <- multiTools$combMeanSDMD[gtSigName,,drop = F]
+          FinalAttr[[gtSigName]] <- rbind(FinalAttr[[gtSigName]],current[[gtSigName]])
+        }
+      }
+      for(gtSigName in gtSigNames){
+        write.csv(FinalAttr[[gtSigName]],
+                  file = paste0(out.dir,"/ManhattanDist.",gtSigName,".csv"))
+      }
+    }
+    ## Plot general png and pdf for attribution Manhattan Distance summary
+    ## Plot a general boxplot + beeswarm plot for multiple signatures
+    ## in all runs and in all datasets.
+    {
+      plotDFList <- list()
+
+      ## For ground-truth signature,
+      ## Create a data.frame integrating results of
+      ## all runs and for all datasets
+      gtSigNames <- multiTools$gtSigNames
+      sigNums <- length(gtSigNames)
+
+      for(gtSigName in gtSigNames){
+        plotDFList[[gtSigName]] <- data.frame()
+      }
+
+      ## For each dataset, combine the gtSigName values into plotDFList[[gtSigName]]
+      for(datasetDir in dataset.dirs){
+        thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        load(paste0(thirdLevelDir,"/multiTools.RDa"))
+
+        for(gtSigName in gtSigNames){
+          plotDFList[[gtSigName]] <- rbind(plotDFList[[gtSigName]],multiTools$ManhattanDist[[gtSigName]])
+        }
+      }
+
+      ## Combine all plotDFList[[gtSigName]] into plotDFList$Combined
+      plotDFList$combined <- data.frame()
+      for(gtSigName in gtSigNames){
+        plotDFList$combined <- rbind(plotDFList$combined,plotDFList[[gtSigName]])
+      }
+
+      ggplotList <- list()
+      ## Plot a multi-facet ggplot for all gtSigNames and all runs.
+      {
+        ## Generate a ggplot object based on plotDFList$combined
+        ggplotList$general <- ggplot2::ggplot(
+          plotDFList$combined,
+          ggplot2::aes(x = toolName, y = value))
+        ## Draw geom_boxplot and geom_quasirandom
+        ggplotList$general <- ggplotList$general +
+          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName)) +
+          ggbeeswarm::geom_quasirandom(
+            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+          )
+        ## Rotate the names of tools,
+        ## and remove legends
+        ggplotList$general <- ggplotList$general +
+          ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
+                         legend.position = "none")
+        ## Split the plot into multiple facets,
+        ## according to different gtSigNames
+        ggplotList$general <- ggplotList$general +
+          ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free")
+        ## Add title for general boxplot + beeswarm plot
+        ggplotList$general <- ggplotList$general +
+          ggplot2::ggtitle(label = "boxplot + beeswarm plot for Manhattan distance of multiple signatures and all runs.") +
+          ## Restrict the decimal numbers of values of indexes to be 3
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+      }
+      ## Plot a multi-facet ggplot,
+      ## facets are separated by gtSigNames and datasetGroups
+      ## (in example, it refers to slope.)
+      for(by in c("datasetGroups","datasetSubGroups"))  {
+        ## Generate a ggplot object based on plotDFList$combined
+        ggplotList[[by]] <- ggplot2::ggplot(
+          plotDFList$combined,
+          ggplot2::aes(x = toolName, y = value))
+        ## Draw geom_boxplot and geom_quasirandom
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName)) +
+          ggbeeswarm::geom_quasirandom(
+            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+          )
+        ## Rotate the names of tools,
+        ## and remove legends
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
+                         legend.position = "none")
+        ## Split the plot into multiple facets,
+        ## according to different gtSigNames
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::facet_grid(rows =  ggplot2::vars(gtSigName),
+                              cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
+                              scales = "free")
+        ## Add title for general boxplot + beeswarm plot
+        ggplotList[[by]] <- ggplotList[[by]] +
+          ggplot2::ggtitle(
+            label = paste0("boxplot + beeswarm plot separated by gtSigNames and groups.")) +
+          ## Restrict the decimal numbers of values of indexes to be 3
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+      }
+      ## Plot boxplot + beeswarm plots in png format
+      for(by in names(ggplotList)){
+        suppressMessages(
+          ggplot2::ggsave(filename = paste0(out.dir,"/Manhattan.Dist.boxplot.by.",by,".png"),
+                          plot = ggplotList[[by]], device = "png", dpi = 1000)
+        )
+      }
+      ## Plot boxplot + beeswarm plots in pdf format
+      grDevices::pdf(paste0(out.dir,"/Manhattan.Dist.boxplots.pdf"), pointsize = 1)
+      for(by in names(ggplotList)){
+        print(ggplotList[[by]])
+      }
+      grDevices::dev.off()
+    }
+
+    FinalSummary <- list()
+    FinalSummary$FinalExtr <- FinalExtr
+    FinalSummary$FinalAttr <- FinalAttr
+
+    save(FinalSummary,file = paste0(out.dir,"/FinalSummary.RDa"))
+
+    invisible(FinalSummary)
   }
 
 
@@ -755,16 +1159,25 @@ SummarizeMultiToolsMultiDatasets <-
 #'
 #' @param datasetGroups Numeric or character vector specifying the group
 #' each dataset belong to.
-#' E.g. For SBS1-SBS5 correlated datasets, we can consider slope as the group:
-#' c("slope=0.1","slope=0.5","slope=1","slope=2","slope=5","slope=10")
+#' E.g. For SBS1-SBS5 correlated datasets, we can consider slope
+#' (SBS1:SBS5 count ratio) as the group:
+#' \code{c(0.1,0.5,1,2,5,10)}
 #' Default: "Default"
+#'
+#' @param datasetGroupLabel Meaning or label of all datasetGroups.
+#' E.g. For SBS1-SBS5 correlated datasets, we can consider \code{"SBS1:SBS5 mutation count ratio"}
+#' as the label of the \code{datasetGroup} slope.
 #'
 #' @param datasetSubGroups Numeric or character vector differentiating
 #' datasets within each group.
 #' E.g. For SBS1-SBS5 correlated datasets, we can consider Pearson's R^2
 #' as the subgroup:
-#' c("Rsq=0.1","Rsq=0.2","Rsq=0.3","Rsq=0.6")
+#' c(0.1,0.2,0.3,0.6)
 #' Default: Names of datasets, which are \code{basename(dataset.dirs)}
+#'
+#' @param datasetSubGroupLabel Meaning or label of all datasetSubGroups.
+#' E.g. For SBS1-SBS5 correlated datasets, we can consider \code{"Pearson's R squared"}
+#' as the label of the \code{datasetSubGroup} Pearson's R^2.
 #'
 #' @param tool.dirname Name of the second.level.dir (e.g. "sp.sp"),
 #' third.level.dir (e.g. "ExtrAttr") and tool.dir
@@ -785,7 +1198,9 @@ SummarizeMultiToolsMultiDatasets <-
 SummarizeOneToolMultiDatasets <-
   function(dataset.dirs,
            datasetGroups = NULL,
+           datasetGroupLabel,
            datasetSubGroups = NULL,
+           datasetSubGroupLabel,
            tool.dirname,
            out.dir,
            overwrite = FALSE){
@@ -800,147 +1215,440 @@ SummarizeOneToolMultiDatasets <-
     ## Wrap all datasets into one group, if datasetGroups is NULL.
     ## Re-order the dataset.group for better visualization of
     ## ggplot facets.
-    datasetNames <- basename(dataset.dirs)
+    {
+      datasetNames <- basename(dataset.dirs)
 
-    if(is.null(datasetGroups))
-      datasetGroups <- rep("Default",length(dataset.dirs))
-    datasetGroups <- factor(
-      datasetGroups,
-      levels = gtools::mixedsort(unique(datasetGroups)))
-    names(datasetGroups) <- datasetNames
+      if(is.null(datasetGroups))
+        datasetGroups <- rep("Default",length(dataset.dirs))
+      datasetGroups <- factor(
+        datasetGroups,
+        levels = gtools::mixedsort(unique(datasetGroups)))
+      names(datasetGroups) <- datasetNames
 
-    if(is.null(datasetSubGroups))
-      datasetSubGroups <- datasetNames
-    datasetSubGroups <- factor(
-      datasetSubGroups,
-      levels = gtools::mixedsort(unique(datasetSubGroups)))
-    names(datasetSubGroups) <- datasetNames
+      if(is.null(datasetSubGroups))
+        datasetSubGroups <- datasetNames
+      datasetSubGroups <- factor(
+        datasetSubGroups,
+        levels = gtools::mixedsort(unique(datasetSubGroups)))
+      names(datasetSubGroups) <- datasetNames
+    }
 
 
     ## Summarizing extraction results for one software package.
-    OneToolSummary <- list()
+    {
+      ## Construct a summary list for storage
+      OneToolSummary <- list()
 
-    ## Combine extraction assessment for multiple datasets
-    ## in multiple runs onto 1 sheet:
-    OneToolSummary[["extraction"]] <- data.frame()
+      ## Combine extraction assessment for multiple datasets
+      ## in multiple runs onto 1 sheet:
+      OneToolSummary[["extraction"]] <- data.frame()
 
-    for(datasetDir in dataset.dirs){
-      thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
-      toolName <- strsplit(basename(tool.dirname),".results")[[1]]
-      load(paste0(thirdLevelDir,"/multiRun.RDa"))
-      indexes <- rownames(multiRun$meanSD)
-      indexNums <- length(indexes)
-      datasetName <- basename(datasetDir)
+      for(datasetDir in dataset.dirs){
+        thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
+        toolName <- strsplit(basename(tool.dirname),".results")[[1]]
+        load(paste0(thirdLevelDir,"/multiRun.RDa"))
+        indexes <- rownames(multiRun$meanSD)
+        indexNums <- length(indexes)
+        datasetName <- basename(datasetDir)
+
+        for(index in indexes){
+          tmp <- data.frame(seed = names(multiRun[[index]]),
+                            index = index,
+                            value = multiRun[[index]],
+                            toolName = toolName,
+                            datasetName = datasetName,
+                            datasetGroups = datasetGroups[datasetName],
+                            datasetSubGroups = datasetSubGroups[datasetName],
+                            stringsAsFactors = FALSE)
+
+          rownames(tmp) <- NULL
+
+          ## Create a data.frame for each index,
+          ## and summarize multi-Run, multiDataset values
+          ## for each index.
+          if(is.null(OneToolSummary[[index]])){
+            OneToolSummary[[index]] <- data.frame()
+          }
+          OneToolSummary[[index]] <- rbind(OneToolSummary[[index]],tmp)
+        }
+      }
 
       for(index in indexes){
-        tmp <- data.frame(seed = names(multiRun[[index]]),
-                          index = index,
-                          value = multiRun[[index]],
-                          toolName = toolName,
-                          datasetName = datasetName,
-                          datasetGroups = datasetGroups[datasetName],
-                          datasetSubGroups = datasetSubGroups[datasetName],
+        tmp <- data.frame(OneToolSummary[[index]],
                           stringsAsFactors = FALSE)
-
         rownames(tmp) <- NULL
 
-        ## Create a data.frame for each index,
-        ## and summarize multi-Run, multiDataset values
-        ## for each index.
-        if(is.null(OneToolSummary[[index]])){
-          OneToolSummary[[index]] <- data.frame()
+        if(nrow(OneToolSummary[["extraction"]]) == 0 |
+           ncol(OneToolSummary[["extraction"]]) == 0 |
+           is.null(dim(OneToolSummary[["extraction"]])) ) {
+          OneToolSummary[["extraction"]] <- tmp
+        } else {
+          OneToolSummary[["extraction"]] <-
+            rbind(OneToolSummary[["extraction"]],tmp)
         }
-        OneToolSummary[[index]] <- rbind(OneToolSummary[[index]],tmp)
       }
+
     }
+    ## Draw boxplot + beeswarm plot for extraction indexes
+    {
+      ## Designate titles and subtitles for each page
+      titles <- c("Average cosine similarity of SBS1 and SBS5",
+                  "False negatives",
+                  "False positives",
+                  "True positives",
+                  "True Positive Rate (sensitivity)",
+                  "False Discovery Rate (FDR)")
+      names(titles) <- indexes
+      subtitles <- c("","Number of ground-truth signatures not extracted",
+                     "Number of signatures extracted, but different from ground-truth signatures",
+                     "Number of ground-truth signatures extracted",
+                     "True Positives / (True Positives + False Negatives)",
+                     "False Positives / (True Positives + False Positives)")
+      names(subtitles) <- indexes
+      ylabels <- titles
 
-    for(index in indexes){
-      tmp <- data.frame(OneToolSummary[[index]],
-                        stringsAsFactors = FALSE)
-      rownames(tmp) <- NULL
 
-      if(nrow(OneToolSummary[["extraction"]]) == 0 |
-         ncol(OneToolSummary[["extraction"]]) == 0 |
-         is.null(dim(OneToolSummary[["extraction"]])) ) {
-        OneToolSummary[["extraction"]] <- tmp
-      } else {
-        OneToolSummary[["extraction"]] <-
-          rbind(OneToolSummary[["extraction"]],tmp)
+      ## Create a list to store ggplot2 boxplot + beeswarm plot objects
+      ggplotList <- list()
+      ## Plot a general boxplot + beeswarm plot for multiple indexes
+      if(FALSE){
+        ggplotList[["general"]] <- ggplot2::ggplot(
+          OneToolSummary[["extraction"]],
+          ggplot2::aes(x = toolName, y = value))
+        ggplotList[["general"]] <- ggplotList[["general"]] +
+          ## Draw boxplot
+          ggplot2::geom_boxplot(ggplot2::aes(fill = index)) +
+          ## Draw beeswarm plot
+          ggbeeswarm::geom_quasirandom(groupOnX = TRUE, ## Make repetitive points with the same Y to dodge on X axis
+                                       size = 0.3, ## Make dot size smaller
+          ) +
+          ggplot2::scale_fill_manual(
+            values = grDevices::topo.colors(length(indexes)))
+        ## Add title for general boxplot + beeswarm plot
+        ggplotList[["general"]] <- ggplotList[["general"]] +
+          ggplot2::ggtitle(label = "boxplot + beeswarm plot for multiple indexes and multiple datasets.")
+        ## Restrict the decimal numbers of values of indexes to be 3
+        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
+      ## Plot a value~datasetSubGroups beeswarm for each index.
+      for(index in indexes){
+        indexNum <- which(indexes == index)
+        ## ggplot2::ggplot() sets coordinates
+        ggplotList[[index]] <- ggplot2::ggplot(
+          OneToolSummary[[index]],
+          ggplot2::aes(x = datasetGroups, y = value))
+        ## Add facets
+        ggplotList[[index]] <- ggplotList[[index]] +
+          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroups))
+        ## Draw boxplots and beeswarm plots on multi-facets.
+        ggplotList[[index]] <- ggplotList[[index]] +
+          ## Draw boxplot
+          ggplot2::geom_boxplot() +
+          ## Draw beeswarm plot
+          ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
+                                       size = 0.3, ## Make dot size smaller
+                                       ggplot2::aes(color = datasetGroups)) +     ## Set groups for the filling functionalities to differentiate
+          ## Change filling color
+          ggplot2::scale_fill_brewer(palette = "Greys") +
+          ## Rotate the x labels for better visualization
+          ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1))
+        ## Change titles
+        ggplotList[[index]] <- ggplotList[[index]] +
+          ## Add title for value~datasetSubGroups beeswarm plot
+          ggplot2::ggtitle(label = titles[index],subtitle = subtitles[index]) +
+          ## Change title of legend to datasetGroupLabel
+          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupLabel))
+        ## Change labels
+        ggplotList[[index]] <- ggplotList[[index]] +
+          ## Change label of y axis into index info (Same as title)
+          ggplot2::ylab(ylabels[index]) +
+          ## Change label of x axis into datasetSubGroupLabel (label of datasetSubGroups)
+          ggplot2::xlab(paste0("Facets separated by ",datasetSubGroupLabel))
+        ## Restrict the decimal numbers of values of indexes to be 3
+        ggplotList[[index]] <- ggplotList[[index]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+      }
+
+
+      ## Output indexes in a png file
+      for(index in indexes){
+        suppressMessages(
+          ggplot2::ggsave(paste0(out.dir,"/boxplot.onetool.extraction.",index,".png"),
+                          plot = ggplotList[[index]], device = "png", dpi = 1000)
+        )
+      }
+
+      ## Output multiple extraction indexes in a pdf file
+      grDevices::pdf(paste0(out.dir,"/boxplot.onetool.extraction.indexes.pdf"), pointsize = 1)
+      for(index in indexes) print(ggplotList[[index]])
+      grDevices::dev.off()
     }
 
 
-    ## Draw boxplot for extraction indexes
-    ## Designate titles and subtitles for each page
-    titles <- c("Average cosine similarity",
-                "False negatives",
-                "False positives",
-                "True positives",
-                "True Positive Rate (sensitivity)",
-                "False Discovery Rate (FDR)")
-    names(titles) <- indexes
-    subtitles <- c("","Number of ground-truth signatures not extracted",
-                   "Number of signatures extracted, but different from ground-truth signatures",
-                   "Number of ground-truth signatures extracted",
-                   "True Positives / (True Positives + False Negatives)",
-                   "False Positives / (True Positives + False Positives)")
-    names(subtitles) <- indexes
+    ## Summarize one-signature cosine similarity for one tool.
+    {
+      OneToolSummary$cosSim <- list()
 
+      for(datasetDir in dataset.dirs){
+        thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
+        toolName <- strsplit(basename(tool.dirname),".results")[[1]]
+        load(paste0(thirdLevelDir,"/multiRun.RDa"))
+        gtSigNames <- names(multiRun$cosSim)
+        sigNums <- length(gtSigNames)
+        datasetName <- basename(datasetDir)
 
-    ## Create a list to store ggplot2 boxplot objects
-    ggplotList <- list()
-    ## Plot a general boxplot for multiple indexes
-    if(FALSE){
-      ggplotList[["general"]] <- ggplot2::ggplot(
-        OneToolSummary[["extraction"]],
-        ggplot2::aes(x = toolName, y = value))
-      ggplotList[["general"]] <- ggplotList[["general"]] +
-        ggplot2::geom_boxplot(
-          notch = FALSE,
-          position = ggplot2::position_dodge(0.9),
-          ggplot2::aes(fill = index)) +
-        ggplot2::scale_fill_manual(
-          values = grDevices::topo.colors(length(indexes)))
-      ## Add title for general boxplot
-      ggplotList[["general"]] <- ggplotList[["general"]] +
-        ggplot2::ggtitle(label = "Boxplot for multiple indexes and multiple datasets.")
+        for(gtSigName in gtSigNames){
+          tmp <- data.frame(seed = names(multiRun$cosSim[[gtSigName]]),
+                            gtSigName = gtSigName,
+                            value = multiRun$cosSim[[gtSigName]],
+                            toolName = toolName,
+                            datasetName = datasetName,
+                            datasetGroups = datasetGroups[datasetName],
+                            datasetSubGroups = datasetSubGroups[datasetName],
+                            stringsAsFactors = FALSE)
+          rownames(tmp) <- NULL
+
+          ## Create a data.frame for each index,
+          ## and summarize multi-Run, multiDataset values
+          ## for each index.
+          if(is.null(OneToolSummary$cosSim[[gtSigName]])){
+            OneToolSummary$cosSim[[gtSigName]] <- data.frame()
+          }
+          OneToolSummary$cosSim[[gtSigName]] <- rbind(OneToolSummary$cosSim[[gtSigName]],tmp)
+        }
+      }
+
+      ## Combine multiple ground-truth signature Manhattan-distance data.frame
+      ## into OneToolSummary$cosSim$combined
+      OneToolSummary$cosSim$combined <- data.frame()
+      for(gtSigName in gtSigNames){
+        tmp <- data.frame(OneToolSummary$cosSim[[gtSigName]],
+                          stringsAsFactors = FALSE)
+        rownames(tmp) <- NULL
+
+        if(nrow(OneToolSummary$cosSim$combined) == 0 |
+           ncol(OneToolSummary$cosSim$combined) == 0 |
+           is.null(dim(OneToolSummary$cosSim$combined)) ) {
+          OneToolSummary$cosSim$combined <- tmp
+        } else {
+          OneToolSummary$cosSim$combined <-
+            rbind(OneToolSummary$cosSim$combined,tmp)
+        }
+      }
+
     }
-    ## Plot a value~datasetSubGroups boxplot for each index.
-    for(index in indexes){
-      indexNum <- which(indexes == index)
-      ggplotList[[index]] <- ggplot2::ggplot(
-        OneToolSummary[[index]],
-        ggplot2::aes(x = datasetSubGroups, y = value))
-      ggplotList[[index]] <- ggplotList[[index]] +
-        ggplot2::geom_boxplot(
-          notch = FALSE,
-          position = ggplot2::position_dodge(0.9),
-          ggplot2::aes(fill = index)) +
-        ggplot2::scale_fill_manual(
-          values = grDevices::topo.colors(length(indexes))[indexNum]) +
-        ggplot2::theme(
-          ## Rotate the text for better visualization
-          axis.text.x = ggplot2::element_text(angle = 90, hjust = 1),
-          ## Remove legend
-          legend.position = "none") +
-        ggplot2::facet_wrap(~datasetGroups)
-      ## Add title for value~datasetSubGroups boxplot
-      ggplotList[[index]] <- ggplotList[[index]] +
-        ggplot2::ggtitle(label = titles[index],subtitle = subtitles[index])
+    ## Plot one-signature cosine similarity boxplot + beeswarm plot for one tool
+    { ## debug
+      ## Create a list to store ggplot2 boxplot + beeswarm plot objects
+      ggplotList <- list()
+      ## Plot a general boxplot + beeswarm plot for multiple indexes
+      if(FALSE){
+        ggplotList[["general"]] <- ggplot2::ggplot(
+          OneToolSummary$cosSim$combined,
+          ggplot2::aes(x = toolName, y = value))
+        ## Draw boxplot + beeswarm plot
+        ggplotList[["general"]] <- ggplotList[["general"]] +
+          ## Draw boxplot
+          ggplot2::geom_boxplot(ggplot2::aes(fill = index)) +
+          ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
+                                       size = 0.3, ## Make dot size smaller
+                                       #position = ggplot2::position_dodge(0.9),
+          ) +
+          ## Change filling colors
+          ggplot2::scale_fill_manual(
+            values = grDevices::topo.colors(length(indexes)))
+        ## Add title for general boxplot + beeswarm plot
+        ggplotList[["general"]] <- ggplotList[["general"]] +
+          ggplot2::ggtitle(label = "boxplot + beeswarm plot for one-signature cosine similarity on multiple datasets.")
+        ## Restrict the decimal numbers of values of indexes to be 3
+        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+      }
+      ## Plot a value~datasetSubGroups beeswarm plot for each signature.
+      for(gtSigName in gtSigNames){
+        sigNum <- which(gtSigNames == gtSigName)
+        ggplotList[[gtSigName]] <- ggplot2::ggplot(
+          OneToolSummary$cosSim[[gtSigName]],
+          ggplot2::aes(x = datasetGroups, y = value))
+        ## Add facets
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroups))
+        ## Draw beeswarm plots on multiple facets
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ## Draw boxplot
+          ggplot2::geom_boxplot() +
+          ## Draw beeswarm plot
+          ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
+                                       size = 0.3, ## Make dot size smaller
+                                       ggplot2::aes(color = datasetGroups)) +     ## Set groups for the filling functionalities to differentiate
+          ## Change filling color
+          ggplot2::scale_fill_brewer(palette = "Greys") +
+          ## Rotate the x labels for better visualization
+          ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1))
+        ## Add titles
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ## Add title for value~datasetSubGroups beeswarm plot
+          ggplot2::ggtitle(label = paste0("Cosine similarity between signature ",gtSigName),
+                           subtitle = paste0("and all extracted signatures resembling ",gtSigName)) +
+          ## Change title of legend to datasetGroupLabel
+          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupLabel))
+        ## Change labels
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ## Change label of y axis into gtSigName info (Same as title)
+          ggplot2::ylab(paste0("Manhattan distance of ",gtSigName," exposure")) +
+          ## Change label of x axis into datasetSubGroupLabel (label of datasetSubGroups)
+          ggplot2::xlab(paste0("Facets separated by ",datasetSubGroupLabel))
+        ## Restrict the decimal numbers of values of indexes to be 3
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+      }
 
-      print(ggplotList[[index]])
+
+      ## Output average cosine similarity in high resolution png file
+      for(gtSigName in gtSigNames){
+        suppressMessages(
+          ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onesig.cossim.",gtSigName,".png"),
+                          plot = ggplotList[[gtSigName]], device = "png", dpi = 1000)
+        )
+      }
+
+      ## Output multiple extraction indexes in a pdf file
+      grDevices::pdf(paste0(out.dir,"/boxplot.onesig.cossim.pdf"), pointsize = 1)
+      for(gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
+      grDevices::dev.off()
     }
 
 
-    ## Output average cosine similarity in a png file
-    grDevices::png(paste0(out.dir,"/boxplot.onetool.cosine.similarity.png"))
-    print(ggplotList[["cosSim"]])
-    grDevices::dev.off()
 
-    ## Output multiple extractionindexes in a pdf file
-    grDevices::pdf(paste0(out.dir,"/boxplot.onetool.extraction.indexes.pdf"))
-    for(index in indexes) print(ggplotList[[index]])
-    grDevices::dev.off()
+    ## Summarize attribution performance for one tool.
+    {
+      OneToolSummary$ManhattanDist <- list()
+
+      for(datasetDir in dataset.dirs){
+        thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
+        toolName <- strsplit(basename(tool.dirname),".results")[[1]]
+        load(paste0(thirdLevelDir,"/multiRun.RDa"))
+        gtSigNames <- rownames(multiRun$ManhattanDist)
+        sigNums <- length(gtSigNames)
+        datasetName <- basename(datasetDir)
+
+        for(gtSigName in gtSigNames){
+          tmp <- data.frame(seed = colnames(multiRun$ManhattanDist),
+                            gtSigName = gtSigName,
+                            value = multiRun$ManhattanDist[gtSigName,],
+                            toolName = toolName,
+                            datasetName = datasetName,
+                            datasetGroups = datasetGroups[datasetName],
+                            datasetSubGroups = datasetSubGroups[datasetName],
+                            stringsAsFactors = FALSE)
+          rownames(tmp) <- NULL
+
+          ## Create a data.frame for each index,
+          ## and summarize multi-Run, multiDataset values
+          ## for each index.
+          if(is.null(OneToolSummary$ManhattanDist[[gtSigName]])){
+            OneToolSummary$ManhattanDist[[gtSigName]] <- data.frame()
+          }
+          OneToolSummary$ManhattanDist[[gtSigName]] <- rbind(OneToolSummary$ManhattanDist[[gtSigName]],tmp)
+        }
+      }
+
+      ## Combine multiple ground-truth signature Manhattan-distance data.frame
+      ## into OneToolSummary$ManhattanDist$combined.
+      OneToolSummary$ManhattanDist$combined <- data.frame()
+      for(gtSigName in gtSigNames){
+        tmp <- data.frame(OneToolSummary$ManhattanDist[[gtSigName]],
+                          stringsAsFactors = FALSE)
+        rownames(tmp) <- NULL
+
+        if(nrow(OneToolSummary$ManhattanDist$combined) == 0 |
+           ncol(OneToolSummary$ManhattanDist$combined) == 0 |
+           is.null(dim(OneToolSummary$ManhattanDist$combined)) ) {
+          OneToolSummary$ManhattanDist$combined <- tmp
+        } else {
+          OneToolSummary$ManhattanDist$combined <-
+            rbind(OneToolSummary$ManhattanDist$combined,tmp)
+        }
+      }
+
+    }
+    ## Plot attribution performance boxplot + beeswarm plot for one tool
+    { ## debug
+      ## Create a list to store ggplot2 boxplot + beeswarm plot objects
+      ggplotList <- list()
+      ## Plot a general boxplot + beeswarm plot for multiple indexes
+      if(FALSE){
+        ggplotList[["general"]] <- ggplot2::ggplot(
+          OneToolSummary$ManhattanDist$combined,
+          ggplot2::aes(x = toolName, y = value))
+        ## Draw boxplot + beeswarm plot
+        ggplotList[["general"]] <- ggplotList[["general"]] +
+          ## Draw boxplot
+          ggplot2::geom_boxplot(ggplot2::aes(fill = index)) +
+          ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
+                                       size = 0.3, ## Make dot size smaller
+                                       #position = ggplot2::position_dodge(0.9),
+          ) +
+          ## Change filling colors
+          ggplot2::scale_fill_manual(
+            values = grDevices::topo.colors(length(indexes)))
+        ## Add title for general boxplot + beeswarm plot
+        ggplotList[["general"]] <- ggplotList[["general"]] +
+          ggplot2::ggtitle(label = "boxplot + beeswarm plot for multiple indexes and multiple datasets.")
+        ## Restrict the decimal numbers of values of indexes to be 3
+        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+      }
+      ## Plot a value~datasetSubGroups beeswarm plot for each signature.
+      for(gtSigName in gtSigNames){
+        sigNum <- which(gtSigNames == gtSigName)
+        ggplotList[[gtSigName]] <- ggplot2::ggplot(
+          OneToolSummary$ManhattanDist[[gtSigName]],
+          ggplot2::aes(x = datasetGroups, y = value))
+        ## Add facets
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroups))
+        ## Draw beeswarm plots on multiple facets
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ## Draw boxplot
+          ggplot2::geom_boxplot() +
+          ## Draw beeswarm plot
+          ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
+                                       size = 0.3, ## Make dot size smaller
+                                       ggplot2::aes(color = datasetGroups)) +     ## Set groups for the filling functionalities to differentiate
+          ## Change filling color
+          ggplot2::scale_fill_brewer(palette = "Greys") +
+          ## Rotate the x labels for better visualization
+          ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1))
+        ## Change titles
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ## Add title for value~datasetSubGroups beeswarm plot
+          ggplot2::ggtitle(label = paste0("Manhattan distance of ",gtSigName," exposure"),
+                           subtitle = "Between ground-truth exposure and attributed exposure") +
+          ## Change title of legend to datasetGroupLabel
+          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupLabel))
+        ## Change labels
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ## Change label of y axis into gtSigName info (Same as title)
+          ggplot2::ylab(paste0("Manhattan distance of ",gtSigName," exposure")) +
+          ## Change label of x axis into datasetSubGroupLabel (label of datasetSubGroups)
+          ggplot2::xlab(paste0("Facets separated by ",datasetSubGroupLabel))
+        ## Restrict the decimal numbers of values of indexes to be 3
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+      }
+
+
+      ## Output average cosine similarity in high resolution png file
+      for(gtSigName in gtSigNames){
+        suppressMessages(
+          ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onetool.",gtSigName,".Manhattan.dist.png"),
+                          plot = ggplotList[[gtSigName]], device = "png", dpi = 1000)
+        )
+      }
+
+      ## Output multiple extraction indexes in a pdf file
+      grDevices::pdf(paste0(out.dir,"/boxplot.onetool.Manhattan.dist.pdf"), pointsize = 1)
+      for(gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
+      grDevices::dev.off()
+    }
 
 
     ## Write Summary tables
@@ -950,5 +1658,6 @@ SummarizeOneToolMultiDatasets <-
                 quote = F, row.names = F)
     }
 
-    invisible(NULL)
+    save(OneToolSummary, file = paste0(out.dir,"/OneToolSummary.RDa"))
+    invisible(OneToolSummary)
   }

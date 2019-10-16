@@ -9,7 +9,7 @@
 #' @param exposure "Ground truth" exposures used generate the
 #'   synthetic data from which \code{ex.sigs} were extracted.
 #'
-#' @return A list with the elements \code{avg}, \code{match1},
+#' @return A list with the elements \code{averCosSim}, \code{match1},
 #' \code{match2} as for \code{SigSetSimilarity}, with \code{match1}
 #'  being matches for the the extracted signatures (\code{ex.sigs})
 #'  and \code{match2} being the
@@ -74,6 +74,26 @@ MatchSigsAndRelabel <-
 
     sim$ex.sigs <- ex.sigs.x
     sim$gt.sigs <- gt.sigs
+
+    ## Calculate cosine similarity between all extracted signatures,
+    ## and each of the ground-truth signatures.
+    # E.g. First calculate the cosine similarity between ground-truth SBS5 and all
+    # extracted signatures most similar to SBS5; then calculate the cosine similarity
+    # between SBS1 and all extracted signatures most similar to SBS1.
+    if(TRUE){ ## debug
+      sim$cosSim <- list()
+
+      gtSigNames <- rownames(sim$match2)
+      exSigNames <- rownames(sim$match1)
+
+      for(gtSigName in gtSigNames){
+        tmp <- sim$match1
+        values <- tmp[which(tmp[,1] == gtSigName),2]
+        ## Average cosine similarity of all extracted "gtSigName" signature
+        sim$cosSim[[gtSigName]] <- mean(values)
+      }
+    }
+
     invisible(sim)
   }
 
@@ -195,7 +215,6 @@ ReadAndAnalyzeExposures <-
   ## exposures of all extracted signatures which matches to
   ## this input signature.
   for (gtSigName in gtSigsNames) {
-
     matchedExtrSigIndex <- which(sigMatch$match1[,1] == gtSigName)
 
     if (length(matchedExtrSigIndex) > 0)
@@ -216,10 +235,10 @@ ReadAndAnalyzeExposures <-
       exposureDiff[gtSigName,3] <- exposureDiff[gtSigName,3] +
         abs(gtExposureOneTumor - attrExposureOneTumor)
     }
-
-      exposureDiff[gtSigName,4] <- exposureDiff[gtSigName,3] / sum(exposureDiff[,1])
-
   }
+
+  ## Only after the cycle, the sum(exposureDiff[,1]) has been fixed.
+  exposureDiff[,4] <- exposureDiff[,3] / sum(exposureDiff[,1])
 
   return(exposureDiff)
 }

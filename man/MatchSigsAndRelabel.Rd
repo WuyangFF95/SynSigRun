@@ -16,7 +16,7 @@ MatchSigsAndRelabel(ex.sigs, gt.sigs, exposure)
 synthetic data from which \code{ex.sigs} were extracted.}
 }
 \value{
-A list with the elements \code{avg}, \code{match1},
+A list with the elements \code{averCosSim}, \code{match1},
 \code{match2} as for \code{SigSetSimilarity}, with \code{match1}
  being matches for the the extracted signatures (\code{ex.sigs})
  and \code{match2} being the
