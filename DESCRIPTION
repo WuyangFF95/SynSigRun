@@ -20,6 +20,8 @@ Imports:
     utils, 
     graphics,
     grDevices,
+    ggplot2,
+    ggbeeswarm,
     gtools
 Depends: R (>= 3.5)
 RoxygenNote: 6.1.1
