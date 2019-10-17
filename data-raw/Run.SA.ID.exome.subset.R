@@ -8,9 +8,7 @@ num.runs                   <- 20 # 2 for debugging
 # signatureanalyzer.code.dir <- "SignatureAnalzyer.052418" # for debugging on Laptop
 signatureanalyzer.code.dir <- "/home/gmssgr/bin/SignatureAnalzyer.052418/" # for monster
 input.catalog              <- "sa.ID.exome.subset/pcawg-as-exome-ID.csv"
-read.catalog.function      <- ReadCatalog
 out.dir                    <- "sa.ID.exome.subset/"
-write.signature.function   <- WriteCatalog
 maxK                       <- 30
 test.only                  <- FALSE
 delete.tmp.files           <- TRUE
@@ -28,9 +26,7 @@ sa.ID.exome.subset.res <-
     num.runs                   = num.runs,
     signatureanalyzer.code.dir = signatureanalyzer.code.dir,
     input.catalog              = input.catalog,
-    read.catalog.function      = read.catalog.function,
     out.dir                    = out.dir,
-    write.signature.function   = write.signature.function,
     maxK                       = maxK,
     tol                        = 1e-7,
     test.only                  = test.only,

@@ -6,7 +6,7 @@ library(SynSigEval)
 
 
 ## Specify slopes and Rsqs for the datasets
-slopes <- c(0.1,0.5,1)
+slopes <- c(0.1,0.5,1,2,10)
 Rsqs <- c(0.1,0.2,0.3,0.6)
 datasetNames <- c()
 for(slope in slopes)
@@ -21,7 +21,7 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 
 
 
-## Run Extraction and attribution packages
+## Run R-based Extraction and attribution packages.
 ## sigproextractor (Python package) and MultiModalMuSig (Julia package)
 ## needs to be run with external script.
 extrAttrPackages <- c("signeR","sigfit","MutationalPatterns",
@@ -41,6 +41,21 @@ for(extrAttrPackage in extrAttrPackages){
   }
 }
 
+
+## Run SignatureAnalyzer
+for(seedInUse in seedsInUse){
+  for(datasetName in datasetNames){
+    SAMultiRunOneCatalog(
+      num.runs = 20,
+      signatureanalyzer.code.dir = "~/softwares/SynSigEval/data-raw/SignatureAnalzyer.052418/",
+      input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
+      out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",seedInUse),
+      maxK = 10,
+      overwrite = T,
+      mc.cores = 10,
+      seed = seedInUse)
+  }
+}
 
 
 ## Run Attribution-only packages (deconstructSigs, YAPSA, SignatureEstimation)
