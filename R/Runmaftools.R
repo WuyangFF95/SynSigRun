@@ -99,7 +99,7 @@ Runmaftools <-
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
-                                     strict = FALSE)
+                                  strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which HDP accepts:
@@ -178,9 +178,17 @@ Runmaftools <-
     ## Derive exposure count attribution results.
 
 
-    ## exposure attributions (in mutation counts)
-    exposureCounts <- (sigs_nmf$contributions)
-    rownames(exposureCounts) <- paste("maftools",1:nrow(exposureCounts),sep=".")
+    ## exposure attributions (in percentage)
+    exposureRaw <- (sigs_nmf$contributions)
+    rownames(exposureRaw) <- paste("maftools",1:nrow(exposureRaw),sep=".")
+
+    ## convert exposure ratio to exposure counts
+    exposureCounts <- exposureRaw
+    for(sample in colnames(exposureCounts)){
+      exposureCounts[,sample] <- exposureRaw[,sample] * sum(spectra[,sample])
+    }
+
+
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
                   paste0(out.dir,"/attributed.exposures.csv"))
