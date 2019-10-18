@@ -87,12 +87,21 @@ for(datasetName in datasetNames){
       ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
       overwrite = T)
     ## Summarize SignatureAnalyzer
-    SynSigEval:::SummarizeSigOneSASubdir(
-      run.dir = paste0(datasetName,
-                       "/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",
-                       seedInUse,"/"),
-      ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
-      which.run = "",overwrite = T)
+    {
+      SynSigEval::CopyBestSignatureAnalyzerResult(
+        sa.results.dir = paste0(datasetName,
+                                "/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",
+                                seedInUse,"/"),
+        overwrite = T)
+
+      SynSigEval:::SummarizeSigOneSASubdir(
+        run.dir = paste0(datasetName,
+                         "/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",
+                         seedInUse,"/"),
+        ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+        which.run = "/best.run/",
+        overwrite = T)
+    }
   }
   ## Summarize maftools
   SynSigEval::SummarizeSigOneExtrAttrSubdir(

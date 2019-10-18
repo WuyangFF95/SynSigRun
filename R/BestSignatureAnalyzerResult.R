@@ -174,6 +174,8 @@ CopyBestSignatureAnalyzerResult <-
     best.exp <- paste0(best, "sa.output.raw.exp.csv")
     if (!file.exists(best.exp)) stop(best.exp, " does not exist")
     file.copy(from = best.exp, to = target.dir, overwrite = overwrite)
+    file.copy(from = paste0(best, "sa.output.exp.csv"),
+              to = target.dir, overwrite = overwrite)
     file.copy(from = paste0(best, "sa.output.sigs.csv"),
               to = target.dir, overwrite = overwrite)
     file.copy(from = paste0(best, "sa.output.other.data.csv"),

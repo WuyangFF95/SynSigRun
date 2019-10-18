@@ -2,7 +2,7 @@
 % Please edit documentation in R/SummarizeResultsSA.R
 \name{SummarizeSigOneSASubdir}
 \alias{SummarizeSigOneSASubdir}
-\title{Summarize Non-COMPOSITE results (SBS96, DBS, ID) from SignatureAnalyzer}
+\title{Summarize results (SBS96, DBS, ID or COMPOSITE) from SignatureAnalyzer}
 \usage{
 SummarizeSigOneSASubdir(run.dir,
   ground.truth.exposure.dir = paste0(run.dir, "/../../"),
@@ -14,6 +14,10 @@ SummarizeSigOneSASubdir(run.dir,
 \code{<top.dir>}\code{/sp.sp/sa.results/},
 \code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
 \code{<top.dir>}\code{/sp.sa.COMPOSITE/sa.results/}.
+
+We expect \code{run.dir} contain the best-run subdirectory (e.g. "best.run").
+The name of the subdirectory needs to be given to \code{which.run} parameter.
+
 Here, \code{<top.dir>} refers to a top-level directory which contains the
 full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
 This code depends on a conventional directory structure documented
@@ -28,6 +32,6 @@ containing the run to summarize.}
 \item{overwrite}{If TRUE overwrite existing directories and files.}
 }
 \description{
-Summarize Non-COMPOSITE results (SBS96, DBS, ID) from SignatureAnalyzer
+Summarize results (SBS96, DBS, ID or COMPOSITE) from SignatureAnalyzer
 }
 \keyword{internal}

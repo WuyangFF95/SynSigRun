@@ -1,62 +1,14 @@
-#' Summarize COMPOSITE results from SignatureAnalyzer.
+#' Summarize results (SBS96, DBS, ID or COMPOSITE) from SignatureAnalyzer
 #'
 #' @param run.dir Lowest level path to results, that is
 #' \code{<top.dir>}\code{/sa.sa.96/sa.results/},
 #' \code{<top.dir>}\code{/sp.sp/sa.results/},
-#'\code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
+#' \code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
 #' \code{<top.dir>}\code{/sp.sa.COMPOSITE/sa.results/}.
-#' Here, \code{<top.dir>} refers to a top-level directory which contains the
-#' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
-#' This code depends on a conventional directory structure documented
-#' elsewhere.
 #'
-#' @param ground.truth.exposure.dir Folder which stores ground-truth exposures.
-#' It defaults to be \code{sub.dir}, i.e. \code{run.dir}/../../../
+#' We expect \code{run.dir} contain the best-run subdirectory (e.g. "best.run").
+#' The name of the subdirectory needs to be given to \code{which.run} parameter.
 #'
-#' @param which.run Name of subdirectory containing the run to summarize.
-#'
-#' @param overwrite If TRUE overwrite existing directories and files.
-#'
-#' @keywords internal
-#'
-#' TODO(Wuyang): Clean Up
-#'
-#' @importFrom ICAMS WriteCatalog ReadCatalog
-#' @importFrom utils capture.output sessionInfo
-
-SummarizeSigOneSACOMPOSITESubdir <-
-  function(run.dir,
-           ground.truth.exposure.dir = paste0(run.dir,"/../../../"),
-           which.run = "/best.run/",
-           overwrite = FALSE) {
-    # Location of SigProfiler output, which is our input
-    # inputPath may change if sigproextractor updates!
-    inputPath <- paste0(run.dir, which.run)
-    stopifnot(dir.exists(inputPath))
-
-    retval <-
-      SummarizeSigOneSubdir(
-        run.dir = run.dir,
-        ground.truth.exposure.dir = ground.truth.exposure.dir,
-        extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
-        attributed.exp.path = paste0(inputPath,"/sa.output.sigs.csv"),
-        #read.extracted.sigs.fn = ReadCatCOMPOSITE,
-        #read.ground.truth.sigs.fn = ReadCatCOMPOSITE,
-        #write.cat.fn = WriteCatCOMPOSITE,
-        #plot.pdf.fn =  Plot96PartOfComposite, # NA, # Does not exist for COMPOSITE # maybe Plot96PartOfComposite
-        overwrite = overwrite)
-
-    invisible(retval)
-  }
-
-
-#' Summarize Non-COMPOSITE results (SBS96, DBS, ID) from SignatureAnalyzer
-#'
-#' @param run.dir Lowest level path to results, that is
-#' \code{<top.dir>}\code{/sa.sa.96/sa.results/},
-#' \code{<top.dir>}\code{/sp.sp/sa.results/},
-#'\code{<top.dir>}\code{/sa.sa.COMPOSITE/sa.results/}, or
-#' \code{<top.dir>}\code{/sp.sa.COMPOSITE/sa.results/}.
 #' Here, \code{<top.dir>} refers to a top-level directory which contains the
 #' full information of a synthetic dataset. (e.g. \code{syn.2.7a.7b.abst.v8})
 #' This code depends on a conventional directory structure documented
@@ -82,7 +34,7 @@ SummarizeSigOneSASubdir <-
            overwrite = FALSE) {
     # Location of SigProfiler output, which is our input
     # inputPath may change if sigproextractor updates!
-    inputPath <- paste0(run.dir, which.run)
+    inputPath <- paste0(run.dir, "/", which.run)
 
     if (!dir.exists(inputPath)) stop(inputPath, "does not exist")
 
@@ -92,10 +44,6 @@ SummarizeSigOneSASubdir <-
         ground.truth.exposure.dir = ground.truth.exposure.dir,
         extracted.sigs.path = paste0(inputPath,"/sa.output.sigs.csv"),
         attributed.exp.path = paste0(inputPath,"/sa.output.exp.csv"),
-        #read.extracted.sigs.fn = ReadCatalog,
-        #read.ground.truth.sigs.fn = ReadCatalog,
-        #write.cat.fn = WriteCatalog,
-        #plot.pdf.fn = PlotCatalogToPdf,
         overwrite = overwrite)
 
     invisible(retval)
