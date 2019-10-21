@@ -809,7 +809,8 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::facet_wrap(ggplot2::vars(index),scales = "free")
         ## Add title for general boxplot + beeswarm plot
         ggplotList$general <- ggplotList$general +
-          ggplot2::ggtitle(label = "boxplot + beeswarm plot for multiple indexes and all runs.") +
+          ggplot2::ggtitle(label = "boxplot + beeswarm plot for multiple indexes.",
+                           subtitle = "Results from all runs are shown.") +
           ## Restrict the decimal numbers of values of indexes to be 3
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
@@ -948,7 +949,8 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free")
         ## Add title for general boxplot + beeswarm plot
         ggplotList$general <- ggplotList$general +
-          ggplot2::ggtitle(label = "boxplot + beeswarm plot for one-signature cosine similarity of multiple signatures and all runs.") +
+          ggplot2::ggtitle(label = "boxplot + beeswarm plot for one-signature cosine similarity.",
+                           subtitle = "Results from all runs are shown.") +
           ## Restrict the decimal numbers of values of indexes to be 3
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
@@ -1086,7 +1088,8 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free")
         ## Add title for general boxplot + beeswarm plot
         ggplotList$general <- ggplotList$general +
-          ggplot2::ggtitle(label = "boxplot + beeswarm plot for Manhattan distance of multiple signatures and all runs.") +
+          ggplot2::ggtitle(label = "boxplot + beeswarm plot for Manhattan distance of multiple signatures.",
+                           subtitle = "Results from all runs are shown.") +
           ## Restrict the decimal numbers of values of indexes to be 3
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
@@ -1505,13 +1508,13 @@ SummarizeOneToolMultiDatasets <-
       ## Output average cosine similarity in high resolution png file
       for(gtSigName in gtSigNames){
         suppressMessages(
-          ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onesig.cossim.",gtSigName,".png"),
+          ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onetool.",gtSigName,".onesig.cossim.png"),
                           plot = ggplotList[[gtSigName]], device = "png", dpi = 1000)
         )
       }
 
       ## Output multiple extraction indexes in a pdf file
-      grDevices::pdf(paste0(out.dir,"/boxplot.onesig.cossim.pdf"), pointsize = 1)
+      grDevices::pdf(paste0(out.dir,"/boxplot.onetool.onesig.cossim.pdf"), pointsize = 1)
       for(gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
       grDevices::dev.off()
     }
