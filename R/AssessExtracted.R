@@ -90,7 +90,9 @@ MatchSigsAndRelabel <-
         tmp <- sim$match1
         values <- tmp[which(tmp[,1] == gtSigName),2]
         ## Average cosine similarity of all extracted "gtSigName" signature
-        sim$cosSim[[gtSigName]] <- mean(values)
+        ## Change NaN to 0.
+        ## By generating NaN, it means that none of extracted signature is similar to this gtSig
+        sim$cosSim[[gtSigName]] <- ifelse(is.nan(mean(values)),0,mean(values))
       }
     }
 
