@@ -313,96 +313,97 @@ SummarizeMultiRuns <-
     }
 
     ## Plot boxplot + beeswarm plot for signature extraction
-    titles <- c("Average cosine similarity",
-                "False negatives",
-                "False positives",
-                "True positives",
-                "True Positive Rate (sensitivity)",
-                "False Discovery Rate (FDR)")
-    subtitles <- c("","Number of ground-truth signatures not extracted",
-                   "Number of signatures extracted, but different from ground-truth signatures",
-                   "Number of ground-truth signatures extracted",
-                   "True Positives / (True Positives + False Negatives)",
-                   "False Positives / (True Positives + False Positives)")
-
-    ## ggplot2 boxplot + beeswarm plot
-    ggplotList <- list()
-    for(index in indexes){
-      indexNum <- which(index == indexes)
-      ggplotList[[index]] <- ggplot2::ggplot(
-        data.frame(value = multiRun[[index]],
-                   indexName = index),
-        ggplot2::aes(x = indexName, y = value))
-      ggplotList[[index]] <- ggplotList[[index]] +
-        ggplot2::ggtitle(titles[indexNum],subtitle = subtitles[indexNum])
-      ggplotList[[index]] <- ggplotList[[index]] +
-        ggplot2::geom_boxplot() +
-        ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
-        ## Restrict the decimal numbers of values of indexes to be 3
-        ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
-    }
-    for(gtSigName in gtSigNames){
-      ggplotList[[gtSigName]] <- ggplot2::ggplot(
-        data.frame(value = multiRun$cosSim[[gtSigName]],
-                   gtSigName = gtSigName),
-        ggplot2::aes(x = gtSigName, y = value))
-      ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-        ggplot2::ggtitle(label = paste0("Cosine similarity to signature ",gtSigName),
-                         subtitle = paste0("Considers all extracted signatures resembling ", gtSigName))
-      ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-        ggplot2::geom_boxplot() +
-        ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
-        ## Restrict the decimal numbers of values of indexes to be 3
-        ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
-    }
-
-    ## Print high-resolution extraction indexes into one png file
-    ## Only include extraction index plots
-    ## in tempPlotList.
     if(FALSE){
-      tempPlotList <- list()
+      titles <- c("Average cosine similarity",
+                  "False negatives",
+                  "False positives",
+                  "True positives",
+                  "True Positive Rate (sensitivity)",
+                  "False Discovery Rate (FDR)")
+      subtitles <- c("","Number of ground-truth signatures not extracted",
+                     "Number of signatures extracted, but different from ground-truth signatures",
+                     "Number of ground-truth signatures extracted",
+                     "True Positives / (True Positives + False Negatives)",
+                     "False Positives / (True Positives + False Positives)")
+
+      ## ggplot2 boxplot + beeswarm plot
+      ggplotList <- list()
       for(index in indexes){
-        tempPlotList[[index]] <- ggplotList[[index]]
+        indexNum <- which(index == indexes)
+        ggplotList[[index]] <- ggplot2::ggplot(
+          data.frame(value = multiRun[[index]],
+                     indexName = index),
+          ggplot2::aes(x = indexName, y = value))
+        ggplotList[[index]] <- ggplotList[[index]] +
+          ggplot2::ggtitle(titles[indexNum],subtitle = subtitles[indexNum])
+        ggplotList[[index]] <- ggplotList[[index]] +
+          ggplot2::geom_boxplot() +
+          ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
+          ## Restrict the decimal numbers of values of indexes to be 3
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
-      suppressMessages(
-        ggplot2::ggsave(
-          filename = paste0(tool.dir,"/boxplot.extraction.png"),
-          plot = ggpubr::ggarrange(plotlist = tempPlotList),
-          device = "png",
-          dpi = 1000
-        )
-      )
-    }
-
-    ## Print extraction indexes into one pdf file
-    grDevices::pdf(paste0(tool.dir,"/boxplot.extraction.indexes.pdf"), pointsize = 1)
-    for (index in indexes) print(ggplotList[[index]])
-    grDevices::dev.off()
-
-
-    ## Print high-resolution extraction indexes into one png file
-    ## Only include one-signature cosine similarity plots
-    ## in tempPlotList.
-    if(FALSE){
-      tempPlotList <- list()
       for(gtSigName in gtSigNames){
-        tempPlotList[[gtSigName]] <- ggplotList[[gtSigName]]
+        ggplotList[[gtSigName]] <- ggplot2::ggplot(
+          data.frame(value = multiRun$cosSim[[gtSigName]],
+                     gtSigName = gtSigName),
+          ggplot2::aes(x = gtSigName, y = value))
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ggplot2::ggtitle(label = paste0("Cosine similarity to signature ",gtSigName),
+                           subtitle = paste0("Considers all extracted signatures resembling ", gtSigName))
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ggplot2::geom_boxplot() +
+          ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
+          ## Restrict the decimal numbers of values of indexes to be 3
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
-      suppressMessages(
-        ggplot2::ggsave(
-          filename = paste0(tool.dir,"/boxplot.onesig.cossim.png"),
-          plot = ggpubr::ggarrange(plotlist = tempPlotList),
-          device = "png",
-          dpi = 1000
+
+      ## Print high-resolution extraction indexes into one png file
+      ## Only include extraction index plots
+      ## in tempPlotList.
+      if(FALSE){
+        tempPlotList <- list()
+        for(index in indexes){
+          tempPlotList[[index]] <- ggplotList[[index]]
+        }
+        suppressMessages(
+          ggplot2::ggsave(
+            filename = paste0(tool.dir,"/boxplot.extraction.png"),
+            plot = ggpubr::ggarrange(plotlist = tempPlotList),
+            device = "png",
+            dpi = 1000
+          )
         )
-      )
+      }
+
+      ## Print extraction indexes into one pdf file
+      grDevices::pdf(paste0(tool.dir,"/boxplot.extraction.indexes.pdf"), pointsize = 1)
+      for (index in indexes) print(ggplotList[[index]])
+      grDevices::dev.off()
+
+
+      ## Print high-resolution extraction indexes into one png file
+      ## Only include one-signature cosine similarity plots
+      ## in tempPlotList.
+      if(FALSE){
+        tempPlotList <- list()
+        for(gtSigName in gtSigNames){
+          tempPlotList[[gtSigName]] <- ggplotList[[gtSigName]]
+        }
+        suppressMessages(
+          ggplot2::ggsave(
+            filename = paste0(tool.dir,"/boxplot.onesig.cossim.png"),
+            plot = ggpubr::ggarrange(plotlist = tempPlotList),
+            device = "png",
+            dpi = 1000
+          )
+        )
+      }
+
+      ## Print extraction indexes into one pdf file
+      grDevices::pdf(paste0(tool.dir,"/boxplot.onesig.cossim.pdf"), pointsize = 1)
+      for (gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
+      grDevices::dev.off()
     }
-
-    ## Print extraction indexes into one pdf file
-    grDevices::pdf(paste0(tool.dir,"/boxplot.onesig.cossim.pdf"), pointsize = 1)
-    for (gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
-    grDevices::dev.off()
-
 
     ## Indexes for exposure attribution in multiple runs
     ManhattanDist <- matrix(nrow = length(gtSigNames), ncol = length(run.names))
@@ -436,6 +437,7 @@ SummarizeMultiRuns <-
     }
 
     ## Plot boxplot + beeswarm plot for exposure attribution
+    if(FALSE){
     ggplotList <- list()
     for(gtSigName in gtSigNames){
       ggplotList[[gtSigName]] <- ggplot2::ggplot(
@@ -473,7 +475,7 @@ SummarizeMultiRuns <-
     grDevices::pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"), pointsize = 1)
     for(gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
     grDevices::dev.off()
-
+}
 
 
     ## Save data and results
