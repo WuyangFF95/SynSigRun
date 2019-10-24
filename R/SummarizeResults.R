@@ -370,7 +370,8 @@ SummarizeMultiRuns <-
             filename = paste0(tool.dir,"/boxplot.extraction.png"),
             plot = ggpubr::ggarrange(plotlist = tempPlotList),
             device = "png",
-            dpi = 1000
+            dpi = 1000,
+            limitsize = FALSE
           )
         )
       }
@@ -394,7 +395,8 @@ SummarizeMultiRuns <-
             filename = paste0(tool.dir,"/boxplot.onesig.cossim.png"),
             plot = ggpubr::ggarrange(plotlist = tempPlotList),
             device = "png",
-            dpi = 1000
+            dpi = 1000,
+            limitsize = FALSE
           )
         )
       }
@@ -438,44 +440,45 @@ SummarizeMultiRuns <-
 
     ## Plot boxplot + beeswarm plot for exposure attribution
     if(FALSE){
-    ggplotList <- list()
-    for(gtSigName in gtSigNames){
-      ggplotList[[gtSigName]] <- ggplot2::ggplot(
-        data.frame(value = ManhattanDist[gtSigName,],
-                   gtSigName = gtSigName),
-        ggplot2::aes(x = gtSigName, y = value))
-      ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-        ggplot2::ggtitle(paste0("L1-difference of exposure of signature ",gtSigName))
-      ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-        ggplot2::geom_boxplot() +
-        ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
-        ## Restrict the decimal numbers of values of indexes to be 3
-        ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
-    }
-
-
-    ## Print high-resolution extraction indexes into one single png file
-    if(FALSE){
-      tempPlotList <- list()
-      for(gtSigName in gtSigNames) {
-        tempPlotList[[gtSigName]] <- ggplotList[[gtSigName]]
+      ggplotList <- list()
+      for(gtSigName in gtSigNames){
+        ggplotList[[gtSigName]] <- ggplot2::ggplot(
+          data.frame(value = ManhattanDist[gtSigName,],
+                     gtSigName = gtSigName),
+          ggplot2::aes(x = gtSigName, y = value))
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ggplot2::ggtitle(paste0("L1-difference of exposure of signature ",gtSigName))
+        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ggplot2::geom_boxplot() +
+          ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
+          ## Restrict the decimal numbers of values of indexes to be 3
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
 
-      suppressMessages(
-        ggplot2::ggsave(
-          filename = paste0(tool.dir,"/boxplot.Manhattan.Dist.png"),
-          plot = ggpubr::ggarrange(plotlist = tempPlotList),
-          device = "png",
-          dpi = 1000
-        )
-      )
-    }
 
-    ## Print extraction indexes into one pdf file
-    grDevices::pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"), pointsize = 1)
-    for(gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
-    grDevices::dev.off()
-}
+      ## Print high-resolution extraction indexes into one single png file
+      if(FALSE){
+        tempPlotList <- list()
+        for(gtSigName in gtSigNames) {
+          tempPlotList[[gtSigName]] <- ggplotList[[gtSigName]]
+        }
+
+        suppressMessages(
+          ggplot2::ggsave(
+            filename = paste0(tool.dir,"/boxplot.Manhattan.Dist.png"),
+            plot = ggpubr::ggarrange(plotlist = tempPlotList),
+            device = "png",
+            dpi = 1000,
+            limitsize = FALSE
+          )
+        )
+      }
+
+      ## Print extraction indexes into one pdf file
+      grDevices::pdf(paste0(tool.dir,"/boxplot.attribution.indexes.pdf"), pointsize = 1)
+      for(gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
+      grDevices::dev.off()
+    }
 
 
     ## Save data and results
@@ -523,18 +526,26 @@ SummarizeMultiRuns <-
 #' elsewhere. However there should be a directory within the \code{tool.names}
 #' which stores the software output.
 #'
-#' @param datasetGroups Numeric or character vector specifying the group
+#' @param datasetGroup Numeric or character vector specifying the group
 #' each dataset belong to.
 #' E.g. For SBS1-SBS5 correlated datasets, we can consider slope as the group:
 #' c("slope=0.1","slope=0.5","slope=1","slope=2","slope=5","slope=10")
 #' Default: "Default"
 #'
-#' @param datasetSubGroups Numeric or character vector differentiating
+#' @param datasetGroupName Meaning or label of all datasetGroup.
+#' E.g. For SBS1-SBS5 correlated datasets, we can consider \code{"SBS1:SBS5 mutation count ratio"}
+#' as the label of the \code{datasetGroup} slope.
+#'
+#' @param datasetSubGroup Numeric or character vector differentiating
 #' datasets within each group.
 #' E.g. For SBS1-SBS5 correlated datasets, we can consider Pearson's R^2
 #' as the subgroup:
 #' c("Rsq=0.1","Rsq=0.2","Rsq=0.3","Rsq=0.6")
 #' Default: Names of datasets, which are \code{basename(dataset.dirs)}
+#'
+#' @param datasetSubGroupName Meaning or label of all datasetSubGroup.
+#' E.g. For SBS1-SBS5 correlated datasets, we can consider \code{"Pearson's R squared"}
+#' as the label of the \code{datasetSubGroup} Pearson's R^2.
 #'
 #' @return A list contain c(\code{mean},\code{sd}) of multiple runs:
 #' Cosine similarity
@@ -553,8 +564,10 @@ SummarizeMultiToolsOneDataset <- function(
   third.level.dir,
   toolNames,
   tool.dirnames,
-  datasetGroups,
-  datasetSubGroups){
+  datasetGroup,
+  datasetGroupName,
+  datasetSubGroup,
+  datasetSubGroupName){
 
   multiTools <- list()
   combMeanSD <- NULL
@@ -576,8 +589,10 @@ SummarizeMultiToolsOneDataset <- function(
                           value = multiRun[[index]],
                           toolName = toolName,
                           datasetName = datasetName,
-                          datasetGroups = datasetGroups,
-                          datasetSubGroups = datasetSubGroups,
+                          datasetGroup = datasetGroup,
+                          datasetGroupName = datasetGroupName,
+                          datasetSubGroup = datasetSubGroup,
+                          datasetSubGroupName = datasetSubGroupName,
                           stringsAsFactors = FALSE)
         rownames(tmp) <- NULL
         ## Create a data.frame for each index,
@@ -603,8 +618,10 @@ SummarizeMultiToolsOneDataset <- function(
                           value = multiRun$cosSim[[gtSigName]],
                           toolName = toolName,
                           datasetName = datasetName,
-                          datasetGroups = datasetGroups,
-                          datasetSubGroups = datasetSubGroups,
+                          datasetGroup = datasetGroup,
+                          datasetGroupName = datasetGroupName,
+                          datasetSubGroup = datasetSubGroup,
+                          datasetSubGroupName = datasetSubGroupName,
                           stringsAsFactors = FALSE)
         rownames(tmp) <- NULL
         ## Create a data.frame for each ground-truth signature,
@@ -628,8 +645,10 @@ SummarizeMultiToolsOneDataset <- function(
                           value = multiRun$ManhattanDist[gtSigName,],
                           toolName = toolName,
                           datasetName = datasetName,
-                          datasetGroups = datasetGroups,
-                          datasetSubGroups = datasetSubGroups,
+                          datasetGroup = datasetGroup,
+                          datasetGroupName = datasetGroupName,
+                          datasetSubGroup = datasetSubGroup,
+                          datasetSubGroupName = datasetSubGroupName,
                           stringsAsFactors = FALSE)
         rownames(tmp) <- NULL
         ## Create a data.frame for each ground-truth signature,
@@ -670,6 +689,8 @@ SummarizeMultiToolsOneDataset <- function(
 
   multiTools$combMeanSD <- combMeanSD
   multiTools$combMeanSDMD <- combMeanSDMD
+  multiTools$datasetGroupName <- datasetGroupName
+  multiTools$datasetSubGroupName <- datasetSubGroupName
 
   save(multiTools,file = paste0(third.level.dir,"/multiTools.RDa"))
   write.csv(x = multiTools$combMeanSD,
@@ -795,9 +816,12 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_boxplot and geom_quasirandom
         ggplotList$general <- ggplotList$general +
-          ggplot2::geom_boxplot(ggplot2::aes(fill = index)) +
+          ggplot2::geom_boxplot(ggplot2::aes(fill = index),
+                                ## Hide outliers
+                                outlier.shape = NA) +
           ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+            groupOnX = TRUE, size = 0.3
+            #, ggplot2::aes(color = datasetGroup)
           )
         ## Rotate the names of tools,
         ## and remove legends
@@ -811,24 +835,33 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::facet_wrap(ggplot2::vars(index),scales = "free")
         ## Add title for general boxplot + beeswarm plot
         ggplotList$general <- ggplotList$general +
-          ggplot2::ggtitle(label = "boxplot + beeswarm plot for multiple indexes.",
+          ggplot2::ggtitle(label = "Summary plot for extraction indexes.",
                            subtitle = "Results from all runs are shown.") +
           ## Restrict the decimal numbers of values of indexes to be 3
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
       ## Plot a multi-facet ggplot,
-      ## facets are separated by indexes and datasetGroups
+      ## facets are separated by indexes and datasetGroup
       ## (in example, it refers to slope.)
-      for(by in c("datasetGroups","datasetSubGroups"))  {
+      for(by in c("datasetGroup","datasetSubGroup"))  {
+
+
+        ## The value of "datasetGroupName" or "datasetSubGroupName"
+        ## which is the caption of "datasetGroup"
+        byCaption <- eval(parse(text = paste0("multiTools$",by,"Name")))
+
         ## Generate a ggplot object based on plotDFList$combined
         ggplotList[[by]] <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_boxplot and geom_quasirandom
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_boxplot(ggplot2::aes(fill = index)) +
+          ggplot2::geom_boxplot(ggplot2::aes(fill = index),
+                                ## Hide outliers
+                                outlier.shape = NA) +
           ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+            groupOnX = TRUE, size = 0.3
+            #, ggplot2::aes(color = datasetGroup)
           )
         ## Rotate the names of tools,
         ## and remove legends
@@ -844,7 +877,8 @@ SummarizeMultiToolsMultiDatasets <-
         ## Add title for general boxplot + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
-            label = paste0("boxplot + beeswarm plot separated by indexes and groups.")) +
+            label = paste0("Extraction indexes summary plot separated by"),
+            subtitle = paste0("indexes and ",byCaption,".")) +
           ## Restrict the decimal numbers of values of indexes to be 3
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
@@ -852,7 +886,9 @@ SummarizeMultiToolsMultiDatasets <-
       for(by in names(ggplotList)){
         suppressMessages(
           ggplot2::ggsave(filename = paste0(out.dir,"/extraction.boxplot.by.",by,".png"),
-                          plot = ggplotList[[by]], device = "png", dpi = 1000)
+                          plot = ggplotList[[by]], device = "png", dpi = 1000
+                          ,limitsize = FALSE  ## debug
+                          )
         )
       }
       ## Plot boxplot + beeswarm plots in pdf format
@@ -936,9 +972,12 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_boxplot and geom_quasirandom
         ggplotList$general <- ggplotList$general +
-          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName)) +
+          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName),
+                                ## Hide outliers
+                                outlier.shape = NA) +
           ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+            groupOnX = TRUE, size = 0.3
+            #, ggplot2::aes(color = datasetGroup)
           )
         ## Rotate the names of tools,
         ## and remove legends
@@ -951,24 +990,34 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free")
         ## Add title for general boxplot + beeswarm plot
         ggplotList$general <- ggplotList$general +
-          ggplot2::ggtitle(label = "boxplot + beeswarm plot for one-signature cosine similarity.",
+          ggplot2::ggtitle(label = "Summary plot for one-signature cosine similarity.",
                            subtitle = "Results from all runs are shown.") +
           ## Restrict the decimal numbers of values of indexes to be 3
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
       ## Plot a multi-facet ggplot,
-      ## facets are separated by gtSigNames and datasetGroups
+      ## facets are separated by gtSigNames and datasetGroup
       ## (in example, it refers to slope.)
-      for(by in c("datasetGroups","datasetSubGroups"))  {
+      for(by in c("datasetGroup","datasetSubGroup"))  {
+
+
+        ## The value of "datasetGroupName" or "datasetSubGroupName"
+        ## which is the caption of "datasetGroup"
+        byCaption <- eval(parse(
+          text = paste0("multiTools$",by,"Name")))
+
         ## Generate a ggplot object based on plotDFList$combined
         ggplotList[[by]] <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_boxplot and geom_quasirandom
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName)) +
+          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName),
+                                ## Hide outliers
+                                outlier.shape = NA) +
           ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+            groupOnX = TRUE, size = 0.3
+            #, ggplot2::aes(color = datasetGroup)
           )
         ## Rotate the names of tools,
         ## and remove legends
@@ -984,7 +1033,8 @@ SummarizeMultiToolsMultiDatasets <-
         ## Add title for general boxplot + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
-            label = paste0("boxplot + beeswarm plot separated by gtSigNames and groups.")) +
+            label = paste0("One-signature cosine similarity summary plot separated by"),
+            subtitle = paste0("ground-truth signature names and ",byCaption,".")) +
           ## Restrict the decimal numbers of values of indexes to be 3
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
@@ -992,7 +1042,9 @@ SummarizeMultiToolsMultiDatasets <-
       for(by in names(ggplotList)){
         suppressMessages(
           ggplot2::ggsave(filename = paste0(out.dir,"/onesig.cossim.boxplot.by.",by,".png"),
-                          plot = ggplotList[[by]], device = "png", dpi = 1000)
+                          plot = ggplotList[[by]], device = "png", dpi = 1000
+                          ,limitsize = FALSE
+                          )
         )
       }
       ## Plot boxplot + beeswarm plots in pdf format
@@ -1075,9 +1127,12 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_boxplot and geom_quasirandom
         ggplotList$general <- ggplotList$general +
-          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName)) +
+          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName),
+                                ## Hide outliers
+                                outlier.shape = NA) +
           ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+            groupOnX = TRUE, size = 0.3
+            #, ggplot2::aes(color = datasetGroup)
           )
         ## Rotate the names of tools,
         ## and remove legends
@@ -1090,24 +1145,35 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free")
         ## Add title for general boxplot + beeswarm plot
         ggplotList$general <- ggplotList$general +
-          ggplot2::ggtitle(label = "boxplot + beeswarm plot for Manhattan distance of multiple signatures.",
+          ggplot2::ggtitle(label = "Manhattan distance of multiple signatures",
                            subtitle = "Results from all runs are shown.") +
           ## Restrict the decimal numbers of values of indexes to be 3
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
       ## Plot a multi-facet ggplot,
-      ## facets are separated by gtSigNames and datasetGroups
+      ## facets are separated by gtSigNames and datasetGroup
       ## (in example, it refers to slope.)
-      for(by in c("datasetGroups","datasetSubGroups"))  {
+      for(by in c("datasetGroup","datasetSubGroup"))  {
+
+
+        ## The value of "datasetGroupName" or "datasetSubGroupName"
+        ## which is the caption of "datasetGroup"
+        byCaption <- eval(parse(
+          text = paste0("multiTools$",by,"Name")))
+
+
         ## Generate a ggplot object based on plotDFList$combined
         ggplotList[[by]] <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_boxplot and geom_quasirandom
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName)) +
+          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName),
+                                ## Hide outliers
+                                outlier.shape = NA) +
           ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3, ggplot2::aes(color = datasetGroups),
+            groupOnX = TRUE, size = 0.3
+            #, ggplot2::aes(color = datasetGroup)
           )
         ## Rotate the names of tools,
         ## and remove legends
@@ -1123,7 +1189,8 @@ SummarizeMultiToolsMultiDatasets <-
         ## Add title for general boxplot + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
-            label = paste0("boxplot + beeswarm plot separated by gtSigNames and groups.")) +
+            label = paste0("Manhattan Distance summary plot separated by "),
+            subtitle = paste0("ground-truth signature names and ",byCaption,".")) +
           ## Restrict the decimal numbers of values of indexes to be 3
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
@@ -1131,7 +1198,9 @@ SummarizeMultiToolsMultiDatasets <-
       for(by in names(ggplotList)){
         suppressMessages(
           ggplot2::ggsave(filename = paste0(out.dir,"/Manhattan.Dist.boxplot.by.",by,".png"),
-                          plot = ggplotList[[by]], device = "png", dpi = 1000)
+                          plot = ggplotList[[by]], device = "png", dpi = 1000
+                          ,limitsize = FALSE
+                          )
         )
       }
       ## Plot boxplot + beeswarm plots in pdf format
@@ -1162,25 +1231,25 @@ SummarizeMultiToolsMultiDatasets <-
 #' to investigate.
 #' E.g. "./S.0.1.Rsq.0.1"
 #'
-#' @param datasetGroups Numeric or character vector specifying the group
+#' @param datasetGroup Numeric or character vector specifying the group
 #' each dataset belong to.
 #' E.g. For SBS1-SBS5 correlated datasets, we can consider slope
 #' (SBS1:SBS5 count ratio) as the group:
 #' \code{c(0.1,0.5,1,2,5,10)}
 #' Default: "Default"
 #'
-#' @param datasetGroupLabel Meaning or label of all datasetGroups.
+#' @param datasetGroupName Meaning or label of all datasetGroup.
 #' E.g. For SBS1-SBS5 correlated datasets, we can consider \code{"SBS1:SBS5 mutation count ratio"}
 #' as the label of the \code{datasetGroup} slope.
 #'
-#' @param datasetSubGroups Numeric or character vector differentiating
+#' @param datasetSubGroup Numeric or character vector differentiating
 #' datasets within each group.
 #' E.g. For SBS1-SBS5 correlated datasets, we can consider Pearson's R^2
 #' as the subgroup:
 #' c(0.1,0.2,0.3,0.6)
 #' Default: Names of datasets, which are \code{basename(dataset.dirs)}
 #'
-#' @param datasetSubGroupLabel Meaning or label of all datasetSubGroups.
+#' @param datasetSubGroupName Meaning or label of all datasetSubGroup.
 #' E.g. For SBS1-SBS5 correlated datasets, we can consider \code{"Pearson's R squared"}
 #' as the label of the \code{datasetSubGroup} Pearson's R^2.
 #'
@@ -1202,10 +1271,10 @@ SummarizeMultiToolsMultiDatasets <-
 #'
 SummarizeOneToolMultiDatasets <-
   function(dataset.dirs,
-           datasetGroups = NULL,
-           datasetGroupLabel,
-           datasetSubGroups = NULL,
-           datasetSubGroupLabel,
+           datasetGroup = NULL,
+           datasetGroupName,
+           datasetSubGroup = NULL,
+           datasetSubGroupName,
            tool.dirname,
            out.dir,
            overwrite = FALSE){
@@ -1217,25 +1286,25 @@ SummarizeOneToolMultiDatasets <-
       dir.create(out.dir, recursive = T)
     }
 
-    ## Wrap all datasets into one group, if datasetGroups is NULL.
+    ## Wrap all datasets into one group, if datasetGroup is NULL.
     ## Re-order the dataset.group for better visualization of
     ## ggplot facets.
     {
       datasetNames <- basename(dataset.dirs)
 
-      if(is.null(datasetGroups))
-        datasetGroups <- rep("Default",length(dataset.dirs))
-      datasetGroups <- factor(
-        datasetGroups,
-        levels = gtools::mixedsort(unique(datasetGroups)))
-      names(datasetGroups) <- datasetNames
+      if(is.null(datasetGroup))
+        datasetGroup <- rep("Default",length(dataset.dirs))
+      datasetGroup <- factor(
+        datasetGroup,
+        levels = gtools::mixedsort(unique(datasetGroup)))
+      names(datasetGroup) <- datasetNames
 
-      if(is.null(datasetSubGroups))
-        datasetSubGroups <- datasetNames
-      datasetSubGroups <- factor(
-        datasetSubGroups,
-        levels = gtools::mixedsort(unique(datasetSubGroups)))
-      names(datasetSubGroups) <- datasetNames
+      if(is.null(datasetSubGroup))
+        datasetSubGroup <- datasetNames
+      datasetSubGroup <- factor(
+        datasetSubGroup,
+        levels = gtools::mixedsort(unique(datasetSubGroup)))
+      names(datasetSubGroup) <- datasetNames
     }
 
 
@@ -1262,8 +1331,10 @@ SummarizeOneToolMultiDatasets <-
                             value = multiRun[[index]],
                             toolName = toolName,
                             datasetName = datasetName,
-                            datasetGroups = datasetGroups[datasetName],
-                            datasetSubGroups = datasetSubGroups[datasetName],
+                            datasetGroup = datasetGroup[datasetName],
+                            datasetGroupName = datasetGroupName,
+                            datasetSubGroup = datasetSubGroup[datasetName],
+                            datasetSubGroupName = datasetSubGroupName,
                             stringsAsFactors = FALSE)
 
           rownames(tmp) <- NULL
@@ -1331,20 +1402,20 @@ SummarizeOneToolMultiDatasets <-
             values = grDevices::topo.colors(length(indexes)))
         ## Add title for general boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::ggtitle(label = "boxplot + beeswarm plot for multiple indexes and multiple datasets.")
+          ggplot2::ggtitle(label = "Summary plot for extraction indexes")
         ## Restrict the decimal numbers of values of indexes to be 3
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
-      ## Plot a value~datasetSubGroups beeswarm for each index.
+      ## Plot a value~datasetSubGroup beeswarm for each index.
       for(index in indexes){
         indexNum <- which(indexes == index)
         ## ggplot2::ggplot() sets coordinates
         ggplotList[[index]] <- ggplot2::ggplot(
           OneToolSummary[[index]],
-          ggplot2::aes(x = datasetGroups, y = value))
+          ggplot2::aes(x = datasetGroup, y = value))
         ## Add facets
         ggplotList[[index]] <- ggplotList[[index]] +
-          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroups))
+          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroup))
         ## Draw boxplots and beeswarm plots on multi-facets.
         ggplotList[[index]] <- ggplotList[[index]] +
           ## Draw boxplot
@@ -1352,23 +1423,23 @@ SummarizeOneToolMultiDatasets <-
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
-                                       ggplot2::aes(color = datasetGroups)) +     ## Set groups for the filling functionalities to differentiate
+                                       ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
           ## Rotate the x labels for better visualization
           ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1))
         ## Change titles
         ggplotList[[index]] <- ggplotList[[index]] +
-          ## Add title for value~datasetSubGroups beeswarm plot
+          ## Add title for value~datasetSubGroup beeswarm plot
           ggplot2::ggtitle(label = titles[index],subtitle = subtitles[index]) +
-          ## Change title of legend to datasetGroupLabel
-          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupLabel))
+          ## Change title of legend to datasetGroupName
+          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
         ## Change labels
         ggplotList[[index]] <- ggplotList[[index]] +
           ## Change label of y axis into index info (Same as title)
           ggplot2::ylab(ylabels[index]) +
-          ## Change label of x axis into datasetSubGroupLabel (label of datasetSubGroups)
-          ggplot2::xlab(paste0("Facets separated by ",datasetSubGroupLabel))
+          ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
+          ggplot2::xlab(paste0("Facets separated by ",datasetSubGroupName))
         ## Restrict the decimal numbers of values of indexes to be 3
         ggplotList[[index]] <- ggplotList[[index]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
@@ -1378,7 +1449,7 @@ SummarizeOneToolMultiDatasets <-
       for(index in indexes){
         suppressMessages(
           ggplot2::ggsave(paste0(out.dir,"/boxplot.onetool.extraction.",index,".png"),
-                          plot = ggplotList[[index]], device = "png", dpi = 1000)
+                          plot = ggplotList[[index]], device = "png", dpi = 1000,limitsize = FALSE)
         )
       }
 
@@ -1407,8 +1478,10 @@ SummarizeOneToolMultiDatasets <-
                             value = multiRun$cosSim[[gtSigName]],
                             toolName = toolName,
                             datasetName = datasetName,
-                            datasetGroups = datasetGroups[datasetName],
-                            datasetSubGroups = datasetSubGroups[datasetName],
+                            datasetGroup = datasetGroup[datasetName],
+                            datasetGroupName = datasetGroupName,
+                            datasetSubGroup = datasetSubGroup[datasetName],
+                            datasetSubGroupName = datasetSubGroupName,
                             stringsAsFactors = FALSE)
           rownames(tmp) <- NULL
 
@@ -1463,19 +1536,19 @@ SummarizeOneToolMultiDatasets <-
             values = grDevices::topo.colors(length(indexes)))
         ## Add title for general boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::ggtitle(label = "boxplot + beeswarm plot for one-signature cosine similarity on multiple datasets.")
+          ggplot2::ggtitle(label = "Summary plot for one-signature cosine similarity")
         ## Restrict the decimal numbers of values of indexes to be 3
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
-      ## Plot a value~datasetSubGroups beeswarm plot for each signature.
+      ## Plot a value~datasetSubGroup beeswarm plot for each signature.
       for(gtSigName in gtSigNames){
         sigNum <- which(gtSigNames == gtSigName)
         ggplotList[[gtSigName]] <- ggplot2::ggplot(
           OneToolSummary$cosSim[[gtSigName]],
-          ggplot2::aes(x = datasetGroups, y = value))
+          ggplot2::aes(x = datasetGroup, y = value))
         ## Add facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroups))
+          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroup))
         ## Draw beeswarm plots on multiple facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ## Draw boxplot
@@ -1483,24 +1556,24 @@ SummarizeOneToolMultiDatasets <-
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
-                                       ggplot2::aes(color = datasetGroups)) +     ## Set groups for the filling functionalities to differentiate
+                                       ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
           ## Rotate the x labels for better visualization
           ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1))
         ## Add titles
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ## Add title for value~datasetSubGroups beeswarm plot
+          ## Add title for value~datasetSubGroup beeswarm plot
           ggplot2::ggtitle(label = paste0("Cosine similarity between signature ",gtSigName),
                            subtitle = paste0("and all extracted signatures resembling ",gtSigName)) +
-          ## Change title of legend to datasetGroupLabel
-          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupLabel))
+          ## Change title of legend to datasetGroupName
+          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
         ## Change labels
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ## Change label of y axis into gtSigName info (Same as title)
           ggplot2::ylab(paste0("Manhattan distance of ",gtSigName," exposure")) +
-          ## Change label of x axis into datasetSubGroupLabel (label of datasetSubGroups)
-          ggplot2::xlab(paste0("Facets separated by ",datasetSubGroupLabel))
+          ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
+          ggplot2::xlab(paste0("Facets separated by ",datasetSubGroupName))
         ## Restrict the decimal numbers of values of indexes to be 3
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
@@ -1511,7 +1584,7 @@ SummarizeOneToolMultiDatasets <-
       for(gtSigName in gtSigNames){
         suppressMessages(
           ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onetool.",gtSigName,".onesig.cossim.png"),
-                          plot = ggplotList[[gtSigName]], device = "png", dpi = 1000)
+                          plot = ggplotList[[gtSigName]], device = "png", dpi = 1000,limitsize = FALSE)
         )
       }
 
@@ -1541,8 +1614,10 @@ SummarizeOneToolMultiDatasets <-
                             value = multiRun$ManhattanDist[gtSigName,],
                             toolName = toolName,
                             datasetName = datasetName,
-                            datasetGroups = datasetGroups[datasetName],
-                            datasetSubGroups = datasetSubGroups[datasetName],
+                            datasetGroup = datasetGroup[datasetName],
+                            datasetGroupName = datasetGroupName,
+                            datasetSubGroup = datasetSubGroup[datasetName],
+                            datasetSubGroupName = datasetSubGroupName,
                             stringsAsFactors = FALSE)
           rownames(tmp) <- NULL
 
@@ -1579,7 +1654,7 @@ SummarizeOneToolMultiDatasets <-
     { ## debug
       ## Create a list to store ggplot2 boxplot + beeswarm plot objects
       ggplotList <- list()
-      ## Plot a general boxplot + beeswarm plot for multiple indexes
+      ## Plot a general boxplot + beeswarm plot for Manhttan distance of multiple signatures
       if(FALSE){
         ggplotList[["general"]] <- ggplot2::ggplot(
           OneToolSummary$ManhattanDist$combined,
@@ -1597,19 +1672,19 @@ SummarizeOneToolMultiDatasets <-
             values = grDevices::topo.colors(length(indexes)))
         ## Add title for general boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::ggtitle(label = "boxplot + beeswarm plot for multiple indexes and multiple datasets.")
+          ggplot2::ggtitle(label = "Summary plot for Manhattan distance")
         ## Restrict the decimal numbers of values of indexes to be 3
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
       }
-      ## Plot a value~datasetSubGroups beeswarm plot for each signature.
+      ## Plot a value~datasetSubGroup beeswarm plot for each signature.
       for(gtSigName in gtSigNames){
         sigNum <- which(gtSigNames == gtSigName)
         ggplotList[[gtSigName]] <- ggplot2::ggplot(
           OneToolSummary$ManhattanDist[[gtSigName]],
-          ggplot2::aes(x = datasetGroups, y = value))
+          ggplot2::aes(x = datasetGroup, y = value))
         ## Add facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroups))
+          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroup))
         ## Draw beeswarm plots on multiple facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ## Draw boxplot
@@ -1617,24 +1692,24 @@ SummarizeOneToolMultiDatasets <-
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
-                                       ggplot2::aes(color = datasetGroups)) +     ## Set groups for the filling functionalities to differentiate
+                                       ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
           ## Rotate the x labels for better visualization
           ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1))
         ## Change titles
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ## Add title for value~datasetSubGroups beeswarm plot
+          ## Add title for value~datasetSubGroup beeswarm plot
           ggplot2::ggtitle(label = paste0("Manhattan distance of ",gtSigName," exposure"),
                            subtitle = "Between ground-truth exposure and attributed exposure") +
-          ## Change title of legend to datasetGroupLabel
-          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupLabel))
+          ## Change title of legend to datasetGroupName
+          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
         ## Change labels
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ## Change label of y axis into gtSigName info (Same as title)
           ggplot2::ylab(paste0("Manhattan distance of ",gtSigName," exposure")) +
-          ## Change label of x axis into datasetSubGroupLabel (label of datasetSubGroups)
-          ggplot2::xlab(paste0("Facets separated by ",datasetSubGroupLabel))
+          ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
+          ggplot2::xlab(paste0("Facets separated by ",datasetSubGroupName))
         ## Restrict the decimal numbers of values of indexes to be 3
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
@@ -1645,7 +1720,7 @@ SummarizeOneToolMultiDatasets <-
       for(gtSigName in gtSigNames){
         suppressMessages(
           ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onetool.",gtSigName,".Manhattan.dist.png"),
-                          plot = ggplotList[[gtSigName]], device = "png", dpi = 1000)
+                          plot = ggplotList[[gtSigName]], device = "png", dpi = 1000,limitsize = FALSE)
         )
       }
 
@@ -1662,6 +1737,9 @@ SummarizeOneToolMultiDatasets <-
                 file = paste0(out.dir,"/",summaryFileName,".csv"),
                 quote = F, row.names = F)
     }
+
+    OneToolSummary$datasetGroupName <- datasetGroupName
+    OneToolSummary$datasetSubGroupName <- datasetSubGroupName
 
     save(OneToolSummary, file = paste0(out.dir,"/OneToolSummary.RDa"))
     invisible(OneToolSummary)

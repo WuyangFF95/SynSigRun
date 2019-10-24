@@ -5,7 +5,7 @@
 \title{Combine results for a single dataset, from different software tools.}
 \usage{
 SummarizeMultiToolsOneDataset(third.level.dir, toolNames, tool.dirnames,
-  datasetGroups, datasetSubGroups)
+  datasetGroup, datasetGroupName, datasetSubGroup, datasetSubGroupName)
 }
 \arguments{
 \item{third.level.dir}{Third level path distinguishing de-novo extraction
@@ -29,18 +29,26 @@ This code depends on a conventional directory structure documented
 elsewhere. However there should be a directory within the \code{tool.names}
 which stores the software output.}
 
-\item{datasetGroups}{Numeric or character vector specifying the group
+\item{datasetGroup}{Numeric or character vector specifying the group
 each dataset belong to.
 E.g. For SBS1-SBS5 correlated datasets, we can consider slope as the group:
 c("slope=0.1","slope=0.5","slope=1","slope=2","slope=5","slope=10")
 Default: "Default"}
 
-\item{datasetSubGroups}{Numeric or character vector differentiating
+\item{datasetGroupName}{Meaning or label of all datasetGroup.
+E.g. For SBS1-SBS5 correlated datasets, we can consider \code{"SBS1:SBS5 mutation count ratio"}
+as the label of the \code{datasetGroup} slope.}
+
+\item{datasetSubGroup}{Numeric or character vector differentiating
 datasets within each group.
 E.g. For SBS1-SBS5 correlated datasets, we can consider Pearson's R^2
 as the subgroup:
 c("Rsq=0.1","Rsq=0.2","Rsq=0.3","Rsq=0.6")
 Default: Names of datasets, which are \code{basename(dataset.dirs)}}
+
+\item{datasetSubGroupName}{Meaning or label of all datasetSubGroup.
+E.g. For SBS1-SBS5 correlated datasets, we can consider \code{"Pearson's R squared"}
+as the label of the \code{datasetSubGroup} Pearson's R^2.}
 }
 \value{
 A list contain c(\code{mean},\code{sd}) of multiple runs:

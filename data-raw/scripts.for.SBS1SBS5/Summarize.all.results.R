@@ -168,22 +168,27 @@ for(slope in slopes){
                    "EMu","maftools"),
       tool.dirnames = paste0(c(RBasedExtrAttrToolNames,otherExtrAttrToolNames,
                                "EMu","maftools"),".results"),
-      datasetGroups = Rsq,
-      datasetSubGroups = slope)
+      datasetGroup = Rsq,
+      datasetGroupName = "Pearson's R^2",
+      datasetSubGroup = slope,
+      datasetSubGroupName = "SBS1:SBS5 mutation count ratio")
     SynSigEval::SummarizeMultiToolsOneDataset(
       third.level.dir = paste0(datasetName,"/sp.sp/Attr/"),
       toolName = c(attrToolNames,"sigproextractor"),
       tool.dirnames = paste0(c(attrToolNames,"sigproextractor"),".results"),
-      datasetGroups =  Rsq,
-      datasetSubGroups = slope)
+      datasetGroup =  Rsq,
+      datasetGroupName = "Pearson's R^2",
+      datasetSubGroup = slope,
+      datasetSubGroupName = "SBS1:SBS5 mutation count ratio"
+      )
   }
 }
 ## Part IV: Generate a summary table and boxplot for results
 ## of multiple datasets, from each separate tool.
-datasetGroups <- rep(c(0.1,0.2,0.3,0.6),5)
-names(datasetGroups) <- datasetNames
-datasetSubGroups <- rep(c(0.1,0.5,1,2,10),each = 4)
-names(datasetSubGroups) <- datasetNames
+datasetGroup <- rep(c(0.1,0.2,0.3,0.6),5)
+names(datasetGroup) <- datasetNames
+datasetSubGroup <- rep(c(0.1,0.5,1,2,10),each = 4)
+names(datasetSubGroup) <- datasetNames
 
 
 for(toolName in c(
@@ -191,10 +196,10 @@ for(toolName in c(
   "maftools","EMu")){
   SummarizeOneToolMultiDatasets(
     dataset.dirs = datasetNames,
-    datasetGroups = datasetGroups,
-    datasetGroupLabel = "Pearson's R^2",
-    datasetSubGroups = datasetSubGroups,
-    datasetSubGroupLabel = "SBS1:SBS5 mutation count ratio",
+    datasetGroup = datasetGroup,
+    datasetGroupName = "Pearson's R^2",
+    datasetSubGroup = datasetSubGroup,
+    datasetSubGroupName = "SBS1:SBS5 mutation count ratio",
     tool.dirname = paste0("sp.sp/ExtrAttr/",toolName,".results/"),
     out.dir = paste0("FinalToolWiseSummary/ExtrAttr/",toolName,"/"),
     overwrite = T)
@@ -202,10 +207,10 @@ for(toolName in c(
 for(toolName in c(attrToolNames,"sigproextractor")){
   SummarizeOneToolMultiDatasets(
     dataset.dirs = datasetNames,
-    datasetGroups = datasetGroups,
-    datasetGroupLabel = "Pearson's R^2",
-    datasetSubGroups = datasetSubGroups,
-    datasetSubGroupLabel = "SBS1:SBS5 mutation count ratio",
+    datasetGroup = datasetGroup,
+    datasetGroupName = "Pearson's R^2",
+    datasetSubGroup = datasetSubGroup,
+    datasetSubGroupName = "SBS1:SBS5 mutation count ratio",
     tool.dirname = paste0("sp.sp/Attr/",toolName,".results/"),
     out.dir = paste0("FinalToolWiseSummary/Attr/",toolName,"/"),
     overwrite = T)
