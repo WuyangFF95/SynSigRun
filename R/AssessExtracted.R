@@ -239,8 +239,12 @@ ReadAndAnalyzeExposures <-
     }
   }
 
-  ## Only after the cycle, the sum(exposureDiff[,1]) has been fixed.
-  exposureDiff[,4] <- exposureDiff[,3] / sum(exposureDiff[,1])
+  ## Only after the cycle, the exposureDiff[,c(1,3)] has been fixed.
+  ## The Manhattan distance should normalize against the sum of exposures
+  ## of one signature, not sum of exposures of all signatures.
+  ## This can prevent the underestimation of discrepancy between attributed
+  ## exposures and ground-truth exposures.
+  exposureDiff[,4] <- exposureDiff[,3] / exposureDiff[,1]
 
   return(exposureDiff)
 }
