@@ -339,8 +339,8 @@ SummarizeMultiRuns <-
         ggplotList[[index]] <- ggplotList[[index]] +
           ggplot2::geom_boxplot() +
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
-          ## Restrict the decimal numbers of values of indexes to be 3
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       for(gtSigName in gtSigNames){
         ggplotList[[gtSigName]] <- ggplot2::ggplot(
@@ -353,8 +353,8 @@ SummarizeMultiRuns <-
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::geom_boxplot() +
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
-          ## Restrict the decimal numbers of values of indexes to be 3
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
 
       ## Print high-resolution extraction indexes into one png file
@@ -451,8 +451,8 @@ SummarizeMultiRuns <-
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::geom_boxplot() +
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE, size = 0.3) +
-          ## Restrict the decimal numbers of values of indexes to be 3
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
 
 
@@ -851,9 +851,9 @@ SummarizeMultiToolsMultiDatasets <-
         ## according to different indexes
         ggplotList$general <- ggplotList$general +
           ggplot2::facet_wrap(ggplot2::vars(index),scales = "free")
-        ## Restrict the decimal numbers of values of indexes to be 3
+        ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList$general <- ggplotList$general +
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a multi-facet ggplot,
       ## facets are separated by indexes and datasetGroup
@@ -912,8 +912,8 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::ggtitle(
             label = paste0("Measures of extraction performance as a function of"),
             subtitle = paste0("indexes and ",byCaption,".")) +
-          ## Restrict the decimal numbers of values of indexes to be 3
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot boxplot + beeswarm plots in png format
       for(by in names(ggplotList)){
@@ -1038,8 +1038,8 @@ SummarizeMultiToolsMultiDatasets <-
         ## according to different gtSigNames
         ggplotList$general <- ggplotList$general +
           ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free") +
-          ## Restrict the decimal numbers of values of indexes to be 3
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a multi-facet ggplot,
       ## facets are separated by gtSigNames and datasetGroup
@@ -1095,8 +1095,8 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::facet_grid(rows =  ggplot2::vars(gtSigName),
                               cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
                               scales = "free") +
-          ## Restrict the decimal numbers of values of indexes to be 3
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot boxplot + beeswarm plots in png format
       for(by in names(ggplotList)){
@@ -1220,8 +1220,8 @@ SummarizeMultiToolsMultiDatasets <-
         ## according to different gtSigNames
         ggplotList$general <- ggplotList$general +
           ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free") +
-          ## Restrict the decimal numbers of values of indexes to be 3
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a multi-facet ggplot,
       ## facets are separated by gtSigNames and datasetGroup
@@ -1277,8 +1277,8 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::facet_grid(rows =  ggplot2::vars(gtSigName),
                               cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
                               scales = "free") +
-          ## Restrict the decimal numbers of values of indexes to be 3
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot boxplot + beeswarm plots in png format
       for(by in names(ggplotList)){
@@ -1496,8 +1496,8 @@ SummarizeOneToolMultiDatasets <-
         ## Add title for general boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
           ggplot2::ggtitle(label = "Summary plot for extraction indexes")
-        ## Restrict the decimal numbers of values of indexes to be 3
-        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+        ## Restrict the decimal numbers of values of indexes to be 2
+        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a value~datasetSubGroup beeswarm for each index.
       for(index in indexes){
@@ -1537,8 +1537,8 @@ SummarizeOneToolMultiDatasets <-
           y = ylabels[index],
           ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
           x = paste0("Facets separated by ",datasetSubGroupName))
-        ## Restrict the decimal numbers of values of indexes to be 3
-        ggplotList[[index]] <- ggplotList[[index]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+        ## Restrict the decimal numbers of values of indexes to be 2
+        ggplotList[[index]] <- ggplotList[[index]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
 
 
@@ -1641,8 +1641,8 @@ SummarizeOneToolMultiDatasets <-
         ## Add title for general boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
           ggplot2::ggtitle(label = "Summary plot for one-signature cosine similarity")
-        ## Restrict the decimal numbers of values of indexes to be 3
-        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+        ## Restrict the decimal numbers of values of indexes to be 2
+        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a value~datasetSubGroup beeswarm plot for each signature.
       for(gtSigName in gtSigNames){
@@ -1682,9 +1682,9 @@ SummarizeOneToolMultiDatasets <-
           y = (paste0("Manhattan distance of ",gtSigName," exposure")),
           ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
           x = (paste0("Facets separated by ",datasetSubGroupName)))
-        ## Restrict the decimal numbers of values of indexes to be 3
+        ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
 
 
@@ -1788,8 +1788,8 @@ SummarizeOneToolMultiDatasets <-
         ## Add title for general boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
           ggplot2::ggtitle(label = "Summary plot for Manhattan distance")
-        ## Restrict the decimal numbers of values of indexes to be 3
-        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+        ## Restrict the decimal numbers of values of indexes to be 2
+        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a value~datasetSubGroup beeswarm plot for each signature.
       for(gtSigName in gtSigNames){
@@ -1829,9 +1829,9 @@ SummarizeOneToolMultiDatasets <-
           y = (paste0("Manhattan distance of ",gtSigName," exposure")),
           ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
           x = (paste0("Facets separated by ",datasetSubGroupName)))
-        ## Restrict the decimal numbers of values of indexes to be 3
+        ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.3f", x))
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
 
 
