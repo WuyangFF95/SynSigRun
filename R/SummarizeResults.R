@@ -1005,9 +1005,12 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_boxplot and geom_quasirandom
         ggplotList$general <- ggplotList$general +
-          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName),
-                                ## Hide outliers
-                                outlier.shape = NA) +
+          ggplot2::geom_boxplot(
+            ## Change filling color to white
+            fill = "#FFFFFF",
+            #ggplot2::aes(fill = gtSigName),
+            ## Hide outliers
+            outlier.shape = NA) +
           ggbeeswarm::geom_quasirandom(
             groupOnX = TRUE, size = 0.3
             ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
@@ -1054,9 +1057,12 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_boxplot and geom_quasirandom
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName),
-                                ## Hide outliers
-                                outlier.shape = NA) +
+          ggplot2::geom_boxplot(
+            ## Change filling color to white
+            fill = "#FFFFFF",
+            #ggplot2::aes(fill = gtSigName),
+            ## Hide outliers
+            outlier.shape = NA) +
           ggbeeswarm::geom_quasirandom(
             groupOnX = TRUE, size = 0.3
             ## Need to add a single color (different from black)
@@ -1181,9 +1187,12 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_boxplot and geom_quasirandom
         ggplotList$general <- ggplotList$general +
-          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName),
-                                ## Hide outliers
-                                outlier.shape = NA) +
+          ggplot2::geom_boxplot(
+            ## Change filling color to white
+            fill = "#FFFFFF",
+            #ggplot2::aes(fill = gtSigName),
+            ## Hide outliers
+            outlier.shape = NA) +
           ggbeeswarm::geom_quasirandom(
             groupOnX = TRUE, size = 0.3
             ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
@@ -1232,9 +1241,12 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_boxplot and geom_quasirandom
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_boxplot(ggplot2::aes(fill = gtSigName),
-                                ## Hide outliers
-                                outlier.shape = NA) +
+          ggplot2::geom_boxplot(
+            ## Change filling color to white
+            fill = "#FFFFFF",
+            #ggplot2::aes(fill = gtSigName),
+            ## Hide outliers
+            outlier.shape = NA) +
           ggbeeswarm::geom_quasirandom(
             groupOnX = TRUE, size = 0.3
             ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
