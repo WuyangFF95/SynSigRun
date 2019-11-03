@@ -583,9 +583,17 @@ SummarizeMultiToolsOneDataset <- function(
     {
       indexes <- c("averCosSim","falseNeg","falsePos",
                    "truePos","TPR","FDR")
+      indexLabels <- c("Average cosine similarity",
+                       "False negatives",
+                       "False positives",
+                       "True positives",
+                       "True Positive Rate (sensitivity)",
+                       "False Discovery Rate (FDR)")
       for(index in indexes){
+        indexNum <- which(index == indexes)
         tmp <- data.frame(seed = names(multiRun[[index]]),
                           index = index,
+                          indexLabel = indexLabels[indexNum],
                           value = multiRun[[index]],
                           toolName = toolName,
                           datasetName = datasetName,
@@ -783,8 +791,16 @@ SummarizeMultiToolsMultiDatasets <-
       ## For each index,
       ## Create a data.frame integrating results of
       ## all runs and for all datasets
-      indexes <- c("averCosSim","falseNeg","falsePos",
-                   "truePos","TPR","FDR")
+      if(FALSE){ ## Remove redundant indexes
+        indexes <- c("averCosSim","falseNeg","falsePos",
+                     "truePos","TPR","FDR")
+      } else{
+        indexes <- c("averCosSim","falsePos","FDR")
+        indexLabels <- c("Average cosine similarity of all signatures",
+                         "False positives",
+                         "False Discovery Rate (FDR)")
+      }
+
       indexNums <- length(indexes)
 
       for(index in indexes){
@@ -830,17 +846,21 @@ SummarizeMultiToolsMultiDatasets <-
         ## Change title for general boxplot + beeswarm plot
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Measures of extraction performance",
-                           subtitle = "for all tools, ratios and correlation values.")
+                           subtitle = "for all software packages, ratios and correlation values.")
         ## Change axis labels
         ggplotList$general <- ggplotList$general +
           ggplot2::labs(x = "Software package")
         ## Rotate axis.text.x (the names of tools),
         ## and remove legends
         ggplotList$general <- ggplotList$general +
+          ## Remove axis.title.y (defaults to be "value", meaningless)
           ## Rotate axis.text.x 90 degrees,
           ## move axis.text.x right below the tick marks,
           ## and remove legends.
-          ggplot2::theme(axis.text.x = ggplot2::element_text(
+          ggplot2::theme(
+            ## Remove axis.title.y
+            axis.title.y = ggplot2::element_blank(),
+            axis.text.x = ggplot2::element_text(
             ## Rotate the axis.text.x
             angle = 90,
             ## move axis.text.x right below the tick marks
@@ -850,7 +870,7 @@ SummarizeMultiToolsMultiDatasets <-
         ## Split the plot into multiple facets,
         ## according to different indexes
         ggplotList$general <- ggplotList$general +
-          ggplot2::facet_wrap(ggplot2::vars(index),scales = "free")
+          ggplot2::facet_wrap(ggplot2::vars(indexLabel),scales = "free")
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList$general <- ggplotList$general +
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
@@ -890,21 +910,25 @@ SummarizeMultiToolsMultiDatasets <-
         ## Change axis labels
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::labs(x = "Software package")
+        ## Remove axis.title.y (defaults to be "value", meaningless)
         ## Rotate the axis.text.x (names of tools),
         ## move axis.text.x right below the tick marks
         ## and remove legends
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::theme(axis.text.x = ggplot2::element_text(
-            ## Rotate the axis.text.x (names of tools)
-            angle = 90,
-            ## move axis.text.x right below the tick marks
-            hjust = 1, vjust = 0.5),
-                         ## remove legends
-                         legend.position = "none")
+          ggplot2::theme(
+            ## Remove axis.title.y
+            axis.title.y = ggplot2::element_blank(),
+            axis.text.x = ggplot2::element_text(
+              ## Rotate the axis.text.x (names of tools)
+              angle = 90,
+              ## move axis.text.x right below the tick marks
+              hjust = 1, vjust = 0.5),
+              ## remove legends
+              legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::facet_grid(rows =  ggplot2::vars(index),
+          ggplot2::facet_grid(rows =  ggplot2::vars(indexLabel),
                               cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
                               scales = "free")
         ## Add title for general boxplot + beeswarm plot
@@ -1018,7 +1042,7 @@ SummarizeMultiToolsMultiDatasets <-
         ## Add title for general boxplot + beeswarm plot
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Cosine similarity between ground-truth and extracted signatures",
-                           subtitle = "for all tools, ratios and correlation values.")
+                           subtitle = "for all software packages, ratios and correlation values.")
         ## Change axis labels
         ggplotList$general <- ggplotList$general +
           ggplot2::labs(x = "Software package",
@@ -1200,7 +1224,7 @@ SummarizeMultiToolsMultiDatasets <-
         ## Add title for general boxplot + beeswarm plot
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Manhattan distance between attributed and grond-truth exposures",
-                           subtitle = "for all tools, ratios and correlation values.")
+                           subtitle = "for all software packages, ratios and correlation values.")
         ## Change axis labels
         ggplotList$general <- ggplotList$general +
           ggplot2::labs(x = "Software package",
@@ -1393,6 +1417,10 @@ SummarizeOneToolMultiDatasets <-
       names(datasetSubGroup) <- datasetNames
     }
 
+    ## Specifying measures for extraction performance
+    indexes <- c("averCosSim","falsePos","FDR")
+    indexNums <- length(indexes)
+
 
     ## Summarizing extraction results for one software package.
     {
@@ -1407,10 +1435,12 @@ SummarizeOneToolMultiDatasets <-
         thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
         toolName <- strsplit(basename(tool.dirname),".results")[[1]]
         load(paste0(thirdLevelDir,"/multiRun.RDa"))
-        indexes <- rownames(multiRun$meanSD)
-        indexNums <- length(indexes)
+        ## Omit redundant measures
+        if(FALSE){
+          indexes <- rownames(multiRun$meanSD)
+          indexNums <- length(indexes)
+        }
         datasetName <- basename(datasetDir)
-
         for(index in indexes){
           tmp <- data.frame(seed = names(multiRun[[index]]),
                             index = index,
@@ -1454,7 +1484,7 @@ SummarizeOneToolMultiDatasets <-
     ## Draw boxplot + beeswarm plot for extraction indexes
     {
       ## Designate titles and subtitles for each page
-      titles <- c("Average cosine similarity of SBS1 and SBS5",
+      titles <- c("Average cosine similarity of all signatures",
                   "False negatives",
                   "False positives",
                   "True positives",
@@ -1520,7 +1550,8 @@ SummarizeOneToolMultiDatasets <-
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
           ## Rotate and move the axis.text.x for better visualization
-          ggplot2::theme(axis.text.x = ggplot2::element_text(
+          ggplot2::theme(
+            axis.text.x = ggplot2::element_text(
             ## Rotate the axis.text.x
             angle = 90,
             ## move axis.text.x right below the tick marks
@@ -1533,7 +1564,7 @@ SummarizeOneToolMultiDatasets <-
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
         ## Change axis labels
         ggplotList[[index]] <- ggplotList[[index]] + ggplot2::labs(
-          ## Change label of y axis into index info (Same as title)
+          ## Change label of y axis (axis.label.y) into index info (Same as title)
           y = ylabels[index],
           ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
           x = paste0("Facets separated by ",datasetSubGroupName))
