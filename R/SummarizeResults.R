@@ -623,6 +623,7 @@ SummarizeMultiToolsOneDataset <- function(
       for(gtSigName in gtSigNames){
         tmp <- data.frame(seed = names(multiRun$cosSim[[gtSigName]]),
                           gtSigName = gtSigName,
+                          label = paste0("Cosine similarity for signature ",gtSigName),
                           value = multiRun$cosSim[[gtSigName]],
                           toolName = toolName,
                           datasetName = datasetName,
@@ -807,6 +808,7 @@ SummarizeMultiToolsMultiDatasets <-
         plotDFList[[index]] <- data.frame()
       }
 
+
       ## For each dataset, combine the index values into plotDFList[[index]]
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
@@ -815,12 +817,30 @@ SummarizeMultiToolsMultiDatasets <-
         for(index in indexes){
           plotDFList[[index]] <- rbind(plotDFList[[index]],multiTools[[index]])
         }
+
+        ## Also add one-signature cosine similarity into plotDFList.
+        gtSigNames <- names(multiTools$cosSim)
+        for(gtSigName in gtSigNames){
+          if(is.null(plotDFList[[gtSigName]])){
+            plotDFList[[gtSigName]] <- data.frame()
+          }
+          plotDFList[[gtSigName]] <- rbind(plotDFList[[gtSigName]],multiTools$cosSim[[gtSigName]])
+        }
+      }
+
+      for(gtSigName in gtSigNames){
+        colnames(plotDFList[[gtSigName]])[2] <- "index"
+        colnames(plotDFList[[gtSigName]])[3] <- "indexLabel"
       }
 
       ## Combine all plotDFList[[index]] into plotDFList$Combined
+      ## combined all
       plotDFList$combined <- data.frame()
       for(index in indexes){
         plotDFList$combined <- rbind(plotDFList$combined,plotDFList[[index]])
+      }
+      for(gtSigName in gtSigNames){
+        plotDFList$combined <- rbind(plotDFList$combined,plotDFList[[gtSigName]])
       }
 
       ggplotList <- list()
@@ -930,7 +950,9 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::facet_grid(rows =  ggplot2::vars(indexLabel),
                               cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
-                              scales = "free")
+                              scales = "free") +
+          ## Make facet label font size smaller
+          ggplot2::theme(strip.text.y = ggplot2::element_text(size = 4))
         ## Add title for general boxplot + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
@@ -949,7 +971,9 @@ SummarizeMultiToolsMultiDatasets <-
         )
       }
       ## Plot boxplot + beeswarm plots in pdf format
-      grDevices::pdf(paste0(out.dir,"/extraction.boxplots.pdf"), pointsize = 1)
+      grDevices::pdf(paste0(out.dir,"/extraction.boxplots.pdf"),
+                     #paper = "a4", ## A4 size
+                     pointsize = 1)
       for(by in names(ggplotList)){
         print(ggplotList[[by]])
       }
