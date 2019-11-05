@@ -19,7 +19,9 @@ for(slope in slopes){
 RBasedExtrAttrToolNames <- c("signeR","hdp","hdp.clean","sigfit.nmf","sigfit.emu")
 # Python or other language based tools.
 # excluding maftools (seed is fixed) and EMu (cannot designate seed)
-otherExtrAttrToolNames <- c("MultiModalMuSig","SignatureAnalyzer","sigproextractor")
+otherExtrAttrToolNames <-
+  c("MultiModalMuSig","SignatureAnalyzer",
+    "sigproextractor","helmsman")
 # Tools can only do attribution
 attrToolNames <-
   c("decompTumor2Sig","deconstructSigs","mSigAct",
@@ -35,8 +37,50 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
                 27847, 34637, 49081, 75679, 103333,
                 145879, 200437, 310111, 528401, 1076753)
 
+## Clean up all SummarizeSigOneSubdir(), SummarizeSigOneSASubdir()
+## SummarizeSigOnehelmsmanSubdir(), SummarizeSigOneSPSubdir() output.
+## Note: the folder structure of EMu and maftools are different from
+## the structure of other packages.
+## This is because EMu cannot specify seeds; while maftools have a fixed
+## seed (123456).
+## Part I: Run Summarize functions in SynSigEval
+for(datasetName in datasetNames){
+  for(seedInUse in seedsInUse){
+    ## Delete summary of R-based and non-R based Extraction and attribution tools.
+    for(extrAttrToolName in c(RBasedExtrAttrToolNames,otherExtrAttrToolNames)){
+      unlink(
+        paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrToolName,
+               ".results/seed.",seedInUse,"/summary/"),
+        recursive = FALSE)
+    }
+    ## Delete summary of R-based attribution-only tools.
+    for(attrToolName in attrToolNames){
+      unlink(
+        paste0(datasetName,"/sp.sp/Attr/",extrAttrToolName,
+               ".results/seed.",seedInUse,"/summary/"),
+        recursive = FALSE)
+    }
+  }
+  ## Delete summary of maftools
+    unlink(paste0(datasetName,
+                  "/sp.sp/ExtrAttr/maftools.results/seed.123456","/summary/"),
+    recursive = FALSE)
+  ## Summarize EMu
+  for(nrun in 1:20){
+    unlink(
+      paste0(datasetName,"/sp.sp/ExtrAttr/","EMu",
+                       ".results/run.",nrun,"/summary/"),
+      recursive = T)
+  }
+}
 
-##
+
+## Clean up all SummarizeMultiRuns() Output, all SummarizeMultiToolsOneDataset() output
+## Note: for these outputs, the folder structure of EMu and maftools are the same
+## as other tools.
+otherExtrAttrToolNames <- c("MultiModalMuSig","SignatureAnalyzer","sigproextractor",
+                            "EMu","maftools")
+
 for(datasetName in datasetNames){
 
   for(toolName in c(RBasedExtrAttrToolNames,otherExtrAttrToolNames)){
