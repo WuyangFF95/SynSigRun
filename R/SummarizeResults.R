@@ -784,7 +784,7 @@ SummarizeMultiToolsMultiDatasets <-
     }
 
     ## Plot general png and pdf for extraction summary
-    ## Plot a general boxplot + beeswarm plot for multiple indexes
+    ## Plot a general violin + beeswarm plot for multiple indexes
     ## in all runs and in all datasets.
     {
       plotDFList <- list()
@@ -850,20 +850,26 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList$general <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
-        ## Draw geom_boxplot and geom_quasirandom
+        ## Draw geom_violin and geom_quasirandom
         ggplotList$general <- ggplotList$general +
-          ggplot2::geom_boxplot(
+          ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             #ggplot2::aes(fill = index),
+            ## Maximize the violin plot width
+            scale = "width",
+            ## Make bandwidth larger
+            #position = "dodge",
+            #width = 1.2
             ## Hide outliers
-            outlier.shape = NA
-            ) +
-          ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3
-            ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          )
-        ## Change title for general boxplot + beeswarm plot
+            #outlier.shape = NA
+            )
+          #+
+          #ggbeeswarm::geom_quasirandom(
+          #  groupOnX = TRUE, size = 0.3
+          #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+          #)
+        ## Change title for general violin + beeswarm plot
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Measures of extraction performance",
                            subtitle = "for all software packages, ratios and correlation values.")
@@ -881,12 +887,14 @@ SummarizeMultiToolsMultiDatasets <-
             ## Remove axis.title.y
             axis.title.y = ggplot2::element_blank(),
             axis.text.x = ggplot2::element_text(
-            ## Rotate the axis.text.x
-            angle = 90,
-            ## move axis.text.x right below the tick marks
-            hjust = 1,vjust = 0.5),
+              ## Rotate the axis.text.x
+              angle = 90,
+              ## move axis.text.x right below the tick marks
+              hjust = 1,vjust = 0.5),
+            ## Make font size of facet label smaller.
+            strip.text = ggplot2::element_text(size = 4),
             ## remove legends.
-                         legend.position = "none")
+            legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
         ggplotList$general <- ggplotList$general +
@@ -909,20 +917,26 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList[[by]] <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
-        ## Draw geom_boxplot and geom_quasirandom
+        ## Draw geom_violin and geom_quasirandom
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_boxplot(
+          ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             #ggplot2::aes(fill = index),
+            ## Maximize the violin plot width
+            scale = "width",
+            ## Make bandwidth larger
+            #position = "dodge",
+            #width = 1.2
             ## Hide outliers
-            outlier.shape = NA
-            ) +
-          ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3
-            ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          )
-        ## Add title for general boxplot + beeswarm plot
+            #outlier.shape = NA
+            )
+          #+
+          #ggbeeswarm::geom_quasirandom(
+          #  groupOnX = TRUE, size = 0.3
+          #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+          #)
+        ## Add title for general violin + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
             label = paste0("Measures of extraction performance as a function of"),
@@ -953,7 +967,7 @@ SummarizeMultiToolsMultiDatasets <-
                               scales = "free") +
           ## Make facet label font size smaller
           ggplot2::theme(strip.text.y = ggplot2::element_text(size = 4))
-        ## Add title for general boxplot + beeswarm plot
+        ## Add title for general violin + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
             label = paste0("Measures of extraction performance as a function of"),
@@ -961,17 +975,17 @@ SummarizeMultiToolsMultiDatasets <-
           ## Restrict the decimal numbers of values of indexes to be 2
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
-      ## Plot boxplot + beeswarm plots in png format
+      ## Plot violin + beeswarm plots in png format
       for(by in names(ggplotList)){
         suppressMessages(
-          ggplot2::ggsave(filename = paste0(out.dir,"/extraction.boxplot.by.",by,".png"),
+          ggplot2::ggsave(filename = paste0(out.dir,"/extraction.violin.by.",by,".png"),
                           plot = ggplotList[[by]], device = "png", dpi = 1000
                           ,limitsize = FALSE  ## debug
                           )
         )
       }
-      ## Plot boxplot + beeswarm plots in pdf format
-      grDevices::pdf(paste0(out.dir,"/extraction.boxplots.pdf"),
+      ## Plot violin + beeswarm plots in pdf format
+      grDevices::pdf(paste0(out.dir,"/extraction.violins.pdf"),
                      #paper = "a4", ## A4 size
                      pointsize = 1)
       for(by in names(ggplotList)){
@@ -1013,7 +1027,7 @@ SummarizeMultiToolsMultiDatasets <-
       }
     }
     ## Plot general png and pdf for one-signature cosine similarity summary
-    ## Plot a general boxplot + beeswarm plot for multiple signatures
+    ## Plot a general violin + beeswarm plot for multiple signatures
     ## in all runs and in all datasets.
     {
       plotDFList <- list()
@@ -1051,19 +1065,26 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList$general <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
-        ## Draw geom_boxplot and geom_quasirandom
+        ## Draw geom_violin and geom_quasirandom
         ggplotList$general <- ggplotList$general +
-          ggplot2::geom_boxplot(
+          ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             #ggplot2::aes(fill = gtSigName),
+            ##
+            scale = "width",
+            ## Make bandwidth larger
+            #position = "dodge",
+            #width = 1.2
             ## Hide outliers
-            outlier.shape = NA) +
-          ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3
-            ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          )
-        ## Add title for general boxplot + beeswarm plot
+            #outlier.shape = NA
+            )
+          #+
+          #ggbeeswarm::geom_quasirandom(
+          #  groupOnX = TRUE, size = 0.3
+          #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+          #)
+        ## Add title for general violin + beeswarm plot
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Cosine similarity between ground-truth and extracted signatures",
                            subtitle = "for all software packages, ratios and correlation values.")
@@ -1103,21 +1124,28 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList[[by]] <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
-        ## Draw geom_boxplot and geom_quasirandom
+        ## Draw geom_violin and geom_quasirandom
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_boxplot(
+          ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             #ggplot2::aes(fill = gtSigName),
+            ## Maximize the violin plot width
+            scale = "width",
+            ## Make bandwidth larger
+            #position = "dodge",
+            #width = 1.2
             ## Hide outliers
-            outlier.shape = NA) +
-          ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3
-            ## Need to add a single color (different from black)
-            ## for all data points.
-            , ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          )
-        ## Add title for general boxplot + beeswarm plot
+            #outlier.shape = NA
+            )
+          #+
+          #ggbeeswarm::geom_quasirandom(
+          #  groupOnX = TRUE, size = 0.3
+          #  ## Need to add a single color (different from black)
+          #  ## for all data points.
+          #  , ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+          #)
+        ## Add title for general violin + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
             label = paste0("Extraction cosine similarity as a function of"),
@@ -1146,17 +1174,17 @@ SummarizeMultiToolsMultiDatasets <-
           ## Restrict the decimal numbers of values of indexes to be 2
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
-      ## Plot boxplot + beeswarm plots in png format
+      ## Plot violin + beeswarm plots in png format
       for(by in names(ggplotList)){
         suppressMessages(
-          ggplot2::ggsave(filename = paste0(out.dir,"/onesig.cossim.boxplot.by.",by,".png"),
+          ggplot2::ggsave(filename = paste0(out.dir,"/onesig.cossim.violin.by.",by,".png"),
                           plot = ggplotList[[by]], device = "png", dpi = 1000
                           ,limitsize = FALSE
                           )
         )
       }
-      ## Plot boxplot + beeswarm plots in pdf format
-      grDevices::pdf(paste0(out.dir,"/onesig.cossim.boxplots.pdf"), pointsize = 1)
+      ## Plot violin + beeswarm plots in pdf format
+      grDevices::pdf(paste0(out.dir,"/onesig.cossim.violins.pdf"), pointsize = 1)
       for(by in names(ggplotList)){
         print(ggplotList[[by]])
       }
@@ -1195,7 +1223,7 @@ SummarizeMultiToolsMultiDatasets <-
       }
     }
     ## Plot general png and pdf for attribution Manhattan Distance summary
-    ## Plot a general boxplot + beeswarm plot for multiple signatures
+    ## Plot a general violin + beeswarm plot for multiple signatures
     ## in all runs and in all datasets.
     {
       plotDFList <- list()
@@ -1233,19 +1261,26 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList$general <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
-        ## Draw geom_boxplot and geom_quasirandom
+        ## Draw geom_violin and geom_quasirandom
         ggplotList$general <- ggplotList$general +
-          ggplot2::geom_boxplot(
+          ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             #ggplot2::aes(fill = gtSigName),
+            ## Maximize the violin plot width
+            scale = "width",
+            ## Make bandwidth larger
+            #position = "dodge",
+            #width = 1.2
             ## Hide outliers
-            outlier.shape = NA) +
-          ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3
-            ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          )
-        ## Add title for general boxplot + beeswarm plot
+            #outlier.shape = NA
+            )
+          #+
+          #ggbeeswarm::geom_quasirandom(
+          #  groupOnX = TRUE, size = 0.3
+          #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+          #)
+        ## Add title for general violin + beeswarm plot
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Manhattan distance between attributed and grond-truth exposures",
                            subtitle = "for all software packages, ratios and correlation values.")
@@ -1287,19 +1322,26 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList[[by]] <- ggplot2::ggplot(
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
-        ## Draw geom_boxplot and geom_quasirandom
+        ## Draw geom_violin and geom_quasirandom
         ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_boxplot(
+          ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             #ggplot2::aes(fill = gtSigName),
+            ## Maximize the violin plot width
+            scale = "width",
+            ## Make bandwidth larger
+            #position = "dodge",
+            #width = 1.2
             ## Hide outliers
-            outlier.shape = NA) +
-          ggbeeswarm::geom_quasirandom(
-            groupOnX = TRUE, size = 0.3
-            ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          )
-        ## Add title for general boxplot + beeswarm plot
+            #outlier.shape = NA
+            )
+          #+
+          #ggbeeswarm::geom_quasirandom(
+          #  groupOnX = TRUE, size = 0.3
+          #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+          #)
+        ## Add title for general violin + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
             label = paste0("Manhattan Distance summary plot as a function of "),
@@ -1328,17 +1370,17 @@ SummarizeMultiToolsMultiDatasets <-
           ## Restrict the decimal numbers of values of indexes to be 2
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
-      ## Plot boxplot + beeswarm plots in png format
+      ## Plot violin + beeswarm plots in png format
       for(by in names(ggplotList)){
         suppressMessages(
-          ggplot2::ggsave(filename = paste0(out.dir,"/Manhattan.Dist.boxplot.by.",by,".png"),
+          ggplot2::ggsave(filename = paste0(out.dir,"/Manhattan.Dist.violin.by.",by,".png"),
                           plot = ggplotList[[by]], device = "png", dpi = 1000
                           ,limitsize = FALSE
                           )
         )
       }
-      ## Plot boxplot + beeswarm plots in pdf format
-      grDevices::pdf(paste0(out.dir,"/Manhattan.Dist.boxplots.pdf"), pointsize = 1)
+      ## Plot violin + beeswarm plots in pdf format
+      grDevices::pdf(paste0(out.dir,"/Manhattan.Dist.violins.pdf"), pointsize = 1)
       for(by in names(ggplotList)){
         print(ggplotList[[by]])
       }
