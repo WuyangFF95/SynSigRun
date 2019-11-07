@@ -5,8 +5,8 @@ require(SynSigEval)
 options(stringsAsFactors = F)
 
 ## Specify dataset names
-slopes <- c(0.1,0.5,1,2,10)
-Rsqs <- c(0.1,0.2,0.3,0.6)
+slopes <- c("0.1","0.5","1","2","10")
+Rsqs <- c("0.1","0.2","0.3","0.6")
 datasetNames <- character(0)
 
 for(slope in slopes){
@@ -19,7 +19,8 @@ for(slope in slopes){
 # R-based tools which can do both extraction and attribution,
 # excluding SignatureAnalyzer (due to special folder structure)
 # and maftools (its seed is hard-coded)
-RBasedExtrAttrToolNames <- c("signeR","hdp","hdp.clean","sigfit.nmf","sigfit.emu")
+#RBasedExtrAttrToolNames <- c("signeR","hdp","hdp.clean","sigfit.nmf","sigfit.emu")
+RBasedExtrAttrToolNames <- c("signeR","hdp.clean","sigfit.nmf","sigfit.emu")
 # Python or other language based tools.
 # excluding maftools (seed is fixed) and EMu (cannot designate seed)
 otherExtrAttrToolNames <- c("MultiModalMuSig")
@@ -185,9 +186,9 @@ for(slope in slopes){
 }
 ## Part IV: Generate a summary table and boxplot for results
 ## of multiple datasets, from each separate tool.
-datasetGroup <- rep(c(0.1,0.2,0.3,0.6),5)
+datasetGroup <- rep(c("0.1","0.2","0.3","0.6"),5)
 names(datasetGroup) <- datasetNames
-datasetSubGroup <- rep(c(0.1,0.5,1,2,10),each = 4)
+datasetSubGroup <- rep(c("0.1","0.5","1","2","10"),each = 4)
 names(datasetSubGroup) <- datasetNames
 
 
