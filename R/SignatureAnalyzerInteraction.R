@@ -518,7 +518,7 @@ SignatureAnalyzer4MatchedCatalogs <-
     }
 
   retval2 <-
-    mapply(tmp.fn, subdirs[slice], read.fn[slice], write.fn[slice])
+    mapply(tmp.fn, subdirs[slice], ICAMS::ReadCatalog, ICAMS::WriteCatalog)
 
   invisible(retval2)
   }

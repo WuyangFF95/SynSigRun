@@ -58,7 +58,6 @@ Installsigfit <- function(){
 RunsigfitAttributeOnly <-
   function(input.catalog,
            gt.sigs.file,
-           read.catalog.function,
            out.dir,
            model = "nmf",
            seedNumber = 1,
@@ -78,7 +77,7 @@ RunsigfitAttributeOnly <-
 
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
-    spectra <- read.catalog.function(input.catalog,
+    spectra <- ICAMS::ReadCatalog(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
@@ -91,7 +90,7 @@ RunsigfitAttributeOnly <-
     convSpectra <- t(convSpectra)
 
     ## Read in ground-truth signature file
-    gtSignatures <- read.catalog.function(gt.sigs.file)
+    gtSignatures <- ICAMS::ReadCatalog(gt.sigs.file)
     ## Remove the catalog related attributes in gtSignatures
     tmp <- dimnames(gtSignatures)
     class(gtSignatures) <- "matrix"
@@ -166,10 +165,6 @@ RunsigfitAttributeOnly <-
 #'
 #' @param input.catalog File containing input spectra catalog.
 #' Columns are samples (tumors), rows are mutation types.
-#'
-#' @param read.catalog.function Function to read a catalog
-#' (can be spectra or signature catalog): it takes a file path as
-#' its only argument and returning a catalog as a numeric matrix.
 #'
 #' @param out.dir Directory that will be created for the output;
 #' abort if it already exits.  Log files will be in

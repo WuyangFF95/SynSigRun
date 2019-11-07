@@ -141,7 +141,7 @@ RunSparseSignatures <-
         K = seq(K.range[1],K.range[2]),
         num_processes = NA,
         seed = seedNumber)
-      res = as.mean.squared.error(cv_example)$median
+      res = SparseSignatures::as.mean.squared.error(SparseSignatures::cv_example)$median
       resBest = which(res==min(res),arr.ind=TRUE)
       ## Record best number of signatures and Lambda number
       K.best = rownames(res)[resBest[1]]

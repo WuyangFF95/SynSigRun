@@ -94,7 +94,7 @@ ReadEMuExposureFile <-
 ReadEMuCatalog <-
   function(cat,
            mutTypes,
-           sampleOrSigNames,
+           sigOrSampleNames,
            region = "unknown",
            catalog.type = "counts.signature"){
 
@@ -141,11 +141,6 @@ ReadEMuCatalog <-
 #' abort if it already exists. Usually, the \code{out.dir} will
 #' be a \code{EMu.results} folder directly under the folder
 #' storing \code{catalog}.
-#'
-#' @param seedsInUse seed numbers to be used in data creation.
-#' The function will create directories /seed.\code{seedsInUse}
-#' under out.dir, and store EMu ground-truth spectra catalog
-#' under it.
 #'
 #' @param overwrite If TRUE, overwrite existing output
 #'

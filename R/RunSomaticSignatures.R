@@ -107,12 +107,19 @@ RunSomaticSignatures <-
     attr(convSpectra,"region") <- NULL
     dimnames(convSpectra) <- dimnames(spectra)
     sample.number <- dim(spectra)[2]
+
+    ## Signature extraction
+    ## TODO(Wuyang)
+    extractedSignatures <- NULL
+
     ## Write extracted signatures
     ICAMS::WriteCatalog(extractedSignatures,
                         paste0(out.dir,"/extracted.signatures.csv"))
 
 
     ## Derive exposure count attribution results.
+    ## TODO(Wuyang)
+    extractionObject <- NULL
     exposureCounts <- extractionObject$Ehat ## Unnormalized exposures
     rownames(exposureCounts) <- paste("SomaticSignatures",seq(1,K.best),sep = ".") ## Assign row names of exposure matrix as names of signatures
     colnames(exposureCounts) <- colnames(spectra) ## Assign column names of exposure matrix as names of tumors

@@ -164,7 +164,7 @@ CreateMultiModalMuSigOutput <-
 
 	## Dump catMatrix into out.dir
 	newFileName <- paste0(out.dir,"/",oldFileName,".tsv")
-  write.table(catMatrix, file = newFileName,
+  utils::write.table(catMatrix, file = newFileName,
               sep = "\t", quote = F, row.names = F)
 
   invisible(catMatrix)

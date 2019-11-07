@@ -230,6 +230,8 @@ SummarizeMultiRuns <-
       runDir <- paste0(tool.dir,"/",runName)
       summaryDir <- paste0(runDir,"/summary")
       sigAnalysisFile <- paste0(summaryDir,"/sigAnalysis.RDa")
+      ## Add sigAnalysis <- NULL to please the Rcheck
+      sigAnalysis <- NULL
       load(file = sigAnalysisFile)
 
       ## Names of ground-truth signatures
@@ -415,6 +417,8 @@ SummarizeMultiRuns <-
       runDir <- paste0(tool.dir,"/",runName)
       summaryDir <- paste0(runDir,"/summary")
       exposureDiffFile <- paste0(summaryDir,"/exposureDiff.RDa")
+      ## Add exposureDiff <- NULL to please the R check
+      exposureDiff <- NULL
       load(file = exposureDiffFile)
       ManhattanDist[gtSigNames,runName] <- exposureDiff[gtSigNames,"Manhattan.distance"]
     }
@@ -577,6 +581,8 @@ SummarizeMultiToolsOneDataset <- function(
     toolName <- toolNames[toolNumber]
     toolDirName <- tool.dirnames[toolNumber]
     toolPath <- paste0(third.level.dir,"/",toolDirName)
+    ## Add multiRun <- NULL to please the R check
+    multiRun <- NULL
     load(paste0(toolPath,"/multiRun.RDa"))
 
     ## Combine multi-runs and multi-tools for each index
@@ -760,6 +766,8 @@ SummarizeMultiToolsMultiDatasets <-
       ## Combine extraction assessment onto 7 sheets:
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        ## Add multiTools <- NULL to please R check
+        multiTools <- NULL
         load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
         ## Find tool names
@@ -812,6 +820,8 @@ SummarizeMultiToolsMultiDatasets <-
       ## For each dataset, combine the index values into plotDFList[[index]]
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        ## Add multiTools <- NULL to please R check
+        multiTools <- NULL
         load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
         for(index in indexes){
@@ -908,7 +918,6 @@ SummarizeMultiToolsMultiDatasets <-
       ## (in example, it refers to slope.)
       for(by in c("datasetGroup","datasetSubGroup"))  {
 
-
         ## The value of "datasetGroupName" or "datasetSubGroupName"
         ## which is the caption of "datasetGroup"
         byCaption <- eval(parse(text = paste0("multiTools$",by,"Name")))
@@ -994,6 +1003,11 @@ SummarizeMultiToolsMultiDatasets <-
       grDevices::dev.off()
     }
 
+    ## Write a table for extraction measures.
+    if(FALSE){  ## debug
+      indexes <- c("averCosSim","falseNeg","falsePos",
+                   "truePos","TPR","FDR")
+    }
 
 
     ## Summarizing one-signature cosine similarity results.
@@ -1003,6 +1017,8 @@ SummarizeMultiToolsMultiDatasets <-
       ## Each sheet shows cosine similarity for one mutational signature.
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        ## Add multiTools <- NULL to please R check
+        multiTools <- NULL
         load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
         gtSigNames <- rownames(multiTools$combMeanSDMD)
@@ -1045,6 +1061,8 @@ SummarizeMultiToolsMultiDatasets <-
       ## For each dataset, combine the gtSigName values into plotDFList[[gtSigName]]
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        ## Add multiTools <- NULL to please R check
+        multiTools <- NULL
         load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
         for(gtSigName in gtSigNames){
@@ -1199,6 +1217,8 @@ SummarizeMultiToolsMultiDatasets <-
       ## Each sheet shows Manhattan distance for one mutational signature.
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        ## Add multiTools <- NULL to please R check
+        multiTools <- NULL
         load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
         gtSigNames <- rownames(multiTools$combMeanSDMD)
@@ -1241,6 +1261,8 @@ SummarizeMultiToolsMultiDatasets <-
       ## For each dataset, combine the gtSigName values into plotDFList[[gtSigName]]
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",second.third.level.dirname)
+        ## Add multiTools <- NULL to please R check
+        multiTools <- NULL
         load(paste0(thirdLevelDir,"/multiTools.RDa"))
 
         for(gtSigName in gtSigNames){
@@ -1500,6 +1522,8 @@ SummarizeOneToolMultiDatasets <-
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
         toolName <- strsplit(basename(tool.dirname),".results")[[1]]
+        ## Add multiRun <- NULL to please R check
+        multiRun <- NULL
         load(paste0(thirdLevelDir,"/multiRun.RDa"))
         ## Omit redundant measures
         if(FALSE){
@@ -1661,6 +1685,8 @@ SummarizeOneToolMultiDatasets <-
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
         toolName <- strsplit(basename(tool.dirname),".results")[[1]]
+        ## Add multiRun <- NULL to please R check
+        multiRun <- NULL
         load(paste0(thirdLevelDir,"/multiRun.RDa"))
         gtSigNames <- names(multiRun$cosSim)
         sigNums <- length(gtSigNames)
@@ -1808,6 +1834,8 @@ SummarizeOneToolMultiDatasets <-
       for(datasetDir in dataset.dirs){
         thirdLevelDir <- paste0(datasetDir,"/",tool.dirname)
         toolName <- strsplit(basename(tool.dirname),".results")[[1]]
+        ## Add multiRun <- NULL to please R check
+        multiRun <- NULL
         load(paste0(thirdLevelDir,"/multiRun.RDa"))
         gtSigNames <- rownames(multiRun$ManhattanDist)
         sigNums <- length(gtSigNames)

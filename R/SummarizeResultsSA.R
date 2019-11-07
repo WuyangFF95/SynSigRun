@@ -106,10 +106,10 @@ SignatureAnalyzerSummarizeTopLevel <-
              SummarizeSigOneSASubdir(
                sp.sp.dir, overwrite = overwrite),
            sa.sa.COMPOSITE =
-             SummarizeSigOneSACOMPOSITESubdir(
+             SummarizeSigOneSASubdir(
                sa.sa.COMPOSITE.dir, overwrite = overwrite),
            sp.sa.COMPOSITE =
-             SummarizeSigOneSACOMPOSITESubdir(
+             SummarizeSigOneSASubdir(
                sp.sa.COMPOSITE.dir, overwrite = overwrite))
 
     capture.output(print(retval), file = paste0(top.level.dir, "/retval.txt"))

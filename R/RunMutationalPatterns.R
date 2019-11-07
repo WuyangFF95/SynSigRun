@@ -216,8 +216,8 @@ RunMutationalPatterns <-
 
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
-    spectra <- read.catalog.function(input.catalog,
-                                     strict = FALSE)
+    spectra <- ICAMS::ReadCatalog(input.catalog,
+                                  strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which HDP accepts:
