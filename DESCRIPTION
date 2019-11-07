@@ -21,6 +21,7 @@ Imports:
     graphics,
     grDevices,
     ggplot2,
+    ggpubr,
     ggbeeswarm,
     gtools
 Depends: R (>= 3.5)
@@ -40,6 +41,7 @@ Suggests:
     maftools,
     MutationalPatterns,
     mutSignatures,
+    mSigAct,
     rstan,
     sigfit,
     SignatureEstimation,
