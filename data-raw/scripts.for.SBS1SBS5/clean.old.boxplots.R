@@ -43,33 +43,32 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## the structure of other packages.
 ## This is because EMu cannot specify seeds; while maftools have a fixed
 ## seed (123456).
-## Part I: Run Summarize functions in SynSigEval
 for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
     ## Delete summary of R-based and non-R based Extraction and attribution tools.
     for(extrAttrToolName in c(RBasedExtrAttrToolNames,otherExtrAttrToolNames)){
       unlink(
         paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrToolName,
-               ".results/seed.",seedInUse,"/summary/"),
-        recursive = FALSE)
+               ".results/seed.",seedInUse,"/summary/*"),
+        recursive = T)
     }
     ## Delete summary of R-based attribution-only tools.
     for(attrToolName in attrToolNames){
       unlink(
         paste0(datasetName,"/sp.sp/Attr/",extrAttrToolName,
-               ".results/seed.",seedInUse,"/summary/"),
-        recursive = FALSE)
+               ".results/seed.",seedInUse,"/summary/*"),
+        recursive = T)
     }
   }
   ## Delete summary of maftools
     unlink(paste0(datasetName,
-                  "/sp.sp/ExtrAttr/maftools.results/seed.123456","/summary/"),
-    recursive = FALSE)
-  ## Summarize EMu
+                  "/sp.sp/ExtrAttr/maftools.results/seed.123456","/summary/*"),
+    recursive = T)
+  ## Delete summary of EMu
   for(nrun in 1:20){
     unlink(
       paste0(datasetName,"/sp.sp/ExtrAttr/","EMu",
-                       ".results/run.",nrun,"/summary/"),
+                       ".results/run.",nrun,"/summary/*"),
       recursive = T)
   }
 }
