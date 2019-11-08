@@ -879,6 +879,10 @@ SummarizeMultiToolsMultiDatasets <-
           #  groupOnX = TRUE, size = 0.3
           #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
           #)
+        ## Show median of the extraction measure distribution
+        ggplotList$general <- ggplotList$general +
+          stat_summary(fun.y="median", geom="point")
+
         ## Change title for general violin + beeswarm plot
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Measures of extraction performance",
@@ -945,6 +949,9 @@ SummarizeMultiToolsMultiDatasets <-
           #  groupOnX = TRUE, size = 0.3
           #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
           #)
+        ## Show median of the extraction measure distribution
+        ggplotList[[by]] <- ggplotList[[by]] +
+          stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
@@ -1102,6 +1109,9 @@ SummarizeMultiToolsMultiDatasets <-
           #  groupOnX = TRUE, size = 0.3
           #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
           #)
+        ## Show median of the cosine similarity distribution
+        ggplotList$general <- ggplotList$general +
+          stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Cosine similarity between ground-truth and extracted signatures",
@@ -1163,6 +1173,9 @@ SummarizeMultiToolsMultiDatasets <-
           #  ## for all data points.
           #  , ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
           #)
+        ## Show median of the extraction measure distribution
+        ggplotList[[by]] <- ggplotList[[by]] +
+          stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
@@ -1302,6 +1315,9 @@ SummarizeMultiToolsMultiDatasets <-
           #  groupOnX = TRUE, size = 0.3
           #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
           #)
+        ## Show median of the Manhattan distance distribution
+        ggplotList$general <- ggplotList$general +
+          stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Manhattan distance between attributed and grond-truth exposures",
@@ -1363,6 +1379,9 @@ SummarizeMultiToolsMultiDatasets <-
           #  groupOnX = TRUE, size = 0.3
           #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
           #)
+        ## Show median of the Manhattan distance distribution
+        ggplotList[[by]] <- ggplotList[[by]] +
+          stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::ggtitle(
