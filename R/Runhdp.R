@@ -165,19 +165,23 @@ Runhdp <-
       ## Run four independent posterior sampling chains
       chlist <- vector("list", 4)	#4 is too much here!
 
-      i <- 1 ## Should execute manually rather than for cycle, because it is too slow!
-      for (i in 1:4){
-        chlist[[i]] <- hdp::hdp_posterior(hdpObject,
-                                     burnin=4000,	## 4000 is too large, but necessary
-                                     n=50,	## n here refers to the times of posterior sampling after burnin. To be faster, n can be set to 50.
-                                     space=50,	## space is the time of iterations between two samplings. In this case, I need to iterate 9000 times.
-                                     cpiter=3,
-                                     seed= (seedNumber + i * 10^6) %% (10^7) ) ## Cannot choose the same seed for 4 chains!
+      for (i in 1:4) {
+        chlist[[i]] <-
+          hdp::hdp_posterior(
+            hdpObject,
+            # The remaining values, except seed, are from the vignette; there
+            # are no defaults.
+            burnin = 4000,
+            n      = 50,
+            space  = 50,
+            cpiter = 3,
+            # Must choose a different seed for each of the 4 chains:
+            seed   = (seedNumber + i * 10^6) %% (10^7) )
       }
 
       ## Generate the original multi_chain for the sample
       mut_example_multi <- hdp::hdp_multi_chain(chlist)
-      mut_example_multi
+
     }
 
     ## Step 3: Plot the diagnostics of sampling chains.
