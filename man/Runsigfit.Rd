@@ -55,10 +55,6 @@ Default: FALSE}
 
 \item{overwrite}{If TRUE, overwrite existing output.
 Default: FALSE}
-
-\item{read.catalog.function}{Function to read a catalog
-(can be spectra or signature catalog): it takes a file path as
-its only argument and returning a catalog as a numeric matrix.}
 }
 \value{
 The attributed exposure of \code{sigfit}, invisibly.

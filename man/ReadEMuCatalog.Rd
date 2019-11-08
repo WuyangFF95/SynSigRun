@@ -4,7 +4,7 @@
 \alias{ReadEMuCatalog}
 \title{Read Catalog files in EMu format.}
 \usage{
-ReadEMuCatalog(cat, mutTypes, sampleOrSigNames, region = "unknown",
+ReadEMuCatalog(cat, mutTypes, sigOrSampleNames, region = "unknown",
   catalog.type = "counts.signature")
 }
 \arguments{
@@ -14,14 +14,6 @@ or a EMu formatted matrix or data.frame.}
 \item{mutTypes}{Types of mutations. They are usually from an
 \code{ICAMS:::catalog.row.header} object.}
 
-\item{region}{Catalog region. Can be a specific genomic
-or exonic region, or "unknown".
-Default: "unknown"}
-
-\item{catalog.type}{Is the catalog a signature catalog,
-or a spectrum catalog?
-Default: "counts"}
-
 \item{sigOrSampleNames}{If input file is a counts signature file
 \code{(catalog.type == "counts.signature")},
 signature names should be provided.
@@ -29,6 +21,14 @@ signature names should be provided.
 If input file is a counts spectra file
 \code{(catalog.type == "counts")},
 names of samples should be provided.}
+
+\item{region}{Catalog region. Can be a specific genomic
+or exonic region, or "unknown".
+Default: "unknown"}
+
+\item{catalog.type}{Is the catalog a signature catalog,
+or a spectrum catalog?
+Default: "counts"}
 }
 \value{
 a catalog matrix in ICAMS format.

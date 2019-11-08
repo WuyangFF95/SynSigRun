@@ -19,11 +19,6 @@ be a \code{EMu.results} folder directly under the folder
 storing \code{catalog}.}
 
 \item{overwrite}{If TRUE, overwrite existing output}
-
-\item{seedsInUse}{seed numbers to be used in data creation.
-The function will create directories /seed.\code{seedsInUse}
-under out.dir, and store EMu ground-truth spectra catalog
-under it.}
 }
 \value{
 \code{invisible(catalog)},
