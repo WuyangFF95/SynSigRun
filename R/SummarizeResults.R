@@ -1648,7 +1648,10 @@ SummarizeOneToolMultiDatasets <-
         ## ggplot2::ggplot() sets coordinates
         ggplotList[[index]] <- ggplot2::ggplot(
           OneToolSummary[[index]],
-          ggplot2::aes(x = datasetGroup, y = value))
+          ## Make sure that only one x-label is shown in one small facet.
+          #ggplot2::aes(x = datasetGroup, y = value)
+          ggplot2::aes(x = toolName, y = value)
+          )
         ## Add facets
         ggplotList[[index]] <- ggplotList[[index]] +
           ggplot2::facet_grid(
@@ -1666,11 +1669,17 @@ SummarizeOneToolMultiDatasets <-
           ggplot2::scale_fill_brewer(palette = "Greys") +
           ## Rotate and move the axis.text.x for better visualization
           ggplot2::theme(
-            axis.text.x = ggplot2::element_text(
-              ## Rotate the axis.text.x
-              angle = 90,
-              ## move axis.text.x right below the tick marks
-              hjust = 1, vjust = 0.5))
+            axis.text.x =
+              if(FALSE){ ## debug
+                ggplot2::element_text(
+                ## Rotate the axis.text.x
+                angle = 90,
+                ## move axis.text.x right below the tick marks
+                hjust = 1, vjust = 0.5)
+              } else{
+                ggplot2::element_blank()
+              }
+            )
         ## Change titles
         ggplotList[[index]] <- ggplotList[[index]] +
           ## Add title for value~datasetSubGroup beeswarm plot
@@ -1798,7 +1807,10 @@ SummarizeOneToolMultiDatasets <-
         sigNum <- which(gtSigNames == gtSigName)
         ggplotList[[gtSigName]] <- ggplot2::ggplot(
           OneToolSummary$cosSim[[gtSigName]],
-          ggplot2::aes(x = datasetGroup, y = value))
+          ## Make sure that only one x-label is shown in one small facet.
+          #ggplot2::aes(x = datasetGroup, y = value)
+          ggplot2::aes(x = toolName, y = value)
+          )
         ## Add facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::facet_grid(
@@ -1815,11 +1827,18 @@ SummarizeOneToolMultiDatasets <-
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
           ## Rotate and move the axis.text.x for better visualization
-          ggplot2::theme(axis.text.x = ggplot2::element_text(
-            ## Rotate the axis.text.x
-            angle = 90,
-            ## move axis.text.x right below the tick marks
-            hjust = 1, vjust = 0.5))
+          ggplot2::theme(
+            axis.text.x =
+              if(FALSE){ ## debug
+                ggplot2::element_text(
+                  ## Rotate the axis.text.x
+                  angle = 90,
+                  ## move axis.text.x right below the tick marks
+                  hjust = 1, vjust = 0.5)
+              } else{
+                ggplot2::element_blank()
+              }
+            )
         ## Add titles
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ## Add title for value~datasetSubGroup beeswarm plot
@@ -1949,7 +1968,10 @@ SummarizeOneToolMultiDatasets <-
         sigNum <- which(gtSigNames == gtSigName)
         ggplotList[[gtSigName]] <- ggplot2::ggplot(
           OneToolSummary$ManhattanDist[[gtSigName]],
-          ggplot2::aes(x = datasetGroup, y = value))
+          ## Make sure that only one x-label is shown in one small facet.
+          #ggplot2::aes(x = datasetGroup, y = value)
+          ggplot2::aes(x = toolName, y = value)
+          )
         ## Add facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::facet_grid(
@@ -1966,11 +1988,18 @@ SummarizeOneToolMultiDatasets <-
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
           ## Rotate and move the axis.text.x for better visualization
-          ggplot2::theme(axis.text.x = ggplot2::element_text(
-            ## Rotate the axis.text.x
-            angle = 90,
-            ## move axis.text.x right below the tick marks
-            hjust = 1, vjust = 0.5))
+          ggplot2::theme(
+            axis.text.x =
+              if(FALSE){ ## debug
+                ggplot2::element_text(
+                  ## Rotate the axis.text.x
+                  angle = 90,
+                  ## move axis.text.x right below the tick marks
+                  hjust = 1, vjust = 0.5)
+              } else{
+                ggplot2::element_blank()
+              }
+            )
         ## Change titles
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ## Add title for value~datasetSubGroup beeswarm plot
