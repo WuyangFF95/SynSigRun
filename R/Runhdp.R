@@ -165,11 +165,12 @@ Runhdp <-
       ## Run four independent posterior sampling chains
       chlist <- vector("list", 4)	#4 is too much here!
 
-      for (i in 1:4){
+      for (i in 1:4) {
         chlist[[i]] <-
           hdp::hdp_posterior(
             hdpObject,
-            # The remaining values, except seed, are from the vignette; there are no defaults.
+            # The remaining values, except seed, are from the vignette; there
+            # are no defaults.
             burnin = 4000,
             n      = 50,
             space  = 50,
@@ -180,7 +181,7 @@ Runhdp <-
 
       ## Generate the original multi_chain for the sample
       mut_example_multi <- hdp::hdp_multi_chain(chlist)
-      mut_example_multi
+
     }
 
     ## Step 3: Plot the diagnostics of sampling chains.
