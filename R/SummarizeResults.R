@@ -873,12 +873,12 @@ SummarizeMultiToolsMultiDatasets <-
             #width = 1.2
             ## Hide outliers
             #outlier.shape = NA
-            )
-          #+
-          #ggbeeswarm::geom_quasirandom(
-          #  groupOnX = TRUE, size = 0.3
-          #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          #)
+          )
+        #+
+        #ggbeeswarm::geom_quasirandom(
+        #  groupOnX = TRUE, size = 0.3
+        #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+        #)
         ## Show median of the extraction measure distribution
         ggplotList$general <- ggplotList$general +
           stat_summary(fun.y="median", geom="point")
@@ -943,12 +943,12 @@ SummarizeMultiToolsMultiDatasets <-
             #width = 1.2
             ## Hide outliers
             #outlier.shape = NA
-            )
-          #+
-          #ggbeeswarm::geom_quasirandom(
-          #  groupOnX = TRUE, size = 0.3
-          #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          #)
+          )
+        #+
+        #ggbeeswarm::geom_quasirandom(
+        #  groupOnX = TRUE, size = 0.3
+        #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+        #)
         ## Show median of the extraction measure distribution
         ggplotList[[by]] <- ggplotList[[by]] +
           stat_summary(fun.y="median", geom="point")
@@ -973,8 +973,8 @@ SummarizeMultiToolsMultiDatasets <-
               angle = 90,
               ## move axis.text.x right below the tick marks
               hjust = 1, vjust = 0.5),
-              ## remove legends
-              legend.position = "none")
+            ## remove legends
+            legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
         ggplotList[[by]] <- ggplotList[[by]] +
@@ -997,7 +997,7 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::ggsave(filename = paste0(out.dir,"/extraction.violin.by.",by,".png"),
                           plot = ggplotList[[by]], device = "png", dpi = 1000
                           ,limitsize = FALSE  ## debug
-                          )
+          )
         )
       }
       ## Plot violin + beeswarm plots in pdf format
@@ -1103,12 +1103,12 @@ SummarizeMultiToolsMultiDatasets <-
             #width = 1.2
             ## Hide outliers
             #outlier.shape = NA
-            )
-          #+
-          #ggbeeswarm::geom_quasirandom(
-          #  groupOnX = TRUE, size = 0.3
-          #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          #)
+          )
+        #+
+        #ggbeeswarm::geom_quasirandom(
+        #  groupOnX = TRUE, size = 0.3
+        #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+        #)
         ## Show median of the cosine similarity distribution
         ggplotList$general <- ggplotList$general +
           stat_summary(fun.y="median", geom="point")
@@ -1129,8 +1129,8 @@ SummarizeMultiToolsMultiDatasets <-
             angle = 90,
             ## move axis.text.x right below the tick marks
             hjust = 1, vjust = 0.5),
-                         ## remove legends.
-                         legend.position = "none")
+            ## remove legends.
+            legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
         ggplotList$general <- ggplotList$general +
@@ -1165,14 +1165,14 @@ SummarizeMultiToolsMultiDatasets <-
             #width = 1.2
             ## Hide outliers
             #outlier.shape = NA
-            )
-          #+
-          #ggbeeswarm::geom_quasirandom(
-          #  groupOnX = TRUE, size = 0.3
-          #  ## Need to add a single color (different from black)
-          #  ## for all data points.
-          #  , ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          #)
+          )
+        #+
+        #ggbeeswarm::geom_quasirandom(
+        #  groupOnX = TRUE, size = 0.3
+        #  ## Need to add a single color (different from black)
+        #  ## for all data points.
+        #  , ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+        #)
         ## Show median of the extraction measure distribution
         ggplotList[[by]] <- ggplotList[[by]] +
           stat_summary(fun.y="median", geom="point")
@@ -1194,8 +1194,8 @@ SummarizeMultiToolsMultiDatasets <-
             angle = 90,
             ## move axis.text.x right below the tick marks
             hjust = 1, vjust = 0.5),
-                         ## remove legends.
-                         legend.position = "none")
+            ## remove legends.
+            legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
         ggplotList[[by]] <- ggplotList[[by]] +
@@ -1211,7 +1211,7 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::ggsave(filename = paste0(out.dir,"/onesig.cossim.violin.by.",by,".png"),
                           plot = ggplotList[[by]], device = "png", dpi = 1000
                           ,limitsize = FALSE
-                          )
+          )
         )
       }
       ## Plot violin + beeswarm plots in pdf format
@@ -1309,12 +1309,12 @@ SummarizeMultiToolsMultiDatasets <-
             #width = 1.2
             ## Hide outliers
             #outlier.shape = NA
-            )
-          #+
-          #ggbeeswarm::geom_quasirandom(
-          #  groupOnX = TRUE, size = 0.3
-          #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          #)
+          )
+        #+
+        #ggbeeswarm::geom_quasirandom(
+        #  groupOnX = TRUE, size = 0.3
+        #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+        #)
         ## Show median of the Manhattan distance distribution
         ggplotList$general <- ggplotList$general +
           stat_summary(fun.y="median", geom="point")
@@ -1335,8 +1335,8 @@ SummarizeMultiToolsMultiDatasets <-
             angle = 90,
             ## move axis.text.x right below the tick marks
             hjust = 1, vjust = 0.5),
-                         ## remove legends.
-                         legend.position = "none")
+            ## remove legends.
+            legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
         ggplotList$general <- ggplotList$general +
@@ -1373,12 +1373,12 @@ SummarizeMultiToolsMultiDatasets <-
             #width = 1.2
             ## Hide outliers
             #outlier.shape = NA
-            )
-          #+
-          #ggbeeswarm::geom_quasirandom(
-          #  groupOnX = TRUE, size = 0.3
-          #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
-          #)
+          )
+        #+
+        #ggbeeswarm::geom_quasirandom(
+        #  groupOnX = TRUE, size = 0.3
+        #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
+        #)
         ## Show median of the Manhattan distance distribution
         ggplotList[[by]] <- ggplotList[[by]] +
           stat_summary(fun.y="median", geom="point")
@@ -1401,7 +1401,7 @@ SummarizeMultiToolsMultiDatasets <-
             ## move axis.text.x right below the tick marks
             hjust = 1, vjust = 0.5),
             ## remove legends.
-                         legend.position = "none")
+            legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
         ggplotList[[by]] <- ggplotList[[by]] +
@@ -1417,7 +1417,7 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::ggsave(filename = paste0(out.dir,"/Manhattan.Dist.violin.by.",by,".png"),
                           plot = ggplotList[[by]], device = "png", dpi = 1000
                           ,limitsize = FALSE
-                          )
+          )
         )
       }
       ## Plot violin + beeswarm plots in pdf format
@@ -1628,7 +1628,7 @@ SummarizeOneToolMultiDatasets <-
             #ggplot2::aes(fill = index),
             ## Hide outliers
             outlier.shape = NA
-            ) +
+          ) +
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE, ## Make repetitive points with the same Y to dodge on X axis
                                        size = 0.3, ## Make dot size smaller
@@ -1636,8 +1636,8 @@ SummarizeOneToolMultiDatasets <-
           ## If fill is set to single color, disable scale_fill_manual
           #ggplot2::scale_fill_manual(
           #  values = grDevices::topo.colors(length(indexes)))
-        ## Add title for general boxplot + beeswarm plot
-        ggplotList[["general"]] <- ggplotList[["general"]] +
+          ## Add title for general boxplot + beeswarm plot
+          ggplotList[["general"]] <- ggplotList[["general"]] +
           ggplot2::ggtitle(label = paste0(toolName,": Summary plot for extraction indexes"))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
@@ -1651,7 +1651,9 @@ SummarizeOneToolMultiDatasets <-
           ggplot2::aes(x = datasetGroup, y = value))
         ## Add facets
         ggplotList[[index]] <- ggplotList[[index]] +
-          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroup))
+          ggplot2::facet_grid(
+            rows = ggplot2::vars(datasetSubGroup),
+            cols = ggplot2::vars(datasetGroup))
         ## Draw boxplots and beeswarm plots on multi-facets.
         ggplotList[[index]] <- ggplotList[[index]] +
           ## Draw boxplot
@@ -1665,10 +1667,10 @@ SummarizeOneToolMultiDatasets <-
           ## Rotate and move the axis.text.x for better visualization
           ggplot2::theme(
             axis.text.x = ggplot2::element_text(
-            ## Rotate the axis.text.x
-            angle = 90,
-            ## move axis.text.x right below the tick marks
-            hjust = 1, vjust = 0.5))
+              ## Rotate the axis.text.x
+              angle = 90,
+              ## move axis.text.x right below the tick marks
+              hjust = 1, vjust = 0.5))
         ## Change titles
         ggplotList[[index]] <- ggplotList[[index]] +
           ## Add title for value~datasetSubGroup beeswarm plot
@@ -1681,7 +1683,7 @@ SummarizeOneToolMultiDatasets <-
           ## Change label of y axis (axis.label.y) into index info (Same as title)
           y = ylabels[index],
           ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
-          x = paste0("Facets separated by ",datasetSubGroupName))
+          x = paste0("",datasetGroupName))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[[index]] <- ggplotList[[index]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
@@ -1776,7 +1778,7 @@ SummarizeOneToolMultiDatasets <-
             #ggplot2::aes(fill = index),
             ## Hide outliers
             outlier.shape = NA
-            ) +
+          ) +
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
                                        #position = ggplot2::position_dodge(0.9),
@@ -1785,8 +1787,8 @@ SummarizeOneToolMultiDatasets <-
           ## If fill is set to single color, disable scale_fill_manual
           #ggplot2::scale_fill_manual(
           #  values = grDevices::topo.colors(length(indexes)))
-        ## Add title for general boxplot + beeswarm plot
-        ggplotList[["general"]] <- ggplotList[["general"]] +
+          ## Add title for general boxplot + beeswarm plot
+          ggplotList[["general"]] <- ggplotList[["general"]] +
           ggplot2::ggtitle(label = paste0(toolName,": Summary plot for one-signature cosine similarity"))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
@@ -1799,7 +1801,9 @@ SummarizeOneToolMultiDatasets <-
           ggplot2::aes(x = datasetGroup, y = value))
         ## Add facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroup))
+          ggplot2::facet_grid(
+            rows = ggplot2::vars(datasetSubGroup),
+            cols = ggplot2::vars(datasetGroup))
         ## Draw beeswarm plots on multiple facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ## Draw boxplot
@@ -1828,7 +1832,7 @@ SummarizeOneToolMultiDatasets <-
           ## Change label of y axis into gtSigName info (Same as title)
           y = (paste0("Cosine similarity of ",gtSigName)),
           ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
-          x = (paste0("Facets separated by ",datasetSubGroupName)))
+          x = (paste0("",datasetGroupName)))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
@@ -1925,7 +1929,7 @@ SummarizeOneToolMultiDatasets <-
             #ggplot2::aes(fill = index),
             ## Hide outliers
             outlier.shape = NA
-            ) +
+          ) +
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
                                        #position = ggplot2::position_dodge(0.9),
@@ -1934,8 +1938,8 @@ SummarizeOneToolMultiDatasets <-
           ## If fill is set to single color, disable scale_fill_manual
           #ggplot2::scale_fill_manual(
           #  values = grDevices::topo.colors(length(indexes)))
-        ## Add title for general boxplot + beeswarm plot
-        ggplotList[["general"]] <- ggplotList[["general"]] +
+          ## Add title for general boxplot + beeswarm plot
+          ggplotList[["general"]] <- ggplotList[["general"]] +
           ggplot2::ggtitle(label = paste0(toolName,": Summary plot for Manhattan distance"))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
@@ -1948,7 +1952,9 @@ SummarizeOneToolMultiDatasets <-
           ggplot2::aes(x = datasetGroup, y = value))
         ## Add facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ggplot2::facet_wrap(facets = ggplot2::vars(datasetSubGroup))
+          ggplot2::facet_grid(
+            rows = ggplot2::vars(datasetSubGroup),
+            cols = ggplot2::vars(datasetGroup))
         ## Draw beeswarm plots on multiple facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ## Draw boxplot
@@ -1977,7 +1983,7 @@ SummarizeOneToolMultiDatasets <-
           ## Change label of y axis into gtSigName info (Same as title)
           y = (paste0("Manhattan distance of ",gtSigName," exposure")),
           ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
-          x = (paste0("Facets separated by ",datasetSubGroupName)))
+          x = (paste0("",datasetGroupName)))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
