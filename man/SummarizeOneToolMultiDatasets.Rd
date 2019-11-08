@@ -6,7 +6,7 @@
 \usage{
 SummarizeOneToolMultiDatasets(dataset.dirs, datasetGroup = NULL,
   datasetGroupName, datasetSubGroup = NULL, datasetSubGroupName,
-  tool.dirname, out.dir, overwrite = FALSE)
+  toolName, tool.dirname, out.dir, overwrite = FALSE)
 }
 \arguments{
 \item{dataset.dirs}{Paths of top-level dataset directories trees you want
@@ -34,6 +34,9 @@ Default: Names of datasets, which are \code{basename(dataset.dirs)}}
 \item{datasetSubGroupName}{Meaning or label of all datasetSubGroup.
 E.g. For SBS1-SBS5 correlated datasets, we can consider \code{"Pearson's R squared"}
 as the label of the \code{datasetSubGroup} Pearson's R^2.}
+
+\item{toolName}{Name of software package to be investigated
+(e.g. "sigproextractor")}
 
 \item{tool.dirname}{Name of the second.level.dir (e.g. "sp.sp"),
 third.level.dir (e.g. "ExtrAttr") and tool.dir

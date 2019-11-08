@@ -1470,6 +1470,9 @@ SummarizeMultiToolsMultiDatasets <-
 #' E.g. For SBS1-SBS5 correlated datasets, we can consider \code{"Pearson's R squared"}
 #' as the label of the \code{datasetSubGroup} Pearson's R^2.
 #'
+#' @param toolName Name of software package to be investigated
+#' (e.g. "sigproextractor")
+#'
 #' @param tool.dirname Name of the second.level.dir (e.g. "sp.sp"),
 #' third.level.dir (e.g. "ExtrAttr") and tool.dir
 #' (e.g. "sigproextractor.results") to be investigated.
@@ -1492,6 +1495,7 @@ SummarizeOneToolMultiDatasets <-
            datasetGroupName,
            datasetSubGroup = NULL,
            datasetSubGroupName,
+           toolName,
            tool.dirname,
            out.dir,
            overwrite = FALSE){
@@ -1634,7 +1638,7 @@ SummarizeOneToolMultiDatasets <-
           #  values = grDevices::topo.colors(length(indexes)))
         ## Add title for general boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::ggtitle(label = "Summary plot for extraction indexes")
+          ggplot2::ggtitle(label = paste0(toolName,": Summary plot for extraction indexes"))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
@@ -1668,7 +1672,8 @@ SummarizeOneToolMultiDatasets <-
         ## Change titles
         ggplotList[[index]] <- ggplotList[[index]] +
           ## Add title for value~datasetSubGroup beeswarm plot
-          ggplot2::ggtitle(label = titles[index],subtitle = subtitles[index]) +
+          ggplot2::ggtitle(label = paste0(toolName,": ",titles[index]),
+                           subtitle = subtitles[index]) +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
         ## Change axis labels
@@ -1782,7 +1787,7 @@ SummarizeOneToolMultiDatasets <-
           #  values = grDevices::topo.colors(length(indexes)))
         ## Add title for general boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::ggtitle(label = "Summary plot for one-signature cosine similarity")
+          ggplot2::ggtitle(label = paste0(toolName,": Summary plot for one-signature cosine similarity"))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
@@ -1814,14 +1819,14 @@ SummarizeOneToolMultiDatasets <-
         ## Add titles
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ## Add title for value~datasetSubGroup beeswarm plot
-          ggplot2::ggtitle(label = paste0("Cosine similarity between signature ",gtSigName),
+          ggplot2::ggtitle(label = paste0(toolName,": Cosine similarity between signature ",gtSigName),
                            subtitle = paste0("and all extracted signatures resembling ",gtSigName)) +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
         ## Change labels
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] + ggplot2::labs(
           ## Change label of y axis into gtSigName info (Same as title)
-          y = (paste0("Manhattan distance of ",gtSigName," exposure")),
+          y = (paste0("Cosine similarity of ",gtSigName)),
           ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
           x = (paste0("Facets separated by ",datasetSubGroupName)))
         ## Restrict the decimal numbers of values of indexes to be 2
@@ -1931,7 +1936,7 @@ SummarizeOneToolMultiDatasets <-
           #  values = grDevices::topo.colors(length(indexes)))
         ## Add title for general boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::ggtitle(label = "Summary plot for Manhattan distance")
+          ggplot2::ggtitle(label = paste0(toolName,": Summary plot for Manhattan distance"))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
@@ -1963,7 +1968,7 @@ SummarizeOneToolMultiDatasets <-
         ## Change titles
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ## Add title for value~datasetSubGroup beeswarm plot
-          ggplot2::ggtitle(label = paste0("Manhattan distance of ",gtSigName," exposure"),
+          ggplot2::ggtitle(label = paste0(toolName,": Manhattan distance of ",gtSigName," exposure"),
                            subtitle = "Between ground-truth exposure and attributed exposure") +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
