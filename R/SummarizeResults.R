@@ -887,7 +887,7 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Measures of extraction performance",
                            subtitle = "for all software packages, ratios and correlation values.")
-        ## Change axis labels
+        ## Change axis titles
         ggplotList$general <- ggplotList$general +
           ggplot2::labs(x = "Software package")
         ## Rotate axis.text.x (the names of tools),
@@ -957,7 +957,7 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::ggtitle(
             label = paste0("Measures of extraction performance as a function of"),
             subtitle = paste0("ground-truth signature names and ",byCaption,"."))
-        ## Change axis labels
+        ## Change axis titles
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::labs(x = "Software package")
         ## Remove axis.title.y (defaults to be "value", meaningless)
@@ -1116,7 +1116,7 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Cosine similarity between ground-truth and extracted signatures",
                            subtitle = "for all software packages, ratios and correlation values.")
-        ## Change axis labels
+        ## Change axis titles
         ggplotList$general <- ggplotList$general +
           ggplot2::labs(x = "Software package",
                         y = "Cosine Similarity")
@@ -1181,7 +1181,7 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::ggtitle(
             label = paste0("Extraction cosine similarity as a function of"),
             subtitle = paste0("ground-truth signature names and ",byCaption,"."))
-        ## Change axis labels
+        ## Change axis titles
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::labs(x = "Software package",
                         y = "Cosine Similarity")
@@ -1322,7 +1322,7 @@ SummarizeMultiToolsMultiDatasets <-
         ggplotList$general <- ggplotList$general +
           ggplot2::ggtitle(label = "Manhattan distance between attributed and grond-truth exposures",
                            subtitle = "for all software packages, ratios and correlation values.")
-        ## Change axis labels
+        ## Change axis titles
         ggplotList$general <- ggplotList$general +
           ggplot2::labs(x = "Software package",
                         y = "Manhattan Distance")
@@ -1387,7 +1387,7 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::ggtitle(
             label = paste0("Manhattan Distance summary plot as a function of "),
             subtitle = paste0("ground-truth signature names and ",byCaption,"."))
-        ## Change axis labels
+        ## Change axis titles
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::labs(x = "Software package",
                         y = "Manhattan Distance")
@@ -1639,7 +1639,7 @@ SummarizeOneToolMultiDatasets <-
           #  values = grDevices::topo.colors(length(indexes)))
           ## Add title for general boxplot + beeswarm plot
           ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::ggtitle(label = paste0(toolName,": Summary plot for extraction indexes"))
+          ggplot2::labs(title = paste0(toolName,": Summary plot for extraction indexes"))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
@@ -1665,9 +1665,7 @@ SummarizeOneToolMultiDatasets <-
             ## Change filling color to white
             fill = "#FFFFFF",
             ## Maximize the violin plot width
-            scale = "width",
-            ## Hide outliers
-            #outlier.shape = NA
+            scale = "width"
           ) + ggplot2::stat_summary(fun.y="median", geom="point") +
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
@@ -1675,32 +1673,27 @@ SummarizeOneToolMultiDatasets <-
                                        ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
-          ## Rotate and move the axis.text.x for better visualization
-          ggplot2::theme(
-            axis.text.x =
-              if(FALSE){ ## debug
-                ggplot2::element_text(
-                ## Rotate the axis.text.x
-                angle = 90,
-                ## move axis.text.x right below the tick marks
-                hjust = 1, vjust = 0.5)
-              } else{
-                ggplot2::element_blank()
-              }
-            )
         ## Change titles
         ggplotList[[index]] <- ggplotList[[index]] +
-          ## Add title for value~datasetSubGroup beeswarm plot
-          ggplot2::ggtitle(label = paste0(toolName,": ",titles[index]),
-                           subtitle = subtitles[index]) +
+          ## and change axis titles.
+          ## ggplot2::labs() has stronger function than ggplo2::ggtitle.
+          ggplot2::labs(
+            ## Add title for value~datasetSubGroup beeswarm plot,
+            title = paste0(toolName,": ",titles[index]),
+            subtitle = subtitles[index],
+            ## Change label of y axis (axis.label.y) into index info (Same as title)
+            y = ylabels[index],
+            ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
+            x = datasetGroupName) +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
-        ## Change axis labels
-        ggplotList[[index]] <- ggplotList[[index]] + ggplot2::labs(
-          ## Change label of y axis (axis.label.y) into index info (Same as title)
-          y = ylabels[index],
-          ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
-          x = paste0("",datasetGroupName))
+        ## Change axis.text (tickmarks) and axis.title (title/label for an axis)
+        ggplotList[[index]] <- ggplotList[[index]] +
+        ggplot2::theme(
+          ## Remove axis.text.x
+          axis.text.x = ggplot2::element_blank(),
+          ## Change
+        )
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[[index]] <- ggplotList[[index]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
@@ -1807,7 +1800,7 @@ SummarizeOneToolMultiDatasets <-
           #  values = grDevices::topo.colors(length(indexes)))
           ## Add title for general boxplot + beeswarm plot
           ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::ggtitle(label = paste0(toolName,": Summary plot for one-signature cosine similarity"))
+          ggplot2::labs(title = paste0(toolName,": Summary plot for one-signature cosine similarity"))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
@@ -1857,17 +1850,16 @@ SummarizeOneToolMultiDatasets <-
             )
         ## Add titles
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ## Add title for value~datasetSubGroup beeswarm plot
-          ggplot2::ggtitle(label = paste0(toolName,": Cosine similarity between signature ",gtSigName),
-                           subtitle = paste0("and all extracted signatures resembling ",gtSigName)) +
+          ggplot2::labs(
+            ## Add title for value~datasetSubGroup beeswarm plot
+            title = paste0(toolName,": Cosine similarity between signature ",gtSigName),
+            subtitle = paste0("and all extracted signatures resembling ",gtSigName),
+            ## Change title of y axis into gtSigName info (Same as title)
+            y = paste0("Cosine similarity of ",gtSigName),
+            ## Change title of x axis into datasetSubGroupName (label of datasetSubGroup)
+            x = datasetGroupName) +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
-        ## Change labels
-        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] + ggplot2::labs(
-          ## Change label of y axis into gtSigName info (Same as title)
-          y = (paste0("Cosine similarity of ",gtSigName)),
-          ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
-          x = (paste0("",datasetGroupName)))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
@@ -1976,7 +1968,7 @@ SummarizeOneToolMultiDatasets <-
           #  values = grDevices::topo.colors(length(indexes)))
           ## Add title for general boxplot + beeswarm plot
           ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::ggtitle(label = paste0(toolName,": Summary plot for Manhattan distance"))
+          ggplot2::labs(title = paste0(toolName,": Summary plot for Manhattan distance"))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
@@ -2026,17 +2018,16 @@ SummarizeOneToolMultiDatasets <-
             )
         ## Change titles
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ## Add title for value~datasetSubGroup beeswarm plot
-          ggplot2::ggtitle(label = paste0(toolName,": Manhattan distance of ",gtSigName," exposure"),
-                           subtitle = "Between ground-truth exposure and attributed exposure") +
+          ggplot2::labs(
+            ## Add title for value~datasetSubGroup beeswarm plot
+            title = paste0(toolName,": Manhattan distance of ",gtSigName," exposure"),
+            subtitle = "Between ground-truth exposure and attributed exposure",
+            ## Change title of y axis into gtSigName info (Same as title)
+            y = (paste0("Manhattan distance of ",gtSigName," exposure")),
+            ## Change title of x axis into datasetSubGroupName (label of datasetSubGroup)
+            x = datasetGroupName) +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
-        ## Change labels
-        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] + ggplot2::labs(
-          ## Change label of y axis into gtSigName info (Same as title)
-          y = (paste0("Manhattan distance of ",gtSigName," exposure")),
-          ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
-          x = (paste0("",datasetGroupName)))
         ## Restrict the decimal numbers of values of indexes to be 2
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
