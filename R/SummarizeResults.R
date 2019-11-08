@@ -1625,9 +1625,10 @@ SummarizeOneToolMultiDatasets <-
           ggplot2::geom_boxplot(
             ## Change filling color to white
             fill = "#FFFFFF",
-            #ggplot2::aes(fill = index),
+            ## Maximize the violin plot width
+            scale = "width"
             ## Hide outliers
-            outlier.shape = NA
+            #outlier.shape = NA
           ) +
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE, ## Make repetitive points with the same Y to dodge on X axis
@@ -1659,8 +1660,15 @@ SummarizeOneToolMultiDatasets <-
             cols = ggplot2::vars(datasetGroup))
         ## Draw boxplots and beeswarm plots on multi-facets.
         ggplotList[[index]] <- ggplotList[[index]] +
-          ## Draw boxplot
-          ggplot2::geom_boxplot() +
+          ## Draw geom_violin
+          ggplot2::geom_violin(
+            ## Change filling color to white
+            fill = "#FFFFFF",
+            ## Maximize the violin plot width
+            scale = "width",
+            ## Hide outliers
+            #outlier.shape = NA
+          ) + ggplot2::stat_summary(fun.y="median", geom="point") +
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
@@ -1780,14 +1788,15 @@ SummarizeOneToolMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
-          ## Draw boxplot
-          ggplot2::geom_boxplot(
+          ## Draw geom_violin
+          ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
-            #ggplot2::aes(fill = index),
+            ## Maximize the violin plot width
+            scale = "width"
             ## Hide outliers
-            outlier.shape = NA
-          ) +
+            #outlier.shape = NA
+          ) + ggplot2::stat_summary(fun.y="median", geom="point") +
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
                                        #position = ggplot2::position_dodge(0.9),
@@ -1818,8 +1827,15 @@ SummarizeOneToolMultiDatasets <-
             cols = ggplot2::vars(datasetGroup))
         ## Draw beeswarm plots on multiple facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ## Draw boxplot
-          ggplot2::geom_boxplot() +
+          ## Draw geom_violin
+          ggplot2::geom_violin(
+            ## Change filling color to white
+            fill = "#FFFFFF",
+            ## Maximize the violin plot width
+            scale = "width",
+            ## Hide outliers
+            #outlier.shape = NA
+          ) + ggplot2::stat_summary(fun.y="median", geom="point") +
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
@@ -1941,14 +1957,15 @@ SummarizeOneToolMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
-          ## Draw boxplot
-          ggplot2::geom_boxplot(
+          ## Draw geom_violin
+          ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
-            #ggplot2::aes(fill = index),
+            ## Maximize the violin plot width
+            scale = "width"
             ## Hide outliers
-            outlier.shape = NA
-          ) +
+            #outlier.shape = NA
+          ) + ggplot2::stat_summary(fun.y="median", geom="point") +
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
                                        #position = ggplot2::position_dodge(0.9),
@@ -1979,8 +1996,15 @@ SummarizeOneToolMultiDatasets <-
             cols = ggplot2::vars(datasetGroup))
         ## Draw beeswarm plots on multiple facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ## Draw boxplot
-          ggplot2::geom_boxplot() +
+          ## Draw geom_violin
+          ggplot2::geom_violin(
+            ## Change filling color to white
+            fill = "#FFFFFF",
+            ## Maximize the violin plot width
+            scale = "width",
+            ## Hide outliers
+            #outlier.shape = NA
+          ) + ggplot2::stat_summary(fun.y="median", geom="point") +
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
