@@ -1638,10 +1638,13 @@ SummarizeOneToolMultiDatasets <-
           #ggplot2::scale_fill_manual(
           #  values = grDevices::topo.colors(length(indexes)))
           ## Add title for general boxplot + beeswarm plot
-          ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::labs(title = paste0(toolName,": Summary plot for extraction indexes"))
-        ## Restrict the decimal numbers of values of indexes to be 2
-        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+          ggplot2::labs(
+            title = paste0(toolName,": Summary plot for extraction indexes")
+          ) +
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(
+            labels =function(x) sprintf("%.2f", x)
+          )
       }
       ## Plot a value~datasetSubGroup beeswarm for each index.
       for(index in indexes){
@@ -1652,50 +1655,54 @@ SummarizeOneToolMultiDatasets <-
           ## Make sure that only one x-label is shown in one small facet.
           #ggplot2::aes(x = datasetGroup, y = value)
           ggplot2::aes(x = toolName, y = value)
-          )
+        )
         ## Add facets
         ggplotList[[index]] <- ggplotList[[index]] +
           ggplot2::facet_grid(
             rows = ggplot2::vars(datasetSubGroup),
-            cols = ggplot2::vars(datasetGroup))
-        ## Draw boxplots and beeswarm plots on multi-facets.
-        ggplotList[[index]] <- ggplotList[[index]] +
+            cols = ggplot2::vars(datasetGroup),
+            ## Move x facet labels to the right,
+            ## This is to let the facet labels correspond to axis.title.
+            switch = "x") +
+          ## Draw boxplots and beeswarm plots on multi-facets.
           ## Draw geom_violin
           ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             ## Maximize the violin plot width
             scale = "width"
-          ) + ggplot2::stat_summary(fun.y="median", geom="point") +
+          ) +
+          ggplot2::stat_summary(fun.y="median", geom="point") +
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
-                                       size = 0.3, ## Make dot size smaller
-                                       ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
+                                       ## Make dot size smaller
+                                       size = 0.3,
+                                       ## Set groups for the filling functionalities to differentiate
+                                       ggplot2::aes(color = datasetGroup)) +
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
-        ## Change titles
-        ggplotList[[index]] <- ggplotList[[index]] +
+          ## Change titles
           ## and change axis titles.
           ## ggplot2::labs() has stronger function than ggplo2::ggtitle.
           ggplot2::labs(
             ## Add title for value~datasetSubGroup beeswarm plot,
             title = paste0(toolName,": ",titles[index]),
             subtitle = subtitles[index],
-            ## Change label of y axis (axis.label.y) into index info (Same as title)
-            y = ylabels[index],
-            ## Change label of x axis into datasetSubGroupName (label of datasetSubGroup)
-            x = datasetGroupName) +
+            ## Change title of y axis (axis.title.y) into measure info (same as title)
+            y = titles[index],
+            ## Remove title of x axis
+            x = NULL) +
           ## Change title of legend to datasetGroupName
-          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
-        ## Change axis.text (tickmarks) and axis.title (title/label for an axis)
-        ggplotList[[index]] <- ggplotList[[index]] +
-        ggplot2::theme(
-          ## Remove axis.text.x
-          axis.text.x = ggplot2::element_blank(),
-          ## Change
-        )
-        ## Restrict the decimal numbers of values of indexes to be 2
-        ggplotList[[index]] <- ggplotList[[index]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName)) +
+          ## Change axis.text (tickmarks)
+          ggplot2::theme(
+            ## Remove axis.text.x
+            axis.text.x = ggplot2::element_blank()
+          ) +
+          ## Restrict the decimal numbers of values of measures (y) to be 2
+          ggplot2::scale_y_continuous(
+            labels =function(x) sprintf("%.2f", x)
+          )
       }
 
 
@@ -1789,7 +1796,8 @@ SummarizeOneToolMultiDatasets <-
             scale = "width"
             ## Hide outliers
             #outlier.shape = NA
-          ) + ggplot2::stat_summary(fun.y="median", geom="point") +
+          ) +
+          ggplot2::stat_summary(fun.y="median", geom="point") +
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
                                        #position = ggplot2::position_dodge(0.9),
@@ -1799,10 +1807,9 @@ SummarizeOneToolMultiDatasets <-
           #ggplot2::scale_fill_manual(
           #  values = grDevices::topo.colors(length(indexes)))
           ## Add title for general boxplot + beeswarm plot
-          ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::labs(title = paste0(toolName,": Summary plot for one-signature cosine similarity"))
-        ## Restrict the decimal numbers of values of indexes to be 2
-        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+          ggplot2::labs(title = paste0(toolName,": Summary plot for one-signature cosine similarity")) +
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a value~datasetSubGroup beeswarm plot for each signature.
       for(gtSigName in gtSigNames){
@@ -1812,14 +1819,16 @@ SummarizeOneToolMultiDatasets <-
           ## Make sure that only one x-label is shown in one small facet.
           #ggplot2::aes(x = datasetGroup, y = value)
           ggplot2::aes(x = toolName, y = value)
-          )
+        )
         ## Add facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::facet_grid(
             rows = ggplot2::vars(datasetSubGroup),
-            cols = ggplot2::vars(datasetGroup))
-        ## Draw beeswarm plots on multiple facets
-        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+            cols = ggplot2::vars(datasetGroup),
+            ## Move x facet labels to the right,
+            ## This is to let the facet labels correspond to axis.title.
+            switch = "x") +
+          ## Draw beeswarm plots on multiple facets
           ## Draw geom_violin
           ggplot2::geom_violin(
             ## Change filling color to white
@@ -1828,40 +1837,31 @@ SummarizeOneToolMultiDatasets <-
             scale = "width",
             ## Hide outliers
             #outlier.shape = NA
-          ) + ggplot2::stat_summary(fun.y="median", geom="point") +
+          ) +
+          ggplot2::stat_summary(fun.y="median", geom="point") +
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
                                        ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
-          ## Rotate and move the axis.text.x for better visualization
+          ## Change axis.text (tickmarks)
           ggplot2::theme(
-            axis.text.x =
-              if(FALSE){ ## debug
-                ggplot2::element_text(
-                  ## Rotate the axis.text.x
-                  angle = 90,
-                  ## move axis.text.x right below the tick marks
-                  hjust = 1, vjust = 0.5)
-              } else{
-                ggplot2::element_blank()
-              }
-            )
-        ## Add titles
-        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+            ## Remove axis.text.x
+            axis.text.x = ggplot2::element_blank()
+          ) +
+          ## Add titles
           ggplot2::labs(
             ## Add title for value~datasetSubGroup beeswarm plot
             title = paste0(toolName,": Cosine similarity between signature ",gtSigName),
             subtitle = paste0("and all extracted signatures resembling ",gtSigName),
-            ## Change title of y axis into gtSigName info (Same as title)
-            y = paste0("Cosine similarity of ",gtSigName),
-            ## Change title of x axis into datasetSubGroupName (label of datasetSubGroup)
-            x = datasetGroupName) +
+            ## Change title of y axis (axis.title.y) into gtSigName info (same as title)
+            y = paste0("Cosine similarity between signature ",gtSigName),
+            ## Remove title of x axis
+            x = NULL) +
           ## Change title of legend to datasetGroupName
-          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
-        ## Restrict the decimal numbers of values of indexes to be 2
-        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName)) +
+          ## Restrict the decimal numbers of values of measures (y) to be 2
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
 
@@ -1957,7 +1957,8 @@ SummarizeOneToolMultiDatasets <-
             scale = "width"
             ## Hide outliers
             #outlier.shape = NA
-          ) + ggplot2::stat_summary(fun.y="median", geom="point") +
+          ) +
+          ggplot2::stat_summary(fun.y="median", geom="point") +
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
                                        #position = ggplot2::position_dodge(0.9),
@@ -1967,10 +1968,9 @@ SummarizeOneToolMultiDatasets <-
           #ggplot2::scale_fill_manual(
           #  values = grDevices::topo.colors(length(indexes)))
           ## Add title for general boxplot + beeswarm plot
-          ggplotList[["general"]] <- ggplotList[["general"]] +
-          ggplot2::labs(title = paste0(toolName,": Summary plot for Manhattan distance"))
-        ## Restrict the decimal numbers of values of indexes to be 2
-        ggplotList[["general"]] <- ggplotList[["general"]] + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+          ggplot2::labs(title = paste0(toolName,": Summary plot for Manhattan distance")) +
+          ## Restrict the decimal numbers of values of indexes to be 2
+          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a value~datasetSubGroup beeswarm plot for each signature.
       for(gtSigName in gtSigNames){
@@ -1980,14 +1980,16 @@ SummarizeOneToolMultiDatasets <-
           ## Make sure that only one x-label is shown in one small facet.
           #ggplot2::aes(x = datasetGroup, y = value)
           ggplot2::aes(x = toolName, y = value)
-          )
+        )
         ## Add facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::facet_grid(
             rows = ggplot2::vars(datasetSubGroup),
-            cols = ggplot2::vars(datasetGroup))
-        ## Draw beeswarm plots on multiple facets
-        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+            cols = ggplot2::vars(datasetGroup),
+            ## Move x facet labels to the right,
+            ## This is to let the facet labels correspond to axis.title.
+            switch = "x") +
+          ## Draw beeswarm plots on multiple facets
           ## Draw geom_violin
           ggplot2::geom_violin(
             ## Change filling color to white
@@ -1996,40 +1998,31 @@ SummarizeOneToolMultiDatasets <-
             scale = "width",
             ## Hide outliers
             #outlier.shape = NA
-          ) + ggplot2::stat_summary(fun.y="median", geom="point") +
+          ) +
+          ggplot2::stat_summary(fun.y="median", geom="point") +
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
                                        ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
-          ## Rotate and move the axis.text.x for better visualization
+          ## Change axis.text (tickmarks)
           ggplot2::theme(
-            axis.text.x =
-              if(FALSE){ ## debug
-                ggplot2::element_text(
-                  ## Rotate the axis.text.x
-                  angle = 90,
-                  ## move axis.text.x right below the tick marks
-                  hjust = 1, vjust = 0.5)
-              } else{
-                ggplot2::element_blank()
-              }
-            )
+            ## Remove axis.text.x
+            axis.text.x = ggplot2::element_blank()
+          ) +
         ## Change titles
-        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
-          ggplot2::labs(
-            ## Add title for value~datasetSubGroup beeswarm plot
-            title = paste0(toolName,": Manhattan distance of ",gtSigName," exposure"),
-            subtitle = "Between ground-truth exposure and attributed exposure",
-            ## Change title of y axis into gtSigName info (Same as title)
-            y = (paste0("Manhattan distance of ",gtSigName," exposure")),
-            ## Change title of x axis into datasetSubGroupName (label of datasetSubGroup)
-            x = datasetGroupName) +
+        ggplot2::labs(
+          ## Add title for value~datasetSubGroup beeswarm plot
+          title = paste0(toolName,": Manhattan distance of ",gtSigName," exposure"),
+          subtitle = "Between ground-truth exposure and attributed exposure",
+          ## Change title of y axis (axis.title.y) same as gtSigName info (same as title)
+          y = paste0("Manhattan distance of ",gtSigName," exposure"),
+          ## Remove title of x axis
+          x = NULL) +
           ## Change title of legend to datasetGroupName
-          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName))
-        ## Restrict the decimal numbers of values of indexes to be 2
-        ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
+          ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName)) +
+          ## Restrict the decimal numbers of values of measures (y) to be 2
           ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
 
