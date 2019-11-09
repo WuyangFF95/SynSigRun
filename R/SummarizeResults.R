@@ -1694,10 +1694,12 @@ SummarizeOneToolMultiDatasets <-
             x = "Pearson's R squared") +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName)) +
-          ## Change axis.text (tickmarks)
+          ## Change axis.text and tickmarks
           ggplot2::theme(
             ## Remove axis.text.x
-            axis.text.x = ggplot2::element_blank()
+            axis.text.x = ggplot2::element_blank(),
+            ## Remove tick marks on x axis (axis.ticks.x)
+            axis.ticks.x = ggplot2::element_blank()
           ) +
           ## Restrict the decimal numbers of values of measures (y) to be 2
           ggplot2::scale_y_continuous(
@@ -1851,10 +1853,12 @@ SummarizeOneToolMultiDatasets <-
                                        ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
-          ## Change axis.text (tickmarks)
+          ## Change axis.text and tickmarks
           ggplot2::theme(
             ## Remove axis.text.x
-            axis.text.x = ggplot2::element_blank()
+            axis.text.x = ggplot2::element_blank(),
+            ## Remove tick marks on x axis (axis.ticks.x)
+            axis.ticks.x = ggplot2::element_blank()
           ) +
           ## Add titles
           ggplot2::labs(
@@ -2020,10 +2024,12 @@ SummarizeOneToolMultiDatasets <-
                                        ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
-          ## Change axis.text (tickmarks)
+          ## Change axis.text and tickmarks
           ggplot2::theme(
             ## Remove axis.text.x
-            axis.text.x = ggplot2::element_blank()
+            axis.text.x = ggplot2::element_blank(),
+            ## Remove tick marks on x axis (axis.ticks.x)
+            axis.ticks.x = ggplot2::element_blank()
           ) +
         ## Change titles
         ggplot2::labs(
