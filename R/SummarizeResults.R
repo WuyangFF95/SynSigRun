@@ -1598,16 +1598,11 @@ SummarizeOneToolMultiDatasets <-
     {
       ## Designate titles and subtitles for each page
       titles <- c("Average cosine similarity of all signatures",
-                  "False negatives",
                   "False positives",
-                  "True positives",
-                  "True Positive Rate (sensitivity)",
                   "False Discovery Rate (FDR)")
       names(titles) <- indexes
-      subtitles <- c("","Number of ground-truth signatures not extracted",
+      subtitles <- c("",
                      "Number of signatures extracted, but different from ground-truth signatures",
-                     "Number of ground-truth signatures extracted",
-                     "True Positives / (True Positives + False Negatives)",
                      "False Positives / (True Positives + False Positives)")
       names(subtitles) <- indexes
       ylabels <- titles
