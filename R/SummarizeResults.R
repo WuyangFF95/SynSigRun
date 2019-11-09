@@ -1690,8 +1690,8 @@ SummarizeOneToolMultiDatasets <-
             subtitle = subtitles[index],
             ## Change title of y axis (axis.title.y) into measure info (same as title)
             y = titles[index],
-            ## Remove title of x axis
-            x = NULL) +
+            ## Change title of x axis to "Pearson's R squared"
+            x = "Pearson's R squared") +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName)) +
           ## Change axis.text (tickmarks)
@@ -1701,7 +1701,13 @@ SummarizeOneToolMultiDatasets <-
           ) +
           ## Restrict the decimal numbers of values of measures (y) to be 2
           ggplot2::scale_y_continuous(
-            labels =function(x) sprintf("%.2f", x)
+            labels =function(x) sprintf("%.2f", x),
+            ## Add a secondary axis title on the top of the plot
+            ## Showing axis label indicating facets
+            sec.axis = dup_axis(
+              breaks = NULL, ## Don't show axis breaks
+              labels = NULL, ## Don't show axis tickmarks
+              name = "SBS1:SBS5 mutation count ratio")
           )
       }
 
@@ -1857,12 +1863,19 @@ SummarizeOneToolMultiDatasets <-
             subtitle = paste0("and all extracted signatures resembling ",gtSigName),
             ## Change title of y axis (axis.title.y) into gtSigName info (same as title)
             y = paste0("Cosine similarity between signature ",gtSigName),
-            ## Remove title of x axis
-            x = NULL) +
+            ## Change title of x axis to "Pearson's R squared"
+            x = "Pearson's R squared") +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName)) +
           ## Restrict the decimal numbers of values of measures (y) to be 2
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+          ggplot2::scale_y_continuous(
+            labels =function(x) sprintf("%.2f", x),
+            ## Add a secondary axis title on the top of the plot
+            ## Showing axis label indicating facets
+            sec.axis = dup_axis(
+              breaks = NULL, ## Don't show axis breaks
+              labels = NULL, ## Don't show axis tickmarks
+              name = "SBS1:SBS5 mutation count ratio"))
       }
 
 
@@ -1970,7 +1983,8 @@ SummarizeOneToolMultiDatasets <-
           ## Add title for general boxplot + beeswarm plot
           ggplot2::labs(title = paste0(toolName,": Summary plot for Manhattan distance")) +
           ## Restrict the decimal numbers of values of indexes to be 2
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+          ggplot2::scale_y_continuous(
+            labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a value~datasetSubGroup beeswarm plot for each signature.
       for(gtSigName in gtSigNames){
@@ -2018,12 +2032,20 @@ SummarizeOneToolMultiDatasets <-
           subtitle = "Between ground-truth exposure and attributed exposure",
           ## Change title of y axis (axis.title.y) same as gtSigName info (same as title)
           y = paste0("Manhattan distance of ",gtSigName," exposure"),
-          ## Remove title of x axis
-          x = NULL) +
+          ## Change title of x axis to "Pearson's R squared"
+          x = "Pearson's R squared") +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName)) +
           ## Restrict the decimal numbers of values of measures (y) to be 2
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+          ggplot2::scale_y_continuous(
+            ## Restrict the decimal numbers of values of measures (y) to be 2
+            labels =function(x) sprintf("%.2f", x),
+            ## Add a secondary axis title on the top of the plot
+            ## Showing axis label indicating facets
+            sec.axis = dup_axis(
+              breaks = NULL, ## Don't show axis breaks
+              labels = NULL, ## Don't show axis tickmarks
+              name = "SBS1:SBS5 mutation count ratio"))
       }
 
 
