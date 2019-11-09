@@ -1699,7 +1699,9 @@ SummarizeOneToolMultiDatasets <-
             ## Remove axis.text.x
             axis.text.x = ggplot2::element_blank(),
             ## Remove tick marks on x axis (axis.ticks.x)
-            axis.ticks.x = ggplot2::element_blank()
+            axis.ticks.x = ggplot2::element_blank(),
+            ## Remove entire legend
+            legend.position = "none"
           ) +
           ## Restrict the decimal numbers of values of measures (y) to be 2
           ggplot2::scale_y_continuous(
@@ -1858,7 +1860,9 @@ SummarizeOneToolMultiDatasets <-
             ## Remove axis.text.x
             axis.text.x = ggplot2::element_blank(),
             ## Remove tick marks on x axis (axis.ticks.x)
-            axis.ticks.x = ggplot2::element_blank()
+            axis.ticks.x = ggplot2::element_blank(),
+            ## Remove entire legend
+            legend.position = "none"
           ) +
           ## Add titles
           ggplot2::labs(
@@ -2029,7 +2033,9 @@ SummarizeOneToolMultiDatasets <-
             ## Remove axis.text.x
             axis.text.x = ggplot2::element_blank(),
             ## Remove tick marks on x axis (axis.ticks.x)
-            axis.ticks.x = ggplot2::element_blank()
+            axis.ticks.x = ggplot2::element_blank(),
+            ## Remove entire legend
+            legend.position = "none"
           ) +
         ## Change titles
         ggplot2::labs(
