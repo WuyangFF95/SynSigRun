@@ -48,6 +48,8 @@ Installhdp <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
+#' @param verbose If \code{TRUE} then \code{message} progress information.
+#'
 #' @return The attributed exposure of \code{hdp}, invisibly.
 #'
 #' @details Creates several
@@ -67,7 +69,8 @@ Runhdp <-
            K = NULL,
            K.range = NULL,
            test.only = FALSE,
-           overwrite = FALSE) {
+           overwrite = FALSE,
+           verbose = TRUE) {
 
     ## Check whether ONLY ONE of K or K.range is specified.
     bool1 <- is.numeric(K) & is.null(K.range)
@@ -124,9 +127,9 @@ Runhdp <-
     if(bool2)
       K.initial <- max(K.range)
 
-    print(paste0("Assuming there are ",K.initial," signatures active in input spectra."))
-    print(paste0("But the final number of signatures may not equal to ",K.initial,"\n."))
-
+    if (verbose) {
+      message("number of Dirichlet process data clusters = ", K.initial)
+    }
     ## Run hdp main program.
     ## Step 1: initialize hdp object
     {
@@ -134,25 +137,28 @@ Runhdp <-
       ppindex <- c(0, 1, rep(2,number.samples))
       cpindex <- c(1, 2, rep(3,number.samples))
 
+      if (verbose) message("calling hdp_init")
+
       hdpObject <- hdp::hdp_init(ppindex = ppindex,
                       cpindex = cpindex,
                       hh = rep(1,number.channels),
                       alphaa = rep(1,3), alphab = rep(1,3))
       num.process <- hdp::numdp(hdpObject)
 
-      ## Add data
+      if (verbose) message("calling hdp_setdata")
       hdpObject <- hdp::hdp_setdata(hdpObject, 3:num.process, convSpectra)
 
-      hdp::numdp(hdpObject)
+      # hdp::numdp(hdpObject)
 
+      if (verbose) message("calling dp_activate")
       ## hdp also has to enter number of signatures in advance, but the final result doesn't necessarily equal to the initial input value
       ## When the number of sample is too large, hdp may eat up all your RAMs!
       hdpObject <- hdp::dp_activate(hdpObject,
                                     1:num.process,
                                     K.initial,
-                                    seed=seedNumber)	## K.initial initial components(start with 30 signatures)
+                                    seed = seedNumber)
 
-      hdpObject
+      # hdpObject
 
       ## Release the occupied RAM by dp_activate
       gc()
@@ -166,6 +172,8 @@ Runhdp <-
       chlist <- vector("list", 4)	#4 is too much here!
 
       for (i in 1:4) {
+
+        if (verbose) message("calling hdp_posterior ", i)
         chlist[[i]] <-
           hdp::hdp_posterior(
             hdpObject,
@@ -180,6 +188,7 @@ Runhdp <-
       }
 
       ## Generate the original multi_chain for the sample
+      if (verbose) message("calling hdp_multi_chain")
       mut_example_multi <- hdp::hdp_multi_chain(chlist)
 
     }
@@ -191,7 +200,7 @@ Runhdp <-
       ## Need to plot the file into a pdf
 
 
-
+      if (verbose) message("plotting to original_sample.pdf")
       ## Draw the DP oscillation plot for mut_example_multi(original_sample)
       {
         grDevices::pdf(file = paste0(out.dir,"/original_sample.pdf"))
@@ -205,6 +214,7 @@ Runhdp <-
         grDevices::dev.off()
       }
 
+      if (verbose) message("calling hdp_extract_components")
       ## Extract components(here is signature) with cosine.merge = 0.90 (default)
       mut_example_multi_extracted <- hdp::hdp_extract_components(mut_example_multi)
       mut_example_multi_extracted
@@ -212,7 +222,9 @@ Runhdp <-
 
       ## Generate a pdf for mut_example_multi_extracted
       {
-        grDevices::pdf(file = paste0(out.dir,"/signature_hdp_embedded_func.pdf"))
+        if (verbose) message("plotting to signature_hdp_embedded_func.pdf")
+        grDevices::pdf(
+          file = paste0(out.dir,"/signature_hdp_embedded_func.pdf"))
         ## Draw the DP oscillation plot for mut_example_multi_extracted
         graphics::par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
         p1 <- lapply(hdp::chains(mut_example_multi_extracted),
@@ -231,9 +243,10 @@ Runhdp <-
 
     ## Step 4: Using hdp samples to extract signatures
       {
-
+        if (verbose) message("calling hdp::comp_categ_distn")
         ## Calculate the mutation composition in each signature:
-        extractedSignatures <- hdp::comp_categ_distn(mut_example_multi_extracted)$mean
+        extractedSignatures <-
+          hdp::comp_categ_distn(mut_example_multi_extracted)$mean
         dim(extractedSignatures)
         ## Add base context for extractedSignatures
         extractedSignatures <- t(extractedSignatures)
@@ -256,7 +269,8 @@ Runhdp <-
         extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                                  region = "unknown",
                                                  catalog.type = "counts.signature")
-        ## Output the signatures extracted
+
+        if (verbose) message("calling ICAMS::WriteCatalog")
         ICAMS::WriteCatalog(extractedSignatures,
                             paste0(out.dir,"/extracted.signatures.csv"))
       }
@@ -269,6 +283,7 @@ Runhdp <-
       ## This is the probability distribution of signatures(components) for all tumor samples(DP nodes)
       ## exposureProbs proves to be the normalized signature exposure all 100 tumor samples
 
+      if (verbose) message("calling hdp::comp_dp_distn")
       exposureProbs <- hdp::comp_dp_distn(mut_example_multi_extracted)$mean
       dim(exposureProbs)
       exposureProbs <- exposureProbs[3:dim(exposureProbs)[1],]
@@ -294,21 +309,18 @@ Runhdp <-
       ## Change exposure count matrix to SynSigEval format.
       exposureCounts <- t(exposureCounts)
 
-      ## Next, write the exposureCounts to a file
-      ## Write attributed exposures into a SynSig formatted exposure file.
+      if (verbose) message("calling WriteExposure")
       WriteExposure(exposureCounts,
                     paste0(out.dir,"/attributed.exposures.csv"))
     }
 
+    ## Save seeds and session information
+    ## for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-
-      ## Save seeds and session information
-      ## for better reproducibility
-      capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-      write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-      write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
-
-      ## Return a list of signatures and exposures
-      invisible(list("signature" = extractedSignatures,
-                     "exposure" = exposureCounts))
+    ## Return a list of signatures and exposures
+    invisible(list("signature" = extractedSignatures,
+                   "exposure" = exposureCounts))
   }

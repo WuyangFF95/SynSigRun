@@ -5,7 +5,8 @@
 \title{Run hdp extraction and attribution on a spectra catalog file}
 \usage{
 Runhdp(input.catalog, out.dir, seedNumber = 1, K = NULL,
-  K.range = NULL, test.only = FALSE, overwrite = FALSE)
+  K.range = NULL, test.only = FALSE, overwrite = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.
@@ -42,6 +43,8 @@ Default: FALSE}
 
 \item{overwrite}{If TRUE, overwrite existing output.
 Default: FALSE}
+
+\item{verbose}{If \code{TRUE} then \code{message} progress information.}
 }
 \value{
 The attributed exposure of \code{hdp}, invisibly.
