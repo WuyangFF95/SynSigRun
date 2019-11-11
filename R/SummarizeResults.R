@@ -837,14 +837,14 @@ SummarizeMultiToolsMultiDatasets <-
           plotDFList[[gtSigName]] <- rbind(plotDFList[[gtSigName]],multiTools$cosSim[[gtSigName]])
         }
       }
-
+      ## Change column names of one-signature cosine similarity
       for(gtSigName in gtSigNames){
         colnames(plotDFList[[gtSigName]])[2] <- "index"
         colnames(plotDFList[[gtSigName]])[3] <- "indexLabel"
       }
 
-      ## Combine all plotDFList[[index]] into plotDFList$Combined
-      ## combined all
+      ## Combine all extraction measurements, plotDFList[[index]] into plotDFList$Combined
+      ## combined all one-signature cosine similarity, plotDFList[[gtSigName]] into plotDFList$Combined
       plotDFList$combined <- data.frame()
       for(index in indexes){
         plotDFList$combined <- rbind(plotDFList$combined,plotDFList[[index]])
@@ -852,6 +852,17 @@ SummarizeMultiToolsMultiDatasets <-
       for(gtSigName in gtSigNames){
         plotDFList$combined <- rbind(plotDFList$combined,plotDFList[[gtSigName]])
       }
+
+      ## Convert plotDFList$combined$datasetGroup and
+      ## Let their levels follow gtools::mixedsort() fashion
+      ## So that the order of the facet labels will be more reasonable for readers.
+      plotDFList$combined$datasetGroup <- factor(
+        plotDFList$combined$datasetGroup,
+        levels = gtools::mixedsort(unique(plotDFList$combined$datasetGroup)))
+
+      plotDFList$combined$datasetSubGroup <- factor(
+        plotDFList$combined$datasetSubGroup,
+        levels = gtools::mixedsort(unique(plotDFList$combined$datasetSubGroup)))
 
       ggplotList <- list()
       ## Plot a multi-facet ggplot for all indexes and all runs.
@@ -861,8 +872,7 @@ SummarizeMultiToolsMultiDatasets <-
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_violin and geom_quasirandom
-        ggplotList$general <- ggplotList$general +
-          ggplot2::geom_violin(
+        + ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             #ggplot2::aes(fill = index),
@@ -880,24 +890,18 @@ SummarizeMultiToolsMultiDatasets <-
         #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
         #)
         ## Show median of the extraction measure distribution
-        ggplotList$general <- ggplotList$general +
-          stat_summary(fun.y="median", geom="point")
+        + ggplot2::stat_summary(fun.y="median", geom="point")
 
         ## Change title for general violin + beeswarm plot
-        ggplotList$general <- ggplotList$general +
-          ggplot2::ggtitle(label = "Measures of extraction performance",
+        + ggplot2::ggtitle(label = "Measures of extraction performance",
                            subtitle = "for all software packages, ratios and correlation values.")
         ## Change axis titles
-        ggplotList$general <- ggplotList$general +
-          ggplot2::labs(x = "Software package")
-        ## Rotate axis.text.x (the names of tools),
-        ## and remove legends
-        ggplotList$general <- ggplotList$general +
-          ## Remove axis.title.y (defaults to be "value", meaningless)
-          ## Rotate axis.text.x 90 degrees,
-          ## move axis.text.x right below the tick marks,
-          ## and remove legends.
-          ggplot2::theme(
+        + ggplot2::labs(x = "Software package")
+        ## Remove axis.title.y (defaults to be "value", meaningless)
+        ## Rotate axis.text.x 90 degrees,
+        ## move axis.text.x right below the tick marks,
+        ## and remove legends.
+        + ggplot2::theme(
             ## Remove axis.title.y
             axis.title.y = ggplot2::element_blank(),
             axis.text.x = ggplot2::element_text(
@@ -911,11 +915,9 @@ SummarizeMultiToolsMultiDatasets <-
             legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
-        ggplotList$general <- ggplotList$general +
-          ggplot2::facet_wrap(ggplot2::vars(indexLabel),scales = "free")
+        + ggplot2::facet_wrap(ggplot2::vars(indexLabel),scales = "free")
         ## Restrict the decimal numbers of values of indexes to be 2
-        ggplotList$general <- ggplotList$general +
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+        + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a multi-facet ggplot,
       ## facets are separated by indexes and datasetGroup
@@ -931,8 +933,7 @@ SummarizeMultiToolsMultiDatasets <-
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_violin and geom_quasirandom
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_violin(
+        + ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             #ggplot2::aes(fill = index),
@@ -950,22 +951,18 @@ SummarizeMultiToolsMultiDatasets <-
         #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
         #)
         ## Show median of the extraction measure distribution
-        ggplotList[[by]] <- ggplotList[[by]] +
-          stat_summary(fun.y="median", geom="point")
+        + ggplot2::stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::ggtitle(
+        + ggplot2::ggtitle(
             label = paste0("Measures of extraction performance as a function of"),
             subtitle = paste0("ground-truth signature names and ",byCaption,"."))
         ## Change axis titles
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::labs(x = "Software package")
+        + ggplot2::labs(x = "Software package")
         ## Remove axis.title.y (defaults to be "value", meaningless)
         ## Rotate the axis.text.x (names of tools),
         ## move axis.text.x right below the tick marks
         ## and remove legends
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::theme(
+        + ggplot2::theme(
             ## Remove axis.title.y
             axis.title.y = ggplot2::element_blank(),
             axis.text.x = ggplot2::element_text(
@@ -977,19 +974,17 @@ SummarizeMultiToolsMultiDatasets <-
             legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::facet_grid(rows =  ggplot2::vars(indexLabel),
+        + ggplot2::facet_grid(rows =  ggplot2::vars(indexLabel),
                               cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
-                              scales = "free") +
-          ## Make facet label font size smaller
-          ggplot2::theme(strip.text.y = ggplot2::element_text(size = 4))
+                              scales = "free")
+        ## Make facet label font size smaller
+        + ggplot2::theme(strip.text.y = ggplot2::element_text(size = 4))
         ## Add title for general violin + beeswarm plot
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::ggtitle(
+        + ggplot2::ggtitle(
             label = paste0("Measures of extraction performance as a function of"),
-            subtitle = paste0("indexes and ",byCaption,".")) +
-          ## Restrict the decimal numbers of values of indexes to be 2
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+            subtitle = paste0("indexes and ",byCaption,"."))
+        ## Restrict the decimal numbers of values of indexes to be 2
+        + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot violin + beeswarm plots in png format
       for(by in names(ggplotList)){
@@ -1110,21 +1105,17 @@ SummarizeMultiToolsMultiDatasets <-
         #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
         #)
         ## Show median of the cosine similarity distribution
-        ggplotList$general <- ggplotList$general +
-          stat_summary(fun.y="median", geom="point")
+        + ggplot2::stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
-        ggplotList$general <- ggplotList$general +
-          ggplot2::ggtitle(label = "Cosine similarity between ground-truth and extracted signatures",
+        + ggplot2::ggtitle(label = "Cosine similarity between ground-truth and extracted signatures",
                            subtitle = "for all software packages, ratios and correlation values.")
         ## Change axis titles
-        ggplotList$general <- ggplotList$general +
-          ggplot2::labs(x = "Software package",
+        + ggplot2::labs(x = "Software package",
                         y = "Cosine Similarity")
         ## Rotate the axis.text.x (names of tools),
         ## move axis.text.x right below the tick marks
         ## and remove legends
-        ggplotList$general <- ggplotList$general +
-          ggplot2::theme(axis.text.x = ggplot2::element_text(
+        + ggplot2::theme(axis.text.x = ggplot2::element_text(
             ## Rotate the axis.text.x (names of tools)
             angle = 90,
             ## move axis.text.x right below the tick marks
@@ -1133,10 +1124,9 @@ SummarizeMultiToolsMultiDatasets <-
             legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
-        ggplotList$general <- ggplotList$general +
-          ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free") +
-          ## Restrict the decimal numbers of values of indexes to be 2
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+        + ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free")
+        ## Restrict the decimal numbers of values of indexes to be 2
+        + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a multi-facet ggplot,
       ## facets are separated by gtSigNames and datasetGroup
@@ -1153,8 +1143,7 @@ SummarizeMultiToolsMultiDatasets <-
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_violin and geom_quasirandom
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::geom_violin(
+        + ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             #ggplot2::aes(fill = gtSigName),
@@ -1174,22 +1163,18 @@ SummarizeMultiToolsMultiDatasets <-
         #  , ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
         #)
         ## Show median of the extraction measure distribution
-        ggplotList[[by]] <- ggplotList[[by]] +
-          stat_summary(fun.y="median", geom="point")
+        + ggplot2::stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::ggtitle(
+        + ggplot2::ggtitle(
             label = paste0("Extraction cosine similarity as a function of"),
             subtitle = paste0("ground-truth signature names and ",byCaption,"."))
         ## Change axis titles
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::labs(x = "Software package",
+        + ggplot2::labs(x = "Software package",
                         y = "Cosine Similarity")
         ## Rotate the axis.text.x (names of tools),
         ## move axis.text.x right below the tick marks
         ## and remove legends
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::theme(axis.text.x = ggplot2::element_text(
+        + ggplot2::theme(axis.text.x = ggplot2::element_text(
             ## Rotate the axis.text.x (names of tools)
             angle = 90,
             ## move axis.text.x right below the tick marks
@@ -1198,12 +1183,11 @@ SummarizeMultiToolsMultiDatasets <-
             legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::facet_grid(rows =  ggplot2::vars(gtSigName),
+        + ggplot2::facet_grid(rows =  ggplot2::vars(gtSigName),
                               cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
-                              scales = "free") +
-          ## Restrict the decimal numbers of values of indexes to be 2
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+                              scales = "free")
+        ## Restrict the decimal numbers of values of indexes to be 2
+        + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot violin + beeswarm plots in png format
       for(by in names(ggplotList)){
@@ -1297,8 +1281,7 @@ SummarizeMultiToolsMultiDatasets <-
           plotDFList$combined,
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_violin and geom_quasirandom
-        ggplotList$general <- ggplotList$general +
-          ggplot2::geom_violin(
+        + ggplot2::geom_violin(
             ## Change filling color to white
             fill = "#FFFFFF",
             #ggplot2::aes(fill = gtSigName),
@@ -1316,21 +1299,17 @@ SummarizeMultiToolsMultiDatasets <-
         #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
         #)
         ## Show median of the Manhattan distance distribution
-        ggplotList$general <- ggplotList$general +
-          stat_summary(fun.y="median", geom="point")
+        + ggplot2::stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
-        ggplotList$general <- ggplotList$general +
-          ggplot2::ggtitle(label = "Manhattan distance between attributed and grond-truth exposures",
+        + ggplot2::ggtitle(label = "Manhattan distance between attributed and grond-truth exposures",
                            subtitle = "for all software packages, ratios and correlation values.")
         ## Change axis titles
-        ggplotList$general <- ggplotList$general +
-          ggplot2::labs(x = "Software package",
+        + ggplot2::labs(x = "Software package",
                         y = "Manhattan Distance")
         ## Rotate the names of tools,
         ## move axis.text.x right below the tick marks
         ## and remove legends
-        ggplotList$general <- ggplotList$general +
-          ggplot2::theme(axis.text.x = ggplot2::element_text(
+        + ggplot2::theme(axis.text.x = ggplot2::element_text(
             ## Rotate the axis.text.x (names of tools),
             angle = 90,
             ## move axis.text.x right below the tick marks
@@ -1339,16 +1318,14 @@ SummarizeMultiToolsMultiDatasets <-
             legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
-        ggplotList$general <- ggplotList$general +
-          ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free") +
-          ## Restrict the decimal numbers of values of indexes to be 2
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+        + ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free")
+        ## Restrict the decimal numbers of values of indexes to be 2
+        + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot a multi-facet ggplot,
       ## facets are separated by gtSigNames and datasetGroup
       ## (in example, it refers to slope.)
       for(by in c("datasetGroup","datasetSubGroup"))  {
-
 
         ## The value of "datasetGroupName" or "datasetSubGroupName"
         ## which is the caption of "datasetGroup"
@@ -1380,22 +1357,18 @@ SummarizeMultiToolsMultiDatasets <-
         #  ,ggplot2::aes(color = grDevices::hcl(h = 300,c = 35,l = 60)) ## A purple color, albeit deeper than default hcl colors.
         #)
         ## Show median of the Manhattan distance distribution
-        ggplotList[[by]] <- ggplotList[[by]] +
-          stat_summary(fun.y="median", geom="point")
+        + ggplot2::stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::ggtitle(
+        + ggplot2::ggtitle(
             label = paste0("Manhattan Distance summary plot as a function of "),
             subtitle = paste0("ground-truth signature names and ",byCaption,"."))
         ## Change axis titles
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::labs(x = "Software package",
+        + ggplot2::labs(x = "Software package",
                         y = "Manhattan Distance")
         ## Rotate the axis.text.x (names of tools),
         ## move axis.text.x right below the tick marks
         ## and remove legends
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::theme(axis.text.x = ggplot2::element_text(
+        + ggplot2::theme(axis.text.x = ggplot2::element_text(
             ## Rotate the axis.text.x (names of tools),
             angle = 90,
             ## move axis.text.x right below the tick marks
@@ -1404,12 +1377,11 @@ SummarizeMultiToolsMultiDatasets <-
             legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
-        ggplotList[[by]] <- ggplotList[[by]] +
-          ggplot2::facet_grid(rows =  ggplot2::vars(gtSigName),
+        + ggplot2::facet_grid(rows =  ggplot2::vars(gtSigName),
                               cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
-                              scales = "free") +
-          ## Restrict the decimal numbers of values of indexes to be 2
-          ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
+                              scales = "free")
+        ## Restrict the decimal numbers of values of indexes to be 2
+        + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
       ## Plot violin + beeswarm plots in png format
       for(by in names(ggplotList)){
