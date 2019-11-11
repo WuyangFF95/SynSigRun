@@ -87,12 +87,33 @@ MatchSigsAndRelabel <-
       exSigNames <- rownames(sim$match1)
 
       for(gtSigName in gtSigNames){
+        ## sim$match1 denotes the ground-truth signature each extracted
+        ## signature is most similar to, and their pairwise cosine similarity.
         tmp <- sim$match1
+        ## In sim$match1, Find all extracted signatures similar to
+        ## ground-truth signature "gtSigName".
         values <- tmp[which(tmp[,1] == gtSigName),2]
-        ## Average cosine similarity of all extracted "gtSigName" signature
-        ## Change NaN to 0.
-        ## By generating NaN, it means that none of extracted signature is similar to this gtSig
-        sim$cosSim[[gtSigName]] <- ifelse(is.nan(mean(values)),0,mean(values))
+
+        if(is.nan(mean(values))) {
+          ## None of the extracted signatures were most similar to "gtSigName"
+          ## In this way, we go to sim$match2 instead, and find out
+          ## the extracted signature "gtSigName" is most similar to.
+          ##
+          ## This is because there are some cases scenarios, two ground-truth
+          ## signatures have been blended into 1 in extraction results.
+          ##
+          ## In this way, we can still study how an extracted signature is
+          ## similar to multiple ground-truth signatures, and we can also
+          ## compare the performance of different software packages in a
+          ## more reasonable way.
+          tmp <- sim$match2
+          value <- tmp[gtSigName,2]
+          sim$cosSim[[gtSigName]] <- value
+        } else{
+          ## There are some extracted signatures most similar to "gtSigName"
+          ## Average cosine similarity of all extracted "gtSigName" signature
+          sim$cosSim[[gtSigName]] <- mean(values)
+        }
       }
     }
 
@@ -125,19 +146,19 @@ ReadAndAnalyzeSigs <-
   function(extracted.sigs,
            ground.truth.sigs,
            ground.truth.exposures) {
-  ex.sigs <- ICAMS::ReadCatalog(extracted.sigs,
-                                region = "genome",
-                                catalog.type = "counts.signature")
-  # read.extracted.sigs.fn(extracted.sigs)
-  gt.sigs <- ICAMS::ReadCatalog(ground.truth.sigs, region = "genome",
-                                catalog.type = "counts.signature")
-  # read.ground.truth.sigs.fn(ground.truth.sigs)
-  exposure <- ReadExposure(ground.truth.exposures)
-  # Rows are signatures, columns are samples.
+    ex.sigs <- ICAMS::ReadCatalog(extracted.sigs,
+                                  region = "genome",
+                                  catalog.type = "counts.signature")
+    # read.extracted.sigs.fn(extracted.sigs)
+    gt.sigs <- ICAMS::ReadCatalog(ground.truth.sigs, region = "genome",
+                                  catalog.type = "counts.signature")
+    # read.ground.truth.sigs.fn(ground.truth.sigs)
+    exposure <- ReadExposure(ground.truth.exposures)
+    # Rows are signatures, columns are samples.
 
-  return(
-    MatchSigsAndRelabel(ex.sigs, gt.sigs, exposure))
-}
+    return(
+      MatchSigsAndRelabel(ex.sigs, gt.sigs, exposure))
+  }
 
 
 #' @title Assess how well attributed exposures match input exposures
@@ -189,63 +210,63 @@ ReadAndAnalyzeExposures <-
            attributed.exp.path,
            ground.truth.exposures) {
 
-  ## Bilaterally matching between ground-truth and extracted signatures
-  sigMatch <- ReadAndAnalyzeSigs(extracted.sigs,
-              ground.truth.sigs,
-              ground.truth.exposures)
+    ## Bilaterally matching between ground-truth and extracted signatures
+    sigMatch <- ReadAndAnalyzeSigs(extracted.sigs,
+                                   ground.truth.sigs,
+                                   ground.truth.exposures)
 
 
-  ## Read in ground-truth and attributed exposures in ICAMS format
-  gtExposures <- ReadExposure(ground.truth.exposures)
-  attrExposures <- ReadExposure(attributed.exp.path)
+    ## Read in ground-truth and attributed exposures in ICAMS format
+    gtExposures <- ReadExposure(ground.truth.exposures)
+    attrExposures <- ReadExposure(attributed.exp.path)
 
-  ## Names of ground-truth signatures
-  gtSigsNames <- colnames(sigMatch$gt.sigs)
+    ## Names of ground-truth signatures
+    gtSigsNames <- colnames(sigMatch$gt.sigs)
 
-  ## Initialize an empty data.frame for exposure difference
-  exposureDiff <- data.frame(matrix(0,nrow = length(gtSigsNames),ncol = 4))
-  rownames(exposureDiff) <- gtSigsNames
-  colnames(exposureDiff) <- c("Ground.truth.exposure", ## Sum of all tumor's ground-truth exposure to gtSigsName
-                             "Attributed.exposure", ## Sum of all tumor's attributed exposure to gtSigsName
-                             "Absolute.difference", ## Sum of absolute difference of two exposure values for each tumor
-                             "Manhattan.distance") ## L1-difference betwen ground-truth exposure and attributed exposure.
-                                                   ## = Absolute.difference/Ground.truth.Exposure
+    ## Initialize an empty data.frame for exposure difference
+    exposureDiff <- data.frame(matrix(0,nrow = length(gtSigsNames),ncol = 4))
+    rownames(exposureDiff) <- gtSigsNames
+    colnames(exposureDiff) <- c("Ground.truth.exposure", ## Sum of all tumor's ground-truth exposure to gtSigsName
+                                "Attributed.exposure", ## Sum of all tumor's attributed exposure to gtSigsName
+                                "Absolute.difference", ## Sum of absolute difference of two exposure values for each tumor
+                                "Manhattan.distance") ## L1-difference betwen ground-truth exposure and attributed exposure.
+    ## = Absolute.difference/Ground.truth.Exposure
 
-  ## For each of the ground-truth signature, calculate the absolute difference
-  ## between its input (ground-truth) exposure and its attributed exposure.
-  ## Attributed exposure of a input signature equals to the sum of
-  ## exposures of all extracted signatures which matches to
-  ## this input signature.
-  for (gtSigName in gtSigsNames) {
-    matchedExtrSigIndex <- which(sigMatch$match1[,1] == gtSigName)
+    ## For each of the ground-truth signature, calculate the absolute difference
+    ## between its input (ground-truth) exposure and its attributed exposure.
+    ## Attributed exposure of a input signature equals to the sum of
+    ## exposures of all extracted signatures which matches to
+    ## this input signature.
+    for (gtSigName in gtSigsNames) {
+      matchedExtrSigIndex <- which(sigMatch$match1[,1] == gtSigName)
 
-    if (length(matchedExtrSigIndex) > 0)
-      ## 1 or more extracted signatures match to gtSigName in match1
-      matchedExtrSigName <- rownames(sigMatch$match1)[matchedExtrSigIndex]
-    else ## No extracted signatures match to gtSigName
-      matchedExtrSigName <- NULL
+      if (length(matchedExtrSigIndex) > 0)
+        ## 1 or more extracted signatures match to gtSigName in match1
+        matchedExtrSigName <- rownames(sigMatch$match1)[matchedExtrSigIndex]
+      else ## No extracted signatures match to gtSigName
+        matchedExtrSigName <- NULL
 
-    for (index in 1:ncol(attrExposures)) { ## index refers to which tumor we are scrutinizing
-      ## Each cycle traverses one tumor, and calculate the absolute difference
-      ## between its attributed exposures and ground-truth exposures.
-      gtExposureOneTumor <- gtExposures[gtSigName,index]
-      attrExposureOneTumor <- ifelse(length(matchedExtrSigIndex) > 0,
-                                     yes = sum(attrExposures[matchedExtrSigName,index]),
-                                     no = 0)
-      exposureDiff[gtSigName,1] <- exposureDiff[gtSigName,1] + gtExposureOneTumor
-      exposureDiff[gtSigName,2] <- exposureDiff[gtSigName,2] + attrExposureOneTumor
-      exposureDiff[gtSigName,3] <- exposureDiff[gtSigName,3] +
-        abs(gtExposureOneTumor - attrExposureOneTumor)
+      for (index in 1:ncol(attrExposures)) { ## index refers to which tumor we are scrutinizing
+        ## Each cycle traverses one tumor, and calculate the absolute difference
+        ## between its attributed exposures and ground-truth exposures.
+        gtExposureOneTumor <- gtExposures[gtSigName,index]
+        attrExposureOneTumor <- ifelse(length(matchedExtrSigIndex) > 0,
+                                       yes = sum(attrExposures[matchedExtrSigName,index]),
+                                       no = 0)
+        exposureDiff[gtSigName,1] <- exposureDiff[gtSigName,1] + gtExposureOneTumor
+        exposureDiff[gtSigName,2] <- exposureDiff[gtSigName,2] + attrExposureOneTumor
+        exposureDiff[gtSigName,3] <- exposureDiff[gtSigName,3] +
+          abs(gtExposureOneTumor - attrExposureOneTumor)
+      }
     }
+
+    ## Only after the cycle, the exposureDiff[,c(1,3)] has been fixed.
+    ## The Manhattan distance should normalize against the sum of exposures
+    ## of one signature, not sum of exposures of all signatures.
+    ## This can prevent the underestimation of discrepancy between attributed
+    ## exposures and ground-truth exposures.
+    exposureDiff[,4] <- exposureDiff[,3] / exposureDiff[,1]
+
+    return(exposureDiff)
   }
-
-  ## Only after the cycle, the exposureDiff[,c(1,3)] has been fixed.
-  ## The Manhattan distance should normalize against the sum of exposures
-  ## of one signature, not sum of exposures of all signatures.
-  ## This can prevent the underestimation of discrepancy between attributed
-  ## exposures and ground-truth exposures.
-  exposureDiff[,4] <- exposureDiff[,3] / exposureDiff[,1]
-
-  return(exposureDiff)
-}
 
