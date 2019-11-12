@@ -1675,7 +1675,7 @@ SummarizeOneToolMultiDatasets <-
             labels =function(x) sprintf("%.2f", x),
             ## Add a secondary axis title on the top of the plot
             ## Showing axis label indicating facets
-            sec.axis = dup_axis(
+            sec.axis = ggplot2::dup_axis(
               breaks = NULL, ## Don't show axis breaks
               labels = NULL, ## Don't show axis tickmarks
               name = "SBS1:SBS5 mutation count ratio")
@@ -1685,7 +1685,14 @@ SummarizeOneToolMultiDatasets <-
 
       ## Output indexes in a png file
       for(index in indexes){
-        suppressMessages(
+        ## Need to suppress warning,
+        ## because for each facet, there was only one possible x
+        ## and the layout$ in ggplot2:::build.ggplot() will throw a warning:
+        ##  Warning in min(x) : no non-missing arguments to min; returning Inf
+        ##  Warning in max(x) : no non-missing arguments to max; returning -Inf
+        ##
+        ## This warning is not an error, but it is annoying.
+        suppressWarnings(
           ggplot2::ggsave(paste0(out.dir,"/boxplot.onetool.extraction.",index,".png"),
                           plot = ggplotList[[index]], device = "png", dpi = 1000,limitsize = FALSE)
         )
@@ -1847,7 +1854,7 @@ SummarizeOneToolMultiDatasets <-
             labels =function(x) sprintf("%.2f", x),
             ## Add a secondary axis title on the top of the plot
             ## Showing axis label indicating facets
-            sec.axis = dup_axis(
+            sec.axis = ggplot2::dup_axis(
               breaks = NULL, ## Don't show axis breaks
               labels = NULL, ## Don't show axis tickmarks
               name = "SBS1:SBS5 mutation count ratio"))
@@ -1856,7 +1863,7 @@ SummarizeOneToolMultiDatasets <-
 
       ## Output average cosine similarity in high resolution png file
       for(gtSigName in gtSigNames){
-        suppressMessages(
+        suppressWarnings(
           ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onetool.",gtSigName,".onesig.cossim.png"),
                           plot = ggplotList[[gtSigName]], device = "png", dpi = 1000,limitsize = FALSE)
         )
@@ -2021,7 +2028,7 @@ SummarizeOneToolMultiDatasets <-
             labels =function(x) sprintf("%.2f", x),
             ## Add a secondary axis title on the top of the plot
             ## Showing axis label indicating facets
-            sec.axis = dup_axis(
+            sec.axis = ggplot2::dup_axis(
               breaks = NULL, ## Don't show axis breaks
               labels = NULL, ## Don't show axis tickmarks
               name = "SBS1:SBS5 mutation count ratio"))
@@ -2030,7 +2037,7 @@ SummarizeOneToolMultiDatasets <-
 
       ## Output average cosine similarity in high resolution png file
       for(gtSigName in gtSigNames){
-        suppressMessages(
+        suppressWarnings(
           ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onetool.",gtSigName,".Manhattan.dist.png"),
                           plot = ggplotList[[gtSigName]], device = "png", dpi = 1000,limitsize = FALSE)
         )
