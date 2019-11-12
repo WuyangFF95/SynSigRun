@@ -201,6 +201,7 @@ for(toolName in c(
     datasetGroupName = "Pearson's R^2",
     datasetSubGroup = datasetSubGroup,
     datasetSubGroupName = "SBS1:SBS5 mutation count ratio",
+    toolName = toolName,
     tool.dirname = paste0("sp.sp/ExtrAttr/",toolName,".results/"),
     out.dir = paste0("FinalToolWiseSummary/ExtrAttr/",toolName,"/"),
     overwrite = T)
@@ -212,6 +213,7 @@ for(toolName in c(attrToolNames,"sigproextractor")){
     datasetGroupName = "Pearson's R^2",
     datasetSubGroup = datasetSubGroup,
     datasetSubGroupName = "SBS1:SBS5 mutation count ratio",
+    toolName = toolName,
     tool.dirname = paste0("sp.sp/Attr/",toolName,".results/"),
     out.dir = paste0("FinalToolWiseSummary/Attr/",toolName,"/"),
     overwrite = T)
