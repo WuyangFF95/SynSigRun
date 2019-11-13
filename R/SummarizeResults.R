@@ -873,17 +873,17 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_violin and geom_quasirandom
         + ggplot2::geom_violin(
-            ## Change filling color to white
-            fill = "#FFFFFF",
-            #ggplot2::aes(fill = index),
-            ## Maximize the violin plot width
-            scale = "width",
-            ## Make bandwidth larger
-            #position = "dodge",
-            #width = 1.2
-            ## Hide outliers
-            #outlier.shape = NA
-          )
+          ## Change filling color to white
+          fill = "#FFFFFF",
+          #ggplot2::aes(fill = index),
+          ## Maximize the violin plot width
+          scale = "width",
+          ## Make bandwidth larger
+          #position = "dodge",
+          #width = 1.2
+          ## Hide outliers
+          #outlier.shape = NA
+        )
         #+
         #ggbeeswarm::geom_quasirandom(
         #  groupOnX = TRUE, size = 0.3
@@ -902,17 +902,17 @@ SummarizeMultiToolsMultiDatasets <-
         ## move axis.text.x right below the tick marks,
         ## and remove legends.
         + ggplot2::theme(
-            ## Remove axis.title.y
-            axis.title.y = ggplot2::element_blank(),
-            axis.text.x = ggplot2::element_text(
-              ## Rotate the axis.text.x
-              angle = 90,
-              ## move axis.text.x right below the tick marks
-              hjust = 1,vjust = 0.5),
-            ## Make font size of facet label smaller.
-            strip.text = ggplot2::element_text(size = 4),
-            ## remove legends.
-            legend.position = "none")
+          ## Remove axis.title.y
+          axis.title.y = ggplot2::element_blank(),
+          axis.text.x = ggplot2::element_text(
+            ## Rotate the axis.text.x
+            angle = 90,
+            ## move axis.text.x right below the tick marks
+            hjust = 1,vjust = 0.5),
+          ## Make font size of facet label smaller.
+          strip.text = ggplot2::element_text(size = 4),
+          ## remove legends.
+          legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
         + ggplot2::facet_wrap(ggplot2::vars(indexLabel),scales = "free")
@@ -934,17 +934,17 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_violin and geom_quasirandom
         + ggplot2::geom_violin(
-            ## Change filling color to white
-            fill = "#FFFFFF",
-            #ggplot2::aes(fill = index),
-            ## Maximize the violin plot width
-            scale = "width",
-            ## Make bandwidth larger
-            #position = "dodge",
-            #width = 1.2
-            ## Hide outliers
-            #outlier.shape = NA
-          )
+          ## Change filling color to white
+          fill = "#FFFFFF",
+          #ggplot2::aes(fill = index),
+          ## Maximize the violin plot width
+          scale = "width",
+          ## Make bandwidth larger
+          #position = "dodge",
+          #width = 1.2
+          ## Hide outliers
+          #outlier.shape = NA
+        )
         #+
         #ggbeeswarm::geom_quasirandom(
         #  groupOnX = TRUE, size = 0.3
@@ -954,8 +954,8 @@ SummarizeMultiToolsMultiDatasets <-
         + ggplot2::stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
         + ggplot2::ggtitle(
-            label = paste0("Measures of extraction performance as a function of"),
-            subtitle = paste0("ground-truth signature names and ",byCaption,"."))
+          label = paste0("Measures of extraction performance as a function of"),
+          subtitle = paste0("ground-truth signature names and ",byCaption,"."))
         ## Change axis titles
         + ggplot2::labs(x = "Software package")
         ## Remove axis.title.y (defaults to be "value", meaningless)
@@ -963,15 +963,15 @@ SummarizeMultiToolsMultiDatasets <-
         ## move axis.text.x right below the tick marks
         ## and remove legends
         + ggplot2::theme(
-            ## Remove axis.title.y
-            axis.title.y = ggplot2::element_blank(),
-            axis.text.x = ggplot2::element_text(
-              ## Rotate the axis.text.x (names of tools)
-              angle = 90,
-              ## move axis.text.x right below the tick marks
-              hjust = 1, vjust = 0.5),
-            ## remove legends
-            legend.position = "none")
+          ## Remove axis.title.y
+          axis.title.y = ggplot2::element_blank(),
+          axis.text.x = ggplot2::element_text(
+            ## Rotate the axis.text.x (names of tools)
+            angle = 90,
+            ## move axis.text.x right below the tick marks
+            hjust = 1, vjust = 0.5),
+          ## remove legends
+          legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
         + ggplot2::facet_grid(rows =  ggplot2::vars(indexLabel),
@@ -981,8 +981,8 @@ SummarizeMultiToolsMultiDatasets <-
         + ggplot2::theme(strip.text.y = ggplot2::element_text(size = 4))
         ## Add title for general violin + beeswarm plot
         + ggplot2::ggtitle(
-            label = paste0("Measures of extraction performance as a function of"),
-            subtitle = paste0("indexes and ",byCaption,"."))
+          label = paste0("Measures of extraction performance as a function of"),
+          subtitle = paste0("indexes and ",byCaption,"."))
         ## Restrict the decimal numbers of values of indexes to be 2
         + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
@@ -1116,12 +1116,12 @@ SummarizeMultiToolsMultiDatasets <-
         ## move axis.text.x right below the tick marks
         ## and remove legends
         + ggplot2::theme(axis.text.x = ggplot2::element_text(
-            ## Rotate the axis.text.x (names of tools)
-            angle = 90,
-            ## move axis.text.x right below the tick marks
-            hjust = 1, vjust = 0.5),
-            ## remove legends.
-            legend.position = "none")
+          ## Rotate the axis.text.x (names of tools)
+          angle = 90,
+          ## move axis.text.x right below the tick marks
+          hjust = 1, vjust = 0.5),
+          ## remove legends.
+          legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
         + ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free")
@@ -1144,17 +1144,17 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_violin and geom_quasirandom
         + ggplot2::geom_violin(
-            ## Change filling color to white
-            fill = "#FFFFFF",
-            #ggplot2::aes(fill = gtSigName),
-            ## Maximize the violin plot width
-            scale = "width",
-            ## Make bandwidth larger
-            #position = "dodge",
-            #width = 1.2
-            ## Hide outliers
-            #outlier.shape = NA
-          )
+          ## Change filling color to white
+          fill = "#FFFFFF",
+          #ggplot2::aes(fill = gtSigName),
+          ## Maximize the violin plot width
+          scale = "width",
+          ## Make bandwidth larger
+          #position = "dodge",
+          #width = 1.2
+          ## Hide outliers
+          #outlier.shape = NA
+        )
         #+
         #ggbeeswarm::geom_quasirandom(
         #  groupOnX = TRUE, size = 0.3
@@ -1166,8 +1166,8 @@ SummarizeMultiToolsMultiDatasets <-
         + ggplot2::stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
         + ggplot2::ggtitle(
-            label = paste0("Extraction cosine similarity as a function of"),
-            subtitle = paste0("ground-truth signature names and ",byCaption,"."))
+          label = paste0("Extraction cosine similarity as a function of"),
+          subtitle = paste0("ground-truth signature names and ",byCaption,"."))
         ## Change axis titles
         + ggplot2::labs(x = "Software package",
                         y = "Cosine Similarity")
@@ -1175,12 +1175,12 @@ SummarizeMultiToolsMultiDatasets <-
         ## move axis.text.x right below the tick marks
         ## and remove legends
         + ggplot2::theme(axis.text.x = ggplot2::element_text(
-            ## Rotate the axis.text.x (names of tools)
-            angle = 90,
-            ## move axis.text.x right below the tick marks
-            hjust = 1, vjust = 0.5),
-            ## remove legends.
-            legend.position = "none")
+          ## Rotate the axis.text.x (names of tools)
+          angle = 90,
+          ## move axis.text.x right below the tick marks
+          hjust = 1, vjust = 0.5),
+          ## remove legends.
+          legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
         + ggplot2::facet_grid(rows =  ggplot2::vars(gtSigName),
@@ -1282,17 +1282,17 @@ SummarizeMultiToolsMultiDatasets <-
           ggplot2::aes(x = toolName, y = value))
         ## Draw geom_violin and geom_quasirandom
         + ggplot2::geom_violin(
-            ## Change filling color to white
-            fill = "#FFFFFF",
-            #ggplot2::aes(fill = gtSigName),
-            ## Maximize the violin plot width
-            scale = "width",
-            ## Make bandwidth larger
-            #position = "dodge",
-            #width = 1.2
-            ## Hide outliers
-            #outlier.shape = NA
-          )
+          ## Change filling color to white
+          fill = "#FFFFFF",
+          #ggplot2::aes(fill = gtSigName),
+          ## Maximize the violin plot width
+          scale = "width",
+          ## Make bandwidth larger
+          #position = "dodge",
+          #width = 1.2
+          ## Hide outliers
+          #outlier.shape = NA
+        )
         #+
         #ggbeeswarm::geom_quasirandom(
         #  groupOnX = TRUE, size = 0.3
@@ -1310,12 +1310,12 @@ SummarizeMultiToolsMultiDatasets <-
         ## move axis.text.x right below the tick marks
         ## and remove legends
         + ggplot2::theme(axis.text.x = ggplot2::element_text(
-            ## Rotate the axis.text.x (names of tools),
-            angle = 90,
-            ## move axis.text.x right below the tick marks
-            hjust = 1, vjust = 0.5),
-            ## remove legends.
-            legend.position = "none")
+          ## Rotate the axis.text.x (names of tools),
+          angle = 90,
+          ## move axis.text.x right below the tick marks
+          hjust = 1, vjust = 0.5),
+          ## remove legends.
+          legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
         + ggplot2::facet_wrap(ggplot2::vars(gtSigName),scales = "free")
@@ -1360,8 +1360,8 @@ SummarizeMultiToolsMultiDatasets <-
         + ggplot2::stat_summary(fun.y="median", geom="point")
         ## Add title for general violin + beeswarm plot
         + ggplot2::ggtitle(
-            label = paste0("Manhattan Distance summary plot as a function of "),
-            subtitle = paste0("ground-truth signature names and ",byCaption,"."))
+          label = paste0("Manhattan Distance summary plot as a function of "),
+          subtitle = paste0("ground-truth signature names and ",byCaption,"."))
         ## Change axis titles
         + ggplot2::labs(x = "Software package",
                         y = "Manhattan Distance")
@@ -1369,12 +1369,12 @@ SummarizeMultiToolsMultiDatasets <-
         ## move axis.text.x right below the tick marks
         ## and remove legends
         + ggplot2::theme(axis.text.x = ggplot2::element_text(
-            ## Rotate the axis.text.x (names of tools),
-            angle = 90,
-            ## move axis.text.x right below the tick marks
-            hjust = 1, vjust = 0.5),
-            ## remove legends.
-            legend.position = "none")
+          ## Rotate the axis.text.x (names of tools),
+          angle = 90,
+          ## move axis.text.x right below the tick marks
+          hjust = 1, vjust = 0.5),
+          ## remove legends.
+          legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different gtSigNames
         + ggplot2::facet_grid(rows =  ggplot2::vars(gtSigName),
@@ -1692,15 +1692,18 @@ SummarizeOneToolMultiDatasets <-
         ##  Warning in max(x) : no non-missing arguments to max; returning -Inf
         ##
         ## This warning is not an error, but it is annoying.
-        suppressWarnings(
-          ggplot2::ggsave(paste0(out.dir,"/boxplot.onetool.extraction.",index,".png"),
-                          plot = ggplotList[[index]], device = "png", dpi = 1000,limitsize = FALSE)
+        suppressMessages(
+          suppressWarnings(
+            ggplot2::ggsave(paste0(out.dir,"/boxplot.onetool.extraction.",index,".png"),
+                            plot = ggplotList[[index]], device = "png", dpi = 1000,limitsize = FALSE)
+          )
         )
       }
 
       ## Output multiple extraction indexes in a pdf file
       grDevices::pdf(paste0(out.dir,"/boxplot.onetool.extraction.indexes.pdf"), pointsize = 1)
-      for(index in indexes) print(ggplotList[[index]])
+      for(index in indexes)
+        suppressMessages(suppressWarnings(print(ggplotList[[index]])))
       grDevices::dev.off()
     }
 
@@ -1863,15 +1866,18 @@ SummarizeOneToolMultiDatasets <-
 
       ## Output average cosine similarity in high resolution png file
       for(gtSigName in gtSigNames){
-        suppressWarnings(
-          ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onetool.",gtSigName,".onesig.cossim.png"),
-                          plot = ggplotList[[gtSigName]], device = "png", dpi = 1000,limitsize = FALSE)
+        suppressMessages(
+          suppressWarnings(
+            ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onetool.",gtSigName,".onesig.cossim.png"),
+                            plot = ggplotList[[gtSigName]], device = "png", dpi = 1000,limitsize = FALSE)
+          )
         )
       }
 
       ## Output multiple extraction indexes in a pdf file
       grDevices::pdf(paste0(out.dir,"/boxplot.onetool.onesig.cossim.pdf"), pointsize = 1)
-      for(gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
+      for(gtSigName in gtSigNames)
+        suppressMessages(suppressWarnings(print(ggplotList[[gtSigName]])))
       grDevices::dev.off()
     }
 
@@ -2011,15 +2017,15 @@ SummarizeOneToolMultiDatasets <-
             ## Remove entire legend
             legend.position = "none"
           ) +
-        ## Change titles
-        ggplot2::labs(
-          ## Add title for value~datasetSubGroup beeswarm plot
-          title = paste0(toolName,": Manhattan distance of ",gtSigName," exposure"),
-          subtitle = "Between ground-truth exposure and attributed exposure",
-          ## Change title of y axis (axis.title.y) same as gtSigName info (same as title)
-          y = paste0("Manhattan distance of ",gtSigName," exposure"),
-          ## Change title of x axis to "Pearson's R squared"
-          x = "Pearson's R squared") +
+          ## Change titles
+          ggplot2::labs(
+            ## Add title for value~datasetSubGroup beeswarm plot
+            title = paste0(toolName,": Manhattan distance of ",gtSigName," exposure"),
+            subtitle = "Between ground-truth exposure and attributed exposure",
+            ## Change title of y axis (axis.title.y) same as gtSigName info (same as title)
+            y = paste0("Manhattan distance of ",gtSigName," exposure"),
+            ## Change title of x axis to "Pearson's R squared"
+            x = "Pearson's R squared") +
           ## Change title of legend to datasetGroupName
           ggplot2::guides(color = ggplot2::guide_legend(title = datasetGroupName)) +
           ## Restrict the decimal numbers of values of measures (y) to be 2
@@ -2037,15 +2043,18 @@ SummarizeOneToolMultiDatasets <-
 
       ## Output average cosine similarity in high resolution png file
       for(gtSigName in gtSigNames){
-        suppressWarnings(
-          ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onetool.",gtSigName,".Manhattan.dist.png"),
-                          plot = ggplotList[[gtSigName]], device = "png", dpi = 1000,limitsize = FALSE)
+        suppressMessages(
+          suppressWarnings(
+            ggplot2::ggsave(filename = paste0(out.dir,"/boxplot.onetool.",gtSigName,".Manhattan.dist.png"),
+                            plot = ggplotList[[gtSigName]], device = "png", dpi = 1000,limitsize = FALSE)
+          )
         )
       }
 
       ## Output multiple extraction indexes in a pdf file
       grDevices::pdf(paste0(out.dir,"/boxplot.onetool.Manhattan.dist.pdf"), pointsize = 1)
-      for(gtSigName in gtSigNames) print(ggplotList[[gtSigName]])
+      for(gtSigName in gtSigNames)
+        suppressMessages(suppressWarnings(print(ggplotList[[gtSigName]])))
       grDevices::dev.off()
     }
 
