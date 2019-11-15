@@ -121,6 +121,8 @@ RunSomaticSignatures <-
     ## TODO(Wuyang)
     extractionObject <- NULL
     exposureCounts <- extractionObject$Ehat ## Unnormalized exposures
+    ## Temporary workout
+    K.best <- NULL
     rownames(exposureCounts) <- paste("SomaticSignatures",seq(1,K.best),sep = ".") ## Assign row names of exposure matrix as names of signatures
     colnames(exposureCounts) <- colnames(spectra) ## Assign column names of exposure matrix as names of tumors
     ## Normalize the attributed counts so that each column represents exposure of a signature
