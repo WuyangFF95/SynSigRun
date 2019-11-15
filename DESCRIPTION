@@ -18,6 +18,7 @@ Imports:
     stats, 
     devtools, 
     utils, 
+    rlang,
     graphics,
     grDevices,
     ggplot2,

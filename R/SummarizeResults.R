@@ -211,6 +211,8 @@ SummarizeSigOneSubdir <-
 #'
 #' @importFrom utils capture.output sessionInfo
 #'
+#' @importFrom rlang .data
+#'
 #' @export
 SummarizeMultiRuns <-
   function(datasetName,
@@ -335,7 +337,7 @@ SummarizeMultiRuns <-
         ggplotList[[index]] <- ggplot2::ggplot(
           data.frame(value = multiRun[[index]],
                      indexName = index),
-          ggplot2::aes(x = indexName, y = value))
+          ggplot2::aes(x = .data$indexName, y = .data$value))
         ggplotList[[index]] <- ggplotList[[index]] +
           ggplot2::ggtitle(titles[indexNum],subtitle = subtitles[indexNum])
         ggplotList[[index]] <- ggplotList[[index]] +
@@ -348,7 +350,7 @@ SummarizeMultiRuns <-
         ggplotList[[gtSigName]] <- ggplot2::ggplot(
           data.frame(value = multiRun$cosSim[[gtSigName]],
                      gtSigName = gtSigName),
-          ggplot2::aes(x = gtSigName, y = value))
+          ggplot2::aes(x = .data$gtSigName, y = .data$value))
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::ggtitle(label = paste0("Cosine similarity to signature ",gtSigName),
                            subtitle = paste0("Considers all extracted signatures resembling ", gtSigName))
@@ -449,7 +451,7 @@ SummarizeMultiRuns <-
         ggplotList[[gtSigName]] <- ggplot2::ggplot(
           data.frame(value = ManhattanDist[gtSigName,],
                      gtSigName = gtSigName),
-          ggplot2::aes(x = gtSigName, y = value))
+          ggplot2::aes(x = .data$gtSigName, y = .data$value))
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
           ggplot2::ggtitle(paste0("L1-difference of exposure of signature ",gtSigName))
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
@@ -738,6 +740,8 @@ SummarizeMultiToolsOneDataset <- function(
 #' @param overwrite Whether to overwrite the contents in out.dir if
 #' it already exists. (Default: FALSE)
 #'
+#' @importFrom rlang .data
+#'
 #' @export
 #'
 SummarizeMultiToolsMultiDatasets <-
@@ -870,7 +874,7 @@ SummarizeMultiToolsMultiDatasets <-
         ## Generate a ggplot object based on plotDFList$combined
         ggplotList$general <- ggplot2::ggplot(
           plotDFList$combined,
-          ggplot2::aes(x = toolName, y = value))
+          ggplot2::aes(x = .data$toolName, y = .data$value))
         ## Draw geom_violin and geom_quasirandom
         + ggplot2::geom_violin(
           ## Change filling color to white
@@ -931,7 +935,7 @@ SummarizeMultiToolsMultiDatasets <-
         ## Generate a ggplot object based on plotDFList$combined
         ggplotList[[by]] <- ggplot2::ggplot(
           plotDFList$combined,
-          ggplot2::aes(x = toolName, y = value))
+          ggplot2::aes(x = .data$toolName, y = .data$value))
         ## Draw geom_violin and geom_quasirandom
         + ggplot2::geom_violin(
           ## Change filling color to white
@@ -1084,7 +1088,7 @@ SummarizeMultiToolsMultiDatasets <-
         ## Generate a ggplot object based on plotDFList$combined
         ggplotList$general <- ggplot2::ggplot(
           plotDFList$combined,
-          ggplot2::aes(x = toolName, y = value))
+          ggplot2::aes(x = .data$toolName, y = .data$value))
         ## Draw geom_violin and geom_quasirandom
         ggplotList$general <- ggplotList$general +
           ggplot2::geom_violin(
@@ -1141,7 +1145,7 @@ SummarizeMultiToolsMultiDatasets <-
         ## Generate a ggplot object based on plotDFList$combined
         ggplotList[[by]] <- ggplot2::ggplot(
           plotDFList$combined,
-          ggplot2::aes(x = toolName, y = value))
+          ggplot2::aes(x = .data$toolName, y = .data$value))
         ## Draw geom_violin and geom_quasirandom
         + ggplot2::geom_violin(
           ## Change filling color to white
@@ -1279,7 +1283,7 @@ SummarizeMultiToolsMultiDatasets <-
         ## Generate a ggplot object based on plotDFList$combined
         ggplotList$general <- ggplot2::ggplot(
           plotDFList$combined,
-          ggplot2::aes(x = toolName, y = value))
+          ggplot2::aes(x = .data$toolName, y = .data$value))
         ## Draw geom_violin and geom_quasirandom
         + ggplot2::geom_violin(
           ## Change filling color to white
@@ -1336,7 +1340,7 @@ SummarizeMultiToolsMultiDatasets <-
         ## Generate a ggplot object based on plotDFList$combined
         ggplotList[[by]] <- ggplot2::ggplot(
           plotDFList$combined,
-          ggplot2::aes(x = toolName, y = value))
+          ggplot2::aes(x = .data$toolName, y = .data$value))
         ## Draw geom_violin and geom_quasirandom
         ggplotList[[by]] <- ggplotList[[by]] +
           ggplot2::geom_violin(
@@ -1458,6 +1462,8 @@ SummarizeMultiToolsMultiDatasets <-
 #'
 #' @param overwrite Whether to overwrite the contents in out.dir if
 #' it already exists. (Default: FALSE)
+#'
+#' @importFrom rlang .data
 #'
 #' @export
 #'
@@ -1586,7 +1592,7 @@ SummarizeOneToolMultiDatasets <-
       if(FALSE){
         ggplotList[["general"]] <- ggplot2::ggplot(
           OneToolSummary[["extraction"]],
-          ggplot2::aes(x = toolName, y = value))
+          ggplot2::aes(x = .data$toolName, y = .data$value))
         ggplotList[["general"]] <- ggplotList[["general"]] +
           ## Draw boxplot
           ggplot2::geom_boxplot(
@@ -1620,8 +1626,8 @@ SummarizeOneToolMultiDatasets <-
         ggplotList[[index]] <- ggplot2::ggplot(
           OneToolSummary[[index]],
           ## Make sure that only one x-label is shown in one small facet.
-          #ggplot2::aes(x = datasetGroup, y = value)
-          ggplot2::aes(x = toolName, y = value)
+          #ggplot2::aes(x = .data$datasetGroup, y = .data$value)
+          ggplot2::aes(x = .data$toolName, y = .data$value)
         )
         ## Add facets
         ggplotList[[index]] <- ggplotList[[index]] +
@@ -1645,7 +1651,7 @@ SummarizeOneToolMultiDatasets <-
                                        ## Make dot size smaller
                                        size = 0.3,
                                        ## Set groups for the filling functionalities to differentiate
-                                       ggplot2::aes(color = datasetGroup)) +
+                                       ggplot2::aes(color = .data$datasetGroup)) +
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
           ## Change titles
@@ -1772,7 +1778,7 @@ SummarizeOneToolMultiDatasets <-
       if(FALSE){
         ggplotList[["general"]] <- ggplot2::ggplot(
           OneToolSummary$cosSim$combined,
-          ggplot2::aes(x = toolName, y = value))
+          ggplot2::aes(x = .data$toolName, y = .data$value))
         ## Draw boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
           ## Draw geom_violin
@@ -1804,8 +1810,8 @@ SummarizeOneToolMultiDatasets <-
         ggplotList[[gtSigName]] <- ggplot2::ggplot(
           OneToolSummary$cosSim[[gtSigName]],
           ## Make sure that only one x-label is shown in one small facet.
-          #ggplot2::aes(x = datasetGroup, y = value)
-          ggplot2::aes(x = toolName, y = value)
+          #ggplot2::aes(x = .data$datasetGroup, y = .data$value)
+          ggplot2::aes(x = .data$toolName, y = .data$value)
         )
         ## Add facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
@@ -1829,7 +1835,7 @@ SummarizeOneToolMultiDatasets <-
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
-                                       ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
+                                       ggplot2::aes(color = .data$datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
           ## Change axis.text and tickmarks
@@ -1947,7 +1953,7 @@ SummarizeOneToolMultiDatasets <-
       if(FALSE){
         ggplotList[["general"]] <- ggplot2::ggplot(
           OneToolSummary$ManhattanDist$combined,
-          ggplot2::aes(x = toolName, y = value))
+          ggplot2::aes(x = .data$toolName, y = .data$value))
         ## Draw boxplot + beeswarm plot
         ggplotList[["general"]] <- ggplotList[["general"]] +
           ## Draw geom_violin
@@ -1980,8 +1986,8 @@ SummarizeOneToolMultiDatasets <-
         ggplotList[[gtSigName]] <- ggplot2::ggplot(
           OneToolSummary$ManhattanDist[[gtSigName]],
           ## Make sure that only one x-label is shown in one small facet.
-          #ggplot2::aes(x = datasetGroup, y = value)
-          ggplot2::aes(x = toolName, y = value)
+          #ggplot2::aes(x = .data$datasetGroup, y = .data$value)
+          ggplot2::aes(x = .data$toolName, y = .data$value)
         )
         ## Add facets
         ggplotList[[gtSigName]] <- ggplotList[[gtSigName]] +
@@ -2005,7 +2011,7 @@ SummarizeOneToolMultiDatasets <-
           ## Draw beeswarm plot
           ggbeeswarm::geom_quasirandom(groupOnX = TRUE,
                                        size = 0.3, ## Make dot size smaller
-                                       ggplot2::aes(color = datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
+                                       ggplot2::aes(color = .data$datasetGroup)) +     ## Set groups for the filling functionalities to differentiate
           ## Change filling color
           ggplot2::scale_fill_brewer(palette = "Greys") +
           ## Change axis.text and tickmarks
