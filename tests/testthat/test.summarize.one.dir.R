@@ -3,7 +3,7 @@ context("Test summarizing extraction results in one directory")
 test_that("signature.analyzer.sa.sa.COMPOSITE.out", {
   load("signature.analyzer.sa.sa.COMPOSITE.out")
   expect_equal(
-    SummarizeSigOneSACOMPOSITESubdir(
+    SummarizeSigOneSASubdir(
       third.level.dir = "./test.sa.sa.COMPOSITE/sa.results/",
       ground.truth.exposure.name = "ground.truth.syn.exposures.csv",
       which.run = "1.run.sa.sa.COMPOSITE",
@@ -21,7 +21,7 @@ test_that("SummarizeSigOneSA96Subdir", {
   load("signature.analyzer.sa.sa.96.out.Rdata")
   expect_equal(
 
-    SummarizeSigOneSA96Subdir(
+    SummarizeSigOneSASubdir(
       third.level.dir = "./test.sa.sa.96/sa.results/",
       ground.truth.exposure.name = "ground.truth.syn.exposures.csv",
       which.run = "1.run.sa.sa.96",
@@ -46,7 +46,7 @@ test_that("SummarizeSigOneSPSubdir", {
   # or file2 below will be too long for portable zip'ing.
   tdir.res <- "./t1/r/"
   expect_equal(
-    SummarizeSigOneSPSubdir(
+    SummarizeSigOneSigProExtractorSubdir(
       third.level.dir = tdir.res,
       overwrite = T,
       ground.truth.exposure.name = "ground.truth.syn.exposures.csv"),

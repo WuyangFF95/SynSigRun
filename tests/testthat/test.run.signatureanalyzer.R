@@ -9,9 +9,7 @@ test_that("SignatureAnalyzerOneRun", {
       signatureanalyzer.code.dir =
         devtools::package_file("data-raw/SignatureAnalzyer.052418/"),
       input.catalog = "test.random.sigs/sp.sp/ground.truth.syn.catalog.csv",
-      read.catalog.function = ReadCatSNS96,
       out.dir = "test.random.sigs/sp.sp/sa.results/",
-      write.signature.function = WriteCatSNS96,
       input.exposures = "test.random.sigs/sa.sa.96/ground.truth.syn.exposures.csv",
       test.only = TRUE, # Just use a small subset of the input catalog
       overwrite = TRUE)
