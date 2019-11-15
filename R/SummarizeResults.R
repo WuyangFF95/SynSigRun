@@ -585,6 +585,7 @@ SummarizeMultiToolsOneDataset <- function(
     toolPath <- paste0(third.level.dir,"/",toolDirName)
     ## Add multiRun <- NULL to please the R check
     multiRun <- NULL
+    datasetName <- NULL
     load(paste0(toolPath,"/multiRun.RDa"))
 
     ## Combine multi-runs and multi-tools for each index
@@ -749,8 +750,21 @@ SummarizeMultiToolsMultiDatasets <-
            second.third.level.dirname,
            out.dir,
            overwrite = FALSE){
-    indexes <- c("averCosSim","falseNeg","falsePos",
-                 "truePos","TPR","FDR")
+
+    ## For each index,
+    ## Create a data.frame integrating results of
+    ## all runs and for all datasets
+    if(FALSE){ ## Remove redundant indexes
+      indexes <- c("averCosSim","falseNeg","falsePos",
+                   "truePos","TPR","FDR")
+    } else{
+      indexes <- c("averCosSim","falsePos","FDR")
+      indexLabels <- c("Average cosine similarity of all signatures",
+                       "False positives",
+                       "False Discovery Rate (FDR)")
+    }
+
+
     indexNums <- length(indexes)
 
     ## Create output directory
@@ -800,19 +814,6 @@ SummarizeMultiToolsMultiDatasets <-
     ## in all runs and in all datasets.
     {
       plotDFList <- list()
-
-      ## For each index,
-      ## Create a data.frame integrating results of
-      ## all runs and for all datasets
-      if(FALSE){ ## Remove redundant indexes
-        indexes <- c("averCosSim","falseNeg","falsePos",
-                     "truePos","TPR","FDR")
-      } else{
-        indexes <- c("averCosSim","falsePos","FDR")
-        indexLabels <- c("Average cosine similarity of all signatures",
-                         "False positives",
-                         "False Discovery Rate (FDR)")
-      }
 
       indexNums <- length(indexes)
 
@@ -919,7 +920,7 @@ SummarizeMultiToolsMultiDatasets <-
           legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
-        + ggplot2::facet_wrap(ggplot2::vars(indexLabel),scales = "free")
+        + ggplot2::facet_wrap(ggplot2::vars(.data$indexLabel),scales = "free")
         ## Restrict the decimal numbers of values of indexes to be 2
         + ggplot2::scale_y_continuous(labels =function(x) sprintf("%.2f", x))
       }
@@ -978,7 +979,7 @@ SummarizeMultiToolsMultiDatasets <-
           legend.position = "none")
         ## Split the plot into multiple facets,
         ## according to different indexes
-        + ggplot2::facet_grid(rows =  ggplot2::vars(indexLabel),
+        + ggplot2::facet_grid(rows =  ggplot2::vars(.data$indexLabel),
                               cols = eval(parse(text = paste0("ggplot2::vars(",by,")"))),
                               scales = "free")
         ## Make facet label font size smaller
