@@ -67,11 +67,11 @@ RunSignatureAnalyzerAttribution <-
            overwrite = FALSE,
            verbose = FALSE) {
     # TEMPORARY is a global required by SignatureAnalyzer
-    TEMPORARY <<- paste0(out.dir, "/tmp/")
-    if (dir.exists(TEMPORARY)) {
-      if (!overwrite) stop("Directory ", TEMPORARY, " already exists")
+    assign("TEMPORARY",paste0(out.dir, "/tmp/"),envir = envSA)
+    if (dir.exists(envSA$TEMPORARY)) {
+      if (!overwrite) stop("Directory ", envSA$TEMPORARY, " already exists")
     } else {
-      dir.create(TEMPORARY)
+      dir.create(envSA$TEMPORARY)
     }
 
     # Load files required by fine-attribution step.
@@ -139,7 +139,7 @@ RunSignatureAnalyzerAttribution <-
       ## it is no more allowed in the fine-tuned attribution step.
       H1 <- Z1*H0[,match(colnames(V1),colnames(Z0),nomatch=0)]
       lambda <- rep(1+(sqrt((a0-1)*(a0-2)*mean(V1,na.rm=T)/K0))/(nrow(V1) + ncol(V1) + a0 + 1)*2,K0)
-      res0 <- BayesNMF.L1.KL.fixed_W.Z(as.matrix(V1),as.matrix(W1),as.matrix(H1),as.matrix(Z1),lambda,2000000,a0,1.e-07,1/phi)
+      res0 <- envSA$BayesNMF.L1.KL.fixed_W.Z(as.matrix(V1),as.matrix(W1),as.matrix(H1),as.matrix(Z1),lambda,2000000,a0,1.e-07,1/phi)
       H2 <- res0[[2]]  ## Attribution from second step
       colnames(H2) <- colnames(V1) ## The colnames of H2 (exposure attribution matrix) are the names of tumor samples,
       ## it should be the same as the colnames of V1 (catalog matrix for tumors whose tumor type is cohort=ttype.unique[i])
@@ -154,7 +154,7 @@ RunSignatureAnalyzerAttribution <-
         tmpH <- rep(0,ncol(W0))
         if (sum(V1[,j])>=5) {
           lambda <- 1+(sqrt((a0-1)*(a0-2)*mean(V1,na.rm=T)/K0))/(nrow(V1) + ncol(V1) + a0 + 1)*2
-          res <- BayesNMF.L1.KL.fixed_W.Z.sample(as.matrix(V1[,j]),W0,as.matrix(H2[,j]),as.matrix(Z2[,j]),lambda,1000000,a0,1.e-07,1) ## Precise attribution
+          res <- envSA$BayesNMF.L1.KL.fixed_W.Z.sample(as.matrix(V1[,j]),W0,as.matrix(H2[,j]),as.matrix(Z2[,j]),lambda,1000000,a0,1.e-07,1) ## Precise attribution
           tmpH <- res[[2]]
         }
         if (j==1) {

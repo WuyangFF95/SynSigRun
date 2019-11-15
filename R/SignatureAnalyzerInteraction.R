@@ -1,5 +1,18 @@
 # SignatureAnalyzerInteraction.R
 
+
+# Define variables used by SignatureAnalyzer-related functions
+# in an environment called "envSA"
+# This environment does not have a parent, which prevents
+# contamination of .GlobalEnv() when running functions with
+# default parameter "parent.frame()"
+envSA <- new.env(parent = emptyenv())
+## Define variables in envSA.
+for(varName in c("INPUT","OUTPUT","TEMPORARY"))
+  assign(varName,NULL,envir = envSA)
+
+
+
 #' Standardize SignatureAnalyzer signature names
 #'
 #' For example, change \code{BI_COMPOSITE_SNV_SBS83_P}
@@ -37,10 +50,11 @@ SourceSignatureAnlyzerCode <-
     }
     here <- getwd()
     setwd(signatureanalyzer.code.dir)
-    INPUT <<- "INPUT_SignatureAnalyzer/"
+    assign("INPUT","INPUT_SignatureAnalyzer/",envir = envSA)
     suppressWarnings(
       suppressPackageStartupMessages(
-        source("SignatureAnalyzer.PCAWG.function.R")
+        ## Store the SA functions into envSA.
+        source("SignatureAnalyzer.PCAWG.function.R", local = envSA)
       )
     )
     setwd(here) # This is necessary because the caller
@@ -139,11 +153,11 @@ RunSignatureAnalyzerOnFile <-
       dir.create(out.dir, recursive = TRUE)
     }
     # TEMPORARY is a global required by SignatureAnalyzer
-    TEMPORARY <<- paste0(out.dir, "/tmp/")
-    if (dir.exists(TEMPORARY)) {
-      if (!overwrite) stop("Directory ", TEMPORARY, " already exists")
+    assign("TEMPORARY",paste0(out.dir, "/tmp/"),envir = envSA)
+    if (dir.exists(envSA$TEMPORARY)) {
+      if (!overwrite) stop("Directory ", envSA$TEMPORARY, " already exists")
     } else {
-      dir.create(TEMPORARY, recursive = TRUE)
+      dir.create(envSA$TEMPORARY, recursive = TRUE)
     }
 
     suppressWarnings(
@@ -160,8 +174,8 @@ RunSignatureAnalyzerOnFile <-
         # [[5]]: relevance -
         # [[6]]: error -
         out.data <-
-          BayesNMF.L1W.L2H(syn.data, 200000, 10, 5, tol, maxK, maxK, 1),
-        file = paste0(TEMPORARY, "captured.output.txt")))
+          envSA$BayesNMF.L1W.L2H(syn.data, 200000, 10, 5, tol, maxK, maxK, 1),
+        file = paste0(envSA$TEMPORARY, "captured.output.txt")))
 
     # out.data[[1]] has raw extracted signatures; the sum of each signature != 1
     sigs <- out.data[[1]]
