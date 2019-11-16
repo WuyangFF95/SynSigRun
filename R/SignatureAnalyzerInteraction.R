@@ -6,7 +6,7 @@
 # This environment does not have a parent, which prevents
 # contamination of .GlobalEnv() when running functions with
 # default parameter "parent.frame()"
-envSA <- new.env(parent = emptyenv())
+envSA <- new.env(parent = globalenv())
 ## Define variables in envSA.
 for(varName in c("INPUT","OUTPUT","TEMPORARY"))
   assign(varName,NULL,envir = envSA)
@@ -41,7 +41,7 @@ FixSASigNames <- function(sig.names) {
 #' named \code{INPUT_SignatureAnalyzer} and a R script named
 #' \code{SignatureAnalyer.PCAWG.function.R}
 
-SourceSignatureAnlyzerCode <-
+SourceSignatureAnalyzerCode <-
   function(signatureanalyzer.code.dir) {
     if (!dir.exists(signatureanalyzer.code.dir)) {
       stop("SignatureAnalyzer code directory, ",
@@ -54,7 +54,7 @@ SourceSignatureAnlyzerCode <-
     suppressWarnings(
       suppressPackageStartupMessages(
         ## Store the SA functions into envSA.
-        source("SignatureAnalyzer.PCAWG.function.R", local = envSA)
+        sys.source("SignatureAnalyzer.PCAWG.function.R", envir = envSA)
       )
     )
     setwd(here) # This is necessary because the caller
@@ -319,7 +319,7 @@ SignatureAnalyzerOneRun <-
   }
 
   options(warn = 0)
-  SourceSignatureAnlyzerCode(signatureanalyzer.code.dir)
+  SourceSignatureAnalyzerCode(signatureanalyzer.code.dir)
 
   if (verbose)
     cat("Running SignatureAnalyzerOneRun in", out.dir, "\n")
