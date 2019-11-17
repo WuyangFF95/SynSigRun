@@ -4,7 +4,8 @@ test_that("SignatureAnalyzerOneRun", {
   # skip("This is a long test")
   load("SignatureAnalyzerOneRun.out.Rdata")
   set.seed(888)
-  tmp.result <<-
+  assign(
+    "tmp.result",
     SignatureAnalyzerOneRun(
       signatureanalyzer.code.dir =
         devtools::package_file("data-raw/SignatureAnalzyer.052418/"),
@@ -12,7 +13,9 @@ test_that("SignatureAnalyzerOneRun", {
       out.dir = "test.random.sigs/sp.sp/sa.results/",
       input.exposures = "test.random.sigs/sa.sa.96/ground.truth.syn.exposures.csv",
       test.only = TRUE, # Just use a small subset of the input catalog
-      overwrite = TRUE)
+      overwrite = TRUE),
+    pos = envTest
+  )
   # save(SignatureAnalyzerOneRun.out,
   #     file = "SignatureAnalyzerOneRun.out.Rdata")
 
@@ -26,7 +29,7 @@ test_that("SignatureAnalyzerOneRun", {
   unlink.ret <- unlink(dir.to.unlink, recursive = TRUE, force = TRUE)
   if (0 != unlink.ret) warning("failed to unlink", dir.to.unlink)
   expect_equal(
-    tmp.result,
+    envTest$tmp.result,
     SignatureAnalyzerOneRun.out)
 })
 
@@ -34,7 +37,8 @@ test_that("SignatureAnalyzer4MatchedCatalogs", {
   # skip("This is a long test")
   load("SignatureAnalyzer4MatchedCatalogs.out.Rdata")
   set.seed(888)
-  tmp.result <<-
+  assign(
+    "tmp.result",
     SignatureAnalyzer4MatchedCatalogs(
       num.runs = 2,
       signatureanalyzer.code.dir =
@@ -43,7 +47,9 @@ test_that("SignatureAnalyzer4MatchedCatalogs", {
       slice = 1,
       test.only = TRUE, # Just use a small subset of the input catalog
       overwrite = TRUE,
-      mc.cores = 1)
+      mc.cores = 1),
+    pos = envTest
+  )
   # save(SignatureAnalyzer4MatchedCatalogs.out,
   #     file = "SignatureAnalyzer4MatchedCatalogs.out.Rdata")
 
@@ -52,6 +58,7 @@ test_that("SignatureAnalyzer4MatchedCatalogs", {
   unlink.ret <- unlink(dir.to.unlink, recursive = TRUE, force = TRUE)
   if (0 != unlink.ret) warning("failed to unlink", dir.to.unlink)
   expect_equal(
-    tmp.result,
+    envTest$tmp.result,
     SignatureAnalyzer4MatchedCatalogs.out)
+  rm(tmp.result,envir = envTest)
 })

@@ -1,18 +1,6 @@
 # SignatureAnalyzerInteraction.R
 
 
-# Define variables used by SignatureAnalyzer-related functions
-# in an environment called "envSA"
-# This environment does not have a parent, which prevents
-# contamination of .GlobalEnv() when running functions with
-# default parameter "parent.frame()"
-envSA <- new.env(parent = globalenv())
-## Define variables in envSA.
-for(varName in c("INPUT","OUTPUT","TEMPORARY"))
-  assign(varName,NULL,envir = envSA)
-
-
-
 #' Standardize SignatureAnalyzer signature names
 #'
 #' For example, change \code{BI_COMPOSITE_SNV_SBS83_P}
@@ -381,7 +369,6 @@ SAMultiRunOneCatalog <-
            signatureanalyzer.code.dir,
            input.catalog,
            out.dir,
-           #write.signature.function,
            maxK = 30,
            tol = 1e-7,
            test.only = FALSE,
@@ -532,7 +519,7 @@ SignatureAnalyzer4MatchedCatalogs <-
     }
 
   retval2 <-
-    mapply(tmp.fn, subdirs[slice], ICAMS::ReadCatalog, ICAMS::WriteCatalog)
+    mapply(tmp.fn, subdirs[slice])
 
   invisible(retval2)
   }

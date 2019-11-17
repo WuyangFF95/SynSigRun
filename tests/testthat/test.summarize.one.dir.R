@@ -4,9 +4,9 @@ test_that("signature.analyzer.sa.sa.COMPOSITE.out", {
   load("signature.analyzer.sa.sa.COMPOSITE.out")
   expect_equal(
     SummarizeSigOneSASubdir(
-      third.level.dir = "./test.sa.sa.COMPOSITE/sa.results/",
-      ground.truth.exposure.name = "ground.truth.syn.exposures.csv",
-      which.run = "1.run.sa.sa.COMPOSITE",
+      run.dir = "./test.sa.COMPOSITE/sa.results/",
+      ground.truth.exposure.dir = "./test.sa.COMPOSITE/",
+      which.run = "1.run",
       overwrite = TRUE),
     signature.analyzer.sa.sa.COMPOSITE.out)
   if (TRUE) # Set this to FALSE to inspect the file and directory output
@@ -17,13 +17,12 @@ test_that("signature.analyzer.sa.sa.COMPOSITE.out", {
   }
 })
 
-test_that("SummarizeSigOneSA96Subdir", {
+test_that("signature.analyzer.sa.sa.96.out", {
   load("signature.analyzer.sa.sa.96.out.Rdata")
   expect_equal(
-
     SummarizeSigOneSASubdir(
-      third.level.dir = "./test.sa.sa.96/sa.results/",
-      ground.truth.exposure.name = "ground.truth.syn.exposures.csv",
+      run.dir = "./test.sa.sa.96/sa.results/",
+      ground.truth.exposure.dir = "./test.sa.sa.96/",
       which.run = "1.run.sa.sa.96",
       overwrite = TRUE),
     signature.analyzer.sa.sa.96.out)
@@ -39,17 +38,17 @@ test_that("SummarizeSigOneSA96Subdir", {
   }
 })
 
-test_that("SummarizeSigOneSPSubdir", {
+test_that("SummarizeSigOneSigProExtractorSubdir (SBS96)", {
   load("./test.sigprofiler.sp.sp.out.Rdata")
 
   # Warning, do not change t1 to a longer name,
   # or file2 below will be too long for portable zip'ing.
-  tdir.res <- "./t1/r/"
+  tdir.res <- "./"
   expect_equal(
     SummarizeSigOneSigProExtractorSubdir(
-      third.level.dir = tdir.res,
+      run.dir = tdir.res,
       overwrite = T,
-      ground.truth.exposure.name = "ground.truth.syn.exposures.csv"),
+      ground.truth.exposure.dir = "tests/testthat/sp.96.ground.truth/"),
     sigprofiler.sp.sp.out)
   if (TRUE) # Set this to FALSE to inspect the file and directory output
   {
