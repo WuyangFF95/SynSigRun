@@ -48,7 +48,7 @@ test_that("SummarizeSigOneSigProExtractorSubdir (SBS96)", {
     SummarizeSigOneSigProExtractorSubdir(
       run.dir = tdir.res,
       overwrite = T,
-      ground.truth.exposure.dir = "tests/testthat/sp.96.ground.truth/"),
+      ground.truth.exposure.dir = "./sp.96.ground.truth/"),
     sigprofiler.sp.sp.out)
   if (TRUE) # Set this to FALSE to inspect the file and directory output
   {

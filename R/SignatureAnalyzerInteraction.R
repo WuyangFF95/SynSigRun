@@ -36,16 +36,20 @@ SourceSignatureAnalyzerCode <-
            signatureanalyzer.code.dir,
            " does not exist; getwd() == ", getwd())
     }
-    here <- getwd()
-    setwd(signatureanalyzer.code.dir)
-    assign("INPUT","INPUT_SignatureAnalyzer/",envir = envSA)
+    #here <- getwd()
+    #setwd(signatureanalyzer.code.dir)
+    assign("INPUT",
+           paste0(signatureanalyzer.code.dir,"/INPUT_SignatureAnalyzer/"),
+           envir = envSA)
     suppressWarnings(
       suppressPackageStartupMessages(
         ## Store the SA functions into envSA.
-        sys.source("SignatureAnalyzer.PCAWG.function.R", envir = envSA)
+        sys.source(
+          paste0(signatureanalyzer.code.dir,"/SignatureAnalyzer.PCAWG.function.R"),
+          envir = envSA)
       )
     )
-    setwd(here) # This is necessary because the caller
+    #setwd(here) # This is necessary because the caller
     # as specified input and output locations
     # relative to here.
   }

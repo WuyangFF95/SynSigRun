@@ -72,8 +72,14 @@ MatchSigsAndRelabel <-
     }
     colnames(ex.sigs.x) <- init.labels
 
-    sim$ex.sigs <- ex.sigs.x
-    sim$gt.sigs <- gt.sigs
+    sim$ex.sigs <- ICAMS::as.catalog(
+      ex.sigs.x,
+      region = "genome",
+      catalog.type = "counts.signature")
+    sim$gt.sigs <- ICAMS::as.catalog(
+      gt.sigs,
+      region = "genome",
+      catalog.type = "counts.signature")
 
     ## Calculate cosine similarity between all extracted signatures,
     ## and each of the ground-truth signatures.
