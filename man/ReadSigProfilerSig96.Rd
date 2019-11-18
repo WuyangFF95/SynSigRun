@@ -2,7 +2,7 @@
 % Please edit documentation in R/SigProfilerInteraction.R
 \name{ReadSigProfilerSig96}
 \alias{ReadSigProfilerSig96}
-\title{Read a file containing signatures extracted by SigProfiler/Python}
+\title{Read a file containing SBS96 signatures extracted by SigProfiler/Python}
 \usage{
 ReadSigProfilerSig96(file)
 }
@@ -14,5 +14,5 @@ The corresponding signature matrix in standard internal
 representation.
 }
 \description{
-Read a file containing signatures extracted by SigProfiler/Python
+Read a file containing SBS96 signatures extracted by SigProfiler/Python
 }

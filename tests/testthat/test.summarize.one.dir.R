@@ -1,14 +1,14 @@
 context("Test summarizing extraction results in one directory")
 
-test_that("signature.analyzer.sa.sa.COMPOSITE.out", {
-  load("signature.analyzer.sa.sa.COMPOSITE.out")
+test_that("SignatureAnalyzer.sa.sa.COMPOSITE.out", {
+  load("SignatureAnalyzer.sa.sa.COMPOSITE.out.RData")
   expect_equal(
     SummarizeSigOneSASubdir(
       run.dir = "./test.sa.COMPOSITE/sa.results/",
       ground.truth.exposure.dir = "./test.sa.COMPOSITE/",
       which.run = "1.run",
       overwrite = TRUE),
-    signature.analyzer.sa.sa.COMPOSITE.out)
+    SignatureAnalyzer.sa.sa.COMPOSITE.out)
   if (TRUE) # Set this to FALSE to inspect the file and directory output
   {
     # Clean up
@@ -17,15 +17,15 @@ test_that("signature.analyzer.sa.sa.COMPOSITE.out", {
   }
 })
 
-test_that("signature.analyzer.sa.sa.96.out", {
-  load("signature.analyzer.sa.sa.96.out.Rdata")
+test_that("SignatureAnalyzer.sa.sa.96.out", {
+  load("SignatureAnalyzer.sa.sa.96.out.Rdata")
   expect_equal(
     SummarizeSigOneSASubdir(
       run.dir = "./test.sa.sa.96/sa.results/",
       ground.truth.exposure.dir = "./test.sa.sa.96/",
       which.run = "1.run.sa.sa.96",
       overwrite = TRUE),
-    signature.analyzer.sa.sa.96.out)
+    SignatureAnalyzer.sa.sa.96.out)
   if (TRUE) # Set this to FALSE to inspect the file and directory output
   {
     # Clean up
@@ -39,17 +39,17 @@ test_that("signature.analyzer.sa.sa.96.out", {
 })
 
 test_that("SummarizeSigOneSigProExtractorSubdir (SBS96)", {
-  load("./test.sigprofiler.sp.sp.out.Rdata")
+  load("./SigProExtractor.sp.SBS96.out.Rdata")
 
   # Warning, do not change t1 to a longer name,
   # or file2 below will be too long for portable zip'ing.
-  tdir.res <- "./"
+  tdir.res <- "../"
   expect_equal(
     SummarizeSigOneSigProExtractorSubdir(
       run.dir = tdir.res,
       overwrite = T,
-      ground.truth.exposure.dir = "./sp.96.ground.truth/"),
-    sigprofiler.sp.sp.out)
+      ground.truth.exposure.dir = "../SBS96.ground.truth/"),
+    SigProExtractor.sp.SBS96.out)
   if (TRUE) # Set this to FALSE to inspect the file and directory output
   {
     # Clean up

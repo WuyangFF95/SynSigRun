@@ -1,6 +1,6 @@
 # SigProfilerInteraction.R
 
-#' Read a file containing signatures extracted by SigProfiler/Python
+#' Read a file containing SBS96 signatures extracted by SigProfiler/Python
 #'
 #' @param file The name of the file to read.
 #'
@@ -28,7 +28,6 @@ ReadSigProfilerSig96 <- function(file) {
   x <- x[ICAMS::catalog.row.order[["SBS96"]], ,drop = FALSE]
 
   return(x)
-
 }
 
 ## Turn this into a test

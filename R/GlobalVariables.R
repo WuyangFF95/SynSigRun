@@ -6,7 +6,7 @@
 # package, it will point to "<environment: namespace:SynSigEval>"
 envSA <- new.env()
 ## Define variables in envSA.
-for(varName in c("INPUT","OUTPUT","TEMPORARY"))
+for(varName in c("INPUT","TEMPORARY"))
   assign(varName,NULL,envir = envSA)
 
 

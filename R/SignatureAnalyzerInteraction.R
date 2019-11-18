@@ -38,9 +38,15 @@ SourceSignatureAnalyzerCode <-
     }
     #here <- getwd()
     #setwd(signatureanalyzer.code.dir)
+
+    folderFullPath <- paste0(signatureanalyzer.code.dir,"/INPUT_SignatureAnalyzer/")
     assign("INPUT",
-           paste0(signatureanalyzer.code.dir,"/INPUT_SignatureAnalyzer/"),
+           folderFullPath,
            envir = envSA)
+    if(!dir.exists(folderFullPath))
+      dir.create(folderFullPath, recursive = T)
+
+
     suppressWarnings(
       suppressPackageStartupMessages(
         ## Store the SA functions into envSA.
@@ -235,7 +241,7 @@ RunSignatureAnalyzerOnFile <-
     cat("error,", out.data$error, "\n",
         sep = "", file = other.data, append = TRUE)
 
-    if (delete.tmp.files) unlink(TEMPORARY, recursive = TRUE)
+    if (delete.tmp.files) unlink(envSA$TEMPORARY, recursive = TRUE)
 
     invisible(out.data)
   }
