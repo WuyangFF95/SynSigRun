@@ -5,8 +5,8 @@
 \title{Run hdp extraction and attribution on a spectra catalog file}
 \usage{
 Runhdp(input.catalog, out.dir, seedNumber = 1, K = NULL,
-  K.range = NULL, multi.types = FALSE, test.only = FALSE,
-  overwrite = FALSE, verbose = TRUE)
+  K.range = NULL, multi.types = FALSE, remove.noise = FALSE,
+  test.only = FALSE, overwrite = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.
@@ -50,6 +50,14 @@ types.
 e.g. c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")
 
 Default: FALSE}
+
+\item{remove.noise}{Whether to remove noise signature "hdp.0"? In normal cases scenarios,
+only few mutations will be assigned to noise signature.
+
+For result visualization and assessment of \code{hdp} package, select \code{TRUE};
+for diagnostic purposes, select \code{FALSE}.
+
+Default: \code{FALSE}}
 
 \item{test.only}{If TRUE, only analyze the first 10 columns
 read in from \code{input.catalog}.

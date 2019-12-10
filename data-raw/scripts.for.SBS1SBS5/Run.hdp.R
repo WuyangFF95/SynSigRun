@@ -27,10 +27,9 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
     Runhdp(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-           read.catalog.function = ICAMS::ReadCatalog,
-           write.catalog.function = ICAMS::WriteCatalog,
            out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/hdp.results/seed.",seedInUse),
            K.range = c(1,10),
+           multi.types = FALSE,
            seedNumber = seedInUse,
            overwrite = TRUE)
   }

@@ -55,6 +55,14 @@ Installhdp <- function(){
 #'
 #' Default: FALSE
 #'
+#' @param remove.noise Whether to remove noise signature "hdp.0"? In normal cases scenarios,
+#' only few mutations will be assigned to noise signature.
+#'
+#' For result visualization and assessment of \code{hdp} package, select \code{TRUE};
+#' for diagnostic purposes, select \code{FALSE}.
+#'
+#' Default: \code{FALSE}
+#'
 #' @param test.only If TRUE, only analyze the first 10 columns
 #' read in from \code{input.catalog}.
 #' Default: FALSE
@@ -83,6 +91,7 @@ Runhdp <-
            K = NULL,
            K.range = NULL,
            multi.types = FALSE,
+           remove.noise = FALSE,
            test.only = FALSE,
            overwrite = FALSE,
            verbose = TRUE) {
@@ -302,13 +311,17 @@ Runhdp <-
         ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
         colnames(extractedSignatures) <-
           paste("hdp", colnames(extractedSignatures), sep = ".")
-        ## Remove "hdp.0" (noise signature) if it is a null signature or NA signature
+        ## Remove "hdp.0" (noise signature) if remove.noise == TRUE
         flagRemoveHDP0 <- FALSE
-        if(is.null(extractedSignatures[1,"hdp.0"]) | is.na(extractedSignatures[1,"hdp.0"]))
-          flagRemoveHDP0 <- TRUE
+        if(FALSE){ ## debug
+          ## Remove "hdp.0" (noise signature) if it is a null signature or NA signature
+          if(is.null(extractedSignatures[1,"hdp.0"]) | is.na(extractedSignatures[1,"hdp.0"]))
+            flagRemoveHDP0 <- TRUE
+        }
         if(flagRemoveHDP0){
             sigToBeRemoved <- which(colnames(extractedSignatures) == "hdp.0")
-            extractedSignatures <- extractedSignatures[,-(sigToBeRemoved),drop = FALSE]
+            if(length(sigToBeRemoved) == 1)
+              extractedSignatures <- extractedSignatures[,-(sigToBeRemoved),drop = FALSE]
         }
 
 
