@@ -5,8 +5,8 @@
 \title{Run hdp extraction and attribution on a spectra catalog file}
 \usage{
 Runhdp(input.catalog, out.dir, seedNumber = 1, K = NULL,
-  K.range = NULL, test.only = FALSE, overwrite = FALSE,
-  verbose = TRUE)
+  K.range = NULL, multi.types = FALSE, test.only = FALSE,
+  overwrite = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.
@@ -36,6 +36,20 @@ are active in the \code{input.catalog}.
 WARNING: You must specify only one of \code{K} or \code{K.range}!
 
 Default: NULL}
+
+\item{multi.types}{A logical scalar (\code{TRUE} or \code{FALSE}) or
+a character vector.
+If \code{FALSE}, hdp will regard all input spectra as one tumor type,
+and will allocate them to one single dirichlet process node.
+
+If \code{TRUE}, hdp will infer tumor types based on the string before "::" in their names.
+e.g. Tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
+
+If it is a character vector, it should be a vector of case-sensitive tumor
+types.
+e.g. c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")
+
+Default: FALSE}
 
 \item{test.only}{If TRUE, only analyze the first 10 columns
 read in from \code{input.catalog}.
