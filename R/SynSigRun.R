@@ -100,6 +100,6 @@
 #'
 #'
 #' @docType package
-#' @name SynSigEval
+#' @name SynSigRun
 
 NULL
