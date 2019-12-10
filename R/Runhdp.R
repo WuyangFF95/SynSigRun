@@ -41,6 +41,20 @@ Installhdp <- function(){
 #'
 #' Default: NULL
 #'
+#' @param multi.types A logical scalar (\code{TRUE} or \code{FALSE}) or
+#' a character vector.
+#' If \code{FALSE}, hdp will regard all input spectra as one tumor type,
+#' and will allocate them to one single dirichlet process node.
+#'
+#' If \code{TRUE}, hdp will infer tumor types based on the string before "::" in their names.
+#' e.g. Tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
+#'
+#' If it is a character vector, it should be a vector of case-sensitive tumor
+#' types.
+#' e.g. c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")
+#'
+#' Default: FALSE
+#'
 #' @param test.only If TRUE, only analyze the first 10 columns
 #' read in from \code{input.catalog}.
 #' Default: FALSE
@@ -68,6 +82,7 @@ Runhdp <-
            seedNumber = 1,
            K = NULL,
            K.range = NULL,
+           multi.types = FALSE,
            test.only = FALSE,
            overwrite = FALSE,
            verbose = TRUE) {
@@ -106,6 +121,33 @@ Runhdp <-
     number.channels <- dim(spectra)[1]
     number.samples <- dim(spectra)[2]
 
+    ## Allocate process index for hdp initialization.
+    ## Each different index number refers to a dirichlet process
+    ## for one tumor type.
+    if(multi.types == FALSE){ ## All tumors belong to one tumor type (default)
+      num.tumor.types <- 1
+      process.index <- c(0,1,rep(2,number.samples))
+    } else if(multi.types == TRUE){
+      ## There are multiple tumors in the sample.
+      ## Tumor type will be inferred by the string before "::" in the column names.
+      ## e.g. Tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
+      tumor.types <- sapply(
+        colnames(spectra),
+        function(x) {strsplit(x,split = "::",fixed = T)[[1]][1]})
+      num.tumor.types <- length(unique(tumor.types))
+      process.index <- c(0, rep(1,num.tumor.types))
+      process.index <- c(process.index,1 + as.numeric(as.factor(tumor.types)))
+    } else if (is.character(multi.types)){ ## multi.types is a character vector recording tumor types
+      num.tumor.types <- length(unique(multi.types))
+      process.index <- c(0, rep(1,num.tumor.types))
+      process.index <- c(process.index, 1 + as.numeric(as.factor(multi.types)))
+    } else {
+      stop("Error. multi.types should be TRUE, FALSE, or a vector of tumor types for each tumor sample.\n")
+    }
+
+
+
+
     ## Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
@@ -134,8 +176,13 @@ Runhdp <-
     ## Step 1: initialize hdp object
     {
       ## initialise hdp
+      if(FALSE){
       ppindex <- c(0, 1, rep(2,number.samples))
       cpindex <- c(1, 2, rep(3,number.samples))
+      } else {
+      ppindex <- process.index
+      cpindex <- 1 + process.index
+      }
 
       if (verbose) message("calling hdp_init")
 
