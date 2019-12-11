@@ -197,7 +197,7 @@ Runhdp <-
       }
 
       ## Calculate the number of levels in the DP node tree.
-      dp.levels <- unique(ppindex)
+      dp.levels <- length(unique(ppindex))
       ## DP node of each level share two Dirichlet Hyperparameters:
       ## shape (alphaa) and rate (alphab).
       ## For mutational signature analysis purpose,
