@@ -130,33 +130,6 @@ Runhdp <-
     number.channels <- dim(spectra)[1]
     number.samples <- dim(spectra)[2]
 
-    ## Allocate process index for hdp initialization.
-    ## Each different index number refers to a dirichlet process
-    ## for one tumor type.
-    if(multi.types == FALSE){ ## All tumors belong to one tumor type (default)
-      num.tumor.types <- 1
-      process.index <- c(0,1,rep(2,number.samples))
-    } else if(multi.types == TRUE){
-      ## There are multiple tumors in the sample.
-      ## Tumor type will be inferred by the string before "::" in the column names.
-      ## e.g. Tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
-      tumor.types <- sapply(
-        colnames(spectra),
-        function(x) {strsplit(x,split = "::",fixed = T)[[1]][1]})
-      num.tumor.types <- length(unique(tumor.types))
-      process.index <- c(0, rep(1,num.tumor.types))
-      process.index <- c(process.index,1 + as.numeric(as.factor(tumor.types)))
-    } else if (is.character(multi.types)){ ## multi.types is a character vector recording tumor types
-      num.tumor.types <- length(unique(multi.types))
-      process.index <- c(0, rep(1,num.tumor.types))
-      process.index <- c(process.index, 1 + as.numeric(as.factor(multi.types)))
-    } else {
-      stop("Error. multi.types should be TRUE, FALSE, or a vector of tumor types for each tumor sample.\n")
-    }
-
-
-
-
     ## Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
@@ -184,7 +157,37 @@ Runhdp <-
     ## Run hdp main program.
     ## Step 1: initialize hdp object
     {
-      ## initialise hdp
+      ## Allocate process index for hdp initialization.
+      ## Each different index number refers to a dirichlet process
+      ## for one tumor type.
+      if(multi.types == FALSE){ ## All tumors belong to one tumor type (default)
+        num.tumor.types <- 1
+        process.index <- c(0,1,rep(2,number.samples))
+      } else if(multi.types == TRUE){
+        ## There are multiple tumors in the sample.
+        ## Tumor type will be inferred by the string before "::" in the column names.
+        ## e.g. Tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
+        tumor.types <- sapply(
+          colnames(spectra),
+          function(x) {strsplit(x,split = "::",fixed = T)[[1]][1]})
+        num.tumor.types <- length(unique(tumor.types))
+        ## 0 refers to top grandparent DP node. All signatures are drawn from this node.
+        ## Signature of each tumor type is drawn from a parent DP node (level 1).
+        ## If a dataset has X tumor types, then we need to specify X level-1 nodes.
+        process.index <- c(0, rep(1,num.tumor.types))
+        ## For every tumor of the 1st/2nd/3rd/... tumor type,
+        ## we need to specify a level 2/3/4/... DP node for the tumor.
+        process.index <- c(process.index,1 + as.numeric(as.factor(tumor.types)))
+      } else if (is.character(multi.types)){ ## multi.types is a character vector recording tumor types
+        num.tumor.types <- length(unique(multi.types))
+        process.index <- c(0, rep(1,num.tumor.types))
+        process.index <- c(process.index, 1 + as.numeric(as.factor(multi.types)))
+      } else {
+        stop("Error. multi.types should be TRUE, FALSE, or a vector of tumor types for each tumor sample.\n")
+      }
+
+      ## Specify ppindex as process.index,
+      ## and cpindex (concentration parameter) as 1 + process.index
       if(FALSE){
       ppindex <- c(0, 1, rep(2,number.samples))
       cpindex <- c(1, 2, rep(3,number.samples))
@@ -193,12 +196,23 @@ Runhdp <-
       cpindex <- 1 + process.index
       }
 
-      if (verbose) message("calling hdp_init")
+      ## Calculate the number of levels in the DP node tree.
+      dp.levels <- unique(ppindex)
+      ## DP node of each level share two Dirichlet Hyperparameters:
+      ## shape (alphaa) and rate (alphab).
+      ## For mutational signature analysis purpose,
+      ## alphaa and alphab are set as 1 for each level.
+      alphaa <- rep(1,dp.levels)
+      alphab <- rep(1,dp.levels)
 
+
+      ## initialise hdp
+      if (verbose) message("calling hdp_init")
       hdpObject <- hdp::hdp_init(ppindex = ppindex,
                       cpindex = cpindex,
                       hh = rep(1,number.channels),
-                      alphaa = rep(1,3), alphab = rep(1,3))
+                      alphaa = alphaa,
+                      alphab = alphab)
       num.process <- hdp::numdp(hdpObject)
 
       if (verbose) message("calling hdp_setdata")
