@@ -218,7 +218,7 @@ Runhdp <-
       if (verbose) message("calling hdp_setdata")
       hdpObject <- hdp::hdp_setdata(
         hdpObject,
-        (1+num.tumor.types):num.process,
+        (1+num.tumor.types+1):num.process,
         convSpectra)
 
       # hdp::numdp(hdpObject)
