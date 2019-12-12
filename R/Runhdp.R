@@ -358,9 +358,9 @@ Runhdp <-
 
       ## Calculate the exposure probability of each signature(component) for each tumor sample(posterior sample corresponding to a dirichlet process node):
       ## This is the probability distribution of signatures(components) for all tumor samples(DP nodes)
-      ## exposureProbs proves to be the normalized signature exposure all 100 tumor samples
+      ## exposureProbs proves to be the normalized signature exposure all tumor samples
 
-      if (verbose) message("calling hdp::comp_dp_distn")
+      if (verbose) message("Calling hdp::comp_dp_distn to generate exposure probability")
       exposureProbs <- hdp::comp_dp_distn(mut_example_multi_extracted)$mean
       dim(exposureProbs)
       exposureProbs <- exposureProbs[3:dim(exposureProbs)[1],]
@@ -376,7 +376,7 @@ Runhdp <-
 
       ## Calculate signature exposure counts from signature exposure probability
       ## Unnormalized exposure counts = Normalized exposure probability * Total mutation count in a sample
-      sample_mutation_count <- apply(convSpectra,1,sum)
+      sample_mutation_count <- apply(convSpectra,2,sum)
 
       exposureCounts <- matrix(nrow = dim(exposureProbs)[1], ncol = dim(exposureProbs)[2])
       dimnames(exposureCounts) <- dimnames(exposureProbs)
@@ -386,7 +386,7 @@ Runhdp <-
       ## Change exposure count matrix to SynSigEval format.
       exposureCounts <- t(exposureCounts)
 
-      if (verbose) message("calling WriteExposure")
+      if (verbose) message("Calling WriteExposure() to write exposure counts")
       WriteExposure(exposureCounts,
                     paste0(out.dir,"/attributed.exposures.csv"))
     }
