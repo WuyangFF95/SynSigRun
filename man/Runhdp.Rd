@@ -8,7 +8,7 @@ Runhdp(
   input.catalog,
   out.dir,
   seedNumber = 1,
-  K = NULL,
+  K.guess = NULL,
   K.range = NULL,
   multi.types = FALSE,
   remove.noise = FALSE,
@@ -30,11 +30,11 @@ used to run hdp. Setting seed can make the
 attribution of hdp repeatable.
 Default: 1.}
 
-\item{K}{Suggested initial value of the number of
+\item{K.guess}{Suggested initial value of the number of
 signatures, passed to \code{\link[hdp]dp_activate} as
 \code{initcc}.
 
-\code{K.range} Deprecated. Top value is interpreted as parameter \code{K}.}
+\code{K.range} Deprecated. Top value is interpreted as argument \code{K.guess}.}
 
 \item{multi.types}{A logical scalar (\code{TRUE} or \code{FALSE}) or
 a character vector.

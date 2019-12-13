@@ -25,11 +25,11 @@ Installhdp <- function(){
 #' attribution of hdp repeatable.
 #' Default: 1.
 #'
-#' @param K Suggested initial value of the number of
+#' @param K.guess Suggested initial value of the number of
 #' signatures, passed to \code{\link[hdp]dp_activate} as
 #' \code{initcc}.
 #'
-#' \code{K.range} Deprecated. Top value is interpreted as parameter \code{K}.
+#' \code{K.range} Deprecated. Top value is interpreted as argument \code{K.guess}.
 #'
 #' @param multi.types A logical scalar (\code{TRUE} or \code{FALSE}) or
 #' a character vector.
@@ -78,7 +78,7 @@ Runhdp <-
   function(input.catalog,
            out.dir,
            seedNumber = 1,
-           K = NULL,
+           K.guess = NULL,
            K.range = NULL,
            multi.types = FALSE,
            remove.noise = FALSE,
@@ -87,10 +87,10 @@ Runhdp <-
            verbose = TRUE) {
 
     if (!is.null(K.range)) {
-      K <- K.range[2]
-      warning("Setting K <- K.range[2]; K.range is deprecated. Use K instead")
+      K.guess <- K.range[2]
+      warning("Setting K.guess <- K.range[2]; K.range is deprecated. Use K.guess instead")
     }
-    if (is.null(K)) stop("Please provide argument K")
+    if (is.null(K.guess)) stop("Please provide argument K.guess")
 
     ## Set seed
     set.seed(seedNumber)
@@ -122,18 +122,8 @@ Runhdp <-
       dir.create(out.dir, recursive = T)
     }
 
-    ## Determine the best number of signatures (K.best).
-    ##
-    ## hdp accepts an initial guess of number of signatures (K.initial), and later
-    ## determine the best number of signatures (K.best)
-    ##
-    ## If K is provided, use K as the K.initial.
-    ## If K.range is provided, use the largest value as the K.initial.
-    ##
-    ##
-
     if (verbose) {
-      message("number of Dirichlet process data clusters = ", K)
+      message("number of Dirichlet process data clusters = ", K.guess)
     }
     ## Run hdp main program.
     ## Step 1: initialize hdp object
@@ -209,7 +199,7 @@ Runhdp <-
       # memory (e.g. estimated 2 Terabyte for stirling(200000)).
       hdpObject <- hdp::dp_activate(hdpObject,
                                     1:num.process,
-                                    initcc = K,
+                                    initcc = K.guess,
                                     seed = seedNumber)
 
       ## Release the occupied RAM by dp_activate
