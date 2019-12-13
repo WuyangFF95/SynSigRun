@@ -5,8 +5,14 @@
 \title{Run decompTumor2Sig attribution on a spectra catalog file
 and known signatures.}
 \usage{
-RundecompTumor2SigAttributeOnly(input.catalog, gt.sigs.file, out.dir,
-  seedNumber = 1, test.only = FALSE, overwrite = FALSE)
+RundecompTumor2SigAttributeOnly(
+  input.catalog,
+  gt.sigs.file,
+  out.dir,
+  seedNumber = 1,
+  test.only = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog. Columns are

@@ -5,10 +5,19 @@
 \title{Source SignatureAnalyzer and run it once on a single data set
 and put results in specified location.}
 \usage{
-SignatureAnalyzerOneRun(signatureanalyzer.code.dir, input.catalog, out.dir,
-  seedNumber = NULL, input.exposures = NULL, maxK = 30,
-  tol = 1e-07, test.only = FALSE, delete.tmp.files = TRUE,
-  verbose = 0, overwrite = FALSE)
+SignatureAnalyzerOneRun(
+  signatureanalyzer.code.dir,
+  input.catalog,
+  out.dir,
+  seedNumber = NULL,
+  input.exposures = NULL,
+  maxK = 30,
+  tol = 1e-07,
+  test.only = FALSE,
+  delete.tmp.files = TRUE,
+  verbose = 0,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{signatureanalyzer.code.dir}{The directory holding the

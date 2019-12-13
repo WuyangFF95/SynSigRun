@@ -13,8 +13,8 @@ Installhdp <- function(){
 #' WARNING: hdp can only do exposure attribution
 #' using SBS96 spectra catalog and signature catalog!
 #'
-#' @param input.catalog File containing input spectra catalog.
-#' Columns are samples (tumors), rows are mutation types.
+#' @param input.catalog File containing a spectra catalog
+#' in \code{\link[ICAMS]{ICAMS}} format.
 #'
 #' @param out.dir Directory that will be created for the output;
 #' abort if it already exits.  Log files will be in
@@ -25,21 +25,11 @@ Installhdp <- function(){
 #' attribution of hdp repeatable.
 #' Default: 1.
 #'
-#' @param K,K.range \code{K} is the precise value for
-#' the number of signatures active in spectra (K).
-#' Specify \code{K} if you know precisely how many signatures
-#' are active in the \code{input.catalog}, which is the
-#' \code{ICAMS}-formatted spectra file.
+#' @param K Suggested initial value of the number of
+#' signatures, passed to \code{\link[hdp]dp_activate} as
+#' \code{initcc}.
 #'
-#' \code{K.range} is A numeric vector \code{(K.min,K.max)}
-#' of length 2 which tell hdp to search the best
-#' signature number active in spectra, K, in this range of Ks.
-#' Specify \code{K.range} if you don't know how many signatures
-#' are active in the \code{input.catalog}.
-#'
-#' WARNING: You must specify only one of \code{K} or \code{K.range}!
-#'
-#' Default: NULL
+#' \code{K.range} Deprecated. Top value is interpreted as parameter \code{K}.
 #'
 #' @param multi.types A logical scalar (\code{TRUE} or \code{FALSE}) or
 #' a character vector.
@@ -96,21 +86,16 @@ Runhdp <-
            overwrite = FALSE,
            verbose = TRUE) {
 
-    ## Check whether ONLY ONE of K or K.range is specified.
-    bool1 <- is.numeric(K) & is.null(K.range)
-    bool2 <- is.null(K) & is.numeric(K.range) & length(K.range) == 2
-    stopifnot(bool1 | bool2)
-
-    ## Install hdp, if not found in library
-    if ("hdp" %in% rownames(utils::installed.packages()) == FALSE)
-      Installhdp()
-
+    if (!is.null(K.range)) {
+      K <- K.range[2]
+      warning("Setting K <- K.range[2]; K.range is deprecated. Use K instead")
+    }
+    if (is.null(K)) stop("Please provide argument K")
 
     ## Set seed
     set.seed(seedNumber)
     seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
     RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
-
 
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
@@ -146,13 +131,9 @@ Runhdp <-
     ## If K.range is provided, use the largest value as the K.initial.
     ##
     ##
-    if(bool1)
-      K.initial <- K
-    if(bool2)
-      K.initial <- max(K.range)
 
     if (verbose) {
-      message("number of Dirichlet process data clusters = ", K.initial)
+      message("number of Dirichlet process data clusters = ", K)
     }
     ## Run hdp main program.
     ## Step 1: initialize hdp object
@@ -221,21 +202,17 @@ Runhdp <-
         (1+num.tumor.types+1):num.process,
         convSpectra)
 
-      # hdp::numdp(hdpObject)
-
       if (verbose) message("calling dp_activate")
-      ## hdp also has to enter number of signatures in advance, but the final result doesn't necessarily equal to the initial input value
-      ## When the number of sample is too large, hdp may eat up all your RAMs!
+
+      # dp_activate calls hdp:::stirling, which when
+      # called on a large number (e.g. > 200000), requires a great deal of
+      # memory (e.g. estimated 2 Terabyte for stirling(200000)).
       hdpObject <- hdp::dp_activate(hdpObject,
                                     1:num.process,
-                                    K.initial,
+                                    initcc = K,
                                     seed = seedNumber)
 
-      # hdpObject
-
       ## Release the occupied RAM by dp_activate
-      gc()
-      gc()
       gc()
     }
 

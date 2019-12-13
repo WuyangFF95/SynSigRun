@@ -4,9 +4,14 @@
 \alias{SummarizeSigOneSubdir}
 \title{Assess/evaluate one result subfolder from a software package}
 \usage{
-SummarizeSigOneSubdir(run.dir, ground.truth.exposure.dir,
-  extracted.sigs.path, attributed.exp.path = NULL, overwrite = FALSE,
-  summary.folder.name = "summary")
+SummarizeSigOneSubdir(
+  run.dir,
+  ground.truth.exposure.dir,
+  extracted.sigs.path,
+  attributed.exp.path = NULL,
+  overwrite = FALSE,
+  summary.folder.name = "summary"
+)
 }
 \arguments{
 \item{run.dir}{Lowest level path to result of a run. That is,

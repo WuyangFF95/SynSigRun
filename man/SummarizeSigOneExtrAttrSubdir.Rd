@@ -6,9 +6,11 @@
 BOTH extraction and attribution,
 excluding SigProfiler-Python and SignatureAnalyzer.}
 \usage{
-SummarizeSigOneExtrAttrSubdir(run.dir,
+SummarizeSigOneExtrAttrSubdir(
+  run.dir,
   ground.truth.exposure.dir = paste0(run.dir, "/../../../"),
-  overwrite = FALSE)
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{run.dir}{Lowest level path to result of a run. E.g.

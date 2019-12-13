@@ -4,9 +4,17 @@
 \alias{Runsigfit}
 \title{Run sigfit extraction and attribution on a spectra catalog file}
 \usage{
-Runsigfit(input.catalog, out.dir, model = "nmf", CPU.cores = NULL,
-  seedNumber = 1, K = NULL, K.range = NULL, test.only = FALSE,
-  overwrite = FALSE)
+Runsigfit(
+  input.catalog,
+  out.dir,
+  model = "nmf",
+  CPU.cores = NULL,
+  seedNumber = 1,
+  K = NULL,
+  K.range = NULL,
+  test.only = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.

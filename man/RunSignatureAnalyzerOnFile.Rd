@@ -5,9 +5,16 @@
 \title{Run SignatureAnalyzer on a file containing a catalog AFTER the
 SignatureAnalyzer code has been source'ed.}
 \usage{
-RunSignatureAnalyzerOnFile(input.catalog, out.dir,
-  input.exposures = NULL, maxK = 30, tol = 1e-07,
-  test.only = FALSE, delete.tmp.files = TRUE, overwrite = FALSE)
+RunSignatureAnalyzerOnFile(
+  input.catalog,
+  out.dir,
+  input.exposures = NULL,
+  maxK = 30,
+  tol = 1e-07,
+  test.only = FALSE,
+  delete.tmp.files = TRUE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{input.catalog}{File containing input catalog.  Columns are

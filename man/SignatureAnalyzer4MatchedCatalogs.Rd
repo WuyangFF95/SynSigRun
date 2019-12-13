@@ -5,10 +5,18 @@
 \title{Run SignatureAnalyzer on 4 coordinated data sets and put results
 in specified location.}
 \usage{
-SignatureAnalyzer4MatchedCatalogs(num.runs = 20,
-  signatureanalyzer.code.dir, dir.root, maxK = 30, tol = 1e-07,
-  test.only = FALSE, delete.tmp.files = TRUE, slice = 1:4,
-  overwrite = FALSE, mc.cores = 1)
+SignatureAnalyzer4MatchedCatalogs(
+  num.runs = 20,
+  signatureanalyzer.code.dir,
+  dir.root,
+  maxK = 30,
+  tol = 1e-07,
+  test.only = FALSE,
+  delete.tmp.files = TRUE,
+  slice = 1:4,
+  overwrite = FALSE,
+  mc.cores = 1
+)
 }
 \arguments{
 \item{num.runs}{Number of SignatureAnalyzer runs per data set.}

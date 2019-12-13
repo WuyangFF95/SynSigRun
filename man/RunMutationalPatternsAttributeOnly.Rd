@@ -5,8 +5,14 @@
 \title{Run MutationalPatterns attribution on a spectra catalog file
 and known signatures.}
 \usage{
-RunMutationalPatternsAttributeOnly(input.catalog, gt.sigs.file, out.dir,
-  seedNumber = 1, test.only = FALSE, overwrite = FALSE)
+RunMutationalPatternsAttributeOnly(
+  input.catalog,
+  gt.sigs.file,
+  out.dir,
+  seedNumber = 1,
+  test.only = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.

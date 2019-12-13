@@ -4,13 +4,22 @@
 \alias{Runhdp}
 \title{Run hdp extraction and attribution on a spectra catalog file}
 \usage{
-Runhdp(input.catalog, out.dir, seedNumber = 1, K = NULL,
-  K.range = NULL, multi.types = FALSE, remove.noise = FALSE,
-  test.only = FALSE, overwrite = FALSE, verbose = TRUE)
+Runhdp(
+  input.catalog,
+  out.dir,
+  seedNumber = 1,
+  K = NULL,
+  K.range = NULL,
+  multi.types = FALSE,
+  remove.noise = FALSE,
+  test.only = FALSE,
+  overwrite = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
-\item{input.catalog}{File containing input spectra catalog.
-Columns are samples (tumors), rows are mutation types.}
+\item{input.catalog}{File containing a spectra catalog
+in \code{\link[ICAMS]{ICAMS}} format.}
 
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exits.  Log files will be in
@@ -21,21 +30,11 @@ used to run hdp. Setting seed can make the
 attribution of hdp repeatable.
 Default: 1.}
 
-\item{K, K.range}{\code{K} is the precise value for
-the number of signatures active in spectra (K).
-Specify \code{K} if you know precisely how many signatures
-are active in the \code{input.catalog}, which is the
-\code{ICAMS}-formatted spectra file.
+\item{K}{Suggested initial value of the number of
+signatures, passed to \code{\link[hdp]dp_activate} as
+\code{initcc}.
 
-\code{K.range} is A numeric vector \code{(K.min,K.max)}
-of length 2 which tell hdp to search the best
-signature number active in spectra, K, in this range of Ks.
-Specify \code{K.range} if you don't know how many signatures
-are active in the \code{input.catalog}.
-
-WARNING: You must specify only one of \code{K} or \code{K.range}!
-
-Default: NULL}
+\code{K.range} Deprecated. Top value is interpreted as parameter \code{K}.}
 
 \item{multi.types}{A logical scalar (\code{TRUE} or \code{FALSE}) or
 a character vector.

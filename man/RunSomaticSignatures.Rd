@@ -4,8 +4,15 @@
 \alias{RunSomaticSignatures}
 \title{Run SomaticSignatures extraction and attribution on a spectra catalog file}
 \usage{
-RunSomaticSignatures(input.catalog, out.dir, seedNumber = 1, K = NULL,
-  K.range = NULL, test.only = FALSE, overwrite = FALSE)
+RunSomaticSignatures(
+  input.catalog,
+  out.dir,
+  seedNumber = 1,
+  K = NULL,
+  K.range = NULL,
+  test.only = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.

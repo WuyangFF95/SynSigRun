@@ -5,9 +5,15 @@
 \title{Run mSigAct attribution on a spectra catalog file
 and known signatures.}
 \usage{
-RunmSigActAttributeOnly(input.catalog, gt.sigs.file, out.dir,
-  CPU.cores = NULL, seedNumber = 1, test.only = FALSE,
-  overwrite = FALSE)
+RunmSigActAttributeOnly(
+  input.catalog,
+  gt.sigs.file,
+  out.dir,
+  CPU.cores = NULL,
+  seedNumber = 1,
+  test.only = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog. Columns are

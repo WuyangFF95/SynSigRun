@@ -5,8 +5,14 @@
 \title{Run SignatureEstimation Simulated Annealing (SA) attribution
 on a spectra catalog file and known signatures.}
 \usage{
-RunSignatureEstimationSAAttributeOnly(input.catalog, gt.sigs.file, out.dir,
-  seedNumber = 1, test.only = FALSE, overwrite = FALSE)
+RunSignatureEstimationSAAttributeOnly(
+  input.catalog,
+  gt.sigs.file,
+  out.dir,
+  seedNumber = 1,
+  test.only = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.

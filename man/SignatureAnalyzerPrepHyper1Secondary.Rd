@@ -5,8 +5,15 @@
 \title{Prepare the "hypermutated" segment (a.k.a "Secondary" segment
 of a split non-hyper and hyper data set.)}
 \usage{
-SignatureAnalyzerPrepHyper1Secondary(non.hyper.results, primary.catalog,
-  hyper.catalog, secondary.catalog, read.fn, write.fn, overwrite = TRUE)
+SignatureAnalyzerPrepHyper1Secondary(
+  non.hyper.results,
+  primary.catalog,
+  hyper.catalog,
+  secondary.catalog,
+  read.fn,
+  write.fn,
+  overwrite = TRUE
+)
 }
 \arguments{
 \item{non.hyper.results}{The directory containing the the results of the analysis

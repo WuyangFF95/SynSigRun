@@ -5,10 +5,20 @@
 \title{Run SignatureAnalyzer many times on one catalog and put results
 in specified location.}
 \usage{
-SAMultiRunOneCatalog(num.runs, signatureanalyzer.code.dir, input.catalog,
-  out.dir, maxK = 30, tol = 1e-07, test.only = FALSE,
-  delete.tmp.files = TRUE, overwrite = FALSE, mc.cores = 1,
-  verbose = FALSE, seed = NULL)
+SAMultiRunOneCatalog(
+  num.runs,
+  signatureanalyzer.code.dir,
+  input.catalog,
+  out.dir,
+  maxK = 30,
+  tol = 1e-07,
+  test.only = FALSE,
+  delete.tmp.files = TRUE,
+  overwrite = FALSE,
+  mc.cores = 1,
+  verbose = FALSE,
+  seed = NULL
+)
 }
 \arguments{
 \item{num.runs}{The number of times run SignatureAnalyzer on each

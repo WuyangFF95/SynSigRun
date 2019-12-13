@@ -4,10 +4,19 @@
 \alias{RunSignatureAnalyzerAttribution}
 \title{Run SignatureAnalyzer attribution on a catalog file and output by RunSignatureAnalyzerOnFile().}
 \usage{
-RunSignatureAnalyzerAttribution(input.catalog, read.catalog.function,
-  extracted.signature.file, raw.exposures.file, write.signature.function,
-  out.dir, test.only = FALSE, input.exposures = NULL,
-  delete.tmp.files = TRUE, overwrite = FALSE, verbose = FALSE)
+RunSignatureAnalyzerAttribution(
+  input.catalog,
+  read.catalog.function,
+  extracted.signature.file,
+  raw.exposures.file,
+  write.signature.function,
+  out.dir,
+  test.only = FALSE,
+  input.exposures = NULL,
+  delete.tmp.files = TRUE,
+  overwrite = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{input.catalog}{File containing input catalog.  Columns are
