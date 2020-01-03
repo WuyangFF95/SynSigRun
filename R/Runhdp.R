@@ -100,7 +100,7 @@ Runhdp <-
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,strict = FALSE)
-    if (test.only) spectra <- spectra[ , 1:10]
+    if (test.only) spectra <- spectra[ , 1:25]
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which HDP accepts:
     ## 1. Remove the catalog related attributes in convSpectra
