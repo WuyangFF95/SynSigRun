@@ -339,19 +339,18 @@ Runhdp <-
       ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
       colnames(exposureProbs) <- colnames(extractedSignatures)
       dim(exposureProbs)
+      ## Transpose exposureProbs so that it conforms to SynSigEval format.
+      exposureProbs <- t(exposureProbs)
 
 
       ## Calculate signature exposure counts from signature exposure probability
       ## Unnormalized exposure counts = Normalized exposure probability * Total mutation count in a sample
-      sample_mutation_count <- apply(convSpectra,2,sum)
+      sample_mutation_count <- apply(convSpectra,1,sum)
 
-      exposureCounts <- matrix(nrow = dim(exposureProbs)[1], ncol = dim(exposureProbs)[2])
+      exposureCounts <- matrix(nrow = nrow(exposureProbs), ncol = ncol(exposureProbs))
       dimnames(exposureCounts) <- dimnames(exposureProbs)
-      for (sample in seq(1,dim(exposureProbs)[1]))
-        exposureCounts[sample,] <- sample_mutation_count[[sample]] * exposureProbs[sample,]
-
-      ## Change exposure count matrix to SynSigEval format.
-      exposureCounts <- t(exposureCounts)
+      for (sample in seq(1,ncol(exposureProbs)))
+        exposureCounts[,sample] <- sample_mutation_count[[sample]] * exposureProbs[,sample]
 
       if (verbose) message("Calling WriteExposure() to write exposure counts")
       WriteExposure(exposureProbs,
