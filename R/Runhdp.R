@@ -354,6 +354,8 @@ Runhdp <-
       exposureCounts <- t(exposureCounts)
 
       if (verbose) message("Calling WriteExposure() to write exposure counts")
+      WriteExposure(exposureProbs,
+                    paste0(out.dir,"/exposure.probs.csv"))
       WriteExposure(exposureCounts,
                     paste0(out.dir,"/attributed.exposures.csv"))
     }
