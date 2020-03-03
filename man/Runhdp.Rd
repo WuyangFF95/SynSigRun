@@ -31,7 +31,7 @@ attribution of hdp repeatable.
 Default: 1.}
 
 \item{K.guess}{Suggested initial value of the number of
-signatures, passed to \code{\link[hdp]dp_activate} as
+signatures, passed to \code{\link[hdp]{dp_activate}} as
 \code{initcc}.
 
 \code{K.range} Deprecated. Top value is interpreted as argument \code{K.guess}.}
