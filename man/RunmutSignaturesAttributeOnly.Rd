@@ -2,7 +2,7 @@
 % Please edit documentation in R/RunmutSignatures.R
 \name{RunmutSignaturesAttributeOnly}
 \alias{RunmutSignaturesAttributeOnly}
-\title{Run deconstructSigs attribution on a spectra catalog file
+\title{Run mutSignatures attribution on a spectra catalog file
 and known signatures.}
 \usage{
 RunmutSignaturesAttributeOnly(
@@ -15,19 +15,19 @@ RunmutSignaturesAttributeOnly(
 )
 }
 \arguments{
-\item{input.catalog}{File containing input spectra catalog. Columns are
-samples (tumors), rows are mutation types.}
+\item{input.catalog}{File containing input spectra catalog.
+Columns are samples (tumors), rows are mutation types.}
 
-\item{gt.sigs.file}{File containing input mutational signatures. Columns are
-signatures, rows are mutation types.}
+\item{gt.sigs.file}{File containing input mutational signatures.
+Columns are signatures, rows are mutation types.}
 
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exits.  Log files will be in
 \code{paste0(out.dir, "/tmp")}.}
 
 \item{seedNumber}{Specify the pseudo-random seed number
-used to run deconstructSigs. Setting seed can make the
-attribution of deconstructSigs repeatable.
+used to run mutSignatures. Setting seed can make the
+attribution of mutSignatures repeatable.
 Default: 1.}
 
 \item{test.only}{If TRUE, only analyze the first 10 columns
@@ -38,10 +38,10 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{deconstructSigs}, invisibly.
+The attributed exposure of \code{mutSignatures}, invisibly.
 }
 \description{
-Run deconstructSigs attribution on a spectra catalog file
+Run mutSignatures attribution on a spectra catalog file
 and known signatures.
 }
 \details{
