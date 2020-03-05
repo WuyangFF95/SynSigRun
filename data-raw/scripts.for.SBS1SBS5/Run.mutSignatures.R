@@ -1,7 +1,8 @@
 
 ## Load required packages
 library(ICAMS)
-library(SynSigEval)
+library(SynSigRun)
+library(mutSignatures)
 
 
 
@@ -26,10 +27,19 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## needs to be run with external script.
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+    RunmutSignatures(
+      input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
+      out.dir = paste0(datasetName, "/sp.sp/Attr/mutSignatures.results/seed.", seedInUse),
+      CPU.cores = 30,
+      iterations = 1000,
+      seedNumber = seedInUse,
+      K.range = c(1,10),
+      overwrite = T)
+
+
     RunmutSignaturesAttributeOnly(
       input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
       gt.sigs.file = paste0(datasetName, "/sp.sp/ground.truth.syn.sigs.csv"),
-      read.catalog.function = ICAMS::ReadCatalog,
       out.dir = paste0(datasetName, "/sp.sp/Attr/mutSignatures.results/seed.", seedInUse),
       seedNumber = seedInUse,
       overwrite = T
