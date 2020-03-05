@@ -136,13 +136,13 @@ RunmutSignaturesAttributeOnly <-
 #' @param algorithm NMF implementation used to to extract signatures and
 #' attribute exposures. Only "alexa", "brunet" or "lin" is valid.
 #'
-#' "alexa" or "brunet": Jean-Philippe Brunet's implementation. 
-#' This is the most widely used NMF implementation for signature extraction. 
+#' "alexa" or "brunet": Jean-Philippe Brunet's implementation.
+#' This is the most widely used NMF implementation for signature extraction.
 #' DOI: 10.1073/pnas.0308531101
-#' 
-#' "lin": Chih-Jen Lin's implementation. 
+#'
+#' "lin": Chih-Jen Lin's implementation.
 #' DOI:10.1109/TNN.2007.895831
-#' 
+#'
 #' Default: "alexa".
 #'
 #' @param CPU.cores Number of CPUs to use in running
@@ -151,6 +151,9 @@ RunmutSignaturesAttributeOnly <-
 #' By default (CPU.cores = NULL), the CPU.cores would be equal
 #' to \code{(parallel::detectCores())/2}, total number of CPUs
 #' divided by 2.
+#'
+#' @param iterations Number of iterations in signature extraction.
+#' Default: 1000.
 #'
 #' @param seedNumber Specify the pseudo-random seed number
 #' used to run sigfit. Setting seed can make the
@@ -198,6 +201,7 @@ RunmutSignatures <-
            out.dir,
            algorithm = "alexa",
            CPU.cores = NULL,
+           iterations = 1000,
            seedNumber = 1,
            K = NULL,
            K.range = NULL,
@@ -208,10 +212,10 @@ RunmutSignatures <-
     bool1 <- is.numeric(K) & is.null(K.range)
     bool2 <- is.null(K) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
-    
+
     ## Check if algorithm parameter is correctly set
     stopifnot(algorithm %in% c("alexa","brunet","lin"))
-    
+
 
     ## Install mutSignatures, if not found in library
     if ("mutSignatures" %in% rownames(utils::installed.packages()) == FALSE)
@@ -299,7 +303,7 @@ RunmutSignatures <-
     extrParams <- mutSignatures::setMutClusterParams(
       num_processesToExtract = K.best,
       approach = "counts",
-      num_totIterations = 1000,
+      num_totIterations = iterations,
       num_parallelCores = CPU.cores, # set to 1 to avoid parallelization
       debug = FALSE,
       algorithm = algorithm) ## Use Brunet NMF

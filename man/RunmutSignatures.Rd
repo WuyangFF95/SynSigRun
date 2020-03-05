@@ -9,6 +9,7 @@ RunmutSignatures(
   out.dir,
   algorithm = "alexa",
   CPU.cores = NULL,
+  iterations = 1000,
   seedNumber = 1,
   K = NULL,
   K.range = NULL,
@@ -27,11 +28,11 @@ abort if it already exits.  Log files will be in
 \item{algorithm}{NMF implementation used to to extract signatures and
 attribute exposures. Only "alexa", "brunet" or "lin" is valid.
 
-"alexa" or "brunet": Jean-Philippe Brunet's implementation. 
-This is the most widely used NMF implementation for signature extraction. 
+"alexa" or "brunet": Jean-Philippe Brunet's implementation.
+This is the most widely used NMF implementation for signature extraction.
 DOI: 10.1073/pnas.0308531101
 
-"lin": Chih-Jen Lin's implementation. 
+"lin": Chih-Jen Lin's implementation.
 DOI:10.1109/TNN.2007.895831
 
 Default: "alexa".}
@@ -42,6 +43,9 @@ choice; while for a PC, you may only choose 2-4 cores.
 By default (CPU.cores = NULL), the CPU.cores would be equal
 to \code{(parallel::detectCores())/2}, total number of CPUs
 divided by 2.}
+
+\item{iterations}{Number of iterations in signature extraction.
+Default: 1000.}
 
 \item{seedNumber}{Specify the pseudo-random seed number
 used to run sigfit. Setting seed can make the
