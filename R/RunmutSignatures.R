@@ -133,6 +133,24 @@ RunmutSignaturesAttributeOnly <-
 #' abort if it already exits.  Log files will be in
 #' \code{paste0(out.dir, "/tmp")}.
 #'
+#' @param algorithm NMF implementation used to to extract signatures and
+#' attribute exposures. Only "alexa", "brunet" or "lin" is valid.
+#'
+#' "alexa" or "brunet": Jean-Philippe Brunet's implementation. 
+#' This is the most widely used NMF implementation for signature extraction. 
+#' DOI: 10.1073/pnas.0308531101
+#' 
+#' "lin": Chih-Jen Lin's implementation. 
+#' DOI:10.1109/TNN.2007.895831
+#' 
+#' Default: "alexa".
+#'
+#' @param CPU.cores Number of CPUs to use in running
+#' sigfit. For a server, 30 cores would be a good
+#' choice; while for a PC, you may only choose 2-4 cores.
+#' By default (CPU.cores = NULL), the CPU.cores would be equal
+#' to \code{(parallel::detectCores())/2}, total number of CPUs
+#' divided by 2.
 #'
 #' @param seedNumber Specify the pseudo-random seed number
 #' used to run sigfit. Setting seed can make the
@@ -178,6 +196,8 @@ RunmutSignaturesAttributeOnly <-
 RunmutSignatures <-
   function(input.catalog,
            out.dir,
+           algorithm = "alexa",
+           CPU.cores = NULL,
            seedNumber = 1,
            K = NULL,
            K.range = NULL,
@@ -188,6 +208,10 @@ RunmutSignatures <-
     bool1 <- is.numeric(K) & is.null(K.range)
     bool2 <- is.null(K) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
+    
+    ## Check if algorithm parameter is correctly set
+    stopifnot(algorithm %in% c("alexa","brunet","lin"))
+    
 
     ## Install mutSignatures, if not found in library
     if ("mutSignatures" %in% rownames(utils::installed.packages()) == FALSE)
@@ -213,6 +237,16 @@ RunmutSignatures <-
       dir.create(out.dir, recursive = T)
     }
 
+    ## CPU.cores specifies number of CPU cores to use.
+    ## CPU.cores will be capped at 30.
+    ## If CPU.cores is not specified, CPU.cores will
+    ## be equal to the minimum of 30 or (total cores)/2
+    if(is.null(CPU.cores)){
+      CPU.cores = min(30,(parallel::detectCores())/2)
+    } else {
+      stopifnot(is.numeric(CPU.cores))
+      if(CPU.cores > 30) CPU.cores = 30
+    }
 
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which mutSignatures accepts:
@@ -258,15 +292,17 @@ RunmutSignatures <-
     ## Precise extraction:
 
 
-    ## 1. In Params Object
-    ## Specifying number of signatures, and iterating more times to get more precise extraction
+    ## 1. In Params Object, specifying number of signatures,
+    ## and iterating more times to get more precise extraction.
+    ## For faster computation, change num_parallelCores to be
+    ## CPU.cores.
     extrParams <- mutSignatures::setMutClusterParams(
       num_processesToExtract = K.best,
       approach = "counts",
       num_totIterations = 1000,
-      num_parallelCores = 1, # set to 1 to avoid parallelization
+      num_parallelCores = CPU.cores, # set to 1 to avoid parallelization
       debug = FALSE,
-      algorithm = "alexa") ## Use Brunet NMF
+      algorithm = algorithm) ## Use Brunet NMF
     ## 2. Precise extraction,
     ## and report signatures and exposures from preciseExtr object.
     preciseExtr <- mutSignatures::decipherMutationalProcesses(input = spectraCounts, params = extrParams)

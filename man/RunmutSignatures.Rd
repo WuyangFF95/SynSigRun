@@ -7,6 +7,8 @@
 RunmutSignatures(
   input.catalog,
   out.dir,
+  algorithm = "alexa",
+  CPU.cores = NULL,
   seedNumber = 1,
   K = NULL,
   K.range = NULL,
@@ -21,6 +23,25 @@ Columns are samples (tumors), rows are mutation types.}
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exits.  Log files will be in
 \code{paste0(out.dir, "/tmp")}.}
+
+\item{algorithm}{NMF implementation used to to extract signatures and
+attribute exposures. Only "alexa", "brunet" or "lin" is valid.
+
+"alexa" or "brunet": Jean-Philippe Brunet's implementation. 
+This is the most widely used NMF implementation for signature extraction. 
+DOI: 10.1073/pnas.0308531101
+
+"lin": Chih-Jen Lin's implementation. 
+DOI:10.1109/TNN.2007.895831
+
+Default: "alexa".}
+
+\item{CPU.cores}{Number of CPUs to use in running
+sigfit. For a server, 30 cores would be a good
+choice; while for a PC, you may only choose 2-4 cores.
+By default (CPU.cores = NULL), the CPU.cores would be equal
+to \code{(parallel::detectCores())/2}, total number of CPUs
+divided by 2.}
 
 \item{seedNumber}{Specify the pseudo-random seed number
 used to run sigfit. Setting seed can make the

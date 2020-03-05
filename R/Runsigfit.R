@@ -237,6 +237,10 @@ Runsigfit <-
     bool1 <- is.numeric(K) & is.null(K.range)
     bool2 <- is.null(K) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
+    
+    ## Check if model parameter is correctly set
+    stopifnot(model %in% c("nmf","emu"))
+    
 
     ## Install sigfit, if not found in library
     if ("sigfit" %in% rownames(utils::installed.packages()) == FALSE)
@@ -252,7 +256,7 @@ Runsigfit <-
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
-                                     strict = FALSE)
+                                  strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
     ## Create output directory
