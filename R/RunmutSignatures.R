@@ -287,7 +287,7 @@ RunmutSignatures <-
       ## Select the K empirically by SynSigRun:
       ## Choose the minimum K which let reconstrected spectra
       ## to have <0.1% difference to the ground-truth spectra.
-      K.best <- sigErrors[which(sigErrors[,2] < 0.001),1]
+      K.best <- min(sigErrors[which(sigErrors[,2] < 0.001),1])
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
     }
