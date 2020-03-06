@@ -309,7 +309,12 @@ RunmutSignatures <-
       algorithm = algorithm) ## Use Brunet NMF
     ## 2. Precise extraction,
     ## and report signatures and exposures from preciseExtr object.
+
+    ## precise extraction will draw a Silhouette coefficient plot.
+    ## Need to turn on the PDF device.
+    grDevices::pdf(paste0(out.dir,"/Silhouette.coeffs.pdf"))
     preciseExtr <- mutSignatures::decipherMutationalProcesses(input = spectraCounts, params = extrParams)
+    grDevices::dev.off()
     extractedSignatures <- preciseExtr$Results$signatures@mutationFreq
     rownames(extractedSignatures) <- preciseExtr$Results$signatures@mutTypes
     colnames(extractedSignatures) <- preciseExtr$Results$signatures@signatureId
