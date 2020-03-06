@@ -316,12 +316,12 @@ RunmutSignatures <-
     preciseExtr <- mutSignatures::decipherMutationalProcesses(input = spectraCounts, params = extrParams)
     grDevices::dev.off()
     extractedSignatures <- preciseExtr$Results$signatures@mutationFreq
-    rownames(extractedSignatures) <- preciseExtr$Results$signatures@mutTypes
-    colnames(extractedSignatures) <- preciseExtr$Results$signatures@signatureId
+    rownames(extractedSignatures) <- preciseExtr$Results$signatures@mutTypes[,1]
+    colnames(extractedSignatures) <- preciseExtr$Results$signatures@signatureId[,1]
 
     exposureCounts <- preciseExtr$Results$exposures@exposures
-    rownames(exposureCounts) <- preciseExtr$Results$exposures@signatureId
-    colnames(exposureCounts) <- preciseExtr$Results$exposures@sampleId
+    rownames(exposureCounts) <- preciseExtr$Results$exposures@signatureId[,1]
+    colnames(exposureCounts) <- preciseExtr$Results$exposures@sampleId[,1]
 
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                              region = "unknown",
