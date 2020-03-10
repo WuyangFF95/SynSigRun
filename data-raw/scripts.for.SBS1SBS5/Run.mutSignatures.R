@@ -29,8 +29,8 @@ for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
     RunmutSignatures(
       input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName, "/sp.sp/Attr/mutSignatures.results/seed.", seedInUse),
-      CPU.cores = 30,
+      out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/mutSignatures.results/seed.", seedInUse),
+      CPU.cores = 10,
       iterations = 1000,
       seedNumber = seedInUse,
       K.range = c(1,10),
