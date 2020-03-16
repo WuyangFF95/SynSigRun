@@ -30,8 +30,6 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
     RunSparseSignatures(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-              read.catalog.function = ICAMS::ReadCatalog,
-              write.catalog.function = ICAMS::WriteCatalog,
               out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/SparseSignatures.results/seed.",seedInUse),
               seedNumber = seedInUse,
               K.range = c(2,10),
