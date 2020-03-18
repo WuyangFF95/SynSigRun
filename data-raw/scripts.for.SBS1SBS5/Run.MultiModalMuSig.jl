@@ -47,7 +47,7 @@ end
 for seedInUse in seedsInUse
 	for datasetName in datasetNames
 
-		snv_counts = CSV.read(datasetName*"/sp.sp/ExtrAttr/MultiModalMuSig.results/seed."*
+		snv_counts = CSV.read(datasetName*"/sp.sp/ExtrAttr/MultiModalMuSig.CTM.results/seed."*
 		string(seedInUse)*"/ground.truth.syn.catalog.tsv", delim='\t');
 
 		## Run model fitting
@@ -82,7 +82,7 @@ for seedInUse in seedsInUse
 		snv_signatures = snv_signatures[:,[:term;sig_names]]; # Shuffle the columns of signature DataFrame
 
 		# You can't change row names by subsetting!
-		CSV.write(datasetName*"/sp.sp/ExtrAttr/MultiModalMuSig.results/seed."*
+		CSV.write(datasetName*"/sp.sp/ExtrAttr/MultiModalMuSig.CTM.results/seed."*
 		string(seedInUse)*"/extracted.signatures.tsv",
 		snv_signatures,
 		delim = "\t");
@@ -101,7 +101,7 @@ for seedInUse in seedsInUse
 		snv_exposures = snv_exposures[:,[:signature_name; sample_names]]
 
 		# Write attributed exposures
-		CSV.write(datasetName*"/sp.sp/ExtrAttr/MultiModalMuSig.results/seed."*
+		CSV.write(datasetName*"/sp.sp/ExtrAttr/MultiModalMuSig.CTM.results/seed."*
 		string(seedInUse)*"/attributed.exposures.tsv",
 		snv_exposures,
 		delim = "\t")
