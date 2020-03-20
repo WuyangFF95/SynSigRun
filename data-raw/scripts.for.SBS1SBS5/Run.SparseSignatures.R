@@ -1,7 +1,7 @@
 
 ## Load required packages
 library(ICAMS)
-library(SynSigEval)
+library(SynSigRun)
 library(SparseSignatures)
 ## Enable stronger parallel computation power.
 install.extras("NMF")
