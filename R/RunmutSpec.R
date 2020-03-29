@@ -188,7 +188,7 @@ RunmutSpec <-
 
 
     ## Generates a list contain extracted signatures
-    res  <- NMF::nmf(matrixNMF, K.best, "brunet", nrun=200, .opt=nbCPU)
+    res  <- NMF::nmf(convSpectra, K.best, "brunet", nrun=200, .opt=nbCPU)
 
     # Recover the matrix W and H
     matrixW <- NMF::basis(res)
