@@ -140,10 +140,10 @@ RunmutSpec <-
       nbSign  <- seq.int(K.range[1],K.range[2]) ## Change K.range to a full vector
       # The minum number of signatures can't be lower than 2
 
-      estim_r <- NMF::nmf(matrixNMF, method="brunet", nbSign, nrun=50, .opt=nbCPU)
+      estim_r <- NMF::nmf(convSpectra, method="brunet", nbSign, nrun=50, .opt=nbCPU)
 
       # Shuffle original data
-      v_random <- NMF::randomize(matrixNMF)
+      v_random <- NMF::randomize(convSpectra)
       # Estimate quality measures from the shuffled data
       estim_r_random <- nmf(v_random, method="brunet", nbSign, nrun=50, .opt=nbCPU)
 
