@@ -30,7 +30,7 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
     RunmutSpec(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-                          out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/MutationalPatterns.results/seed.", seedInUse),
+                          out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/mutSpec.results/seed.", seedInUse),
                           CPU.cores = 10,
                           K.range = c(2,10),
                           overwrite = TRUE)
