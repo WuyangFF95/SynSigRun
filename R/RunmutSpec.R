@@ -156,7 +156,7 @@ RunmutSpec <-
       # Plot the estimation for our data and the random ones
       grDevices::graphics.off()
       options(bitmapType='cairo')
-      grDevices::png(opt$output, width=3000, height=2000, res=300)
+      grDevices::png(paste0(out.dir,"/estimation.mutSpec.png"), width=3000, height=2000, res=300)
       plot(estim_r, estim_r_random)
       invisible( grDevices::dev.off() )
 
