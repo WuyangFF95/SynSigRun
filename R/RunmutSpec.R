@@ -139,13 +139,16 @@ RunmutSpec <-
 
       nbSign  <- seq.int(K.range[1],K.range[2]) ## Change K.range to a full vector
       # The minum number of signatures can't be lower than 2
-
       estim_r <- NMF::nmf(convSpectra, method="brunet", nbSign, nrun=50, .opt=nbCPU)
+      gc()
+      gc()
+      gc()
 
       # Shuffle original data
       v_random <- NMF::randomize(convSpectra)
       # Estimate quality measures from the shuffled data
       estim_r_random <- nmf(v_random, method="brunet", nbSign, nrun=50, .opt=nbCPU)
+
 
       ## Garbage collection
       gc()
@@ -188,7 +191,15 @@ RunmutSpec <-
 
 
     ## Generates a list contain extracted signatures
+    gc()
+    gc()
+    gc()
     res  <- NMF::nmf(convSpectra, K.best, "brunet", nrun=200, .opt=nbCPU)
+    gc()
+    gc()
+    gc()
+
+
 
     # Recover the matrix W and H
     matrixW <- NMF::basis(res)
