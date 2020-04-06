@@ -20,6 +20,12 @@ Installhdp <- function(){
 #' abort if it already exits.  Log files will be in
 #' \code{paste0(out.dir, "/tmp")}.
 #'
+#' @param CPU.cores Number of CPUs to use in running
+#' sigfit. For a server, 30 cores would be a good
+#' choice; while for a PC, you may only choose 2-4 cores.
+#' By default (CPU.cores = NULL), the CPU.cores would be equal
+#' to \code{(parallel::detectCores())/2}, total number of CPUs
+#' divided by 2.
 #' @param seedNumber Specify the pseudo-random seed number
 #' used to run hdp. Setting seed can make the
 #' attribution of hdp repeatable.
@@ -77,6 +83,7 @@ Installhdp <- function(){
 Runhdp <-
   function(input.catalog,
            out.dir,
+           CPU.cores = NULL,
            seedNumber = 1,
            K.guess = NULL,
            K.range = NULL,
@@ -101,6 +108,17 @@ Runhdp <-
     ## spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:25]
+
+    ## CPU.cores specifies number of CPU cores to use.
+    ## CPU.cores will be capped at 30.
+    ## If CPU.cores is not specified, CPU.cores will
+    ## be equal to the minimum of 30 or (total cores)/2
+    if(is.null(CPU.cores)){
+      CPU.cores = min(30,(parallel::detectCores())/2)
+    } else {
+      stopifnot(is.numeric(CPU.cores))
+      if(CPU.cores > 30) CPU.cores = 30
+    }
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which HDP accepts:
     ## 1. Remove the catalog related attributes in convSpectra
@@ -207,7 +225,7 @@ Runhdp <-
     }
 
     ## Step 2: run 4 independent sampling chains
-    {
+    if(FALSE){ ## debug
       ## Run four independent posterior sampling chains
       chlist <- vector("list", 4)	#4 is too much here!
 
@@ -225,6 +243,30 @@ Runhdp <-
             cpiter = 3,
             # Must choose a different seed for each of the 4 chains:
             seed   = (seedNumber + i * 10^6) %% (10^7) )
+      }else {
+        f_posterior <- function(seed,hdpObject) {
+          if (verbose) message("calling hdp_posterior ", i)
+          chlist[[i]] <-
+            hdp::hdp_posterior(
+              hdpObject,
+              # The remaining values, except seed, are from the vignette; there
+              # are no defaults.
+              burnin = 4000,
+              n      = 50,
+              space  = 50,
+              cpiter = 3,
+              # Must choose a different seed for each of the 4 chains:
+              seed   = seed %% (10^7) )
+        }
+
+        parallel::mcmapply(
+          FUN = f_posterior,
+          seed = seedNumber + 10^6 * 1:4,
+          MoreArgs = list(hdpObject = hdpObject),
+          mc.cores = CPU.cores
+        )
+
+
       }
 
       ## Generate the original multi_chain for the sample
