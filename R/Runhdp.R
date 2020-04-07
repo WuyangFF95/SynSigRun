@@ -178,11 +178,11 @@ Runhdp <-
       ## Specify ppindex as process.index,
       ## and cpindex (concentration parameter) as 1 + process.index
       if(FALSE){
-      ppindex <- c(0, 1, rep(2,number.samples))
-      cpindex <- c(1, 2, rep(3,number.samples))
+        ppindex <- c(0, 1, rep(2,number.samples))
+        cpindex <- c(1, 2, rep(3,number.samples))
       } else {
-      ppindex <- process.index
-      cpindex <- 1 + process.index
+        ppindex <- process.index
+        cpindex <- 1 + process.index
       }
 
       ## Calculate the number of levels in the DP node tree.
@@ -198,10 +198,10 @@ Runhdp <-
       ## initialise hdp
       if (verbose) message("calling hdp_init")
       hdpObject <- hdp::hdp_init(ppindex = ppindex,
-                      cpindex = cpindex,
-                      hh = rep(1,number.channels),
-                      alphaa = alphaa,
-                      alphab = alphab)
+                                 cpindex = cpindex,
+                                 hh = rep(1,number.channels),
+                                 alphaa = alphaa,
+                                 alphab = alphab)
       num.process <- hdp::numdp(hdpObject)
 
       if (verbose) message("calling hdp_setdata")
@@ -225,40 +225,41 @@ Runhdp <-
     }
 
     ## Step 2: run 4 independent sampling chains
-    if(FALSE){ ## debug
-      ## Run four independent posterior sampling chains
-      chlist <- vector("list", 4)	#4 is too much here!
+    {
+      if(FALSE){ ## debug
+        ## Run four independent posterior sampling chains
+        chlist <- vector("list", 4)	#4 is too much here!
 
-      for (i in 1:4) {
+        for (i in 1:4) {
 
-        if (verbose) message("calling hdp_posterior ", i)
-        chlist[[i]] <-
-          hdp::hdp_posterior(
-            hdpObject,
-            # The remaining values, except seed, are from the vignette; there
-            # are no defaults.
-            burnin = 4000,
-            n      = 50,
-            space  = 50,
-            cpiter = 3,
-            # Must choose a different seed for each of the 4 chains:
-            seed   = (seedNumber + i * 10^6) %% (10^7) )
+          if (verbose) message("calling hdp_posterior ", i)
+          chlist[[i]] <-
+            hdp::hdp_posterior(
+              hdpObject,
+              # The remaining values, except seed, are from the vignette; there
+              # are no defaults.
+              burnin = 4000,
+              n      = 50,
+              space  = 50,
+              cpiter = 3,
+              # Must choose a different seed for each of the 4 chains:
+              seed   = (seedNumber + i * 10^6) %% (10^7) )
         }
-    } else {
-      f_posterior <- function(seed,hdpObject) {
-        if (verbose) message("calling hdp_posterior ", i)
-        chlist[[i]] <-
-          hdp::hdp_posterior(
-            hdpObject,
-            # The remaining values, except seed, are from the vignette; there
-            # are no defaults.
-            burnin = 4000,
-            n      = 50,
-            space  = 50,
-            cpiter = 3,
-            # Must choose a different seed for each of the 4 chains:
-            seed   = seed %% (10^7) )
-      }
+      } else {
+        f_posterior <- function(seed,hdpObject) {
+          if (verbose) message("calling hdp_posterior ", i)
+          chlist[[i]] <-
+            hdp::hdp_posterior(
+              hdpObject,
+              # The remaining values, except seed, are from the vignette; there
+              # are no defaults.
+              burnin = 4000,
+              n      = 50,
+              space  = 50,
+              cpiter = 3,
+              # Must choose a different seed for each of the 4 chains:
+              seed   = seed %% (10^7) )
+        }
 
         parallel::mcmapply(
           FUN = f_posterior,
@@ -266,15 +267,13 @@ Runhdp <-
           MoreArgs = list(hdpObject = hdpObject),
           mc.cores = CPU.cores
         )
-
-
-    }
+      }
 
       ## Generate the original multi_chain for the sample
       if (verbose) message("calling hdp_multi_chain")
       mut_example_multi <- hdp::hdp_multi_chain(chlist)
-
     }
+
 
     ## Step 3: Plot the diagnostics of sampling chains.
     {
@@ -325,42 +324,42 @@ Runhdp <-
     }
 
     ## Step 4: Using hdp samples to extract signatures
-      {
-        if (verbose) message("calling hdp::comp_categ_distn")
-        ## Calculate the mutation composition in each signature:
-        extractedSignatures <-
-          hdp::comp_categ_distn(mut_example_multi_extracted)$mean
-        dim(extractedSignatures)
-        ## Add base context for extractedSignatures
-        extractedSignatures <- t(extractedSignatures)
-        rownames(extractedSignatures) <- rownames(spectra)
-        ## Change signature names in extractedSignatures
-        ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
-        colnames(extractedSignatures) <-
-          paste("hdp", colnames(extractedSignatures), sep = ".")
-        ## Remove "hdp.0" (noise signature) if remove.noise == TRUE
-        flagRemoveHDP0 <- FALSE
-        if(FALSE){ ## debug
-          ## Remove "hdp.0" (noise signature) if it is a null signature or NA signature
-          if(is.null(extractedSignatures[1,"hdp.0"]) | is.na(extractedSignatures[1,"hdp.0"]))
-            flagRemoveHDP0 <- TRUE
-        }
-        if(flagRemoveHDP0){
-            sigToBeRemoved <- which(colnames(extractedSignatures) == "hdp.0")
-            if(length(sigToBeRemoved) == 1)
-              extractedSignatures <- extractedSignatures[,-(sigToBeRemoved),drop = FALSE]
-        }
-
-
-        ## Convert extractedSignatures to ICAMS-formatted catalog.
-        extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
-                                                 region = "unknown",
-                                                 catalog.type = "counts.signature")
-
-        if (verbose) message("calling ICAMS::WriteCatalog")
-        ICAMS::WriteCatalog(extractedSignatures,
-                            paste0(out.dir,"/extracted.signatures.csv"))
+    {
+      if (verbose) message("calling hdp::comp_categ_distn")
+      ## Calculate the mutation composition in each signature:
+      extractedSignatures <-
+        hdp::comp_categ_distn(mut_example_multi_extracted)$mean
+      dim(extractedSignatures)
+      ## Add base context for extractedSignatures
+      extractedSignatures <- t(extractedSignatures)
+      rownames(extractedSignatures) <- rownames(spectra)
+      ## Change signature names in extractedSignatures
+      ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
+      colnames(extractedSignatures) <-
+        paste("hdp", colnames(extractedSignatures), sep = ".")
+      ## Remove "hdp.0" (noise signature) if remove.noise == TRUE
+      flagRemoveHDP0 <- FALSE
+      if(FALSE){ ## debug
+        ## Remove "hdp.0" (noise signature) if it is a null signature or NA signature
+        if(is.null(extractedSignatures[1,"hdp.0"]) | is.na(extractedSignatures[1,"hdp.0"]))
+          flagRemoveHDP0 <- TRUE
       }
+      if(flagRemoveHDP0){
+        sigToBeRemoved <- which(colnames(extractedSignatures) == "hdp.0")
+        if(length(sigToBeRemoved) == 1)
+          extractedSignatures <- extractedSignatures[,-(sigToBeRemoved),drop = FALSE]
+      }
+
+
+      ## Convert extractedSignatures to ICAMS-formatted catalog.
+      extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
+                                               region = "unknown",
+                                               catalog.type = "counts.signature")
+
+      if (verbose) message("calling ICAMS::WriteCatalog")
+      ICAMS::WriteCatalog(extractedSignatures,
+                          paste0(out.dir,"/extracted.signatures.csv"))
+    }
 
 
     ## Step 5: Using hdp samples to attribute exposure counts.
