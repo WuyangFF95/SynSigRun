@@ -243,21 +243,22 @@ Runhdp <-
             cpiter = 3,
             # Must choose a different seed for each of the 4 chains:
             seed   = (seedNumber + i * 10^6) %% (10^7) )
-      }else {
-        f_posterior <- function(seed,hdpObject) {
-          if (verbose) message("calling hdp_posterior ", i)
-          chlist[[i]] <-
-            hdp::hdp_posterior(
-              hdpObject,
-              # The remaining values, except seed, are from the vignette; there
-              # are no defaults.
-              burnin = 4000,
-              n      = 50,
-              space  = 50,
-              cpiter = 3,
-              # Must choose a different seed for each of the 4 chains:
-              seed   = seed %% (10^7) )
         }
+    } else {
+      f_posterior <- function(seed,hdpObject) {
+        if (verbose) message("calling hdp_posterior ", i)
+        chlist[[i]] <-
+          hdp::hdp_posterior(
+            hdpObject,
+            # The remaining values, except seed, are from the vignette; there
+            # are no defaults.
+            burnin = 4000,
+            n      = 50,
+            space  = 50,
+            cpiter = 3,
+            # Must choose a different seed for each of the 4 chains:
+            seed   = seed %% (10^7) )
+      }
 
         parallel::mcmapply(
           FUN = f_posterior,
@@ -267,7 +268,7 @@ Runhdp <-
         )
 
 
-      }
+    }
 
       ## Generate the original multi_chain for the sample
       if (verbose) message("calling hdp_multi_chain")
