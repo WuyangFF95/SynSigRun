@@ -261,7 +261,7 @@ Runhdp <-
               seed   = seed %% (10^7) )
         }
 
-        parallel::mcmapply(
+        chlist <- parallel::mcmapply(
           FUN = f_posterior,
           seed = seedNumber + 10^6 * 1:4,
           MoreArgs = list(hdpObject = hdpObject),
