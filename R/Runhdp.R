@@ -247,9 +247,8 @@ Runhdp <-
         }
       } else {
         f_posterior <- function(seed,hdpObject) {
-          if (verbose) message("calling hdp_posterior ", i)
-          chlist[[i]] <-
-            hdp::hdp_posterior(
+          if (verbose) message("calling hdp_posterior")
+            retval <- hdp::hdp_posterior(
               hdpObject,
               # The remaining values, except seed, are from the vignette; there
               # are no defaults.
@@ -259,12 +258,13 @@ Runhdp <-
               cpiter = 3,
               # Must choose a different seed for each of the 4 chains:
               seed   = seed %% (10^7) )
+            return(retval)
         }
 
-        chlist <- parallel::mcmapply(
+        chlist <- parallel::mclapply(
+          X = seedNumber + 10^6 * 1:4,
           FUN = f_posterior,
-          seed = seedNumber + 10^6 * 1:4,
-          MoreArgs = list(hdpObject = hdpObject),
+          hdpObject = hdpObject,
           mc.cores = CPU.cores
         )
       }
