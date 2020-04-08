@@ -83,7 +83,7 @@ Installhdp <- function(){
 Runhdp <-
   function(input.catalog,
            out.dir,
-           CPU.cores = NULL,
+           CPU.cores = 1,
            seedNumber = 1,
            K.guess = NULL,
            K.range = NULL,
@@ -226,7 +226,7 @@ Runhdp <-
 
     ## Step 2: run 4 independent sampling chains
     {
-      if(FALSE){ ## debug
+      if(CPU.cores == 1){ ## debug
         ## Run four independent posterior sampling chains
         chlist <- vector("list", 4)	#4 is too much here!
 
