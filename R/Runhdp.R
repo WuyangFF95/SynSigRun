@@ -10,9 +10,6 @@ Installhdp <- function(){
 
 #' Run hdp extraction and attribution on a spectra catalog file
 #'
-#' WARNING: hdp can only do exposure attribution
-#' using SBS96 spectra catalog and signature catalog!
-#'
 #' @param input.catalog File containing a spectra catalog
 #' in \code{\link[ICAMS]{ICAMS}} format.
 #'
@@ -21,11 +18,8 @@ Installhdp <- function(){
 #' \code{paste0(out.dir, "/tmp")}.
 #'
 #' @param CPU.cores Number of CPUs to use in running
-#' sigfit. For a server, 30 cores would be a good
-#' choice; while for a PC, you may only choose 2-4 cores.
-#' By default (CPU.cores = NULL), the CPU.cores would be equal
-#' to \code{(parallel::detectCores())/2}, total number of CPUs
-#' divided by 2.
+#'    \code{\link[hdp]{hdp_posterior}}.
+#'
 #' @param seedNumber Specify the pseudo-random seed number
 #' used to run hdp. Setting seed can make the
 #' attribution of hdp repeatable.
@@ -35,9 +29,7 @@ Installhdp <- function(){
 #' signatures, passed to \code{\link[hdp]{dp_activate}} as
 #' \code{initcc}.
 #'
-#' \code{K.range} Deprecated. Top value is interpreted as argument \code{K.guess}.
-#'
-#' @param multi.types A logical scalar (\code{TRUE} or \code{FALSE}) or
+#' @param multi.types A logical scalar or
 #' a character vector.
 #' If \code{FALSE}, hdp will regard all input spectra as one tumor type,
 #' and will allocate them to one single dirichlet process node.
@@ -47,9 +39,7 @@ Installhdp <- function(){
 #'
 #' If it is a character vector, it should be a vector of case-sensitive tumor
 #' types.
-#' e.g. c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")
-#'
-#' Default: FALSE
+#' e.g. \code{c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")}.
 #'
 #' @param remove.noise Whether to remove noise signature "hdp.0"? In normal cases scenarios,
 #' only few mutations will be assigned to noise signature.
@@ -57,14 +47,10 @@ Installhdp <- function(){
 #' For result visualization and assessment of \code{hdp} package, select \code{TRUE};
 #' for diagnostic purposes, select \code{FALSE}.
 #'
-#' Default: \code{FALSE}
-#'
 #' @param test.only If TRUE, only analyze the first 10 columns
-#' read in from \code{input.catalog}.
-#' Default: FALSE
+#' in \code{input.catalog}.
 #'
 #' @param overwrite If TRUE, overwrite existing output.
-#' Default: FALSE
 #'
 #' @param verbose If \code{TRUE} then \code{message} progress information.
 #'
@@ -85,27 +71,19 @@ Runhdp <-
            out.dir,
            CPU.cores = 1,
            seedNumber = 1,
-           K.guess = NULL,
-           K.range = NULL,
+           K.guess,
            multi.types = FALSE,
            remove.noise = FALSE,
            test.only = FALSE,
            overwrite = FALSE,
            verbose = TRUE) {
 
-    if (!is.null(K.range)) {
-      K.guess <- K.range[2]
-      warning("Setting K.guess <- K.range[2]; K.range is deprecated. Use K.guess instead")
-    }
-    if (is.null(K.guess)) stop("Please provide argument K.guess")
-
     ## Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # To document the seed used
+    RNGInUse <- RNGkind()      # To document the random number generator (RNG) used
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
     spectra <- ICAMS::ReadCatalog(input.catalog,strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:25]
 
@@ -113,25 +91,23 @@ Runhdp <-
     ## CPU.cores will be capped at 30.
     ## If CPU.cores is not specified, CPU.cores will
     ## be equal to the minimum of 30 or (total cores)/2
-    if(is.null(CPU.cores)){
-      CPU.cores = min(30,(parallel::detectCores())/2)
-    } else {
-      stopifnot(is.numeric(CPU.cores))
-      if(CPU.cores > 30) CPU.cores = 30
-    }
+
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which HDP accepts:
     ## 1. Remove the catalog related attributes in convSpectra
     ## 2. Transpose the catalog
     convSpectra <- spectra
+
+    # hdp get confused if there are extra attributes
+    # or classes.
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
-    dimnames(convSpectra) <- dimnames(spectra)
+    dimnames(convSpectra) <- dimnames(spectra) # check if really necessary
     convSpectra <- t(convSpectra)
 
-    number.channels <- dim(spectra)[1]
-    number.samples <- dim(spectra)[2]
+    number.channels <- nrow(spectra)
+    number.samples  <- ncol(spectra)
 
     ## Create output directory
     if (dir.exists(out.dir)) {
@@ -167,6 +143,12 @@ Runhdp <-
         ## For every tumor of the 1st/2nd/3rd/... tumor type,
         ## we need to specify a level 2/3/4/... DP node for the tumor.
         process.index <- c(process.index,1 + as.numeric(as.factor(tumor.types)))
+        # Something like
+        # c(0, 1, 1, 2, 2, 2, 3, 3)
+        # 0 is grandparent
+        # 1 is a parent of one type (there are 2 types)
+        # 2 indcates tumors of the first type
+        # 3 indicates tumors of second type
       } else if (is.character(multi.types)){ ## multi.types is a character vector recording tumor types
         num.tumor.types <- length(unique(multi.types))
         process.index <- c(0, rep(1,num.tumor.types))
@@ -177,13 +159,8 @@ Runhdp <-
 
       ## Specify ppindex as process.index,
       ## and cpindex (concentration parameter) as 1 + process.index
-      if(FALSE){
-        ppindex <- c(0, 1, rep(2,number.samples))
-        cpindex <- c(1, 2, rep(3,number.samples))
-      } else {
-        ppindex <- process.index
-        cpindex <- 1 + process.index
-      }
+      ppindex <- process.index
+      cpindex <- 1 + process.index
 
       ## Calculate the number of levels in the DP node tree.
       dp.levels <- length(unique(ppindex))
@@ -194,7 +171,6 @@ Runhdp <-
       alphaa <- rep(1,dp.levels)
       alphab <- rep(1,dp.levels)
 
-
       ## initialise hdp
       if (verbose) message("calling hdp_init")
       hdpObject <- hdp::hdp_init(ppindex = ppindex,
@@ -202,12 +178,14 @@ Runhdp <-
                                  hh = rep(1,number.channels),
                                  alphaa = alphaa,
                                  alphab = alphab)
+
+      # num.process is the number of samples plus number cancer types plus 1 (grandparent)
       num.process <- hdp::numdp(hdpObject)
 
       if (verbose) message("calling hdp_setdata")
       hdpObject <- hdp::hdp_setdata(
         hdpObject,
-        (1+num.tumor.types+1):num.process,
+        (1 + num.tumor.types + 1):num.process,
         convSpectra)
 
       if (verbose) message("calling dp_activate")

@@ -7,9 +7,9 @@
 Runhdp(
   input.catalog,
   out.dir,
+  CPU.cores = 1,
   seedNumber = 1,
-  K.guess = NULL,
-  K.range = NULL,
+  K.guess,
   multi.types = FALSE,
   remove.noise = FALSE,
   test.only = FALSE,
@@ -25,6 +25,9 @@ in \code{\link[ICAMS]{ICAMS}} format.}
 abort if it already exits.  Log files will be in
 \code{paste0(out.dir, "/tmp")}.}
 
+\item{CPU.cores}{Number of CPUs to use in running
+\code{\link[hdp]{hdp_posterior}}.}
+
 \item{seedNumber}{Specify the pseudo-random seed number
 used to run hdp. Setting seed can make the
 attribution of hdp repeatable.
@@ -32,11 +35,9 @@ Default: 1.}
 
 \item{K.guess}{Suggested initial value of the number of
 signatures, passed to \code{\link[hdp]{dp_activate}} as
-\code{initcc}.
+\code{initcc}.}
 
-\code{K.range} Deprecated. Top value is interpreted as argument \code{K.guess}.}
-
-\item{multi.types}{A logical scalar (\code{TRUE} or \code{FALSE}) or
+\item{multi.types}{A logical scalar or
 a character vector.
 If \code{FALSE}, hdp will regard all input spectra as one tumor type,
 and will allocate them to one single dirichlet process node.
@@ -46,24 +47,18 @@ e.g. Tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA
 
 If it is a character vector, it should be a vector of case-sensitive tumor
 types.
-e.g. c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")
-
-Default: FALSE}
+e.g. \code{c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")}.}
 
 \item{remove.noise}{Whether to remove noise signature "hdp.0"? In normal cases scenarios,
 only few mutations will be assigned to noise signature.
 
 For result visualization and assessment of \code{hdp} package, select \code{TRUE};
-for diagnostic purposes, select \code{FALSE}.
-
-Default: \code{FALSE}}
+for diagnostic purposes, select \code{FALSE}.}
 
 \item{test.only}{If TRUE, only analyze the first 10 columns
-read in from \code{input.catalog}.
-Default: FALSE}
+in \code{input.catalog}.}
 
-\item{overwrite}{If TRUE, overwrite existing output.
-Default: FALSE}
+\item{overwrite}{If TRUE, overwrite existing output.}
 
 \item{verbose}{If \code{TRUE} then \code{message} progress information.}
 }
@@ -71,8 +66,7 @@ Default: FALSE}
 The attributed exposure of \code{hdp}, invisibly.
 }
 \description{
-WARNING: hdp can only do exposure attribution
-using SBS96 spectra catalog and signature catalog!
+Run hdp extraction and attribution on a spectra catalog file
 }
 \details{
 Creates several
