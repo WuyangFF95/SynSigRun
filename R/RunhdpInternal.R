@@ -197,7 +197,7 @@ RunhdpInternal <-
         ## Run four independent posterior sampling chains
         chlist <- vector("list", 4)	#4 is too much here!
 
-        for (i in 1:4) {
+        for (i in 1:num.posterior) {
 
           if (verbose) message("calling hdp_posterior ", i)
           chlist[[i]] <-
@@ -229,7 +229,7 @@ RunhdpInternal <-
         }
 
         chlist <- parallel::mclapply(
-          X = seedNumber + 10^6 * 1:4,
+          X = seedNumber + 10^6 * 1:num.posterior,
           FUN = f_posterior,
           hdpObject = hdpObject,
           mc.cores = CPU.cores
