@@ -46,7 +46,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{mSigAct}, invisibly.
+The inferred exposure of \code{mSigAct}, invisibly.
 }
 \description{
 Run mSigAct attribution on a spectra catalog file

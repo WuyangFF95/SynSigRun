@@ -38,7 +38,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{MutationalPatterns}, invisibly.
+The inferred exposure of \code{MutationalPatterns}, invisibly.
 }
 \description{
 Run MutationalPatterns attribution on a spectra catalog file

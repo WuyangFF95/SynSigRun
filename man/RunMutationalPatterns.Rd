@@ -59,7 +59,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{MutationalPatterns}, invisibly.
+The inferred exposure of \code{MutationalPatterns}, invisibly.
 }
 \description{
 WARNING: MutationalPatterns can only do exposure attribution

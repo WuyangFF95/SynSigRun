@@ -45,7 +45,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{YAPSA}, invisibly.
+The inferred exposure of \code{YAPSA}, invisibly.
 }
 \description{
 Run YAPSA attribution on a spectra catalog file

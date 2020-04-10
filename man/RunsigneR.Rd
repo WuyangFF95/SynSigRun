@@ -51,7 +51,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{signeR}, invisibly.
+The inferred exposure of \code{signeR}, invisibly.
 }
 \description{
 Run signeR extraction and attribution on a spectra catalog file

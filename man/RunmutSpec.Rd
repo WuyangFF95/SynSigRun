@@ -59,7 +59,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{mutSpec}, invisibly.
+The inferred exposure of \code{mutSpec}, invisibly.
 }
 \description{
 NOTE: mutSpec can only do exposure attribution
