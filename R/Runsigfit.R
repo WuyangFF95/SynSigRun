@@ -45,7 +45,7 @@ Installsigfit <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{sigfit}, invisibly.
+#' @return The inferred exposure of \code{sigfit}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
@@ -117,8 +117,8 @@ RunsigfitAttributeOnly <-
                                                chains = 1,
                                                seed = seedNumber)
 
-    ## exposuresObj$mean contain the mean of attributed exposures across multiple
-    ## MCMC samples. Note that attributed exposure in exposuresObj$mean are un-normalized.
+    ## exposuresObj$mean contain the mean of inferred exposures across multiple
+    ## MCMC samples. Note that inferred exposure in exposuresObj$mean are un-normalized.
     exposuresObj <- sigfit::retrieve_pars(mcmc_samples_fit,
                                           par = "exposures",
                                           hpd_prob = 0.90)
@@ -139,7 +139,7 @@ RunsigfitAttributeOnly <-
     ## Write exposure counts in ICAMS and SynSig format.
     exposureCounts <- t(exposureCounts)
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
@@ -152,7 +152,7 @@ RunsigfitAttributeOnly <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Return attributed exposures
+    ## Return inferred exposures
     invisible(exposureCounts)
   }
 
@@ -210,7 +210,7 @@ RunsigfitAttributeOnly <-
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{sigfit}, invisibly.
+#' @return The inferred exposure of \code{sigfit}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{out.dir}. These are:
@@ -237,10 +237,10 @@ Runsigfit <-
     bool1 <- is.numeric(K) & is.null(K.range)
     bool2 <- is.null(K) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
-    
+
     ## Check if model parameter is correctly set
     stopifnot(model %in% c("nmf","emu"))
-    
+
 
     ## Install sigfit, if not found in library
     if ("sigfit" %in% rownames(utils::installed.packages()) == FALSE)
@@ -381,8 +381,8 @@ Runsigfit <-
                                                chains = 1,
                                                seed = 1)
 
-    ## exposuresObj$mean contain the mean of attributed exposures across multiple
-    ## MCMC samples. Note that attributed exposure in exposuresObj$mean are un-normalized.
+    ## exposuresObj$mean contain the mean of inferred exposures across multiple
+    ## MCMC samples. Note that inferred exposure in exposuresObj$mean are un-normalized.
     exposuresObj <- sigfit::retrieve_pars(mcmc_samples_fit,
                                           par = "exposures",
                                           hpd_prob = 0.90)
@@ -398,10 +398,10 @@ Runsigfit <-
     colnames(exposureCounts) <-
       gsub(pattern = "Signature ",replacement = "sigfit.",colnames(exposureCounts))
 
-    ## Write attributed exposures into a SynSig formatted exposure file.
+    ## Write inferred exposures into a SynSig formatted exposure file.
     exposureCounts <- t(exposureCounts)
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information

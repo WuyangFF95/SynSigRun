@@ -376,7 +376,7 @@ Runhdp <-
       WriteExposure(exposureProbs,
                     paste0(out.dir,"/exposure.probs.csv"))
       WriteExposure(exposureCounts,
-                    paste0(out.dir,"/attributed.exposures.csv"))
+                    paste0(out.dir,"/inferred.exposures.csv"))
     }
 
     ## Save seeds and session information

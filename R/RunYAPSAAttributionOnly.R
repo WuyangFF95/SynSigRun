@@ -40,7 +40,7 @@ InstallYAPSA <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{YAPSA}, invisibly.
+#' @return The inferred exposure of \code{YAPSA}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
@@ -142,20 +142,20 @@ RunYAPSAAttributeOnly <-
       LCD_complex_object$exposures == LCD_object ## [1] FALSE
     }
 
-    ## For each tumor spectrum, $exposures (the exposure counts attributed by LCD_complex_object())
+    ## For each tumor spectrum, $exposures (the exposure counts inferred by LCD_complex_object())
     ## sums up to the total mutation counts in 500 tumors in the dataset.
-    ## But $norm_exposures (relative exposure probs attributed by LCD_complex_object())
+    ## But $norm_exposures (relative exposure probs inferred by LCD_complex_object())
     ## sums up to number of tumors only.
     sum(LCD_complex_object$exposures) == sum(spectra) ## [1] TRUE
     sum(LCD_complex_object$norm_exposures) ## [1] (Number of tumors in spectra)
 
-    ## For each tumor spectrum, sum of normalized attributed exposures by LCD_complex_cutoff()
+    ## For each tumor spectrum, sum of normalized inferred exposures by LCD_complex_cutoff()
     ## does not equal to the sum of ground-truth exposures.
     all( colSums(LCD_complex_object$norm_exposures) == colSums(spectra) ) ## [1] FALSE
 
-    ## Export attributed exposure probs
+    ## Export inferred exposure probs
     LCD_exposure_prob <- LCD_complex_object$norm_exposures
-    ## Export attributed exposure counts
+    ## Export inferred exposure counts
     exposureCounts <- LCD_complex_object$exposures ## Export exposure probs
 
     ## Copy ground.truth.sigs to out.dir
@@ -163,9 +163,9 @@ RunYAPSAAttributeOnly <-
               to = paste0(out.dir,"/ground.truth.signatures.csv"),
               overwrite = overwrite)
 
-    ## Write attributed exposures into a SynSig formatted exposure file.
+    ## Write inferred exposures into a SynSig formatted exposure file.
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Save seeds and session information
     ## for better reproducibility
@@ -173,6 +173,6 @@ RunYAPSAAttributeOnly <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Return the exposures attributed, invisibly
+    ## Return the exposures inferred, invisibly
     invisible(exposureCounts)
   }

@@ -95,7 +95,7 @@ RunSignatureAnalyzerAttribution <-
     # If signatures are un-normalized, Normalize them
     sigs <- apply(sigs, 2, function(x) x/sum(x))
 
-    # Load RAW-attributed exposures required by fine-attribution step.
+    # Load RAW-inferred exposures required by fine-attribution step.
     exp.raw <- ReadExposure(raw.exposures.file)
     if(FALSE){
     exp.raw <- exp.raw[sigs.to.use, , drop = FALSE]
@@ -105,9 +105,9 @@ RunSignatureAnalyzerAttribution <-
     # 2 more steps of fine-tuned attribution.
     # INPUT: extracted signatures (sigs),
     # input catalog matrix (syn.data),
-    # and RAW-attributed exposures (exp.raw)
+    # and RAW-inferred exposures (exp.raw)
     W0 <- sigs # Extracted signatures
-    H0 <- exp.raw # initially attributed exposures
+    H0 <- exp.raw # initially inferred exposures
 
     V0 <- syn.data     # Catalog matrix for all tumors
     K0 <- ncol(W0)     # Number of signatures

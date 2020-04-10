@@ -32,7 +32,7 @@ InstalldecompTumor2Sig <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{deconstructSigs}, invisibly.
+#' @return The inferred exposure of \code{deconstructSigs}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
@@ -133,7 +133,7 @@ RundecompTumor2SigAttributeOnly <-
 
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
@@ -146,6 +146,6 @@ RundecompTumor2SigAttributeOnly <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Return attributed exposures
+    ## Return inferred exposures
     invisible(exposureCounts)
   }

@@ -191,7 +191,7 @@ Runmaftools <-
 
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information

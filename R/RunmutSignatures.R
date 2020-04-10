@@ -33,7 +33,7 @@ InstallmutSignatures <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{mutSignatures}, invisibly.
+#' @return The inferred exposure of \code{mutSignatures}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
@@ -92,7 +92,7 @@ RunmutSignaturesAttributeOnly <-
     attr(gtSignaturesMS,"region") <- NULL
     class(gtSignaturesMS) <- "matrix"
 
-    ## Obtain attributed exposures using resolveMutSignatures function
+    ## Obtain inferred exposures using resolveMutSignatures function
     run <- mutSignatures::resolveMutSignatures(mutCountData = convSpectra,
                                                signFreqData = gtSignaturesMS)
     ## An S4 object storing exposures, names of signatures and samples.
@@ -104,7 +104,7 @@ RunmutSignaturesAttributeOnly <-
     colnames(exposureCounts) <- exposures@sampleId[,1]
 
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
@@ -117,7 +117,7 @@ RunmutSignaturesAttributeOnly <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Return attributed exposures
+    ## Return inferred exposures
     invisible(exposureCounts)
   }
 
@@ -184,7 +184,7 @@ RunmutSignaturesAttributeOnly <-
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{mutSignatures}, invisibly.
+#' @return The inferred exposure of \code{mutSignatures}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{out.dir}. These are:
@@ -331,9 +331,9 @@ RunmutSignatures <-
     ICAMS::WriteCatalog(extractedSignatures,
                         paste0(out.dir,"/extracted.signatures.csv"))
 
-    ## Write attributed exposures into a SynSig formatted exposure file.
+    ## Write inferred exposures into a SynSig formatted exposure file.
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information

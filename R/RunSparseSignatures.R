@@ -47,7 +47,7 @@ InstallSparseSignatures <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{SparseSignatures}, invisibly.
+#' @return The inferred exposure of \code{SparseSignatures}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{out.dir}. These are:
@@ -183,7 +183,7 @@ RunSparseSignatures <-
 
     ## Save exposure attribution results
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information

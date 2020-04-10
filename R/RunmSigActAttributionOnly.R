@@ -40,7 +40,7 @@ InstallmSigAct <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{mSigAct}, invisibly.
+#' @return The inferred exposure of \code{mSigAct}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
@@ -110,7 +110,7 @@ RunmSigActAttributeOnly <-
 
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
@@ -123,6 +123,6 @@ RunmSigActAttributeOnly <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Return attributed exposures
+    ## Return inferred exposures
     invisible(exposureCounts)
   }

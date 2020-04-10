@@ -47,7 +47,7 @@
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{mutSpec}, invisibly.
+#' @return The inferred exposure of \code{mutSpec}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{out.dir}. These are:
@@ -233,7 +233,7 @@ RunmutSpec <-
 
     ## Write exposure counts in ICAMS and SynSig format.
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information

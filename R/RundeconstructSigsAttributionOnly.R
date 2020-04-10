@@ -29,7 +29,7 @@ InstalldeconstructSigs <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{deconstructSigs}, invisibly.
+#' @return The inferred exposure of \code{deconstructSigs}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
@@ -90,10 +90,10 @@ RundeconstructSigsAttributeOnly <-
     class(gtSignaturesDS) <- "matrix"
     gtSignaturesDS <- as.data.frame(t(gtSignaturesDS))
 
-    ## Obtain attributed exposures using whichSignatures function
+    ## Obtain inferred exposures using whichSignatures function
     ## Note: deconstructSigs::whichSignatures() can only attribute ONE tumor at each run!
     num.tumors <- nrow(convSpectra)
-    ## In each cycle, obtain attributed exposures for each tumor.
+    ## In each cycle, obtain inferred exposures for each tumor.
     exposures <- data.frame()
 
     for(ii in 1:num.tumors){
@@ -101,14 +101,14 @@ RundeconstructSigsAttributeOnly <-
                                                       signatures.ref = gtSignaturesDS,
                                                       contexts.needed = TRUE)
       ## names(output.list): [1] "weights" "tumor"   "product" "diff"    "unknown"
-      ## $weights: attributed signature exposure (in relative percentage)
+      ## $weights: inferred signature exposure (in relative percentage)
       ## Note: sum of all exposure may be smaller than 1
       ## $tumor: input tumor spectrum
       ## $product: Reconstructed catalog = product of signatures and exposures
       ## = $weights %*% gtSignaturesDS
       ## $diff: $product - $tumor
       ## $unknown: 100% - $weights
-      ## (percentage of exposures not attributed by this program)
+      ## (percentage of exposures not inferred by this program)
 
       ## Obtain absolute exposures for current tumor
       exposures.one.tumor <- output.list$weights
@@ -123,7 +123,7 @@ RundeconstructSigsAttributeOnly <-
     ## Write exposure counts in ICAMS and SynSig format.
     exposureCounts <- t(exposures)
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
@@ -136,6 +136,6 @@ RundeconstructSigsAttributeOnly <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Return attributed exposures
+    ## Return inferred exposures
     invisible(exposureCounts)
   }

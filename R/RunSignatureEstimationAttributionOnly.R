@@ -32,7 +32,7 @@ InstallSignatureEstimation <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{SignatureEstimation}, invisibly.
+#' @return The inferred exposure of \code{SignatureEstimation}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
@@ -92,10 +92,10 @@ RunSignatureEstimationQPAttributeOnly <-
     attr(gtSignaturesSE,"region") <- NULL
     class(gtSignaturesSE) <- "matrix"
 
-    ## Obtain attributed exposures using decomposeQP/decomposeSA function
+    ## Obtain inferred exposures using decomposeQP/decomposeSA function
     ## Note: SignatureEstimation::decomposeQP/decomposeSA() can only attribute ONE tumor at each run!
     num.tumors <- ncol(convSpectra)
-    ## In each cycle, obtain attributed exposures for each tumor.
+    ## In each cycle, obtain inferred exposures for each tumor.
     exposureCounts <- data.frame()
 
     for(ii in 1:num.tumors){
@@ -119,9 +119,9 @@ RunSignatureEstimationQPAttributeOnly <-
               to = paste0(out.dir,"/ground.truth.signatures.csv"),
               overwrite = overwrite)
 
-    ## Write attributed exposures into a SynSig formatted exposure file.
+    ## Write inferred exposures into a SynSig formatted exposure file.
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Save seeds and session information
     ## for better reproducibility
@@ -129,7 +129,7 @@ RunSignatureEstimationQPAttributeOnly <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Return the exposures attributed, invisibly
+    ## Return the exposures inferred, invisibly
     invisible(exposureCounts)
   }
 
@@ -159,7 +159,7 @@ RunSignatureEstimationQPAttributeOnly <-
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{SignatureEstimation}, invisibly.
+#' @return The inferred exposure of \code{SignatureEstimation}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
@@ -219,10 +219,10 @@ RunSignatureEstimationSAAttributeOnly <-
     attr(gtSignaturesSE,"region") <- NULL
     class(gtSignaturesSE) <- "matrix"
 
-    ## Obtain attributed exposures using decomposeQP/decomposeSA function
+    ## Obtain inferred exposures using decomposeQP/decomposeSA function
     ## Note: SignatureEstimation::decomposeQP/decomposeSA() can only attribute ONE tumor at each run!
     num.tumors <- ncol(convSpectra)
-    ## In each cycle, obtain attributed exposures for each tumor.
+    ## In each cycle, obtain inferred exposures for each tumor.
     exposureCounts <- data.frame()
 
     for(ii in 1:num.tumors){
@@ -247,9 +247,9 @@ RunSignatureEstimationSAAttributeOnly <-
               to = paste0(out.dir,"/ground.truth.signatures.csv"),
               overwrite = overwrite)
 
-    ## Write attributed exposures into a SynSig formatted exposure file.
+    ## Write inferred exposures into a SynSig formatted exposure file.
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Save seeds and session information
     ## for better reproducibility
@@ -257,6 +257,6 @@ RunSignatureEstimationSAAttributeOnly <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Return the exposures attributed, invisibly
+    ## Return the exposures inferred, invisibly
     invisible(exposureCounts)
   }

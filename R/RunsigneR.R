@@ -47,7 +47,7 @@ InstallsigneR <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{signeR}, invisibly.
+#' @return The inferred exposure of \code{signeR}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{out.dir}. These are:
@@ -161,14 +161,14 @@ RunsigneR <-
     exposureCounts <- extractionObject$Ehat ## Unnormalized exposures
     rownames(exposureCounts) <- paste("signeR",seq(1,K.best),sep = ".") ## Assign row names of exposure matrix as names of signatures
     colnames(exposureCounts) <- colnames(spectra) ## Assign column names of exposure matrix as names of tumors
-    ## Normalize the attributed counts so that each column represents exposure of a signature
+    ## Normalize the inferred counts so that each column represents exposure of a signature
     for(ii in 1:ncol(exposureCounts)) {
       exposureCounts[,ii] <- exposureCounts[,ii] / sum(exposureCounts[,ii])
       exposureCounts[,ii] <- exposureCounts[,ii] * colSums(spectra)[ii]
     }
     ## Save exposure attribution results
     WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information
