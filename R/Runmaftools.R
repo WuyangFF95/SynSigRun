@@ -35,9 +35,9 @@ Installmaftools <- function(){
 #' attribution of maftools repeatable.
 #' Default: 1.
 #'
-#' @param K,K.range \code{K} is the precise value for
+#' @param K.exact,K.range \code{K.exact} is the exact value for
 #' the number of signatures active in spectra (K).
-#' Specify \code{K} if you know precisely how many signatures
+#' Specify \code{K.exact} if you know exactly how many signatures
 #' are active in the \code{input.catalog}, which is the
 #' \code{ICAMS}-formatted spectra file.
 #'
@@ -47,7 +47,7 @@ Installmaftools <- function(){
 #' Specify \code{K.range} if you don't know how many signatures
 #' are active in the \code{input.catalog}.
 #'
-#' WARNING: You must specify only one of \code{K} or \code{K.range}!
+#' WARNING: You must specify only one of \code{K.exact} or \code{K.range}!
 #'
 #' Default: NULL
 #'
@@ -75,14 +75,14 @@ Runmaftools <-
            out.dir,
            CPU.cores = NULL,
            seedNumber = 1,
-           K = NULL,
+           K.exact = NULL,
            K.range = NULL,
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Check whether ONLY ONE of K or K.range is specified.
-    bool1 <- is.numeric(K) & is.null(K.range)
-    bool2 <- is.null(K) & is.numeric(K.range) & length(K.range) == 2
+    ## Check whether ONLY ONE of K.exact or K.range is specified.
+    bool1 <- is.numeric(K.exact) & is.null(K.range)
+    bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
     ## Install maftools, if not found in library
@@ -135,7 +135,7 @@ Runmaftools <-
 
     ## Run NMF using ICAMS-formatted spectra catalog
     ## Determine the best number of signatures (K.best).
-    ## If K is provided, use K as the K.best.
+    ## If K.exact is provided, use K.exact as the K.best.
     ## If K.range is provided, determine K.best by doing raw extraction.
     if(bool1){
       grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
@@ -143,8 +143,7 @@ Runmaftools <-
                           n = K,     ## n specifies number of signatures you want to assess
                           parallel  = paste0("p",CPU.cores))
       grDevices::dev.off()
-      K.best <- K
-      K.range <- K
+      K.best <- K.exact
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
