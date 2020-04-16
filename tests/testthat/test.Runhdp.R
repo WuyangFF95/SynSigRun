@@ -2,7 +2,7 @@
 input.catalog <-
   ICAMS::ReadCatalog("tests/SBS96.ground.truth/ground.truth.syn.catalog.csv")
 
-stir.closure <- hdp:::make.stirling()
+stir.closure <- hdp::make.stirling()
 
 retval <- RunhdpInternal(
   input.catalog = input.catalog[ , 1:15],

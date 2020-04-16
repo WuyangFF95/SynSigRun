@@ -51,7 +51,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{SparseSignatures}, invisibly.
+The inferred exposure of \code{SparseSignatures}, invisibly.
 }
 \description{
 Run SparseSignatures extraction and attribution on a spectra catalog file

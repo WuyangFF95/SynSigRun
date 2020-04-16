@@ -38,7 +38,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{deconstructSigs}, invisibly.
+The inferred exposure of \code{deconstructSigs}, invisibly.
 }
 \description{
 Run deconstructSigs attribution on a spectra catalog file

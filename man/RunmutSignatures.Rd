@@ -77,7 +77,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{mutSignatures}, invisibly.
+The inferred exposure of \code{mutSignatures}, invisibly.
 }
 \description{
 Run mutSignatures extraction and attribution on a spectra catalog file

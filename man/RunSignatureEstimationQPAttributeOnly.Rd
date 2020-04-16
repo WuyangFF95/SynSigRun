@@ -38,7 +38,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{SignatureEstimation}, invisibly.
+The inferred exposure of \code{SignatureEstimation}, invisibly.
 }
 \description{
 Run SignatureEstimation Quadratic Programming (QP) attribution

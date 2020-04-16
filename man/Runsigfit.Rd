@@ -65,7 +65,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{sigfit}, invisibly.
+The inferred exposure of \code{sigfit}, invisibly.
 }
 \description{
 WARNING: sigfit can only do exposure attribution
