@@ -68,6 +68,10 @@ RunhdpInternal <-
            verbose       = TRUE,
            num.posterior = 4) {
 
+    if (!exists("stir.closure", envir = .GlobalEnv)) {
+      assign("stir.closure", make.stirling(), envir = .GlobalEnv)
+    }
+
     ## Set seed
     set.seed(seedNumber)
     seedInUse <- .Random.seed  # To document the seed used

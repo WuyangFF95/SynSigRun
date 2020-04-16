@@ -7,7 +7,7 @@ input.catalog <-
       package = "SynSigRun",
       mustWork = TRUE))
 
-stir.closure <- hdp:::make.stirling()
+# stir.closure <- hdp:::make.stirling()
 
 load(
   system.file("tests/RunhdpInternal.testdata/t2.out.Rdata",
