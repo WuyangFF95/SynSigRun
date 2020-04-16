@@ -11,7 +11,7 @@ RunmutSignatures(
   CPU.cores = NULL,
   iterations = 1000,
   seedNumber = 1,
-  K = NULL,
+  K.exact = NULL,
   K.range = NULL,
   test.only = FALSE,
   overwrite = FALSE
@@ -52,9 +52,9 @@ used to run sigfit. Setting seed can make the
 attribution of sigfit repeatable.
 Default: 1.}
 
-\item{K, K.range}{\code{K} is the precise value for
+\item{K.exact, K.range}{\code{K.exact} is the exact value for
 the number of signatures active in spectra (K).
-Specify \code{K} if you know precisely how many signatures
+Specify \code{K.exact} if you know exactly how many signatures
 are active in the \code{input.catalog}, which is the
 \code{ICAMS}-formatted spectra file.
 
@@ -65,7 +65,7 @@ Specify \code{K.range} if you don't know how many signatures
 are active in the \code{input.catalog}.
 K.max - K.min >= 3, otherwise an error will be thrown.
 
-WARNING: You must specify only one of \code{K} or \code{K.range}!
+WARNING: You must specify only one of \code{K.exact} or \code{K.range}!
 
 Default: NULL}
 

@@ -14,7 +14,8 @@ RunhdpInternal(
   remove.noise = FALSE,
   overwrite = FALSE,
   verbose = TRUE,
-  num.posterior = 4
+  num.posterior = 4,
+  posterior_verbosity = 0
 )
 }
 \arguments{
@@ -61,6 +62,9 @@ for diagnostic purposes, select \code{FALSE}.}
 
 \item{num.posterior}{Number of posterior sampling chains; can set to
 1 for testing.}
+
+\item{posterior_verbosity}{Pass to \code{\link[hdp]{hdp_posterior}}
+\code{verbosity}.}
 }
 \value{
 The attributed exposure of \code{hdp}, invisibly.
