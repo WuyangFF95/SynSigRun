@@ -191,56 +191,31 @@ RunhdpInternal <-
       gc()
     }
 
-    ## Step 2: run 4 independent sampling chains
-    {
-      if(CPU.cores == 1){ ## debug
-        ## Run four independent posterior sampling chains
-        chlist <- vector("list", 4)	#4 is too much here!
+    ## Step 2: run num.posterior independent sampling chains
 
-        for (i in 1:num.posterior) {
-
-          if (verbose) message("calling hdp_posterior ", i)
-          chlist[[i]] <-
-            hdp::hdp_posterior(
-              hdpObject,
-              # The remaining values, except seed, are from the vignette; there
-              # are no defaults.
-              burnin = 4000,
-              n      = 50,
-              space  = 50,
-              cpiter = 3,
-              # Must choose a different seed for each of the 4 chains:
-              seed   = (seedNumber + i * 10^6) %% (10^7) )
-        }
-      } else {
-        f_posterior <- function(seed,hdpObject) {
-          if (verbose) message("calling hdp_posterior")
-            retval <- hdp::hdp_posterior(
-              hdpObject,
-              # The remaining values, except seed, are from the vignette; there
-              # are no defaults.
-              burnin = 4000,
-              n      = 50,
-              space  = 50,
-              cpiter = 3,
-              # Must choose a different seed for each of the 4 chains:
-              seed   = seed %% (10^7) )
-            return(retval)
-        }
-
-        chlist <- parallel::mclapply(
-          X = seedNumber + 10^6 * 1:num.posterior,
-          FUN = f_posterior,
-          hdpObject = hdpObject,
-          mc.cores = CPU.cores
-        )
-      }
-
-      ## Generate the original multi_chain for the sample
-      if (verbose) message("calling hdp_multi_chain")
-      mut_example_multi <- hdp::hdp_multi_chain(chlist)
+    f_posterior <- function(seed) {
+      if (verbose) message("calling hdp_posterior")
+      retval <- hdp::hdp_posterior (
+        hdp    = hdpObject,
+        # The remaining values, except seed, are from the vignette; there
+        # are no defaults.
+        burnin = 4000,
+        n      = 50,
+        space  = 50,
+        cpiter = 3,
+        seed   = seed)
+      return(retval)
     }
 
+    chlist <- parallel::mclapply(
+      # Must choose a different seed for each of the chains
+      X = (seedNumber + 1:num.posterior * 10^6) %% 10^7 ,
+      FUN = f_posterior,
+      mc.cores = CPU.cores)
+
+    ## Generate the original multi_chain for the sample
+    if (verbose) message("calling hdp_multi_chain")
+    mut_example_multi <- hdp::hdp_multi_chain(chlist)
 
     ## Step 3: Plot the diagnostics of sampling chains.
     {
