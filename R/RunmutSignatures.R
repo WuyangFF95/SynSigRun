@@ -160,9 +160,9 @@ RunmutSignaturesAttributeOnly <-
 #' attribution of sigfit repeatable.
 #' Default: 1.
 #'
-#' @param K,K.range \code{K} is the precise value for
+#' @param K.exact,K.range \code{K.exact} is the exact value for
 #' the number of signatures active in spectra (K).
-#' Specify \code{K} if you know precisely how many signatures
+#' Specify \code{K.exact} if you know exactly how many signatures
 #' are active in the \code{input.catalog}, which is the
 #' \code{ICAMS}-formatted spectra file.
 #'
@@ -173,7 +173,7 @@ RunmutSignaturesAttributeOnly <-
 #' are active in the \code{input.catalog}.
 #' K.max - K.min >= 3, otherwise an error will be thrown.
 #'
-#' WARNING: You must specify only one of \code{K} or \code{K.range}!
+#' WARNING: You must specify only one of \code{K.exact} or \code{K.range}!
 #'
 #' Default: NULL
 #'
@@ -203,14 +203,14 @@ RunmutSignatures <-
            CPU.cores = NULL,
            iterations = 1000,
            seedNumber = 1,
-           K = NULL,
+           K.exact = NULL,
            K.range = NULL,
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Check whether ONLY ONE of K or K.range is specified.
-    bool1 <- is.numeric(K) & is.null(K.range)
-    bool2 <- is.null(K) & is.numeric(K.range) & length(K.range) == 2
+    ## Check whether ONLY ONE of K.exact or K.range is specified.
+    bool1 <- is.numeric(K.exact) & is.null(K.range)
+    bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
     ## Check if algorithm parameter is correctly set
@@ -269,12 +269,12 @@ RunmutSignatures <-
     spectraCounts <- mutSignatures::as.mutation.counts(x = convSpectra) ## S4 object. Its class is "mutationCounts"
 
     ## Determine the best number of signatures (K.best).
-    ## If K is provided, use K as the K.best.
+    ## If K.exact is provided, use K.exact as the K.best.
     ## If K.range is provided, determine K.best by doing raw extraction
     ## with function ().
     ## Function can find the K.best with the Sihouette.
     if(bool1){
-      K.best <- K
+      K.best <- K.exact
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
