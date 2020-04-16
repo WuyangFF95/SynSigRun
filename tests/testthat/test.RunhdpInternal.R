@@ -7,8 +7,6 @@ input.catalog <-
       package = "SynSigRun",
       mustWork = TRUE))
 
-# stir.closure <- hdp:::make.stirling()
-
 load(
   system.file("tests/RunhdpInternal.testdata/t2.out.Rdata",
               package = "SynSigRun",
@@ -16,7 +14,7 @@ load(
 
 retvalx <- RunhdpInternal(
   input.catalog = input.catalog[ , 1:15],
-  out.dir = "tests/test_RunhdpInternal_out_dir",
+  # out.dir = "tests/test_RunhdpInternal_out_dir",
   CPU.cores = 1,
   seedNumber = 44,
   K.guess = 5,

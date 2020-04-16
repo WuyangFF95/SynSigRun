@@ -49,19 +49,11 @@
 #'
 #' @return The attributed exposure of \code{hdp}, invisibly.
 #'
-#' @details Creates several
-#'  files in \code{out.dir}. These are:
-#'  TODO(Steve): list the files
-#'
-#'  TODO(Wuyang)
-#'
-#' @importFrom utils capture.output
-#'
 #' @export
 
 RunhdpInternal <-
   function(input.catalog,
-           out.dir,
+           # out.dir,
            CPU.cores           = 1,
            seedNumber          = 1,
            K.guess,
@@ -107,11 +99,11 @@ RunhdpInternal <-
     number.samples  <- ncol(spectra)
 
     ## Create output directory
-    if (dir.exists(out.dir)) {
-      if (!overwrite) stop(out.dir, " already exits")
-    } else {
-      dir.create(out.dir, recursive = T)
-    }
+    # if (dir.exists(out.dir)) {
+    #  if (!overwrite) stop(out.dir, " already exits")
+    # } else {
+    #  dir.create(out.dir, recursive = T)
+    # }
 
     if (verbose) {
       message("number of Dirichlet process data clusters = ", K.guess)
@@ -222,57 +214,13 @@ RunhdpInternal <-
       FUN = f_posterior,
       mc.cores = CPU.cores)
 
-    ## Generate the original multi_chain for the sample
+    # Generate the original multi_chain for the sample
     if (verbose) message("calling hdp_multi_chain")
     mut_example_multi <- hdp::hdp_multi_chain(chlist)
 
-    ## Step 3: Plot the diagnostics of sampling chains.
-    {
-      ## Plotting using hdp functions
-      ## Plotting device on the server does not work
-      ## Need to plot the file into a pdf
-
-
-      if (verbose) message("plotting to original_sample.pdf")
-      ## Draw the DP oscillation plot for mut_example_multi(original_sample)
-      {
-        grDevices::pdf(file = paste0(out.dir,"/original_sample.pdf"))
-
-        graphics::par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
-        p1 <- lapply(hdp::chains(mut_example_multi),
-                     hdp::plot_lik, bty="L", start=500)
-        p2 <- lapply(hdp::chains(mut_example_multi),
-                     hdp::plot_numcluster, bty="L")
-
-        grDevices::dev.off()
-      }
-
-      if (verbose) message("calling hdp_extract_components")
-      ## Extract components(here is signature) with cosine.merge = 0.90 (default)
-      mut_example_multi_extracted <- hdp::hdp_extract_components(mut_example_multi)
-      mut_example_multi_extracted
-
-
-      ## Generate a pdf for mut_example_multi_extracted
-      {
-        if (verbose) message("plotting to signature_hdp_embedded_func.pdf")
-        grDevices::pdf(
-          file = paste0(out.dir,"/signature_hdp_embedded_func.pdf"))
-        ## Draw the DP oscillation plot for mut_example_multi_extracted
-        graphics::par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
-        p1 <- lapply(hdp::chains(mut_example_multi_extracted),
-                     hdp::plot_lik, bty="L", start=500)
-        p2 <- lapply(hdp::chains(mut_example_multi_extracted),
-                     hdp::plot_numcluster, bty="L")
-
-        ## Draw the computation size plot
-        graphics::par(mfrow=c(1,1), mar=c(5, 4, 4, 2))
-        hdp::plot_comp_size(mut_example_multi_extracted, bty="L")
-
-        ## Close the PDF device so that the plots are exported to PDF
-        grDevices::dev.off()
-      }
-    }
+    if (verbose) message("calling hdp_extract_components")
+    # Extract components(here is signature) with cosine.merge = 0.90 (default)
+    mut_example_multi_extracted <- hdp::hdp_extract_components(mut_example_multi)
 
     ## Step 4: Using hdp samples to extract signatures
     {
@@ -301,15 +249,11 @@ RunhdpInternal <-
           extractedSignatures <- extractedSignatures[,-(sigToBeRemoved),drop = FALSE]
       }
 
-
       ## Convert extractedSignatures to ICAMS-formatted catalog.
       extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                                region = "unknown",
                                                catalog.type = "counts.signature")
 
-      if (verbose) message("calling ICAMS::WriteCatalog")
-      ICAMS::WriteCatalog(extractedSignatures,
-                          paste0(out.dir,"/extracted.signatures.csv"))
     }
 
 
@@ -345,18 +289,11 @@ RunhdpInternal <-
       for (sample in seq(1,ncol(exposureProbs)))
         exposureCounts[,sample] <- sample_mutation_count[[sample]] * exposureProbs[,sample]
 
-      if (verbose) message("Calling WriteExposure() to write exposure counts")
-      WriteExposure(exposureProbs,
-                    paste0(out.dir,"/exposure.probs.csv"))
-      WriteExposure(exposureCounts,
-                    paste0(out.dir,"/inferred.exposures.csv"))
     }
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    ## Save seeds for reproducibility
+    # write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
+    # write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
     ## Return a list of signatures and exposures
     invisible(list("signature" = extractedSignatures,
