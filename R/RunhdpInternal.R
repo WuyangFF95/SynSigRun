@@ -44,6 +44,9 @@
 #' @param num.posterior Number of posterior sampling chains; can set to
 #'   1 for testing.
 #'
+#' @param posterior_verbosity Pass to \code{\link[hdp]{hdp_posterior}}
+#'      \code{verbosity}.
+#'
 #' @return The attributed exposure of \code{hdp}, invisibly.
 #'
 #' @details Creates several
@@ -59,17 +62,18 @@
 RunhdpInternal <-
   function(input.catalog,
            out.dir,
-           CPU.cores     = 1,
-           seedNumber    = 1,
+           CPU.cores           = 1,
+           seedNumber          = 1,
            K.guess,
-           multi.types   = FALSE,
-           remove.noise  = FALSE,
-           overwrite     = FALSE,
-           verbose       = TRUE,
-           num.posterior = 4) {
+           multi.types         = FALSE,
+           remove.noise        = FALSE,
+           overwrite           = FALSE,
+           verbose             = TRUE,
+           num.posterior       = 4,
+           posterior_verbosity = 0) {
 
     if (!exists("stir.closure", envir = .GlobalEnv)) {
-      assign("stir.closure", make.stirling(), envir = .GlobalEnv)
+      assign("stir.closure", hdp::make.stirling(), envir = .GlobalEnv)
     }
 
     ## Set seed
@@ -200,14 +204,15 @@ RunhdpInternal <-
     f_posterior <- function(seed) {
       if (verbose) message("calling hdp_posterior")
       retval <- hdp::hdp_posterior (
-        hdp    = hdpObject,
+        hdp       = hdpObject,
+        verbosity = posterior_verbosity,
         # The remaining values, except seed, are from the vignette; there
         # are no defaults.
-        burnin = 4000,
-        n      = 50,
-        space  = 50,
-        cpiter = 3,
-        seed   = seed)
+        burnin    = 4000,
+        n         = 50,
+        space     = 50,
+        cpiter    = 3,
+        seed      = seed)
       return(retval)
     }
 
