@@ -6,13 +6,10 @@
 \usage{
 RunhdpInternal(
   input.catalog,
-  out.dir,
   CPU.cores = 1,
   seedNumber = 1,
   K.guess,
   multi.types = FALSE,
-  remove.noise = FALSE,
-  overwrite = FALSE,
   verbose = TRUE,
   num.posterior = 4,
   posterior_verbosity = 0
@@ -21,10 +18,6 @@ RunhdpInternal(
 \arguments{
 \item{input.catalog}{A catalog of spectra catalog
 in \code{\link[ICAMS]{ICAMS}} format.}
-
-\item{out.dir}{Directory that will be created for the output;
-abort if it already exits.  Log files will be in
-\code{paste0(out.dir, "/tmp")}.}
 
 \item{CPU.cores}{Number of CPUs to use in running
 \code{\link[hdp]{hdp_posterior}}.}
@@ -50,14 +43,6 @@ If it is a character vector, it should be a vector of case-sensitive tumor
 types.
 e.g. \code{c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")}.}
 
-\item{remove.noise}{Whether to remove noise signature "hdp.0"? In normal cases scenarios,
-only few mutations will be assigned to noise signature.
-
-For result visualization and assessment of \code{hdp} package, select \code{TRUE};
-for diagnostic purposes, select \code{FALSE}.}
-
-\item{overwrite}{If TRUE, overwrite existing output.}
-
 \item{verbose}{If \code{TRUE} then \code{message} progress information.}
 
 \item{num.posterior}{Number of posterior sampling chains; can set to
@@ -71,11 +56,4 @@ The attributed exposure of \code{hdp}, invisibly.
 }
 \description{
 Run hdp extraction and attribution on a spectra catalog file
-}
-\details{
-Creates several
- files in \code{out.dir}. These are:
- TODO(Steve): list the files
-
- TODO(Wuyang)
 }
