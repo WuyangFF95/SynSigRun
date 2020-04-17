@@ -25,5 +25,8 @@ retvalx <- RunhdpInternal(
   num.posterior = 1
 )
 
-testthat::expect_equal(retvalx, t2.out)
+foo <- t2.out$signature
+class(foo) <- "matrix"
+testthat::expect_equal(retvalx$signature, foo, check.attributes = FALSE)
+testthat::expect_equal(retvalx$exposure, t2.out$exposure)
 })
