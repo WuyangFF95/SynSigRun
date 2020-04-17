@@ -12,7 +12,7 @@
 #'
 #' @param train.mc.data Transposed \code{\link[ICAMS]{ICAMS}} spectra catalog
 #' containing mutations of training samples.
-#' 
+#'
 #' @param test.mc.data Transposed \code{\link[ICAMS]{ICAMS}} spectra catalog
 #' containing mutations of testing samples.
 #'
@@ -44,12 +44,12 @@ make.heldout.obj <- function(train.mc.data, test.mc.data){
 }
 
 run.stm <- function(
-  train.mc.data, 
-  test.mc.data, 
-  train.feature.file = NULL, 
-  test.feature.file = NULL, 
-  covariates = NULL, 
-  K, 
+  train.mc.data,
+  test.mc.data,
+  train.feature.file = NULL,
+  test.feature.file = NULL,
+  covariates = NULL,
+  K,
   seed){
   heldout <- make.heldout.obj(train.mc.data, test.mc.data)
   if (is.null(covariates)){
@@ -101,7 +101,7 @@ run.stm <- function(
 #' used to run tcsm. Setting seed can make the
 #' attribution of tcsm repeatable.
 #'
-#' @param K.exact,K.range \code{K.exact} is the exact 
+#' @param K.exact,K.range \code{K.exact} is the exact
 #' value for the number of signatures active in spectra (K).
 #' Specify \code{K.exact} if you know exact how many signatures
 #' are active in the \code{input.catalog}, which is the
@@ -140,12 +140,12 @@ Runtcsm <-
            seedNumber = 1,
            K.exact = NULL,
            K.range = NULL,
-		   covariates = NULL, 
+		       covariates = NULL,
            test.only = FALSE,
            overwrite = FALSE,
-		   feature.file = NULL, 
-		   effect.output.file = NULL, 
-		   sigma.output.file = NULL, 
+		   feature.file = NULL,
+		   effect.output.file = NULL,
+		   sigma.output.file = NULL,
 		   gamma.output.file = NULL
 		   ) {
 
@@ -154,8 +154,6 @@ Runtcsm <-
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    ## Check if model parameter is correctly set
-    stopifnot(model %in% c("nmf","emu"))
 
 
     ## Set seed
@@ -174,7 +172,7 @@ Runtcsm <-
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
-      dir.create(out.dir, recursive = T)
+      dir.create(paste0(out.dir,"/other.outputs.by.tcsm"), recursive = T)
     }
 
     ## CPU.cores specifies number of CPU cores to use.
@@ -224,27 +222,48 @@ Runtcsm <-
       ## The last element is the best signature number
       K.range <- seq.int(K.range[1],K.range[2])
 
-      likelihoods <- list()
+      likelihoods <- numeric(0)
       for(K in K.range){
-	    likelihoods[[as.character(K)]] <- 
-	      run.stm(
-		  train.mc.data,test.mc.data, 
-          train.feature.file = NULL, 
-          test.feature.file = NULL, 
-          covariates = NULL, 
-          K, 
-          seed = seedNumber)
+
+        currLikelihood <- data.frame()
+        portion <- ceiling(sample.number/5)
+
+        ## Do heldout training 5 times.
+        ## In each run, take ~80% of samples to train,
+        ## and take ~20% of samples to calculate likelihood of current K.
+        for(ii in 1:5){
+
+          if(ii == 5){
+            test.samples <-
+              seq((ii - 1)*portion + 1,sample.number)
+          } else{
+            test.samples <-
+              seq((ii - 1)*portion + 1,ii*portion)
+          }
+          train.samples <- setdiff(seq.int(1,sample.number),test.samples)
+
+          train.mc.data <- convSpectra[train.samples,]
+          test.mc.data <- convSpectra[test.samples,]
+
+          currLikelihood <- rbind(currLikelihood,
+            run.stm(
+            train.mc.data,
+            test.mc.data,
+            train.feature.file = NULL,
+            test.feature.file = NULL,
+            covariates = NULL,
+            K,
+            seed = seedNumber))
+          gc()
+        }
+
+        likelihoods[as.character(K)] <- mean(currLikelihood[,1])
 	  }
 
 
-      K.best <- mcmc_samples_extr$best ## Choose K.best
+      K.best <- names(likelihoods)[which.max(likelihoods)] ## Choose K.best
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
-
-      ## Remove the raw extraction object,
-      ## which is extremely large (~32G)
-      rm(mcmc_samples_extr)
-      gc() ## Do garbage collection to recycle RAM
     }
 
 
@@ -268,14 +287,14 @@ Runtcsm <-
       effect.tables <- effect.summary$tables
       results <- lapply(effect.summary$tables, function(x) x[, "Estimate"])
       effect.frame <- as.data.frame(do.call(rbind, results))
-      utils::write.table(effect.frame, file=effect.output.file, sep="\t")
+      utils::write.table(effect.frame, file=paste0(out.dir,"/other.outputs.by.tcsm/effect.frame.tsv"), sep="\t")
       covariate.list <- strsplit(covariates, "\\+")[[1]]
       gamma <- stm1$mu$gamma
       rownames(gamma) <- c("default", covariate.list)
-      utils::write.table(gamma, file=gamma.output.file, sep="\t")
+      utils::write.table(gamma, file=paste0(out.dir,"/other.outputs.by.tcsm/gamma.tsv"), sep="\t")
   }
 
-  utils::write.table(stm1$sigma, file=sigma.output.file, sep="\t")
+  utils::write.table(stm1$sigma, file=paste0(out.dir,"/other.outputs.by.tcsm/sigma.tsv"), sep="\t")
   # process the signatures and save them
   # the K-by-V matrix logbeta contains the natural log of the probability of seeing each word conditional on the topic
   mat <- stm1$beta$logbeta[[1]]
@@ -299,15 +318,15 @@ Runtcsm <-
   ## Write extracted signatures into a ICAMS signature catalog file.
   ICAMS::WriteCatalog(extractedSignatures,
                       paste0(out.dir,"/extracted.signatures.csv"))
-  
-  
+
+
   # Get raw exposure object, dt.
   # dt records exposure proportion in each tumor spectrum.
   # That is, the signature exposure of each tumor sums to 1.
   dt <- stm::make.dt(stm1)
   rawExposures <- as.matrix(dt[,-1])
   rownames(rawExposures) <- colnames(spectra)
-  colnames(rawExposures) <- 
+  colnames(rawExposures) <-
     gsub(pattern = "Topic",replacement = "tcsm.",
 	colnames(rawExposures))
   ## Calculate exposureCounts from rawExposures.
@@ -315,7 +334,7 @@ Runtcsm <-
   exposureCounts <- t(exposureCounts)
 
   ## Write inferred exposures into a SynSig formatted exposure file.
-  
+
   WriteExposure(exposureCounts,
                 paste0(out.dir,"/inferred.exposures.csv"))
 
