@@ -19,8 +19,8 @@ retvalx <- RunhdpInternal(
   seedNumber = 44,
   K.guess = 5,
   multi.types = FALSE,
-  remove.noise = FALSE,
-  overwrite = TRUE,
+  # remove.noise = FALSE,
+  # overwrite = TRUE,
   verbose       = TRUE,
   num.posterior = 1
 )
