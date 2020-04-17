@@ -39,7 +39,7 @@ divided by 2.}
 used to run tcsm. Setting seed can make the
 attribution of tcsm repeatable.}
 
-\item{K.exact, K.range}{\code{K.exact} is the exact 
+\item{K.exact, K.range}{\code{K.exact} is the exact
 value for the number of signatures active in spectra (K).
 Specify \code{K.exact} if you know exact how many signatures
 are active in the \code{input.catalog}, which is the
