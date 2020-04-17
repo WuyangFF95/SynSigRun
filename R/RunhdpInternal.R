@@ -3,10 +3,6 @@
 #' @param input.catalog A catalog of spectra catalog
 #' in \code{\link[ICAMS]{ICAMS}} format.
 #'
-# @param out.dir Directory that will be created for the output;
-# abort if it already exits.  Log files will be in
-# \code{paste0(out.dir, "/tmp")}.
-#
 #' @param CPU.cores Number of CPUs to use in running
 #'    \code{\link[hdp]{hdp_posterior}}.
 #'
@@ -73,35 +69,27 @@ RunhdpInternal <-
     seedInUse <- .Random.seed  # To document the seed used
     RNGInUse <- RNGkind()      # To document the random number generator (RNG) used
 
-    # Read in spectra data from input.catalog file
-    # spectra <- input.catalog
-
-    ## CPU.cores specifies number of CPU cores to use.
-    ## CPU.cores will be capped at 30.
-    ## If CPU.cores is not specified, CPU.cores will
-    ## be equal to the minimum of 30 or (total cores)/2
-
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which HDP accepts:
     ## 1. Remove the catalog related attributes in convSpectra
     ## 2. Transpose the catalog
     convSpectra <- input.catalog
 
-    # hdp get confused if there are extra attributes
-    # or classes.
+    # hdp gets confused if there are extra attributes or classes.
     class(convSpectra) <- "matrix"
-    attr(convSpectra,"catalog.type") <- NULL
-    attr(convSpectra,"region") <- NULL
-    dimnames(convSpectra) <- dimnames(input.catalog) # check if really necessary
+    # attr(convSpectra,"catalog.type") <- NULL
+    # attr(convSpectra,"region") <- NULL
+    # dimnames(convSpectra) <- dimnames(input.catalog) Not needed
     convSpectra <- t(convSpectra)
 
     number.channels <- nrow(input.catalog)
     number.samples  <- ncol(input.catalog)
 
     if (verbose) {
-      message("number of Dirichlet process data clusters = ", K.guess)
+      message("Guessed number of signatures ",
+      "(= Dirichlet process data clusters) = ", K.guess)
     }
-    ## Run hdp main program.
+
     ## Step 1: initialize hdp object
     {
       ## Allocate process index for hdp initialization.
@@ -161,7 +149,7 @@ RunhdpInternal <-
                                  alphaa = alphaa,
                                  alphab = alphab)
 
-      # num.process is the number of samples plus number cancer types plus 1 (grandparent)
+      # num.process is the number of samples plus number of cancer types plus 1 (grandparent)
       num.process <- hdp::numdp(hdpObject)
 
       if (verbose) message("calling hdp_setdata")
@@ -172,19 +160,16 @@ RunhdpInternal <-
 
       if (verbose) message("calling dp_activate")
 
-      # dp_activate calls hdp:::stirling, which when
-      # called on a large number (e.g. > 200000), requires a great deal of
-      # memory (e.g. estimated 2 Terabyte for stirling(200000)).
+      # dp_activate requires that stir.closure exists in .GlobalEnv
       hdpObject <- hdp::dp_activate(hdpObject,
                                     1:num.process,
                                     initcc = K.guess,
                                     seed = seedNumber)
 
-      ## Release the occupied RAM by dp_activate
-      gc()
+      # gc()
     }
 
-    ## Step 2: run num.posterior independent sampling chains
+    ## Step 2: run num.posterior on independent sampling chains
 
     f_posterior <- function(seed) {
       if (verbose) message("calling hdp_posterior")
@@ -221,7 +206,8 @@ RunhdpInternal <-
       ## Calculate the mutation composition in each signature:
       extractedSignatures <-
         hdp::comp_categ_distn(mut_example_multi_extracted)$mean
-      dim(extractedSignatures)
+
+      # dim(extractedSignatures)
       ## Add base context for extractedSignatures
       extractedSignatures <- t(extractedSignatures)
       rownames(extractedSignatures) <- rownames(input.catalog)
@@ -231,7 +217,7 @@ RunhdpInternal <-
         paste("hdp", colnames(extractedSignatures), sep = ".")
 
       ## Convert extractedSignatures to ICAMS-formatted catalog.
-      extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
+      extractedSignatures2 <- ICAMS::as.catalog(extractedSignatures,
                                                region = "unknown",
                                                catalog.type = "counts.signature")
 
@@ -239,13 +225,15 @@ RunhdpInternal <-
 
 
 
-    ## Calculate the exposure probability of each signature(component) for each tumor sample(posterior sample corresponding to a dirichlet process node):
-    ## This is the probability distribution of signatures(components) for all tumor samples(DP nodes)
-    ## exposureProbs proves to be the normalized signature exposure all tumor samples
+    ## Calculate the exposure probability of each signature (component) for each
+    ## tumor sample (posterior sample corresponding to a dirichlet process node):
+    ## This is the probability distribution of signatures(components) for all
+    ## tumor samples (DP nodes) exposureProbs proves to be the normalized
+    ## signature exposure all tumor samples
 
     if (verbose) message("Calling hdp::comp_dp_distn to generate exposure probability")
     exposureProbs <- hdp::comp_dp_distn(mut_example_multi_extracted)$mean
-    dim(exposureProbs)
+    # dim(exposureProbs)
     exposureProbs <- exposureProbs[(num.tumor.types + 2):dim(exposureProbs)[1],]
     rownames(exposureProbs) <- rownames(convSpectra)[1:dim(exposureProbs)[1]]
     ## Remove NA or NULL "hdp.0" signature in exposureProbs matrix.
@@ -254,10 +242,9 @@ RunhdpInternal <-
     ## Change signature names in exposureCounts
     ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
     colnames(exposureProbs) <- colnames(extractedSignatures)
-    dim(exposureProbs)
+    # dim(exposureProbs)
     ## Transpose exposureProbs so that it conforms to SynSigEval format.
     exposureProbs <- t(exposureProbs)
-
 
     ## Calculate signature exposure counts from signature exposure probability
     ## Unnormalized exposure counts = Normalized exposure probability * Total mutation count in a sample
@@ -265,14 +252,14 @@ RunhdpInternal <-
 
     exposureCounts <- matrix(nrow = nrow(exposureProbs), ncol = ncol(exposureProbs))
     dimnames(exposureCounts) <- dimnames(exposureProbs)
+
     for (sample in seq(1,ncol(exposureProbs)))
       exposureCounts[,sample] <- sample_mutation_count[[sample]] * exposureProbs[,sample]
 
-    ## Save seeds for reproducibility
-    # write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    # write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
-
     ## Return a list of signatures and exposures
-    invisible(list("signature" = extractedSignatures,
-                   "exposure" = exposureCounts))
+    invisible(list(signature = extractedSignatures2,
+                   exposure  = exposureCounts,
+                   raw.sig   = extractedSignatures,
+                   seedInUse = seedInUse,
+                   RNGInUse  = RNGInUse))
   }
