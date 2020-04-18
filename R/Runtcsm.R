@@ -262,6 +262,7 @@ Runtcsm <-
 
 
       K.best <- names(likelihoods)[which.max(likelihoods)] ## Choose K.best
+      K.best <- as.integer(K.best)
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
     }
