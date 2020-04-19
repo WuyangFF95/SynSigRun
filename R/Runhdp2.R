@@ -78,7 +78,6 @@ Runhdp2 <-
     p2 <- lapply(chains, hdp::plot_numcluster, bty="L")
     grDevices::dev.off()
 
-
     ex.chains <- hdp::chains(retval$ex.multi.chains) # extracted chains
     grDevices::pdf(
       file = paste0(out.dir,"/signature_hdp_embedded_func.pdf"))
@@ -88,7 +87,7 @@ Runhdp2 <-
     p2 <- lapply(ex.chains, hdp::plot_numcluster, bty="L")
     ## Draw the computation size plot
     graphics::par(mfrow=c(1,1), mar=c(5, 4, 4, 2))
-    hdp::plot_comp_size(mut_example_multi_extracted, bty="L")
+    hdp::plot_comp_size(retval$ex.multi.chains, bty="L")
     grDevices::dev.off()
 
     if (verbose) message("Writing signatures")
