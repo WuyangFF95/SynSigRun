@@ -18,14 +18,14 @@ out.dir.root <- system.file("tests",
 retvalx <- Runhdp2(
   input.catalog.file = input.catalog.file,
   out.dir            = file.path(out.dir.root, "test_Runhdp2_out_dir"),
-  out.dir            = out.dir,
   CPU.cores          = 1,
   seedNumber         = 44,
   K.guess            = 5,
   multi.types        = FALSE,
   overwrite          = TRUE,
   verbose            = TRUE,
-  num.posterior      = 1
+  num.posterior      = 1,
+  test.only          = 15
 )
 
 foo <- t2.out$signature
