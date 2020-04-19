@@ -91,7 +91,7 @@ Runhdp2 <-
     grDevices::dev.off()
 
     if (verbose) message("Writing signatures")
-    extractedSignatures <- ICAMS::as.catalog(retval$signture,
+    extractedSignatures <- ICAMS::as.catalog(retval$signature,
                                              region       = "unknown",
                                              catalog.type = "counts.signature")
     ICAMS::WriteCatalog(extractedSignatures,
