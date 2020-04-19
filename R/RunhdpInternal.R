@@ -29,7 +29,7 @@
 #' @param num.posterior Number of posterior sampling chains; can set to
 #'   1 for testing.
 #'
-#' @param posterior_verbosity Pass to \code{\link[hdp]{hdp_posterior}}
+#' @param posterior.verbosity Pass to \code{\link[hdp]{hdp_posterior}}
 #'      \code{verbosity}.
 #'
 #' @return The attributed exposure of \code{hdp}, invisibly.
@@ -45,7 +45,7 @@ RunhdpInternal <-
            multi.types         = FALSE,
            verbose             = TRUE,
            num.posterior       = 4,
-           posterior_verbosity = 0) {
+           posterior.verbosity = 0) {
 
     if (!exists("stir.closure", envir = .GlobalEnv)) {
       assign("stir.closure", hdp::make.stirling(), envir = .GlobalEnv)
@@ -56,13 +56,9 @@ RunhdpInternal <-
     seedInUse <- .Random.seed  # To document the seed used
     RNGInUse <- RNGkind()      # To document the random number generator (RNG) used
 
-    ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which HDP accepts:
-    ## 1. Remove the catalog related attributes in convSpectra
-    ## 2. Transpose the catalog
+    # input.catalog into a matrix that accepts.
+    # hdp gets confused if the class in not matrix.
     convSpectra <- input.catalog
-
-    # hdp gets confused if the class in not "matrix.
     class(convSpectra) <- "matrix"
     convSpectra <- t(convSpectra)
 
@@ -74,7 +70,7 @@ RunhdpInternal <-
               "(= Dirichlet process data clusters) = ", K.guess)
     }
 
-    # Step 1: initialize hdp object
+    # Initialize hdp object
     # Allocate process index for hdp initialization.
     # Each different index number refers to a dirichlet process
     # for one tumor type. TODO Wuyang -- this comment does not seem correct
@@ -117,12 +113,7 @@ RunhdpInternal <-
 
     ## Calculate the number of levels in the DP node tree.
     dp.levels <- length(unique(ppindex))
-    ## DP node of each level share two Dirichlet Hyperparameters:
-    ## shape (alphaa) and rate (alphab).
-    ## For mutational signature analysis purpose,
-    ## alphaa and alphab are set as 1 for each level.
-    # alphaa <- rep(1,dp.levels)
-    # alphab <- rep(1,dp.levels)
+
     al <- rep(1,dp.levels)
 
     ## initialise hdp
@@ -149,15 +140,13 @@ RunhdpInternal <-
                                   1:num.process,
                                   initcc = K.guess,
                                   seed = seedNumber)
-    # End Step 1
 
-    ## Step 2: run num.posterior on independent sampling chains
-
+    # Run num.posterior independent sampling chains
     f_posterior <- function(seed) {
       if (verbose) message("calling hdp_posterior")
       retval <- hdp::hdp_posterior (
         hdp       = hdpObject,
-        verbosity = posterior_verbosity,
+        verbosity = posterior.verbosity,
         # The remaining values, except seed, are from the vignette
         burnin    = 4000,
         n         = 50,
@@ -201,12 +190,6 @@ RunhdpInternal <-
     if (verbose) message("Calling hdp::comp_dp_distn to generate exposure probability")
     exposureProbs <- hdp::comp_dp_distn(mut_example_multi_extracted)$mean
 
-    # exposureProbs <- exposureProbs[(num.tumor.types + 2):dim(exposureProbs)[1],]
-
-    # rownames(exposureProbs) <- rownames(convSpectra)[1:dim(exposureProbs)[1]]
-
-    # colnames(exposureProbs) <- colnames(extractedSignatures)
-
     # Remove columns corresponding to parent or grandparent nodes
     # (leaving only columns corresponding to samples.
     # Transpose so it conforms to SynSigEval format
@@ -219,8 +202,11 @@ RunhdpInternal <-
     colnames(exposureCounts) <- colnames(input.catalog)
     rownames(exposureCounts) <- colnames(extractedSignatures)
 
-    invisible(list(signature = extractedSignatures,
-                   exposure  = exposureCounts,
-                   seedInUse = seedInUse,
-                   RNGInUse  = RNGInUse))
+    invisible(list(signature       = extractedSignatures,
+                   exposure        = exposureCounts,
+                   exposure.p      = exposureProbs,
+                   multi.chains    = mut_example_multi,
+                   ex.multi.chains = mut_example_multi_extracted,
+                   seedInUse       = seedInUse,
+                   RNGInUse        = RNGInUse))
   }
