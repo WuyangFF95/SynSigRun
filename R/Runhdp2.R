@@ -85,7 +85,7 @@ Runhdp2 <-
     ## Draw the DP oscillation plot for mut_example_multi_extracted
     graphics::par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
     p1 <- lapply(ex.chains, hdp::plot_lik, bty="L", start=500)
-    p2 <- lapply(ex.chanis, hdp::plot_numcluster, bty="L")
+    p2 <- lapply(ex.chains, hdp::plot_numcluster, bty="L")
     ## Draw the computation size plot
     graphics::par(mfrow=c(1,1), mar=c(5, 4, 4, 2))
     hdp::plot_comp_size(mut_example_multi_extracted, bty="L")
