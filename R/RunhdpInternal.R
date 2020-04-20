@@ -52,9 +52,9 @@ RunhdpInternal <-
     }
 
     ## Set seed
-    set.seed(seedNumber)
-    seedInUse <- .Random.seed  # To document the seed used
-    RNGInUse <- RNGkind()      # To document the random number generator (RNG) used
+    # set.seed(seedNumber) TEST -- is this needed?
+    seedInUse <- .Random.seed  # To document the seed used TODO: Steve move to enclosing fn
+    RNGInUse <- RNGkind()      # To document the random number generator (RNG) used TODO: Steve ditto
 
     # input.catalog into a matrix that accepts.
     # hdp gets confused if the class in not matrix.
