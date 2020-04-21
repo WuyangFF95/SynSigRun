@@ -4,7 +4,7 @@ input.catalog <-
 
 stir.closure <- hdp::make.stirling()
 
-retval <- SynSigRun:::RunhdpInternal(
+retval <- RunhdpInternal(
   input.catalog = input.catalog[ , 1:15],
   out.dir = "tests/test_Hdprun_out_dir",
   CPU.cores = 1,
