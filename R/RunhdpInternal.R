@@ -191,7 +191,7 @@ RunhdpInternal <-
       gc()
     }
 
-    ## Step 2: run 4 independent sampling chains
+    ## Step 2: run independent sampling chains
     {
       if(CPU.cores == 1){ ## debug
         ## Run four independent posterior sampling chains
