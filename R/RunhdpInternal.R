@@ -205,9 +205,8 @@ RunhdpInternal <-
     invisible(list(signature       = extractedSignatures,
                    exposure        = exposureCounts,
                    exposure.p      = exposureProbs,
-                   multi.chains    = mut_example_multi,
+                   multi.chains    = mut_example_multi,  # TODO Steve simplify this
                    ex.multi.chains = mut_example_multi_extracted,
                    seedInUse       = seedInUse,
-                   RNGInUse        = RNGInUse,
-                   hdp.chain       = mut_example_multi_extracted))
+                   RNGInUse        = RNGInUse))
   }
