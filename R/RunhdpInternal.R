@@ -32,7 +32,7 @@
 #' @param posterior.verbosity Pass to \code{\link[hdp]{hdp_posterior}}
 #'      \code{verbosity}.
 #'
-#' @return The attributed exposure of \code{hdp}, invisibly.
+#' @return A lot of information, invisibly.
 #'
 #' @export
 
@@ -98,7 +98,7 @@ RunhdpInternal <-
       # 1 is a parent of one type (there are 2 types)
       # 2 indcates tumors of the first type
       # 3 indicates tumors of second type
-    } else if (is.character(multi.types)){ ## multi.types is a character vector recording tumor types
+    } else if (is.character(multi.types)) { ## multi.types is a character vector recording tumor types
       num.tumor.types <- length(unique(multi.types))
       process.index <- c(0, rep(1,num.tumor.types))
       process.index <- c(process.index, 1 + as.numeric(as.factor(multi.types)))
@@ -208,5 +208,6 @@ RunhdpInternal <-
                    multi.chains    = mut_example_multi,
                    ex.multi.chains = mut_example_multi_extracted,
                    seedInUse       = seedInUse,
-                   RNGInUse        = RNGInUse))
+                   RNGInUse        = RNGInUse,
+                   hdp.chain       = mut_example_multi_extracted))
   }
