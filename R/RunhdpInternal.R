@@ -4,7 +4,9 @@
 #' in \code{\link[ICAMS]{ICAMS}} format.
 #'
 #' @param CPU.cores Number of CPUs to use in running
-#'    \code{\link[hdp]{hdp_posterior}}.
+#'    \code{\link[hdp]{hdp_posterior}; this is used to parallize
+#'    running the posterior sampling chains, so there is no
+#'    point in making this larger than \code{num.posterior}.
 #'
 #' @param seedNumber Specify the random seed for repeatable results.
 #'
@@ -14,14 +16,14 @@
 #'
 #' @param multi.types A logical scalar or
 #' a character vector.
-#' If \code{FALSE}, hdp will regard all input spectra as one tumor type,
-#' and will allocate them to one single dirichlet process node.
+#' If \code{FALSE}, hdp will regard all input spectra as one tumor type.
 #'
 #' If \code{TRUE}, hdp will infer tumor types based on the string before "::" in their names.
-#' e.g. Tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
+#' e.g. tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
 #'
-#' If it is a character vector, it should be a vector of case-sensitive tumor
-#' types.
+#' If \code{multi.types} is a character vector it should be of the same length
+#' as the number of columns in \code{input.catalog}, and each value is the
+#' name of the tumor type of the corresponding column in \code{input.catalog},
 #' e.g. \code{c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")}.
 #'
 #' @param verbose If \code{TRUE} then \code{message} progress information.
@@ -31,6 +33,15 @@
 #'
 #' @param posterior.verbosity Pass to \code{\link[hdp]{hdp_posterior}}
 #'      \code{verbosity}.
+#'
+#' @param cos.merge The cosine similarity threshhold for merging raw clusters
+#'      from the posterior sampling chains into "components" i.e. signatures.
+#'      This is passed to \code{\link[hdp]{hdp_extract_components}} as
+#'      the argument \code{cos.merge}.
+#'
+#' @param min.sample A"components" (i.e. signature) must have at least
+#'      this many samples.  This is passed to \code{\link[hdp]{hdp_extract_components}} as
+#'      the argument \code{min.sample}.
 #'
 #' @return A lot of information, invisibly.
 #'
@@ -45,7 +56,9 @@ RunhdpInternal <-
            multi.types         = FALSE,
            verbose             = TRUE,
            num.posterior       = 4,
-           posterior.verbosity = 0) {
+           posterior.verbosity = 0,
+           cos.merge           = 0.9,
+           min.sample          = 1) {
 
     if (!exists("stir.closure", envir = .GlobalEnv)) {
       assign("stir.closure", hdp::make.stirling(), envir = .GlobalEnv)
@@ -53,7 +66,7 @@ RunhdpInternal <-
 
     ## Set seed
     # set.seed(seedNumber) TEST -- is this needed?
-    seedInUse <- .Random.seed  # To document the seed used TODO: Steve move to enclosing fn
+    seedInUse <- base::.Random.seed  # To document the seed used TODO: Steve move to enclosing fn
     RNGInUse <- RNGkind()      # To document the random number generator (RNG) used TODO: Steve ditto
 
     # input.catalog into a matrix that accepts.
@@ -72,38 +85,40 @@ RunhdpInternal <-
 
     # Initialize hdp object
     # Allocate process index for hdp initialization.
-    # Each different index number refers to a dirichlet process
-    # for one tumor type. TODO Wuyang -- this comment does not seem correct
-    if(multi.types == FALSE){ ## All tumors belong to one tumor type (default)
+
+    if (multi.types == FALSE) { # All tumors belong to one tumor type
       num.tumor.types <- 1
       process.index <- c(0,1,rep(2,number.samples))
-    } else if(multi.types == TRUE){
-      ## There are multiple tumors in the sample.
-      ## Tumor type will be inferred by the string before "::" in the column names.
-      ## e.g. Tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
-      tumor.types <- sapply(
-        colnames(input.catalog),
-        function(x) {strsplit(x,split = "::",fixed = T)[[1]][1]})
-      num.tumor.types <- length(unique(tumor.types))
-      ## 0 refers to the grandparent DP node. All signatures are drawn from this node.
-      ## Signature of each tumor type is drawn from a parent DP node (level 1).
-      ## If a dataset has X tumor types, then we need to specify X level-1 nodes.
-      process.index <- c(0, rep(1,num.tumor.types))
-      ## For every tumor of the 1st/2nd/3rd/... tumor type,
-      ## we need to specify a level 2/3/4/... DP node for the tumor.
-      process.index <- c(process.index,1 + as.numeric(as.factor(tumor.types)))
-      # Something like
+    } else {
+      if (multi.types == TRUE) {
+        sample.names <- colnames(input.catalog)
+        if (!all(grepl("::", sample.names)))
+          stop("Every sample name needs to be of",
+               " the form <sample_type>::<sample_id>")
+
+        tumor.types <- sapply(
+          sample.names,
+          function(x) {strsplit(x, split = "::", fixed = T)[[1]][1]})
+
+        num.tumor.types <- length(unique(tumor.types))
+      } else if (is.character(multi.types)) {
+        num.tumor.types <- length(unique(multi.types))
+        tumor.types <- multi.types
+      } else {
+        stop("multi.types should be TRUE, FALSE, or a character vector of tumor types")
+      }
+      # 0 refers to the grandparent Dirichelet process node.
+      # There is a level-one node for each tumor type, indicated by a 1.
+      process.index <- c(0, rep(1, num.tumor.types))
+
+      # Each tumor type gets its own number.
+      process.index <- c(process.index, 1 + as.numeric(as.factor(tumor.types)))
+      # process.index is now something like
       # c(0, 1, 1, 2, 2, 2, 3, 3)
       # 0 is grandparent
       # 1 is a parent of one type (there are 2 types)
       # 2 indcates tumors of the first type
       # 3 indicates tumors of second type
-    } else if (is.character(multi.types)) { ## multi.types is a character vector recording tumor types
-      num.tumor.types <- length(unique(multi.types))
-      process.index <- c(0, rep(1,num.tumor.types))
-      process.index <- c(process.index, 1 + as.numeric(as.factor(multi.types)))
-    } else {
-      stop("Error. multi.types should be TRUE, FALSE, or a vector of tumor types for each tumor sample.\n")
     }
 
     ## Specify ppindex as process.index,
@@ -134,8 +149,8 @@ RunhdpInternal <-
       convSpectra)
 
     if (verbose) message("calling dp_activate")
-
-    # dp_activate requires that stir.closure exists in .GlobalEnv
+    # dp_activate requires that stir.closure exists in .GlobalEnv;
+    # see above in this function.
     hdpObject <- hdp::dp_activate(hdpObject,
                                   1:num.process,
                                   initcc = K.guess,
@@ -144,7 +159,7 @@ RunhdpInternal <-
     # Run num.posterior independent sampling chains
     f_posterior <- function(seed) {
       if (verbose) message("calling hdp_posterior")
-      retval <- hdp::hdp_posterior (
+      retval <- hdp::hdp_posterior(
         hdp       = hdpObject,
         verbosity = posterior.verbosity,
         # The remaining values, except seed, are from the vignette
@@ -167,9 +182,11 @@ RunhdpInternal <-
     mut_example_multi <- hdp::hdp_multi_chain(chlist)
 
     if (verbose) message("calling hdp_extract_components")
-    # Extract components(here is signature) with cosine.merge = 0.90 (default) TODO: Wu Yang, this is clustering of signatures?
+    # Group raw "clusters" into "components" (i.e. signatures).
     mut_example_multi_extracted <-
-      hdp::hdp_extract_components(mut_example_multi)
+      hdp::hdp_extract_components(mut_example_multi,
+                                  cos.merge  = cos.merge,
+                                  min.sample = min.sample)
 
     if (verbose) message("calling hdp::comp_categ_distn")
     extractedSignatures <-

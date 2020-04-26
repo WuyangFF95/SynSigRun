@@ -16,7 +16,9 @@ Runhdp2(
   overwrite = FALSE,
   verbose = TRUE,
   num.posterior = 4,
-  posterior.verbosity = 0
+  posterior.verbosity = 0,
+  cos.merge = 0.9,
+  min.sample = 1
 )
 }
 \arguments{
@@ -27,9 +29,6 @@ in \code{\link[ICAMS]{ICAMS}} format.}
 abort if it already exits.  Log files will be in
 \code{paste0(out.dir, "/tmp")}.}
 
-\item{CPU.cores}{Number of CPUs to use in running
-\code{\link[hdp]{hdp_posterior}}.}
-
 \item{seedNumber}{Specify the random seed for repeatable results.}
 
 \item{K.guess}{Suggested initial value of the number of
@@ -38,14 +37,14 @@ signatures, passed to \code{\link[hdp]{dp_activate}} as
 
 \item{multi.types}{A logical scalar or
 a character vector.
-If \code{FALSE}, hdp will regard all input spectra as one tumor type,
-and will allocate them to one single dirichlet process node.
+If \code{FALSE}, hdp will regard all input spectra as one tumor type.
 
 If \code{TRUE}, hdp will infer tumor types based on the string before "::" in their names.
-e.g. Tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
+e.g. tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
 
-If it is a character vector, it should be a vector of case-sensitive tumor
-types.
+If \code{multi.types} is a character vector it should be of the same length
+as the number of columns in \code{input.catalog}, and each value is the
+name of the tumor type of the corresponding column in \code{input.catalog},
 e.g. \code{c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")}.}
 
 \item{remove.noise}{Deprecated; ignored
@@ -63,6 +62,15 @@ in \code{input.catalog.file}.}
 
 \item{posterior.verbosity}{Pass to \code{\link[hdp]{hdp_posterior}}
 \code{verbosity}.}
+
+\item{cos.merge}{The cosine similarity threshhold for merging raw clusters
+from the posterior sampling chains into "components" i.e. signatures.
+This is passed to \code{\link[hdp]{hdp_extract_components}} as
+the argument \code{cos.merge}.}
+
+\item{min.sample}{A"components" (i.e. signature) must have at least
+this many samples.  This is passed to \code{\link[hdp]{hdp_extract_components}} as
+the argument \code{min.sample}.}
 }
 \value{
 The attributed exposure of \code{hdp}, invisibly.

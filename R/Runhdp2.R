@@ -41,7 +41,9 @@ Runhdp2 <-
            overwrite           = FALSE,
            verbose             = TRUE,
            num.posterior       = 4,
-           posterior.verbosity = 0) {
+           posterior.verbosity = 0,
+           cos.merge           = 0.9,
+           min.sample          = 1) {
 
     if (verbose) message("Reading catalog file ", input.catalog.file)
     spectra <- ICAMS::ReadCatalog(input.catalog.file, strict = FALSE)
@@ -64,7 +66,9 @@ Runhdp2 <-
       multi.types         = multi.types,
       verbose             = verbose,
       num.posterior       = num.posterior,
-      posterior.verbosity = posterior.verbosity
+      posterior.verbosity = posterior.verbosity,
+      cos.merge           = cos.merge,
+      min.sample          = min.sample
     )
 
     # Plot the diagnostics of sampling chains.
