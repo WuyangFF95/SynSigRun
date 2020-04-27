@@ -66,7 +66,7 @@ RunhdpInternal <-
 
     ## Set seed
     # set.seed(seedNumber) TEST -- is this needed?
-    seedInUse <- base::.Random.seed  # To document the seed used TODO: Steve move to enclosing fn
+    seedInUse <- .Random.seed  # To document the seed used TODO: Steve move to enclosing fn
     RNGInUse <- RNGkind()      # To document the random number generator (RNG) used TODO: Steve ditto
 
     # input.catalog into a matrix that accepts.
