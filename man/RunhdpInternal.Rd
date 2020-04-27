@@ -69,21 +69,21 @@ e.g. \code{c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC"
 \code{verbosity}.}
 
 \item{cos.merge}{The cosine similarity threshhold for merging raw clusters
-from the posterior sampling chains into "components" i.e. signatures.
-This is passed to \code{\link[hdp]{hdp_extract_components}} as
-the argument \code{cos.merge}.}
+from the posterior sampling chains into "components" i.e. signatures;
+passed to \code{\link[hdp]{hdp_extract_components}}.}
 
-\item{min.sample}{A"components" (i.e. signature) must have at least
-this many samples.  This is passed to \code{\link[hdp]{hdp_extract_components}} as
-the argument \code{min.sample}.}
+\item{min.sample}{A "component" (i.e. signature) must have at least
+this many samples; passed to \code{\link[hdp]{hdp_extract_components}}.}
 }
 \value{
 A list with the following elements:\describe{
-\item{signature}{foo.}
-\item{exposure}{foo.}
-\item{exposure.p}{fpp/}
-\item{multi.chains}{A foobar object.}
-
+\item{signature}{The extracted signature profiles as a matrix;
+            rows are mutation types, columns are
+            samples (e.g. tumors).}
+\item{exposure}{The inferred exposures as a matrix of mutation counts;
+           rows are signatures, columns are samples (e.g. tumors).}
+\item{exposure.p}{\code{exposure} converted to proportions.}
+\item{multi.chains}{A \code{\link[hdp]{hdpSampleMulti-class}} object.}
 }
 }
 \description{

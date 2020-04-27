@@ -16,11 +16,11 @@ test_that("RunhdpInternal-fast96", {
     envir = regression)
 
   retvalx <- RunhdpInternal(
-    input.catalog = input.catalog[1:10 , ],
-    CPU.cores = 1,
-    seedNumber = 44,
-    K.guess = 5,
-    multi.types = FALSE,
+    input.catalog = input.catalog[, 1:10],
+    CPU.cores     = 1,
+    seedNumber    = 44,
+    K.guess       = 5,
+    multi.types   = FALSE,
     verbose       = TRUE,
     num.posterior = 1,
     post.burnin   = 50, # Super low for fast testing

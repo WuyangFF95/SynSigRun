@@ -47,29 +47,26 @@
 #'      \code{verbosity}.
 #'
 #' @param cos.merge The cosine similarity threshhold for merging raw clusters
-#'      from the posterior sampling chains into "components" i.e. signatures.
-#'      This is passed to \code{\link[hdp]{hdp_extract_components}} as
-#'      the argument \code{cos.merge}.
+#'      from the posterior sampling chains into "components" i.e. signatures;
+#'      passed to \code{\link[hdp]{hdp_extract_components}}.
 #'
-#' @param min.sample A"components" (i.e. signature) must have at least
-#'      this many samples.  This is passed to \code{\link[hdp]{hdp_extract_components}} as
-#'      the argument \code{min.sample}.
+#' @param min.sample A "component" (i.e. signature) must have at least
+#'      this many samples; passed to \code{\link[hdp]{hdp_extract_components}}.
 #'
 #' @return A list with the following elements:\describe{
-#' \item{signature}{foo.}
-#' \item{exposure}{foo.}
-#' \item{exposure.p}{fpp/}
-#' \item{multi.chains}{A foobar object.}
-# seedInUse       = seedInUse,
-# RNGInUse        = RNGInUse
-#'
+#' \item{signature}{The extracted signature profiles as a matrix;
+#'             rows are mutation types, columns are
+#'             samples (e.g. tumors).}
+#' \item{exposure}{The inferred exposures as a matrix of mutation counts;
+#'            rows are signatures, columns are samples (e.g. tumors).}
+#' \item{exposure.p}{\code{exposure} converted to proportions.}
+#' \item{multi.chains}{A \code{\link[hdp]{hdpSampleMulti-class}} object.}
 #' }
 #'
 #' @export
 
 RunhdpInternal <-
   function(input.catalog,
-           # out.dir,
            CPU.cores           = 1,
            seedNumber          = 1,
            K.guess,
@@ -83,7 +80,7 @@ RunhdpInternal <-
            post.verbosity      = 0,
            cos.merge           = 0.9,
            min.sample          = 1
-) {
+) { # 14 arguments
 
     if (!exists("stir.closure", envir = .GlobalEnv)) {
       assign("stir.closure", hdp::make.stirling(), envir = .GlobalEnv)
@@ -140,7 +137,7 @@ RunhdpInternal <-
       # 3 indicates tumors of second type
     }
 
-    ## Specify ppindex as process.index,
+    ## Specify ppindex as process.index, TODO, why introduce a new variable here?
     ## and cpindex (concentration parameter) as 1 + process.index
     ppindex <- process.index
     cpindex <- 1 + process.index
@@ -176,7 +173,7 @@ RunhdpInternal <-
                                   seed = seedNumber)
 
     # Run num.posterior independent sampling chains
-    f_posterior <- function(seed) {
+    f_posterior <- function(my.seed) {
       if (verbose) message("calling hdp_posterior")
       retval <- hdp::hdp_posterior(
         hdp       = hdpObject,
@@ -186,7 +183,7 @@ RunhdpInternal <-
         n         = post.n,
         space     = post.space,
         cpiter    = post.cpiter,
-        seed      = seed)
+        seed      = my.seed)
       return(retval)
     }
 
@@ -198,18 +195,17 @@ RunhdpInternal <-
 
     # Generate the original multi_chain for the sample
     if (verbose) message("calling hdp_multi_chain")
-    mut_example_multi <- hdp::hdp_multi_chain(chlist)
+    multi.chains <- hdp::hdp_multi_chain(chlist)
 
     if (verbose) message("calling hdp_extract_components")
     # Group raw "clusters" into "components" (i.e. signatures).
-    mut_example_multi_extracted <-
-      hdp::hdp_extract_components(mut_example_multi,
+    multi.chains <-
+      hdp::hdp_extract_components(multi.chains,
                                   cos.merge  = cos.merge,
                                   min.sample = min.sample)
 
     if (verbose) message("calling hdp::comp_categ_distn")
-    extractedSignatures <-
-      t(hdp::comp_categ_distn(mut_example_multi_extracted)$mean)
+    extractedSignatures <- t(hdp::comp_categ_distn(multi.chains)$mean)
 
     rownames(extractedSignatures) <- rownames(input.catalog)
     # Set signature names to "hdp.0","hdp.1","hdp.2", ...
@@ -223,14 +219,14 @@ RunhdpInternal <-
     ## signature exposure all tumor samples # TODO Wuyang, what do you mean
     # by normalize?
 
-    if (verbose) message("Calling hdp::comp_dp_distn to generate exposure probability")
-    exposureProbs <- hdp::comp_dp_distn(mut_example_multi_extracted)$mean
+    if (verbose) message("Calling hdp::comp_dp_distn")
+    exposureProbs <- hdp::comp_dp_distn(multi.chains)$mean
 
     # Remove columns corresponding to parent or grandparent nodes
     # (leaving only columns corresponding to samples.
     # Transpose so it conforms to SynSigEval format
     exposureProbs <- t(exposureProbs[-(1:(num.tumor.types + 1)), ])
-    # Now in exposureProb rows are signatures, columns are samples
+    # Now rows are signatures, columns are samples
 
     # Calculate exposure counts from exposure probabilies and total mutation
     # counts
@@ -241,6 +237,5 @@ RunhdpInternal <-
     invisible(list(signature       = extractedSignatures,
                    exposure        = exposureCounts,
                    exposure.p      = exposureProbs,
-                   #  TODO Steve remove random stuff this
-                   multi.chains    = mut_example_multi_extracted))
+                   multi.chains    = multi.chains))
   }

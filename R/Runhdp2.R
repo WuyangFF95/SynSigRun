@@ -63,6 +63,7 @@ Runhdp2 <-
       seedNumber      = seedNumber,
       K.guess         = K.guess,
       multi.types     = multi.types,
+      num.posterior   = num.posterior,
       verbose         = verbose,
       post.burnin     = post.burnin,
       post.n          = post.n,
@@ -71,18 +72,18 @@ Runhdp2 <-
       post.verbosity  = post.verbosity,
       cos.merge       = cos.merge,
       min.sample      = min.sample
-    )
+    ) # 14 Arguments
 
     multi <- retval[["multi.chains"]]
     chains <- hdp::chains(multi) # Gibbs sampling chains
-    cat("Runhdp2, class of chains ", class(chains), "\n")
-    cat("Runhdp2, class of multi ",  class(multi),  "\n")
+    # cat("Runhdp2, class of chains ", class(chains), "\n")
+    # cat("Runhdp2, class of multi ",  class(multi),  "\n")
 
     # Plot the diagnostics of sampling chains.
     if (verbose) message("Writing hdp.diagnostics.pdf")
     grDevices::pdf(file = paste0(out.dir,"/hdp.diagnostics.pdf"))
     graphics::par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
-    p1 <- lapply(chains, hdp::plot_lik, bty="L", start=500)
+    p1 <- lapply(chains, hdp::plot_lik, bty="L")
     p2 <- lapply(chains, hdp::plot_numcluster, bty="L")
 
     graphics::par(mfrow=c(1,1), mar=c(5, 4, 4, 2))
@@ -90,7 +91,11 @@ Runhdp2 <-
 
     graphics::par(mfrow=c(8, 1), mar = c(1, 1, 1, 1))
     hdp::plot_comp_distn(multi)
-    hdp::plot_dp_comp_exposure(multi)
+
+    # TODO, need argument dpinices and col_comp;
+    # Need to return the hdp object (perhaps) from RunhdpInternal
+    # to get the required values.
+    # hdp::plot_dp_comp_exposure(multi)
 
     grDevices::dev.off()
 
@@ -109,8 +114,6 @@ Runhdp2 <-
 
     if (verbose) message("Writting additonal information")
     utils::capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt"))
-    write(x = retval$seedInUse, file = paste0(out.dir,"/seedInUse.txt"))
-    write(x = retval$RNGInUse, file = paste0(out.dir,"/RNGInUse.txt"))
 
     invisible(retval)
   }

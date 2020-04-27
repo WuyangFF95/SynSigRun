@@ -85,13 +85,11 @@ in \code{input.catalog.file}.}
 \code{verbosity}.}
 
 \item{cos.merge}{The cosine similarity threshhold for merging raw clusters
-from the posterior sampling chains into "components" i.e. signatures.
-This is passed to \code{\link[hdp]{hdp_extract_components}} as
-the argument \code{cos.merge}.}
+from the posterior sampling chains into "components" i.e. signatures;
+passed to \code{\link[hdp]{hdp_extract_components}}.}
 
-\item{min.sample}{A"components" (i.e. signature) must have at least
-this many samples.  This is passed to \code{\link[hdp]{hdp_extract_components}} as
-the argument \code{min.sample}.}
+\item{min.sample}{A "component" (i.e. signature) must have at least
+this many samples; passed to \code{\link[hdp]{hdp_extract_components}}.}
 }
 \value{
 The same list as returned by \code{\link{RunhdpInternal}}.
