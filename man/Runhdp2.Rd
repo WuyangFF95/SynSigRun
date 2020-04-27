@@ -16,7 +16,11 @@ Runhdp2(
   overwrite = FALSE,
   verbose = TRUE,
   num.posterior = 4,
-  posterior.verbosity = 0,
+  post.burnin = 4000,
+  post.n = 50,
+  post.space = 50,
+  post.cpiter = 3,
+  post.verbosity = 0,
   cos.merge = 0.9,
   min.sample = 1
 )
@@ -28,6 +32,11 @@ in \code{\link[ICAMS]{ICAMS}} format.}
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exits.  Log files will be in
 \code{paste0(out.dir, "/tmp")}.}
+
+\item{CPU.cores}{Number of CPUs to use in running
+\code{\link[hdp]{hdp_posterior}}; this is used to parallize
+running the posterior sampling chains, so there is no
+point in making this larger than \code{num.posterior}.}
 
 \item{seedNumber}{Specify the random seed for repeatable results.}
 
@@ -60,7 +69,19 @@ in \code{input.catalog.file}.}
 \item{num.posterior}{Number of posterior sampling chains; can set to
 1 for testing.}
 
-\item{posterior.verbosity}{Pass to \code{\link[hdp]{hdp_posterior}}
+\item{post.burnin}{Pass to \code{\link[hdp]{hdp_posterior}}
+\code{burnin}.}
+
+\item{post.n}{Pass to \code{\link[hdp]{hdp_posterior}}
+\code{n}.}
+
+\item{post.space}{Pass to \code{\link[hdp]{hdp_posterior}}
+\code{space}.}
+
+\item{post.cpiter}{Pass to \code{\link[hdp]{hdp_posterior}}
+\code{cpiter}.}
+
+\item{post.verbosity}{Pass to \code{\link[hdp]{hdp_posterior}}
 \code{verbosity}.}
 
 \item{cos.merge}{The cosine similarity threshhold for merging raw clusters
@@ -73,15 +94,12 @@ this many samples.  This is passed to \code{\link[hdp]{hdp_extract_components}} 
 the argument \code{min.sample}.}
 }
 \value{
-The attributed exposure of \code{hdp}, invisibly.
+The same list as returned by \code{\link{RunhdpInternal}}.
 }
 \description{
 Run hdp extraction and attribution on a spectra catalog file
 }
 \details{
-Creates several
- files in \code{out.dir}. These are:
+Creates several files in \code{out.dir}. These are:
  TODO(Steve): list the files
-
- TODO(Wuyang)
 }

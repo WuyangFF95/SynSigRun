@@ -17,15 +17,10 @@
 #' @param test.only If > 0, only analyze the first \code{test.only} columns
 #'  in \code{input.catalog.file}.
 #'
-#' @return The attributed exposure of \code{hdp}, invisibly.
+#' @return The same list as returned by \code{\link{RunhdpInternal}}.
 #'
-#' @details Creates several
-#'  files in \code{out.dir}. These are:
+#' @details Creates several files in \code{out.dir}. These are:
 #'  TODO(Steve): list the files
-#'
-#'  TODO(Wuyang)
-#'
-#' @importFrom utils capture.output
 #'
 #' @export
 
@@ -41,57 +36,62 @@ Runhdp2 <-
            overwrite           = FALSE,
            verbose             = TRUE,
            num.posterior       = 4,
-           posterior.verbosity = 0,
+           post.burnin         = 4000,
+           post.n              = 50,
+           post.space          = 50,
+           post.cpiter         = 3,
+           post.verbosity      = 0,
            cos.merge           = 0.9,
            min.sample          = 1) {
 
-    if (verbose) message("Reading catalog file ", input.catalog.file)
+    if (verbose) message("Reading input catalog file ", input.catalog.file)
     spectra <- ICAMS::ReadCatalog(input.catalog.file, strict = FALSE)
     if (test.only > 0) spectra <- spectra[ , 1:test.only]
 
     ## Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
-      message("Using existing out.dir ", out.dir)
+      if (verbose) message("Using existing out.dir ", out.dir)
     } else {
       dir.create(out.dir, recursive = T)
-      message("Created new out.dir", out.dir)
+      if (verbose) message("Created new out.dir", out.dir)
     }
 
     retval <- RunhdpInternal(
-      input.catalog       = spectra,
-      CPU.cores           = CPU.cores,
-      seedNumber          = seedNumber,
-      K.guess             = K.guess,
-      multi.types         = multi.types,
-      verbose             = verbose,
-      num.posterior       = num.posterior,
-      posterior.verbosity = posterior.verbosity,
-      cos.merge           = cos.merge,
-      min.sample          = min.sample
+      input.catalog   = spectra,
+      CPU.cores       = CPU.cores,
+      seedNumber      = seedNumber,
+      K.guess         = K.guess,
+      multi.types     = multi.types,
+      verbose         = verbose,
+      post.burnin     = post.burnin,
+      post.n          = post.n,
+      post.space      = post.space,
+      post.cpiter     = post.cpiter,
+      post.verbosity  = post.verbosity,
+      cos.merge       = cos.merge,
+      min.sample      = min.sample
     )
 
-    # Plot the diagnostics of sampling chains.
-    if (verbose) message("Writing sampling chain information")
+    multi <- retval[["multi.chains"]]
+    chains <- hdp::chains(multi) # Gibbs sampling chains
+    cat("Runhdp2, class of chains ", class(chains), "\n")
+    cat("Runhdp2, class of multi ",  class(multi),  "\n")
 
-    ## Draw the DP oscillation plot for mut_example_multi(original_sample)
-    chains <- hdp::chains(retval$multi.chains) # Gibbs sampling chains
-    grDevices::pdf(file = paste0(out.dir,"/original_sample.pdf"))
+    # Plot the diagnostics of sampling chains.
+    if (verbose) message("Writing hdp.diagnostics.pdf")
+    grDevices::pdf(file = paste0(out.dir,"/hdp.diagnostics.pdf"))
     graphics::par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
     p1 <- lapply(chains, hdp::plot_lik, bty="L", start=500)
     p2 <- lapply(chains, hdp::plot_numcluster, bty="L")
-    grDevices::dev.off()
 
-    ex.chains <- hdp::chains(retval$ex.multi.chains) # extracted chains
-    grDevices::pdf(
-      file = paste0(out.dir,"/signature_hdp_embedded_func.pdf"))
-    ## Draw the DP oscillation plot for mut_example_multi_extracted
-    graphics::par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
-    p1 <- lapply(ex.chains, hdp::plot_lik, bty="L", start=500)
-    p2 <- lapply(ex.chains, hdp::plot_numcluster, bty="L")
-    ## Draw the computation size plot
     graphics::par(mfrow=c(1,1), mar=c(5, 4, 4, 2))
-    hdp::plot_comp_size(retval$ex.multi.chains, bty="L")
+    hdp::plot_comp_size(multi, bty="L")
+
+    graphics::par(mfrow=c(8, 1), mar = c(1, 1, 1, 1))
+    hdp::plot_comp_distn(multi)
+    hdp::plot_dp_comp_exposure(multi)
+
     grDevices::dev.off()
 
     if (verbose) message("Writing signatures")
@@ -108,7 +108,7 @@ Runhdp2 <-
                   paste0(out.dir,"/inferred.exposures.csv"))
 
     if (verbose) message("Writting additonal information")
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt"))
+    utils::capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt"))
     write(x = retval$seedInUse, file = paste0(out.dir,"/seedInUse.txt"))
     write(x = retval$RNGInUse, file = paste0(out.dir,"/RNGInUse.txt"))
 

@@ -4,7 +4,7 @@
 #' in \code{\link[ICAMS]{ICAMS}} format.
 #'
 #' @param CPU.cores Number of CPUs to use in running
-#'    \code{\link[hdp]{hdp_posterior}; this is used to parallize
+#'    \code{\link[hdp]{hdp_posterior}}; this is used to parallize
 #'    running the posterior sampling chains, so there is no
 #'    point in making this larger than \code{num.posterior}.
 #'
@@ -31,7 +31,19 @@
 #' @param num.posterior Number of posterior sampling chains; can set to
 #'   1 for testing.
 #'
-#' @param posterior.verbosity Pass to \code{\link[hdp]{hdp_posterior}}
+#' @param post.burnin Pass to \code{\link[hdp]{hdp_posterior}}
+#'      \code{burnin}.
+#'
+#' @param post.n Pass to \code{\link[hdp]{hdp_posterior}}
+#'      \code{n}.
+#'
+#' @param post.space Pass to \code{\link[hdp]{hdp_posterior}}
+#'      \code{space}.
+#'
+#' @param post.cpiter Pass to \code{\link[hdp]{hdp_posterior}}
+#'      \code{cpiter}.
+#'
+#' @param post.verbosity Pass to \code{\link[hdp]{hdp_posterior}}
 #'      \code{verbosity}.
 #'
 #' @param cos.merge The cosine similarity threshhold for merging raw clusters
@@ -43,7 +55,15 @@
 #'      this many samples.  This is passed to \code{\link[hdp]{hdp_extract_components}} as
 #'      the argument \code{min.sample}.
 #'
-#' @return A lot of information, invisibly.
+#' @return A list with the following elements:\describe{
+#' \item{signature}{foo.}
+#' \item{exposure}{foo.}
+#' \item{exposure.p}{fpp/}
+#' \item{multi.chains}{A foobar object.}
+# seedInUse       = seedInUse,
+# RNGInUse        = RNGInUse
+#'
+#' }
 #'
 #' @export
 
@@ -56,21 +76,20 @@ RunhdpInternal <-
            multi.types         = FALSE,
            verbose             = TRUE,
            num.posterior       = 4,
-           posterior.verbosity = 0,
+           post.burnin         = 4000,
+           post.n              = 50,
+           post.space          = 50,
+           post.cpiter         = 3,
+           post.verbosity      = 0,
            cos.merge           = 0.9,
-           min.sample          = 1) {
+           min.sample          = 1
+) {
 
     if (!exists("stir.closure", envir = .GlobalEnv)) {
       assign("stir.closure", hdp::make.stirling(), envir = .GlobalEnv)
     }
 
-    ## Set seed
-    # set.seed(seedNumber) TEST -- is this needed?
-    seedInUse <- .Random.seed  # To document the seed used TODO: Steve move to enclosing fn
-    RNGInUse <- RNGkind()      # To document the random number generator (RNG) used TODO: Steve ditto
-
-    # input.catalog into a matrix that accepts.
-    # hdp gets confused if the class in not matrix.
+    # hdp gets confused if the class of its input is not matrix.
     convSpectra <- input.catalog
     class(convSpectra) <- "matrix"
     convSpectra <- t(convSpectra)
@@ -161,12 +180,12 @@ RunhdpInternal <-
       if (verbose) message("calling hdp_posterior")
       retval <- hdp::hdp_posterior(
         hdp       = hdpObject,
-        verbosity = posterior.verbosity,
+        verbosity = post.verbosity,
         # The remaining values, except seed, are from the vignette
-        burnin    = 4000,
-        n         = 50,
-        space     = 50,
-        cpiter    = 3,
+        burnin    = post.burnin,
+        n         = post.n,
+        space     = post.space,
+        cpiter    = post.cpiter,
         seed      = seed)
       return(retval)
     }
@@ -222,8 +241,6 @@ RunhdpInternal <-
     invisible(list(signature       = extractedSignatures,
                    exposure        = exposureCounts,
                    exposure.p      = exposureProbs,
-                   multi.chains    = mut_example_multi,  # TODO Steve simplify this
-                   ex.multi.chains = mut_example_multi_extracted,
-                   seedInUse       = seedInUse,
-                   RNGInUse        = RNGInUse))
+                   #  TODO Steve remove random stuff this
+                   multi.chains    = mut_example_multi_extracted))
   }
