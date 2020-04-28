@@ -1,18 +1,26 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: R
+language: r
 sudo: false
 cache: packages
+
+# environment variables set for all builds
+env:
+  global:
+    - BIOC_USE_DEVEL="FALSE"  ## Use the current release version
+
 r:
-- oldrel
 - release
-- devel
+
+# we need to install BiocInstaller for testing Bioconductor packages
+bioc_required: true
 
 bioc_packages: BiocManager, DelayedArray, BSGenome,
 GenomeInfoDb, GenomicRanges, IRanges, Biostrings,
 YAPSA, signeR, maftools, SparseSignatures
 
 r_github_packages:
+steverozen/ICAMS
 kgori/sigfit
 nicolaroberts/hdp
 renozao/NMF/devel
