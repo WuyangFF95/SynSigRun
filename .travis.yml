@@ -9,7 +9,6 @@ env:
   global:
     - BIOC_USE_DEVEL="FALSE"  ## Use the current release version
 
-
 r:
 - release
 
