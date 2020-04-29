@@ -85,11 +85,11 @@ A list with the following elements:\describe{
 \item{exposure.p}{\code{exposure} converted to proportions.}
 
 \item{multi.chains}{A \code{\link[hdp]{hdpSampleMulti-class}} object.
-    This object has the method \code\link[hdp]{chains}} which returns
+    This object has the method \code{\link[hdp]{chains}} which returns
     a list of \code{\link[hdp]{hdpSampleChain-class}} objects. Each of these
     sample chains objects has a method \code{\link[hdp]{final_hdpState}}
     (actually the methods seems to be just \code{hdp})
-    that returns the \code{hdpState} frm which it was generated.
+    that returns the \code{hdpState} from which it was generated.}
 }
 }
 \description{
