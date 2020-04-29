@@ -10,20 +10,16 @@ env:
     - BIOC_USE_DEVEL="FALSE"  ## Use the current release version
 
 r:
-- release
+  - bioc-release
 
 # we need to install BiocInstaller for testing Bioconductor packages
 bioc_required: true
 
-bioc_packages: BiocManager, DelayedArray, BSGenome,
-GenomeInfoDb, GenomicRanges, IRanges, Biostrings,
-YAPSA, signeR, maftools, SparseSignatures
-
 r_github_packages:
-steverozen/ICAMS
-kgori/sigfit
-nicolaroberts/hdp
-renozao/NMF/devel
+  - steverozen/ICAMS
+  - kgori/sigfit
+  - nicolaroberts/hdp
+  - renozao/NMF/devel
 
 
 
