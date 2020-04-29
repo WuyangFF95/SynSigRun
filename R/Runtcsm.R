@@ -260,9 +260,19 @@ Runtcsm <-
         likelihoods[as.character(K)] <- mean(currLikelihood[,1])
 	  }
 
-
-      K.best <- names(likelihoods)[which.max(likelihoods)] ## Choose K.best
-      K.best <- as.integer(K.best)
+      if(TRUE){ ## debug
+        ## Choose the K.best if likelihood(K.best + 1) - likelihood(K.best) < 0.01
+        for(K in K.range){
+          K.best <- K
+          if(K == max(K.range))
+            break
+          if(likelihoods[as.character(K+1)] - likelihoods[as.character(K)] < 0.01)
+            break
+        }
+      } else{
+        K.best <- names(likelihoods)[which.max(likelihoods)] ## Choose K.best
+        K.best <- as.integer(K.best)
+      }
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
     }
