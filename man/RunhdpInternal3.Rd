@@ -30,7 +30,11 @@ in \code{\link[ICAMS]{ICAMS}} format.}
 running the posterior sampling chains, so there is no
 point in making this larger than \code{num.posterior}.}
 
-\item{seedNumber}{Specify the random seed for repeatable results.}
+\item{seedNumber}{An intenger that is used to generate separate
+random seeds for each call to \code{\link[hdp]{dp_activate}},
+and each call \code{\link[hdp]{hdp_posterior}}; please see the code
+on how this is done. But repeated calls with same value of
+\code{seedNumber} and other inputs should produce the same results.}
 
 \item{K.guess}{Suggested initial value of the number of
 signatures, passed to \code{\link[hdp]{dp_activate}} as
