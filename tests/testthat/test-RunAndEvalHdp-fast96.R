@@ -31,7 +31,7 @@ test_that("RunAndEvalHdp-fast96", {
                               mustWork = TRUE)
 
   retvalx <- RunAndEvalHdp(
-    input.catalog.file = input.catalog.file, # The spectra
+    input.catalog.file         = input.catalog.file, # The spectra
     ground.truth.exposure.file = input.exposure.file,
     ground.truth.sig.file      = input.signature.file,
     test.only     = 10, # Only use columns 1:10 of input.catalog

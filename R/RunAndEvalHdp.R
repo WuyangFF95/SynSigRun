@@ -96,9 +96,11 @@ RunAndEvalHdp <- function(
   write.csv(sigAnalysis$match2, file = file.path(out.dir, "match2.csv"))
   # Dumps other outputs into "other.results.txt"
   capture.output(
-    cat("Average cosine similarity\n"),
+    cat("Call\n"),
+    match.call(),
+    cat("\nAverage cosine similarity\n"),
     sigAnalysis$averCosSim,
-    cat("Average cosine similarity to each ground-truth signature\n"),
+    cat("\nAverage cosine similarity to each ground-truth signature\n"),
     sigAnalysis$cosSim,
     cat("\nNumber of ground-truth signatures\n"),
     ncol(sigAnalysis$gt.sigs),
