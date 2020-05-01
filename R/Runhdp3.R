@@ -1,18 +1,15 @@
 #' Run hdp extraction and attribution on a spectra catalog file
 #'
-#' @inheritParams RunhdpInternal
+#' @inheritParams RunhdpInternal3
 #'
 #' @param input.catalog.file File containing a spectra catalog
 #' in \code{\link[ICAMS]{ICAMS}} format.
 #'
 #' @param out.dir Directory that will be created for the output;
-#' abort if it already exits.  Log files will be in
-#' \code{paste0(out.dir, "/tmp")}.
+#'   if \code{overwrite} is \code{FALSE} then
+#'   abort if \code{out.dir} already exits.
 #'
 #' @param remove.noise Deprecated; ignored
-#'
-#' For result visualization and assessment of \code{hdp} package, select \code{TRUE};
-#' for diagnostic purposes, select \code{FALSE}.
 #'
 #' @param test.only If > 0, only analyze the first \code{test.only} columns
 #'  in \code{input.catalog.file}.
@@ -57,6 +54,11 @@ Runhdp3 <-
       if (verbose) message("Created new out.dir", out.dir)
     }
 
+    utils::capture.output(date(), cat("\n\n"),
+                          match.call(), cat("\n\n"),
+                          sessionInfo(),
+                          file = file.path(out.dir, "call.and.session.info.txt"))
+
     retval <- RunhdpInternal3(
       input.catalog   = spectra,
       CPU.cores       = CPU.cores,
@@ -74,28 +76,43 @@ Runhdp3 <-
       min.sample      = min.sample
     ) # 14 Arguments
 
-    multi <- retval[["multi.chains"]]
-    chains <- hdp::chains(multi) # Gibbs sampling chains
-    # cat("Runhdp2, class of chains ", class(chains), "\n")
-    # cat("Runhdp2, class of multi ",  class(multi),  "\n")
+    multi <- retval[["multi.chains"]] # class hdpSampleMulti
+    chains <- hdp::chains(multi)      # list of hdpSampleChain
 
     # Plot the diagnostics of sampling chains.
     if (verbose) message("Writing hdp.diagnostics.pdf")
     grDevices::pdf(file = paste0(out.dir,"/hdp.diagnostics.pdf"))
     graphics::par(mfrow=c(2,2), mar=c(4, 4, 2, 1))
-    p1 <- lapply(chains, hdp::plot_lik, bty="L")
-    p2 <- lapply(chains, hdp::plot_numcluster, bty="L")
+
+    # This is the likelihood plot along each chain
+    lapply(chains, hdp::plot_lik, bty = "L")
+
+    # This is the number of raw clusters sampled along each chain
+    lapply(chains, hdp::plot_numcluster, bty = "L")
+
+    # This is the number of mutations assigned as a function of
+    # the number of raw clusters
+    lapply(chains, hdp::plot_data_assigned, bty = "L")
 
     graphics::par(mfrow=c(1,1), mar=c(5, 4, 4, 2))
+    # Components were already extracted, so this call will work
     hdp::plot_comp_size(multi, bty="L")
 
     graphics::par(mfrow=c(8, 1), mar = c(1, 1, 1, 1))
+    # This plots the component (signature) profiles with
+    # 95% credibility intervals
     hdp::plot_comp_distn(multi)
 
     # TODO, need argument dpinices and col_comp;
     # Need to return the hdp object (perhaps) from RunhdpInternal
     # to get the required values.
-    # hdp::plot_dp_comp_exposure(multi)
+    if (FALSE) { # Not finished
+    num.dpindices <- length(chains[[1]]@hdp@ppindex)
+    hdp::plot_dp_comp_exposure(
+      multi, dpindices = 3:num.dpindices,
+      col_comp = myCol[1:ncol(retval$signature)],
+      dpnames = colnames(retval$exposure))
+    }
 
     grDevices::dev.off()
 
@@ -111,9 +128,6 @@ Runhdp3 <-
                   paste0(out.dir,"/exposure.probs.csv"))
     WriteExposure(retval$exposure,
                   paste0(out.dir,"/inferred.exposures.csv"))
-
-    if (verbose) message("Writting additonal information")
-    utils::capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt"))
 
     invisible(retval)
   }

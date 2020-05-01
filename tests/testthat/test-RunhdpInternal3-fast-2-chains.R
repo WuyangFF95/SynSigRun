@@ -34,3 +34,4 @@ test_that("RunhdpInternal3-fast", {
   testthat::expect_equal(retvalx$exposure,  regress$retvalx$exposure)
   testthat::expect_equal(retvalx, regress$retvalx)
 })
+

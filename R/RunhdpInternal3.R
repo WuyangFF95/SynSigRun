@@ -8,9 +8,9 @@
 #'    running the posterior sampling chains, so there is no
 #'    point in making this larger than \code{num.posterior}.
 #'
-#' @param seedNumber An intenger that is used to generate separate
+#' @param seedNumber An integer that is used to generate separate
 #'   random seeds for each call to \code{\link[hdp]{dp_activate}},
-#'   and each call \code{\link[hdp]{hdp_posterior}}; please see the code
+#'   and each call of \code{\link[hdp]{hdp_posterior}}; please see the code
 #'   on how this is done. But repeated calls with same value of
 #'   \code{seedNumber} and other inputs should produce the same results.
 #'
@@ -25,7 +25,7 @@
 #' If \code{TRUE}, hdp will infer tumor types based on the string before "::" in their names.
 #' e.g. tumor type for "SA.Syn.Ovary-AdenoCA::S.500" would be "SA.Syn.Ovary-AdenoCA"
 #'
-#' If \code{multi.types} is a character vector it should be of the same length
+#' If \code{multi.types} is a character vector, then it should be of the same length
 #' as the number of columns in \code{input.catalog}, and each value is the
 #' name of the tumor type of the corresponding column in \code{input.catalog},
 #' e.g. \code{c("SA.Syn.Ovary-AdenoCA", "SA.Syn.Ovary-AdenoCA", "SA.Syn.Kidney-RCC")}.
