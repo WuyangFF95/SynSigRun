@@ -1,6 +1,8 @@
 #' tcsm's internal function to calculate likelihood for each \code{K}
 #' using heldout method.
 #'
+#' This code requires the CRAN package stm https://cran.r-project.org/package=stm.
+#'
 #' tcsm advises to use "heldout" method to obtain the likelihood of number of
 #' mutational signatures, \code{K}.
 #' That is, to split the whole spectra catalogs dataset into 2 parts:

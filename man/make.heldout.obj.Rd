@@ -23,11 +23,13 @@ heldout, which is a named list
   $vocab - list the vocabularies, which refers to mutation types.
 }
 \description{
+This code requires the CRAN package stm https://cran.r-project.org/package=stm.
+}
+\details{
 tcsm advises to use "heldout" method to obtain the likelihood of number of
 mutational signatures, \code{K}.
 That is, to split the whole spectra catalogs dataset into 2 parts:
-}
-\details{
+
 80% of spectra catalogs should be allocated into \code{train.mc.data}
 for training \code{\link[stm]{stm}} model,
 20% of spectra catalogs should be allocated into \code{test.mc.data}
