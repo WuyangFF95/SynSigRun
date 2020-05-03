@@ -210,7 +210,7 @@ RunSignatureAnalyzerOnFile <-
                         paste0(out.dir, "/sa.output.sigs.csv"))
 
     # Output raw attributions / exposures
-    WriteExposure(exp.raw,
+    SynSigGen::WriteExposure(exp.raw,
                   file = paste0(out.dir, "/sa.output.raw.exp.csv"))
 
     # Output exposure attribution in mutation counts
@@ -220,12 +220,13 @@ RunSignatureAnalyzerOnFile <-
       exp.normalized[,ii] <- exp.normalized[,ii] * sum(syn.data[,ii])
     }
 
-    WriteExposure(exp.normalized,
+    SynSigGen::WriteExposure(exp.normalized,
                   file = paste0(out.dir, "/sa.output.exp.csv"))
 
     if (!is.null(input.exposures)) {
-      WriteExposure(ReadExposure(input.exposures),
-                    file = paste0(out.dir, "/input.syn.exp.csv"))
+      SynSigGen::WriteExposure(
+        SynSigGen::ReadExposure(input.exposures),
+        file = paste0(out.dir, "/input.syn.exp.csv"))
     }
 
     other.data <- paste0(out.dir, "/sa.output.other.data.csv")

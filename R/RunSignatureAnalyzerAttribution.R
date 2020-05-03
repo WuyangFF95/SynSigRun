@@ -96,7 +96,7 @@ RunSignatureAnalyzerAttribution <-
     sigs <- apply(sigs, 2, function(x) x/sum(x))
 
     # Load RAW-inferred exposures required by fine-attribution step.
-    exp.raw <- ReadExposure(raw.exposures.file)
+    exp.raw <- SynSigGen::ReadExposure(raw.exposures.file)
     if(FALSE){
     exp.raw <- exp.raw[sigs.to.use, , drop = FALSE]
     rownames(exp.raw) <- new.names
@@ -178,13 +178,16 @@ RunSignatureAnalyzerAttribution <-
 
 
     # Output fine-tuned attributions
-    WriteExposure(exp.fine.tuned, file = paste0(out.dir, "/sa.output.fine.exp.csv"))
+    SynSigGen::WriteExposure(
+      exp.fine.tuned,
+      file = paste0(out.dir, "/sa.output.fine.exp.csv"))
 
     # Copy the input exposure into "out.dir",
     # if filepath "input.exposures" is provided.
     if (!is.null(input.exposures)) {
-      WriteExposure(ReadExposure(input.exposures),
-                    file = paste0(out.dir, "/input.syn.exp.csv"))
+      SynSigGen::WriteExposure(
+        SynSigGen::ReadExposure(input.exposures),
+        file = paste0(out.dir, "/input.syn.exp.csv"))
     }
 
     # Delete temporary files if flag delete.tmp.files == TRUE

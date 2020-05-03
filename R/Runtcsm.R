@@ -178,7 +178,6 @@ Runtcsm <-
     }
 
     ## CPU.cores specifies number of CPU cores to use.
-    ## CPU.cores will be capped at 30.
     ## If CPU.cores is not specified, CPU.cores will
     ## be equal to the minimum of 30 or (total cores)/2
     if(is.null(CPU.cores)){
@@ -348,8 +347,9 @@ Runtcsm <-
 
   ## Write inferred exposures into a SynSig formatted exposure file.
 
-  WriteExposure(exposureCounts,
-                paste0(out.dir,"/inferred.exposures.csv"))
+  SynSigGen::WriteExposure(
+    exposureCounts,
+    paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information

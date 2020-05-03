@@ -182,7 +182,7 @@ RunSparseSignatures <-
     colnames(exposureCounts) <- colnames(spectra) ## Assign column names of exposure matrix as names of tumors
 
     ## Save exposure attribution results
-    WriteExposure(exposureCounts,
+    SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
 

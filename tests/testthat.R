@@ -1,4 +1,4 @@
 library(testthat)
-library(SynSigEval)
+library(SynSigRun)
 
-test_check("SynSigEval")
+test_check("SynSigRun")

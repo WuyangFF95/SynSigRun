@@ -48,7 +48,7 @@ RunAndEvalHdp <- function(
 
   # Do this early to catch any possible error before we do a lot
   # of computation
-  ground.truth.exp <- ReadExposure(ground.truth.exposure.file)
+  ground.truth.exp <- SynSigGen::ReadExposure(ground.truth.exposure.file)
 
   retval <- Runhdp3(
     input.catalog.file         = input.catalog.file,

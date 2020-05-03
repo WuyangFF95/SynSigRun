@@ -372,10 +372,10 @@ Runhdp <-
       for (sample in seq(1,ncol(exposureProbs)))
         exposureCounts[,sample] <- sample_mutation_count[[sample]] * exposureProbs[,sample]
 
-      if (verbose) message("Calling WriteExposure() to write exposure counts")
-      WriteExposure(exposureProbs,
+      if (verbose) message("Calling SynSigGen::WriteExposure() to write exposure counts")
+      SynSigGen::WriteExposure(exposureProbs,
                     paste0(out.dir,"/exposure.probs.csv"))
-      WriteExposure(exposureCounts,
+      SynSigGen::WriteExposure(exposureCounts,
                     paste0(out.dir,"/inferred.exposures.csv"))
     }
 

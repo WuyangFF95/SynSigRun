@@ -119,14 +119,12 @@ Runmaftools <-
     }
 
     ## CPU.cores specifies number of CPU cores to use.
-    ## CPU.cores will be capped at 30.
     ## If CPU.cores is not specified, CPU.cores will
     ## be equal to the minimum of 30 or (total cores)/2
     if(is.null(CPU.cores)){
       CPU.cores = min(30,(parallel::detectCores())/2)
     } else {
       stopifnot(is.numeric(CPU.cores))
-      if(CPU.cores > 30) CPU.cores = 30
     }
 
     ## Before running NMF packge,
@@ -189,7 +187,7 @@ Runmaftools <-
 
 
     ## Write exposure counts in ICAMS and SynSig format.
-    WriteExposure(exposureCounts,
+    SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
 

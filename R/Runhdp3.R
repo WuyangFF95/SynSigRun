@@ -124,9 +124,9 @@ Runhdp3 <-
                         paste0(out.dir,"/extracted.signatures.csv"))
 
     if (verbose) message("Writing exposures")
-    WriteExposure(retval$exposure.p,
+    SynSigGen::WriteExposure(retval$exposure.p,
                   paste0(out.dir,"/exposure.probs.csv"))
-    WriteExposure(retval$exposure,
+    SynSigGen::WriteExposure(retval$exposure,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
     invisible(retval)

@@ -164,7 +164,7 @@ RunYAPSAAttributeOnly <-
               overwrite = overwrite)
 
     ## Write inferred exposures into a SynSig formatted exposure file.
-    WriteExposure(exposureCounts,
+    SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Save seeds and session information

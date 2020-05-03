@@ -48,7 +48,7 @@ SignatureAnalyzerPrepHyper1Secondary <-
 
   best.exp.file <- paste0(non.hyper.results, "/best.run/sa.output.raw.exp.csv")
   if (!file.exists(best.exp.file)) stop(best.exp.file, " does not exist")
-  best.exp  <- ReadExposure(best.exp.file)
+  best.exp  <- SynSigGen::ReadExposure(best.exp.file)
 
   exp.sums <- rowSums(best.exp) # Sum for each signature.
   ### best.sigs not proportions, but rather are
@@ -147,7 +147,7 @@ SignatureAnalyzerPrepHyper4 <-
 
     best.exp.file <- paste0(dir1, "/sa.results/best.run/sa.output.exp.csv")
     if (!file.exists(best.exp.file)) stop(best.exp.file, " does not exist")
-    best.exp  <- ReadExposure(best.exp.file)
+    best.exp  <- SynSigGen::ReadExposure(best.exp.file)
 
     exp.sums <- rowSums(best.exp) # Sum for each signature.
                  ### best.sigs not proportions, but rather are

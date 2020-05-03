@@ -122,7 +122,7 @@ RundeconstructSigsAttributeOnly <-
 
     ## Write exposure counts in ICAMS and SynSig format.
     exposureCounts <- t(exposures)
-    WriteExposure(exposureCounts,
+    SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Copy ground.truth.sigs to out.dir

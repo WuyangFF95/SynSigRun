@@ -167,7 +167,7 @@ RunsigneR <-
       exposureCounts[,ii] <- exposureCounts[,ii] * colSums(spectra)[ii]
     }
     ## Save exposure attribution results
-    WriteExposure(exposureCounts,
+    SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
 

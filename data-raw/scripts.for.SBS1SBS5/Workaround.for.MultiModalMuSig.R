@@ -1,6 +1,6 @@
 ## Load required packages
 library(ICAMS)
-library(SynSigEval)
+library(SynSigRun)
 
 
 
@@ -22,7 +22,7 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## <dataset.top.level.dir>/sp.sp/ExtrAttr/helmsman.results
 for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
-    CreateMultiModalMuSigOutput(
+    SynSigRun::CreateMultiModalMuSigOutput(
       catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
       read.catalog.function = ICAMS::ReadCatalog,
       out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/MultiModalMuSig.results",
@@ -40,7 +40,7 @@ for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
 
     ## Convert signatures
-    signatures <- SynSigEval::MMCatalog2ICAMS(
+    signatures <- SynSigRun::MMCatalog2ICAMS(
       paste0(datasetName,
              "/sp.sp/ExtrAttr/MultiModalMuSig.results/",
              "seed.",seedInUse,
@@ -55,12 +55,12 @@ for(datasetName in datasetNames){
              "/extracted.signatures.csv"))
 
     ## Convert exposures
-    exposure <- SynSigEval::ReadExposureMM(
+    exposure <- SynSigRun::ReadExposureMM(
       paste0(datasetName,
              "/sp.sp/ExtrAttr/MultiModalMuSig.results/",
              "seed.",seedInUse,
              "/attributed.exposures.tsv"))
-    SynSigEval::WriteExposure(
+    SynSigGen::WriteExposure(
       exposure,
       paste0(datasetName,
              "/sp.sp/ExtrAttr/MultiModalMuSig.results/",

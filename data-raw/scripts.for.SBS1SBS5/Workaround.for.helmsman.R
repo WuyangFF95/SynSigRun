@@ -22,11 +22,12 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## <dataset.top.level.dir>/sp.sp/ExtrAttr/helmsman.results
 for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
-  CreatehelmsmanOutput(catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-                       read.catalog.function = ICAMS::ReadCatalog,
-                       out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/helmsman.results",
-                                        "/seed.",seedInUse),
-                       overwrite = T)
+    SynSigRun::CreatehelmsmanOutput(
+      catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
+      read.catalog.function = ICAMS::ReadCatalog,
+      out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/helmsman.results",
+                       "/seed.",seedInUse),
+      overwrite = T)
   }
 }
 

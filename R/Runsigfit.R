@@ -138,7 +138,7 @@ RunsigfitAttributeOnly <-
 
     ## Write exposure counts in ICAMS and SynSig format.
     exposureCounts <- t(exposureCounts)
-    WriteExposure(exposureCounts,
+    SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Copy ground.truth.sigs to out.dir
@@ -274,7 +274,6 @@ Runsigfit <-
       CPU.cores = min(30,(parallel::detectCores())/2)
     } else {
       stopifnot(is.numeric(CPU.cores))
-      if(CPU.cores > 30) CPU.cores = 30
     }
 
     ## For faster computation, enable parallel computing in rstan.
@@ -399,7 +398,7 @@ Runsigfit <-
 
     ## Write inferred exposures into a SynSig formatted exposure file.
     exposureCounts <- t(exposureCounts)
-    WriteExposure(exposureCounts,
+    SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
 
