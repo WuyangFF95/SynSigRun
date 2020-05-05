@@ -1,6 +1,6 @@
-#' Install decompTumor2Sig from Biocondcutor
+#' Install decompTumor2Sig from Bioconductor
 InstalldecompTumor2Sig <- function(){
-  message("Installing decompTumor2Sig from Biocondcutor...\n")
+  message("Installing decompTumor2Sig from Bioconductor...\n")
   if (!requireNamespace("BiocManager", quietly = TRUE))
     utils::install.packages("BiocManager")
   # The following initializes usage of Bioc devel

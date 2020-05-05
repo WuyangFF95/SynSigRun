@@ -2,10 +2,10 @@
 % Please edit documentation in R/RundecompTumor2SigAttributionOnly.R
 \name{InstalldecompTumor2Sig}
 \alias{InstalldecompTumor2Sig}
-\title{Install decompTumor2Sig from Biocondcutor}
+\title{Install decompTumor2Sig from Bioconductor}
 \usage{
 InstalldecompTumor2Sig()
 }
 \description{
-Install decompTumor2Sig from Biocondcutor
+Install decompTumor2Sig from Bioconductor
 }

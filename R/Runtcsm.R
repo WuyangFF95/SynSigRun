@@ -10,7 +10,7 @@
 #' 80% of spectra catalogs should be allocated into \code{train.mc.data}
 #' for training \code{\link[stm]{stm}} model,
 #' 20% of spectra catalogs should be allocated into \code{test.mc.data}
-#' for estmating likelihood for given K.
+#' for estimating likelihood for given K.
 #'
 #' @param train.mc.data Transposed \code{\link[ICAMS]{ICAMS}} spectra catalog
 #' containing mutations of training samples.

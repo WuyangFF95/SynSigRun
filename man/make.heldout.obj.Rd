@@ -33,6 +33,6 @@ That is, to split the whole spectra catalogs dataset into 2 parts:
 80% of spectra catalogs should be allocated into \code{train.mc.data}
 for training \code{\link[stm]{stm}} model,
 20% of spectra catalogs should be allocated into \code{test.mc.data}
-for estmating likelihood for given K.
+for estimating likelihood for given K.
 }
 \keyword{internal}
