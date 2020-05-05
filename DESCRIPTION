@@ -14,7 +14,6 @@ Imports:
     lsa, 
     data.table, 
     ICAMS, 
-    SynSigGen,
     stats, 
     devtools, 
     utils, 
@@ -25,6 +24,8 @@ Imports:
     ggpubr,
     ggbeeswarm,
     gtools
+Remotes:
+    github::steverozen/SynSigGen
 Depends: R (>= 3.5)
 RoxygenNote: 7.1.0
 Suggests: 
