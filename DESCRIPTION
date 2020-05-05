@@ -12,40 +12,41 @@ Encoding: UTF-8
 LazyData: true
 biocViews:
 Imports: 
-    lsa, 
-    data.table, 
-    ICAMS, 
-    stats, 
-    devtools, 
-    utils, 
-    rlang,
-    graphics,
-    grDevices,
+    data.table,
+    devtools,
+    ggbeeswarm,
     ggplot2,
     ggpubr,
-    ggbeeswarm,
-    gtools
+    graphics,
+    grDevices,
+    gtools,
+    ICAMS, 
+    lsa, 
+    rlang,
+    stats, 
+    SynSigGen,
+    utils
 Remotes:
     github::steverozen/SynSigGen
 Depends: R (>= 3.5)
 RoxygenNote: 7.1.0
 Suggests: 
-    testthat,
-    knitr,
-    rmarkdown,
-    DelayedArray,
     BiocManager,
-    NMF,
-    SparseSignatures,
-    YAPSA,
     decompTumor2Sig,
     deconstructSigs,
+    DelayedArray,
     hdp,
+    knitr,
     maftools,
+    mSigAct,
     MutationalPatterns,
     mutSignatures,
-    mSigAct,
+    NMF,
+    rmarkdown,
     rstan,
     sigfit,
     SignatureEstimation,
-    signeR
+    signeR,
+    SparseSignatures,
+    testthat,
+    YAPSA
