@@ -199,7 +199,7 @@ RunhdpInternal3 <-
 
     chlist <- parallel::mclapply(
       # Must choose a different seed for each of the chains
-      X = (seedNumber + 1:num.posterior * 10^6) %% 10^7 ,
+      X = (seedNumber + 1:num.posterior * 10^6) ,
       FUN = activate.and.sample,
       mc.cores = CPU.cores)
 

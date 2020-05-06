@@ -221,7 +221,7 @@ Runhdp <-
               space  = 50,
               cpiter = 3,
               # Must choose a different seed for each of the 4 chains:
-              seed   = (seedNumber + i * 10^6) %% (10^7) )
+              seed   = (seedNumber + i * 10^6) )
         }
       } else {
         f_posterior <- function(seed,hdpObject) {
@@ -235,7 +235,7 @@ Runhdp <-
               space  = 50,
               cpiter = 3,
               # Must choose a different seed for each of the 4 chains:
-              seed   = seed %% (10^7) )
+              seed   = seed )
             return(retval)
         }
 
