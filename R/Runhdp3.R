@@ -14,7 +14,7 @@
 #' @param test.only If > 0, only analyze the first \code{test.only} columns
 #'  in \code{input.catalog.file}.
 #'
-#' @return The same list as returned by \code{\link{RunhdpInternal}}.
+#' @return The same list as returned by \code{\link{RunhdpInternal3}}.
 #'
 #' @details Creates several files in \code{out.dir}. These are:
 #'  TODO(Steve): list the files
