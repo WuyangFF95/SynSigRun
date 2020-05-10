@@ -129,5 +129,8 @@ Runhdp3 <-
     SynSigGen::WriteExposure(retval$exposure,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
+    ## Save return values
+    save(retval, paste0(out.dir,"/Runhdp3.retval.Rdata"))
+
     invisible(retval)
   }
