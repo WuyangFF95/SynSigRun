@@ -58,10 +58,6 @@ WARNING: You must specify only one of \code{K} or \code{K.range}!}
 read in from \code{input.catalog}.}
 
 \item{overwrite}{If TRUE, overwrite existing output.}
-
-\item{model}{Algorithm to be used to extract signatures and
-attribute exposures. Only "nmf" or "emu" is valid.
-Default: "nmf".}
 }
 \value{
 The inferred exposure of \code{tcsm}, invisibly.

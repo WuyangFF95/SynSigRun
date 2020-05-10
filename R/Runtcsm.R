@@ -88,10 +88,6 @@ run.stm <- function(
 #' abort if it already exits.  Log files will be in
 #' \code{paste0(out.dir, "/tmp")}.
 #'
-#' @param model Algorithm to be used to extract signatures and
-#' attribute exposures. Only "nmf" or "emu" is valid.
-#' Default: "nmf".
-#'
 #' @param CPU.cores Number of CPUs to use in running
 #' tcsm. For a server, 30 cores would be a good
 #' choice; while for a PC, you may only choose 2-4 cores.

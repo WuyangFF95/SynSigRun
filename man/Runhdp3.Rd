@@ -93,7 +93,7 @@ passed to \code{\link[hdp]{hdp_extract_components}}.}
 this many samples; passed to \code{\link[hdp]{hdp_extract_components}}.}
 }
 \value{
-The same list as returned by \code{\link{RunhdpInternal}}.
+The same list as returned by \code{\link{RunhdpInternal3}}.
 }
 \description{
 Run hdp extraction and attribution on a spectra catalog file
