@@ -1,6 +1,6 @@
 ## Load required packages
 library(ICAMS)
-library(SynSigEval)
+library(SynSigRun)
 
 
 

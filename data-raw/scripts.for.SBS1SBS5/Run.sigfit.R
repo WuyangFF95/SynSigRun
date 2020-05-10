@@ -1,7 +1,7 @@
 
 ## Load required packages
 library(ICAMS)
-library(SynSigEval)
+library(SynSigRun)
 library(sigfit)
 library(rstan)
 library(rstantools)

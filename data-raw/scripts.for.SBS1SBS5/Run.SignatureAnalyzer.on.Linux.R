@@ -1,7 +1,7 @@
 
 ## Load required packages
 library(ICAMS)
-library(SynSigEval)
+library(SynSigRun)
 
 
 
@@ -27,8 +27,8 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
     ## Run extraction and attribution
-    SynSigEval:::SignatureAnalyzerOneRun(
-      signatureanalyzer.code.dir = "/home/wuyang/softwares/SynSigEval/data-raw/SignatureAnalzyer.052418",
+    SynSigRun:::SignatureAnalyzerOneRun(
+      signatureanalyzer.code.dir = "/home/wuyang/softwares/SynSigRun/data-raw/SignatureAnalzyer.052418",
       input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
       read.catalog.function = ICAMS::ReadCatalog,
       out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",seedInUse),
@@ -41,8 +41,8 @@ for(seedInUse in seedsInUse){
       verbose = 0, overwrite = TRUE)
 
     ## Run Attribution Only
-    SynSigEval:::SignatureAnalyzerOneRun(
-      signatureanalyzer.code.dir = "/home/wuyang/softwares/SynSigEval/data-raw/SignatureAnalzyer.052418",
+    SynSigRun:::SignatureAnalyzerOneRun(
+      signatureanalyzer.code.dir = "/home/wuyang/softwares/SynSigRun/data-raw/SignatureAnalzyer.052418",
       input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
       read.catalog.function = ICAMS::ReadCatalog,
       out.dir = paste0(datasetName,"/sp.sp/Attr/SignatureAnalyzer.results/seed.",seedInUse),
