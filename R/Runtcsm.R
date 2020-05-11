@@ -78,8 +78,6 @@ run.stm <- function(
 
 #' Run tcsm extraction and attribution on a spectra catalog file
 #'
-#' WARNING: tcsm can only do exposure attribution
-#' using SBS96 spectra catalog and signature catalog!
 #'
 #' @param input.catalog File containing input spectra catalog.
 #' Columns are samples (tumors), rows are mutation types.
