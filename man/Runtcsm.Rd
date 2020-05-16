@@ -63,8 +63,7 @@ read in from \code{input.catalog}.}
 The inferred exposure of \code{tcsm}, invisibly.
 }
 \description{
-WARNING: tcsm can only do exposure attribution
-using SBS96 spectra catalog and signature catalog!
+Run tcsm extraction and attribution on a spectra catalog file
 }
 \details{
 Creates several
