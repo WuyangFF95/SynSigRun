@@ -48,7 +48,7 @@ for seedNumber in seedNumbers:
     for datasetName in datasetNames:
         inputDir = "/".join([datasetName,"sp.sp/"])
         inputCatalog = "/".join([inputDir,"ground.truth.syn.catalog.csv"])
-        outputDir = "/".join([inputDir,"ExtrAttr/sigproextractor.results/seed."+str(seedNumber)])
+        outputDir = "/".join([inputDir,"ExtrAttr/SigProExtractor.results/seed."+str(seedNumber)])
         ## Set seed
         random.seed(seedNumber) ## Set seed to seedNumber
         ## extract signatures and attribute exposures
@@ -63,7 +63,7 @@ for seedNumber in seedNumbers:
         inputDir = "/".join([datasetName,"sp.sp/"])
         inputCatalog = "/".join([inputDir,"ground.truth.syn.catalog.csv"])
         inputSigs = "/".join([inputDir,"ground.truth.syn.sigs.csv"])
-        outputDir = "/".join([inputDir,"Attr/sigproextractor.results/seed."+str(seedNumber)])
+        outputDir = "/".join([inputDir,"Attr/SigProSS.results/seed."+str(seedNumber)])
         spss_pcwag.single_sample_pcwag(samples=inputCatalog, output=outputDir, 
         sigbase=inputSigs, n_cpu = numcpus)
 		

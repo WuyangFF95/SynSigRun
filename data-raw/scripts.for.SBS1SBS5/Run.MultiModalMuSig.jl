@@ -50,13 +50,12 @@ for seedInUse in seedsInUse
 		## Find which K is the best likelihood.
 		max_likelihood = maximum(likelihoods);
 		KBest = [i for (i, x) in enumerate(likelihoods) if x == max_likelihood];
-		KBest = KBest[1];
+		KBest = KBest[1]; ## LDA accepts K as an integer rather than an array
 
 		## Obtain extracted signatures given the best K.
 		## In MultiModalMuSig format, later converted to ICAMS format
 		Random.seed!(seedInUse);
-		model = LDA(KBest, 0.1, 0.1, 96, X); ## You cannot write [KBest] here!
-		## [KBest] an nested array!
+		model = LDA(KBest, 0.1, 0.1, 96, X);
 		fit!(model, tol=1e-5);
 		snv_signatures = DataFrame(model.β);
 		sig_names = names(snv_signatures);
@@ -133,7 +132,7 @@ for seedInUse in seedsInUse
 		## In MultiModalMuSig format, later converted to ICAMS format
 		Random.seed!(seedInUse);
 		model = MMCTM(KBest, [0.1], X); ## You cannot write [KBest] here!
-		## [KBest] an nested array!
+		## as KBest is already an array, [KBest] would be an nested array!
 		fit!(model, tol=1e-5);
 		snv_signatures = DataFrame(hcat(model.ϕ[1]...));
 		sig_names = names(snv_signatures);
