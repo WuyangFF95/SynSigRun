@@ -24,10 +24,28 @@ for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
     SynSigRun::CreateMultiModalMuSigOutput(
       catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-      read.catalog.function = ICAMS::ReadCatalog,
-      out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/MultiModalMuSig.results",
+      out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/MultiModalMuSig.LDA.results",
                        "/seed.",seedInUse),
       overwrite = T)
+
+    SynSigRun::CreateMultiModalMuSigOutput(
+      catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
+      out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/MultiModalMuSig.CTM.results",
+                       "/seed.",seedInUse),
+      overwrite = T)
+
+    SynSigRun::CreateMultiModalMuSigOutput(
+      catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
+      out.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/MultiModalMuSig.LDA.results",
+                       "/seed.",seedInUse),
+      overwrite = T)
+
+    SynSigRun::CreateMultiModalMuSigOutput(
+      catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
+      out.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/MultiModalMuSig.CTM.results",
+                       "/seed.",seedInUse),
+      overwrite = T)
+
   }
 }
 
