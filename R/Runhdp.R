@@ -47,6 +47,21 @@ Installhdp <- function(){
 #' For result visualization and assessment of \code{hdp} package, select \code{TRUE};
 #' for diagnostic purposes, select \code{FALSE}.
 #'
+#' @param num.posterior Number of posterior sampling chains; can set to
+#'   1 for testing.
+#'
+#' @param post.burnin Pass to \code{\link[hdp]{hdp_posterior}}
+#'      \code{burnin}.
+#'
+#' @param post.n Pass to \code{\link[hdp]{hdp_posterior}}
+#'      \code{n}.
+#'
+#' @param post.space Pass to \code{\link[hdp]{hdp_posterior}}
+#'      \code{space}.
+#'
+#' @param post.cpiter Pass to \code{\link[hdp]{hdp_posterior}}
+#'      \code{cpiter}.
+#'
 #' @param test.only If TRUE, only analyze the first 10 columns
 #' in \code{input.catalog}.
 #'
@@ -74,6 +89,11 @@ Runhdp <-
            K.guess,
            multi.types = FALSE,
            remove.noise = FALSE,
+           num.posterior = 4,
+           post.burnin = 4000,
+           post.n      = 50,
+           post.space  = 50,
+           post.cpiter = 3,
            test.only = FALSE,
            overwrite = FALSE,
            verbose = TRUE) {
@@ -208,7 +228,7 @@ Runhdp <-
         ## Run four independent posterior sampling chains
         chlist <- vector("list", 4)	#4 is too much here!
 
-        for (i in 1:4) {
+        for (i in seq(1,num.posterior)) {
 
           if (verbose) message("calling hdp_posterior ", i)
           chlist[[i]] <-
@@ -216,10 +236,10 @@ Runhdp <-
               hdpObject,
               # The remaining values, except seed, are from the vignette; there
               # are no defaults.
-              burnin = 4000,
-              n      = 50,
-              space  = 50,
-              cpiter = 3,
+              burnin = post.burnin,
+              n      = post.n,
+              space  = post.space,
+              cpiter = post.cpiter,
               # Must choose a different seed for each of the 4 chains:
               seed   = (seedNumber + i * 10^6) )
         }
@@ -230,10 +250,10 @@ Runhdp <-
               hdpObject,
               # The remaining values, except seed, are from the vignette; there
               # are no defaults.
-              burnin = 4000,
-              n      = 50,
-              space  = 50,
-              cpiter = 3,
+              burnin = post.burnin,
+              n      = post.n,
+              space  = post.space,
+              cpiter = post.cpiter,
               # Must choose a different seed for each of the 4 chains:
               seed   = seed )
             return(retval)
