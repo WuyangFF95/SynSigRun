@@ -12,6 +12,11 @@ Runhdp(
   K.guess,
   multi.types = FALSE,
   remove.noise = FALSE,
+  num.posterior = 4,
+  post.burnin = 4000,
+  post.n = 50,
+  post.space = 50,
+  post.cpiter = 3,
   test.only = FALSE,
   overwrite = FALSE,
   verbose = TRUE
@@ -54,6 +59,21 @@ only few mutations will be assigned to noise signature.
 
 For result visualization and assessment of \code{hdp} package, select \code{TRUE};
 for diagnostic purposes, select \code{FALSE}.}
+
+\item{num.posterior}{Number of posterior sampling chains; can set to
+1 for testing.}
+
+\item{post.burnin}{Pass to \code{\link[hdp]{hdp_posterior}}
+\code{burnin}.}
+
+\item{post.n}{Pass to \code{\link[hdp]{hdp_posterior}}
+\code{n}.}
+
+\item{post.space}{Pass to \code{\link[hdp]{hdp_posterior}}
+\code{space}.}
+
+\item{post.cpiter}{Pass to \code{\link[hdp]{hdp_posterior}}
+\code{cpiter}.}
 
 \item{test.only}{If TRUE, only analyze the first 10 columns
 in \code{input.catalog}.}
