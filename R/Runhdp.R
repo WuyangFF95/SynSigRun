@@ -301,7 +301,7 @@ Runhdp <-
 
 
       ## Generate a pdf for mut_example_multi_extracted
-      {
+      if(FALSE){
         if (verbose) message("plotting to signature_hdp_embedded_func.pdf")
         grDevices::pdf(
           file = paste0(out.dir,"/signature_hdp_embedded_func.pdf"))
