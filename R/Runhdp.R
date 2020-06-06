@@ -405,10 +405,14 @@ Runhdp <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Save sample chains
-    save(mut_example_multi,file = paste0(out.dir,"/multi_chains.RData"))
+    ## Save signatures, exposures and sample chains
+    retval <- list(signature            = extractedSignatures,
+                   exposure             = exposureCounts,
+                   exposure.p           = exposureProbs,
+                   mut_example_multi    = mut_example_multi)
 
-    ## Return a list of signatures and exposures
-    invisible(list("signature" = extractedSignatures,
-                   "exposure" = exposureCounts))
+    save(retval,file = paste0(out.dir,"/Runhdp.retval.RData"))
+
+    ## Return a list of signatures and exposures, and sample chains
+    invisible(retval)
   }
