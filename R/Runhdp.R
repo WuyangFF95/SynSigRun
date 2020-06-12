@@ -124,7 +124,7 @@ Runhdp <-
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
     dimnames(convSpectra) <- dimnames(spectra) # check if really necessary
-    convSpectra <- t(convSpectra)
+    convSpectra <- as.data.frame(t(convSpectra))
 
     number.channels <- nrow(spectra)
     number.samples  <- ncol(spectra)
