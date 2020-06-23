@@ -193,10 +193,17 @@ RunhdpLessHier <-
       num.process <- hdp::numdp(hdpObject)
 
       if (verbose) message("calling hdp_setdata")
+      if(num.tumor.types > 1){
       hdpObject <- hdp::hdp_setdata(
         hdpObject,
         (1 + num.tumor.types + 1):num.process,
         convSpectra)
+      } else{
+        hdpObject <- hdp::hdp_setdata(
+          hdpObject,
+          (1 + 1):num.process,
+          convSpectra)
+      }
 
       if (verbose) message("calling dp_activate")
 
