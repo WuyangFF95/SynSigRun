@@ -1,13 +1,3 @@
-#' Install hdp from GitHub.
-#'
-#' @keywords internal
-Installhdp <- function(){
-  message("Installing hdp from GitHub nicolaroberts/hdp ...\n")
-  devtools::install_github("nicolaroberts/hdp", build_vignettes = TRUE)
-}
-
-
-
 #' Run hdp extraction and attribution on a spectra catalog file
 #'
 #' @param input.catalog File containing a spectra catalog
@@ -81,7 +71,7 @@ Installhdp <- function(){
 #'
 #' @export
 
-Runhdp <-
+RunhdpLessHier <-
   function(input.catalog,
            out.dir,
            CPU.cores = 1,
@@ -147,7 +137,7 @@ Runhdp <-
       ## for one tumor type.
       if(multi.types == FALSE){ ## All tumors belong to one tumor type (default)
         num.tumor.types <- 1
-        process.index <- c(0,1,rep(2,number.samples))
+        process.index <- c(0,rep(1,number.samples))
       } else if(multi.types == TRUE){
         ## There are multiple tumors in the sample.
         ## Tumor type will be inferred by the string before "::" in the column names.
