@@ -1,6 +1,6 @@
 ## Load required packages
 library(ICAMS)
-library(SynSigRun)
+library(SynSigEval)
 
 
 
@@ -35,7 +35,7 @@ reticulate::py_run_file("Run.EMu.py")
 
 
 ## After running, convert EMu-formatted tsv files
-## to SynSigRun/ICAMS-formatted csv files.
+## to SynSigEval/ICAMS-formatted csv files.
 for(datasetName in datasetNames){
   for(nrun in 1:20){
     ## Grep the names of EMu-formatted files.
@@ -56,7 +56,7 @@ for(datasetName in datasetNames){
 
 
     ## Convert signatures
-    signatures <- SynSigRun::ReadEMuCatalog(
+    signatures <- SynSigEval::ReadEMuCatalog(
       paste0(resultDir,"/",signatureFile),
       mutTypes = ICAMS::catalog.row.order$SBS96,
       sampleOrSigNames = NULL,
@@ -67,13 +67,13 @@ for(datasetName in datasetNames){
       paste0(resultDir,"/extracted.signatures.csv"))
 
     ## Convert exposures
-    exposure <- SynSigRun::ReadEMuExposureFile(
+    exposure <- SynSigEval::ReadEMuExposureFile(
       exposureFile = paste0(resultDir,"/",exposureFile),
       sigNames = NULL,
       sampleNames = paste0("TwoCorreSigsGen::",1:500))
     SynSigGen::WriteExposure(
       exposure,
-      paste0(resultDir,"/attributed.exposures.csv"))
+      paste0(resultDir,"/inferred.exposures.csv"))
 
   }
 }
