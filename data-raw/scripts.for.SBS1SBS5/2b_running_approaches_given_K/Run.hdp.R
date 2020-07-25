@@ -37,7 +37,7 @@ for(seedInUse in seedsInUse){
       message(paste0("Begin running catalog with K.guess = 2",datasetName," using seed ",seedInUse,"...\n"))
       message("\n\n########################################################\n\n")
 
-      RunhdpLessHier(
+      Runhdp(
         input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
         out.dir = out.dir,
         CPU.cores = 4,

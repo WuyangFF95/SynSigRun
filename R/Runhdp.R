@@ -147,7 +147,7 @@ Runhdp <-
       ## for one tumor type.
       if(multi.types == FALSE){ ## All tumors belong to one tumor type (default)
         num.tumor.types <- 1
-        process.index <- c(0,1,rep(2,number.samples))
+        process.index <- c(0,rep(1,number.samples))
       } else if(multi.types == TRUE){
         ## There are multiple tumors in the sample.
         ## Tumor type will be inferred by the string before "::" in the column names.
@@ -203,10 +203,17 @@ Runhdp <-
       num.process <- hdp::numdp(hdpObject)
 
       if (verbose) message("calling hdp_setdata")
+      if(num.tumor.types > 1){
       hdpObject <- hdp::hdp_setdata(
         hdpObject,
         (1 + num.tumor.types + 1):num.process,
         convSpectra)
+      } else{
+        hdpObject <- hdp::hdp_setdata(
+          hdpObject,
+          (1 + 1):num.process,
+          convSpectra)
+      }
 
       if (verbose) message("calling dp_activate")
 

@@ -28,26 +28,27 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 
 
 
-## Run Extraction and attribution packages
-## sigproextractor (Python package) and MultiModalMuSig (Julia package)
-## needs to be run with external script.
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
-    Runhdp(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-           out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/hdp.results/seed.",seedInUse),
-           K.range = c(1,10),
-           multi.types = FALSE,
-           seedNumber = seedInUse,
-           overwrite = TRUE)
+
+    out.dir <- paste0(datasetName,"/sp.sp/ExtrAttrExact/hdp.results/seed.",seedInUse)
+    if(!file.exists(paste0(out.dir,"/inferred.exposures.csv"))) {
+      message("\n\n########################################################\n\n")
+      message(paste0("Begin running catalog with K.guess = 10",datasetName," using seed ",seedInUse,"...\n"))
+      message("\n\n########################################################\n\n")
+
+      Runhdp(
+        input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
+        out.dir = out.dir,
+        CPU.cores = 4,
+        K.guess = 2,
+        multi.types = FALSE,
+        remove.noise = TRUE,
+        seedNumber = seedInUse,
+        post.burnin     = 20000,
+        post.n          = 1000,
+        post.space      = 50,
+        overwrite       = T)
+    }
   }
 }
-
-## Clean up "hdp.0" noise signatures in hdp runs (if any)
-## Cleaned results would be placed in "hdp.clean.results"
-CleanHDP <- function(){
-  NULL
-}
-
-
-
-
