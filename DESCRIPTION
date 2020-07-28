@@ -14,12 +14,6 @@ biocViews:
 Imports: 
     data.table,
     devtools,
-    ggbeeswarm,
-    ggplot2,
-    ggpubr,
-    graphics,
-    grDevices,
-    gtools,
     ICAMS, 
     lsa, 
     rlang,
