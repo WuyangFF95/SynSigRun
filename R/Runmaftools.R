@@ -137,7 +137,7 @@ Runmaftools <-
     ## If K.range is provided, determine K.best by doing raw extraction.
     if(bool1){
       grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
-      gof_nmf <- maftools::extractSignatures(mat = convSpectra,
+      sigs_nmf <- maftools::extractSignatures(mat = convSpectra,
                           n = K.exact,     ## n specifies number of signatures you want to assess
                           parallel  = paste0("p",CPU.cores))
       grDevices::dev.off()
