@@ -138,7 +138,7 @@ Runmaftools <-
     if(bool1){
       grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
       gof_nmf <- maftools::extractSignatures(mat = convSpectra,
-                          n = K,     ## n specifies number of signatures you want to assess
+                          n = K.exact,     ## n specifies number of signatures you want to assess
                           parallel  = paste0("p",CPU.cores))
       grDevices::dev.off()
       K.best <- K.exact
