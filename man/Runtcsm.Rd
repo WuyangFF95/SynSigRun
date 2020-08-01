@@ -7,7 +7,6 @@
 Runtcsm(
   input.catalog,
   out.dir,
-  CPU.cores = NULL,
   seedNumber = 1,
   K.exact = NULL,
   K.range = NULL,
@@ -27,13 +26,6 @@ Columns are samples (tumors), rows are mutation types.}
 \item{out.dir}{Directory that will be created for the output;
 abort if it already exits.  Log files will be in
 \code{paste0(out.dir, "/tmp")}.}
-
-\item{CPU.cores}{Number of CPUs to use in running
-tcsm. For a server, 30 cores would be a good
-choice; while for a PC, you may only choose 2-4 cores.
-By default (CPU.cores = NULL), the CPU.cores would be equal
-to \code{(parallel::detectCores())/2}, total number of CPUs
-divided by 2.}
 
 \item{seedNumber}{Specify the pseudo-random seed number
 used to run tcsm. Setting seed can make the
