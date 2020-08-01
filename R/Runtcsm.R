@@ -167,9 +167,10 @@ Runtcsm <-
     ## Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
-    } else {
-      dir.create(paste0(out.dir,"/other.outputs.by.tcsm"), recursive = T)
     }
+    # The subdirectory might not exist even
+    # if the out.dir exists.
+    dir.create(paste0(out.dir,"/other.outputs.by.tcsm"), recursive = T)
 
     ## CPU.cores specifies number of CPU cores to use.
     ## If CPU.cores is not specified, CPU.cores will
