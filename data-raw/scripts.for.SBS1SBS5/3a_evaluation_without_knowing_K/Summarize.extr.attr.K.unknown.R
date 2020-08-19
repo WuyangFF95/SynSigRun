@@ -34,7 +34,7 @@ for(slope in slopes){
 # and maftools (its seed is hard-coded)
 RBasedExtrAttrToolNames <- c("hdp","MutationalPatterns",
                              "sigfit.EMu","sigfit.NMF","signeR",
-                             "tcsm")
+                             "TCSM")
 # Python or other language based tools.
 # excluding maftools (seed is fixed) and EMu (cannot designate seed)
 otherExtrAttrToolNames <- c("MultiModalMuSig.CTM","MultiModalMuSig.LDA")
@@ -75,7 +75,7 @@ for(datasetName in datasetNames){
                        seedInUse,"/"),
       ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
       overwrite = T)
-    ## Summarize helmsman
+    ## Summarize helmsman.NMF
     SynSigEval::SummarizeSigOnehelmsmanSubdir(
       run.dir = paste0(datasetName,
                        "/sp.sp/ExtrAttr/helmsman.NMF.results/seed.",
@@ -164,9 +164,9 @@ for(slope in slopes){
 }
 ## Part IV: Generate a summary table and boxplot for results
 ## of multiple datasets, from each separate tool.
-datasetGroup <- rep(c("0.1","0.2","0.3","0.6"),5)
+datasetGroup <- rep(c(0.1,0.2,0.3,0.6),5)
 names(datasetGroup) <- datasetNames
-datasetSubGroup <- rep(c("0.1","0.5","1","2","10"),each = 4)
+datasetSubGroup <- rep(c(0.1,0.5,1,2,10),each = 4)
 names(datasetSubGroup) <- datasetNames
 
 
@@ -189,8 +189,9 @@ for(toolName in c(
 
 ## Part V: Generate a combined summary table for results
 ## of multiple datasets, from multiple tools
-FinalExtrAttr <- SummarizeMultiToolsMultiDatasets(dataset.dirs = datasetNames,
-                       second.third.level.dirname = "sp.sp/ExtrAttr",
-                       out.dir = "./FinalExtrAttrSummary", overwrite = T)
+FinalExtrAttr <- SummarizeMultiToolsMultiDatasets(
+  dataset.dirs = datasetNames,
+  second.third.level.dirname = "sp.sp/ExtrAttr",
+  out.dir = "./FinalExtrAttrSummary", overwrite = T)
 
 
