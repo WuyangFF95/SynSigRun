@@ -3,8 +3,14 @@
 require(tidyverse)
 require(lattice)
 require(dplyr)
+## Require plotting package
 require(ggplot2)
+## Require package combining multiple grid plots
 require(ggpubr)
+## Require package altering axis scales
+require(scales)
+## Require package altering color
+require(RColorBrewer)
 
 setwd("../../practice/3_Signature_Challenge/3.2_SBS1-SBS5-Correlation_Project/new_results/FinalExtrAttrExactSummary")
 
@@ -77,16 +83,36 @@ for(index in c("SBS1","SBS5")){
 ggVsRsq <- list()
 ggVsRatio <- list()
 for(index in c("TPR","FDR","SBS1","SBS5")){
+
+  numTools <- length(unique(summaries[[index]]$toolName))
+
   ggVsRsq[[index]] <- ggplot2::ggplot(
     summaries[[index]],
     aes(x = datasetGroup)) +
     ## by specifying group aesthetics = toolName,
     ## we draw a line for each toolName.
     ## This is done implicitly when specifying colour = toolName,
-    ## yet we still specify it explicitly, as it will become
-    ## a disaster if we specify group = datasetSubGroup.
-    ggplot2::geom_line(aes(y = Mean, colour = toolName)) +
-    ggplot2::labs(x = "Pearson's R squared") +
+    ggplot2::geom_line(aes(y = Mean, colour = toolName, linetype = toolName)) +
+    ggplot2::labs(
+      x = "Pearson's R squared",
+      ## Change title of legend
+      colour = "Computational approaches",
+      linetype = "Computational approaches"
+    ) +
+    ## Change colour scale for lines
+    scale_color_manual(values = rainbow(numTools)) +
+    ## Make line segment in legend longer.
+    ggplot2::theme(legend.key.width = grid::unit(1,"inches")) +
+    ## Change x axis to log2 scaled.
+    ## Show tick marks exactly at possible Pearson's R^2 values.
+    ## (0.1, 0.2, 0.3, 0.6)
+    ggplot2::scale_x_continuous(
+      trans = log2_trans(),
+      breaks = c(0.1, 0.2, 0.3, 0.6)
+    ) +
+    ## Fix limit of y axis to be 0 to 1
+    ## for all extraction measures
+    ggplot2::scale_y_continuous(limits = c(0,1)) +
     ggplot2::facet_wrap(facets = vars(datasetSubGroup))
 
   ggVsRatio[[index]] <- ggplot2::ggplot(
@@ -95,53 +121,70 @@ for(index in c("TPR","FDR","SBS1","SBS5")){
     ## by specifying group aesthetics = toolName,
     ## we draw a line for each toolName.
     ## This is done implicitly when specifying colour = toolName,
-    ## yet we still specify it explicitly, as it will become
-    ## a disaster if we specify group = datasetGroup.
-    ggplot2::geom_line(aes(y = Mean, colour = toolName, group = toolName)) +
-    ggplot2::labs(x = "SBS1:SBS5 exposure ratio") +
+    ggplot2::geom_line(aes(y = Mean, colour = toolName, linetype = toolName)) +
+    ggplot2::labs(
+      x = "SBS1:SBS5 exposure ratio",
+      ## Change title of legend
+      colour = "Computational approaches",
+      linetype = "Computational approaches"
+    ) +
+    ## Change colour scale for lines
+    scale_color_manual(values = rainbow(numTools)) +
+    ## Make line segment in legend longer.
+    ggplot2::theme(legend.key.width = grid::unit(1,"inches")) +
+    ## Change x axis to log10 scaled.
+    ## Show tick marks exactly at possible SBS1:SBS5 exposure ratio values.
+    ## (0.1, 0.5, 1, 2, 10)
+    ggplot2::scale_x_continuous(
+      trans = log10_trans(),
+      breaks = c(0.1, 0.5, 1, 2, 10)
+      ) +
+    ## Fix limit of y axis to be 0 to 1
+    ## for all extraction measures
+    ggplot2::scale_y_continuous(limits = c(0,1)) +
     ggplot2::facet_wrap(facets = vars(datasetGroup))
 }
 
 ## Plot these summary plots separately, with customized x labels and y labels.
 {
-pdf("../TrendDiag/ExtrAttrExact/cosSimSBS1AgainstRsq.pdf")
+pdf("../TrendDiag/ExtrAttrExact/cosSimSBS1AgainstRsq.pdf",12,10)
   ggVsRsq$SBS1 <- ggVsRsq$SBS1 + ggplot2::labs(y = "Cosine similarity to SBS1")
 plot(ggVsRsq$SBS1)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/cosSimSBS5AgainstRsq.pdf")
+pdf("../TrendDiag/ExtrAttrExact/cosSimSBS5AgainstRsq.pdf",12,10)
 ggVsRsq$SBS5 <- ggVsRsq$SBS5 + ggplot2::labs(y = "Cosine similarity to SBS5")
 plot(ggVsRsq$SBS5)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/TPRAgainstRsq.pdf")
+pdf("../TrendDiag/ExtrAttrExact/TPRAgainstRsq.pdf",12,10)
 ggVsRsq$TPR <- ggVsRsq$TPR + ggplot2::labs(y = "True Positive Rate")
 plot(ggVsRsq$TPR)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/FDRAgainstRsq.pdf")
+pdf("../TrendDiag/ExtrAttrExact/FDRAgainstRsq.pdf",12,10)
 ggVsRsq$FDR <- ggVsRsq$FDR + ggplot2::labs(y = "False Discovery Rate")
 plot(ggVsRsq$FDR)
 dev.off()
 }
 
 {
-pdf("../TrendDiag/ExtrAttrExact/cosSimSBS1AgainstSBS1SBS5Ratio.pdf")
+pdf("../TrendDiag/ExtrAttrExact/cosSimSBS1AgainstSBS1SBS5Ratio.pdf",12,10)
   ggVsRatio$SBS1 <- ggVsRatio$SBS1 + ggplot2::labs(y = "Cosine similarity to SBS1")
 plot(ggVsRatio$SBS1)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/cosSimSBS5AgainstSBS1SBS5Ratio.pdf")
+pdf("../TrendDiag/ExtrAttrExact/cosSimSBS5AgainstSBS1SBS5Ratio.pdf",12,10)
 ggVsRatio$SBS5 <- ggVsRatio$SBS5 + ggplot2::labs(y = "Cosine similarity to SBS5")
 plot(ggVsRatio$SBS5)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/TPRAgainstSBS1SBS5Ratio.pdf")
+pdf("../TrendDiag/ExtrAttrExact/TPRAgainstSBS1SBS5Ratio.pdf",12,10)
 ggVsRatio$TPR <- ggVsRatio$TPR + ggplot2::labs(y = "True Positive Rate")
 plot(ggVsRatio$TPR)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/FDRAgainstSBS1SBS5Ratio.pdf")
+pdf("../TrendDiag/ExtrAttrExact/FDRAgainstSBS1SBS5Ratio.pdf",12,10)
 ggVsRatio$FDR <- ggVsRatio$FDR + ggplot2::labs(y = "False Discovery Rate")
 plot(ggVsRatio$FDR)
 dev.off()
@@ -150,7 +193,7 @@ dev.off()
 ## Plot multiple summary plots into one page.
 ## These PDF files with multiple panels are ready for publication.
 {
-  pdf("../TrendDiag/ExtrAttrExact/cosSimCombined.pdf", width = 10, height = 10)
+  pdf("../TrendDiag/ExtrAttrExact/cosSimCombined.pdf", width = 15, height = 15)
   ggObj <- ggpubr::ggarrange(
     ggVsRsq$SBS1 + rremove("legend"),
     ggVsRsq$SBS5 + rremove("legend"),
@@ -163,7 +206,7 @@ dev.off()
   plot(ggObj)
   dev.off()
 
-  pdf("../TrendDiag/ExtrAttrExact/TPRFDRCombined.pdf", width = 10, height = 10)
+  pdf("../TrendDiag/ExtrAttrExact/TPRFDRCombined.pdf", width = 15, height = 15)
   ggObj <- ggpubr::ggarrange(
     ggVsRsq$FDR + rremove("legend"),
     ggVsRatio$FDR + rremove("legend"),
