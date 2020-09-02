@@ -40,8 +40,8 @@ extrAttrToolNames <-
 toolNameWOSeed <- "EMu"
 toolNameWFixedSeed <- "maftools"
 
-if(!dir.exists(paste0("../../TrendDiag/ExtrAttr/")))
-  dir.create(paste0("../../TrendDiag/ExtrAttr/"),recursive = T)
+if(!dir.exists(paste0("../TrendDiag/ExtrAttr/")))
+  dir.create(paste0("../TrendDiag/ExtrAttr/"),recursive = T)
 
 
 ## Load final summary for all approaches.
@@ -94,7 +94,7 @@ for(index in c("TPR","FDR","SBS1","SBS5")){
     ## This is done implicitly when specifying colour = toolName,
     ggplot2::geom_line(aes(y = Mean, colour = toolName, linetype = toolName)) +
     ggplot2::labs(
-      x = "Pearson's R squared",
+      x = "SBS1-SBS5 correlation (in Pearson's R squared)",
       ## Change title of legend
       colour = "Computational approaches",
       linetype = "Computational approaches"
@@ -113,7 +113,13 @@ for(index in c("TPR","FDR","SBS1","SBS5")){
     ## Fix limit of y axis to be 0 to 1
     ## for all extraction measures
     ggplot2::scale_y_continuous(limits = c(0,1)) +
-    ggplot2::facet_wrap(facets = vars(datasetSubGroup))
+    ggplot2::facet_wrap(facets = vars(datasetSubGroup)) +
+    ## Add facet title on the top,
+    ## implemented by adding a sub-title
+    ggplot2::labs(subtitle = "SBS1:SBS5 exposure ratio") +
+    ggplot2::theme(
+      plot.title = element_blank(),
+      plot.subtitle = element_text(hjust = 0.5))
 
   ggVsRatio[[index]] <- ggplot2::ggplot(
     summaries[[index]],
@@ -142,7 +148,13 @@ for(index in c("TPR","FDR","SBS1","SBS5")){
     ## Fix limit of y axis to be 0 to 1
     ## for all extraction measures
     ggplot2::scale_y_continuous(limits = c(0,1)) +
-    ggplot2::facet_wrap(facets = vars(datasetGroup))
+    ggplot2::facet_wrap(facets = vars(datasetGroup)) +
+    ## Add facet title on the top,
+    ## implemented by adding a sub-title
+    ggplot2::labs(subtitle = "SBS1-SBS5 correlation (in Pearson's R squared)") +
+    ggplot2::theme(
+      plot.title = element_blank(),
+      plot.subtitle = element_text(hjust = 0.5))
 }
 
 ## Plot these summary plots separately, with customized x labels and y labels.
