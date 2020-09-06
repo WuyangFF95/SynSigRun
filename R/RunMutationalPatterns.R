@@ -148,11 +148,6 @@ RunMutationalPatternsAttributeOnly <-
 #' to \code{(parallel::detectCores())/2}, total number of CPUs
 #' divided by 2.
 #'
-#' @param seedNumber Specify the pseudo-random seed number
-#' used to run MutationalPatterns. Setting seed can make the
-#' attribution of MutationalPatterns repeatable.
-#' Default: 1.
-#'
 #' @param K.exact,K.range \code{K.exact} is the exact value for
 #' the number of signatures active in spectra (K).
 #' Specify \code{K.exact} if you know exactly how many signatures
@@ -192,7 +187,6 @@ RunMutationalPatterns <-
   function(input.catalog,
            out.dir,
            CPU.cores = NULL,
-           seedNumber = 1,
            K.exact = NULL,
            K.range = NULL,
            test.only = FALSE,
@@ -254,15 +248,6 @@ RunMutationalPatterns <-
     ## If K.exact is provided, use K.exact as the K.best.
     ## If K.range is provided, determine K.best by doing raw extraction.
     if(bool1){
-      gof_nmf <- NMF::nmf(convSpectra,
-                          rank = K.exact,     ## Rank specifies number of signatures you want to assess
-                          method = "brunet",  ## "brunet" is the default NMF method in NMF package.
-                          nrun = CPU.cores,
-                          seed = seedNumber)
-      gc()
-      gc()
-      gc()
-
       K.best <- K.exact
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
@@ -270,8 +255,9 @@ RunMutationalPatterns <-
       K.range <- seq.int(K.range[1],K.range[2]) ## Change K.range to a full vector
       gof_nmf <- NMF::nmf(convSpectra,
                           rank = K.range,     ## Rank specifies number of signatures you want to assess
+                          nrun = 200,
                           method = "brunet",  ## "brunet" is the default NMF method in NMF package.
-                          nrun = CPU.cores,
+                          .options = paste0("p", CPU.cores),
                           seed = seedNumber)
       gc()
       gc()
@@ -304,7 +290,10 @@ RunMutationalPatterns <-
 
 
     ## Generates a list contain extracted signatures
-    sigs_nmf <- MutationalPatterns::extract_signatures(convSpectra,K.best,CPU.cores)
+    sigs_nmf <- MutationalPatterns::extract_signatures(
+      mut_matrix = convSpectra,
+      rank = K.best,
+      nrun = 200)
     gc()
     gc()
     gc()
