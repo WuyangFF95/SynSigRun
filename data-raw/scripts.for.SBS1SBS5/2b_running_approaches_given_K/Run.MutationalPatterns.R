@@ -22,11 +22,10 @@ for(slope in slopes)
     datasetNames <- c(datasetNames, paste0("S.",slope,".Rsq.",Rsq))
 
 ## Specify 20 seeds used in software running
-seedsInUse <- c(1, 691, 1999, 3511, 8009,
-                9902, 10163, 10509, 14476, 20897,
-                27847, 34637, 49081, 75679, 103333,
-                145879, 200437, 310111, 528401, 1076753)
+seedsInUse <- c(123456)
 
+## Enable memory sharing in NMF
+install.extras("NMF")
 
 
 ## Run MutationalPatterns which requires package NMF.
@@ -35,7 +34,7 @@ for(seedInUse in seedsInUse){
     RunMutationalPatterns(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
                           out.dir = paste0(datasetName, "/sp.sp/ExtrAttrExact/MutationalPatterns.results/seed.", seedInUse),
                           CPU.cores = 10,
-                          K.range = c(2,2),
+                          K.exact = 2,
                           overwrite = TRUE)
   }
 }
