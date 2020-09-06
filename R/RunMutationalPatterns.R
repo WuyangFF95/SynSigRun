@@ -63,7 +63,7 @@ RunMutationalPatternsAttributeOnly <-
 
 
     ## Set seed
-    set.seed(seedNumber)
+    set.seed(123456)
     seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
     RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
 
