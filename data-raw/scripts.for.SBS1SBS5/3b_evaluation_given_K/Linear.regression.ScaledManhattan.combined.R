@@ -33,7 +33,7 @@ seedsInUse <- as.character(c(1, 691, 1999, 3511, 8009,
 
 
 extrAttrToolNames <-
-  c("hdp","sigfit.EMu",
+  c("hdp","MutationalPatterns","sigfit.EMu",
     "sigfit.NMF","signeR","TCSM",
     "helmsman.NMF","MultiModalMuSig.CTM",
     "MultiModalMuSig.LDA","SigProExtractor","SignatureAnalyzer")
