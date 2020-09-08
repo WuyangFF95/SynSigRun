@@ -8,7 +8,6 @@ Runmaftools(
   input.catalog,
   out.dir,
   CPU.cores = NULL,
-  seedNumber = 1,
   K.exact = NULL,
   K.range = NULL,
   test.only = FALSE,
@@ -29,11 +28,6 @@ choice; while for a PC, you may only choose 2-4 cores.
 By default (CPU.cores = NULL), the CPU.cores would be equal
 to \code{(parallel::detectCores())/2}, total number of CPUs
 divided by 2.}
-
-\item{seedNumber}{Specify the pseudo-random seed number
-used to run maftools. Setting seed can make the
-attribution of maftools repeatable.
-Default: 1.}
 
 \item{K.exact, K.range}{\code{K.exact} is the exact value for
 the number of signatures active in spectra (K).
