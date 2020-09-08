@@ -30,11 +30,6 @@ Installmaftools <- function(){
 #' to \code{(parallel::detectCores())/2}, total number of CPUs
 #' divided by 2.
 #'
-#' @param seedNumber Specify the pseudo-random seed number
-#' used to run maftools. Setting seed can make the
-#' attribution of maftools repeatable.
-#' Default: 1.
-#'
 #' @param K.exact,K.range \code{K.exact} is the exact value for
 #' the number of signatures active in spectra (K).
 #' Specify \code{K.exact} if you know exactly how many signatures
@@ -74,7 +69,6 @@ Runmaftools <-
   function(input.catalog,
            out.dir,
            CPU.cores = NULL,
-           seedNumber = 1,
            K.exact = NULL,
            K.range = NULL,
            test.only = FALSE,
