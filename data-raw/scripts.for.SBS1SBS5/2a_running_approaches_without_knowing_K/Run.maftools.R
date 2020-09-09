@@ -22,20 +22,31 @@ for(slope in slopes)
     datasetNames <- c(datasetNames, paste0("S.",slope,".Rsq.",Rsq))
 
 ## Specify 1 seed used in software running
-## Note: maftools has been fixed to use seed 123456!
+## Note: The seed for maftools is hard-coded as 123456.
 seedsInUse <- c(123456)
 
+## Enable memory sharing in NMF
+## Applicable for R 3.6
+## Not applicable for R 4.0+
+#install.extras("NMF")
 
 
-## Run Extraction and attribution packages
-## sigproextractor (Python package) and MultiModalMuSig (Julia package)
-## needs to be run with external script.
+## NMF will have an error if K.exact equals to 1
+## Run approach maftools
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+    
+    out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/maftools.results/seed.",seedInUse)
+
+    cat("\n===========================================\n")
+    cat(paste0("Running MutationalPatterns on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat("\n===========================================\n")
+
+
     Runmaftools(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-              out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/maftools.results/seed.",seedInUse),
-              seedNumber = seedInUse,
-              K.range = c(1,10),
+              out.dir = out.dir,
+              CPU.cores = 10,
+              K.range = c(2,10),
               overwrite = T)
   }
 }
