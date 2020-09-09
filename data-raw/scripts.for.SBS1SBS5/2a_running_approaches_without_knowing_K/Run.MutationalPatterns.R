@@ -22,20 +22,29 @@ for(slope in slopes)
     datasetNames <- c(datasetNames, paste0("S.",slope,".Rsq.",Rsq))
 
 ## Specify 1 seed used in software running
+## Note: The seed for MutationalPatterns is hard-coded as 123456.
 seedsInUse <- c(123456)
 
 ## Enable memory sharing in NMF
-install.extras("NMF")
+## Applicable for R 3.6
+## Not applicable for R 4.0+
+#install.extras("NMF")
 
-## Run Extraction and attribution packages
-## sigproextractor (Python package) and MultiModalMuSig (Julia package)
-## needs to be run with external script.
 
-## NMF will have an error if K.range includes 1!
+## NMF will have an error if K.range includes 1
+## Run approach MutationalPatterns
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+    
+    out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/MutationalPatterns.results/seed.", seedInUse)
+
+    cat("\n===========================================\n")
+    cat(paste0("Running MutationalPatterns on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat("\n===========================================\n")
+
+
     RunMutationalPatterns(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-                          out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/MutationalPatterns.results/seed.", seedInUse),
+                          out.dir = out.dir,
                           CPU.cores = 10,
                           K.range = c(2,10),
                           overwrite = TRUE)
