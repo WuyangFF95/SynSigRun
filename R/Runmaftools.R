@@ -84,8 +84,8 @@ Runmaftools <-
       Installmaftools()
 
 
-    ## Set seed
-    set.seed(seedNumber)
+    ## Set seed as 123456
+    set.seed(123456)
     seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
     RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
 
@@ -133,21 +133,51 @@ Runmaftools <-
       grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
       sigs_nmf <- maftools::extractSignatures(mat = convSpectra,
                           n = K.exact,     ## n specifies number of signatures you want to assess
-                          parallel  = paste0("p",CPU.cores))
+                          parallel  = CPU.cores)
       grDevices::dev.off()
       K.best <- K.exact
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
-      grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
-      sigs_nmf <- maftools::extractSignatures(convSpectra,
-                          nTry = K.range[2],     ## nTry specifies maximal number of signatures you want to assess
-                          parallel  = paste0("p",CPU.cores))
-      grDevices::dev.off()
+      K.range <- seq.int(K.range[1],K.range[2])
+      gof_nmf <- NMF::nmf(
+        convSpectra[["nmf_matrix"]],
+        rank = K.range, ## Rank specifies number of signatures you want to assess
+        method = "brunet",  ## "brunet" is the default NMF method in NMF package.
+        .options = paste0("p", CPU.cores),
+        seed = 123456)
+      gc()
+      gc()
+      gc()
+      ## Choose the best signature number (K.best) active in the spectra
+      ## catalog (input.catalog).
+      ##
+      ## According to paper "A flexible R package for nonnegative matrix factorization"
+      ## (Gaujoux & Seoighe, 2010), the most common approach to choose number of
+      ## signature (K, a.k.a. rank in this paper) is to choose the smallest K for which
+      ## cophenetic correlation coefficient starts decreasing.
+      for(current.K in K.range)
+      {
+        current.summary <- NMF::summary(gof_nmf$fit[[as.character(current.K)]])
+        current.cophenetic.coefficient <- current.summary["cophenetic"]
 
-      K.best <- ncol(sigs_nmf$signatures) ## extractSignatures() will pick up K.best automatically.
+        next.summary <- NMF::summary(gof_nmf$fit[[as.character(current.K+1)]])
+        next.cophenetic.coefficient <- next.summary["cophenetic"]
+
+        if(current.cophenetic.coefficient > next.cophenetic.coefficient)
+          break
+      }
+      K.best <- current.K ## Choose K.best as the smallest current.K whose cophenetic
+      ## is greater than cophenetic from (current.K+1).
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
+
+      grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
+      sigs_nmf <- maftools::extractSignatures(convSpectra,
+                          n = K.best,     ## nTry speciies maximal number of signatures you want to assess
+                          parallel  = CPU.cores)
+      grDevices::dev.off()
+
     }
 
 
