@@ -90,6 +90,13 @@ run.stm <- function(
 #' used to run tcsm. Setting seed can make the
 #' attribution of tcsm repeatable.
 #'
+#' @param CPU.cores Number of CPUs to use in running
+#' MutationalPatterns. For a server, 30 cores would be a good
+#' choice; while for a PC, you may only choose 2-4 cores.
+#' By default (CPU.cores = NULL), the CPU.cores would be equal
+#' to \code{(parallel::detectCores())/2}, total number of CPUs
+#' divided by 2.
+#'
 #' @param K.exact,K.range \code{K.exact} is the exact
 #' value for the number of signatures active in spectra (K).
 #' Specify \code{K.exact} if you know exact how many signatures
@@ -126,6 +133,7 @@ Runtcsm <-
   function(input.catalog,
            out.dir,
            seedNumber = 1,
+           CPU.cores = 1,
            K.exact = NULL,
            K.range = NULL,
 		       covariates = NULL,
