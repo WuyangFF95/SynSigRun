@@ -33,6 +33,11 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## needs to be run with external script.
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+
+    cat("\n===========================================\n")
+    cat(paste0("Running signeR on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat("\n===========================================\n")
+
     RunsigneR(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
               out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/signeR.results/seed.",seedInUse),
               seedNumber = seedInUse,

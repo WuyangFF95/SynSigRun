@@ -50,6 +50,7 @@ for(seedInUse in seedsInUse){
         seedInUse),
       model = "nmf",
       CPU.cores = 10,
+      seedNumber = seedInUse,
       K.range = c(2, 10),
       overwrite = TRUE)
 
@@ -60,6 +61,7 @@ for(seedInUse in seedsInUse){
                        seedInUse),
       model = "emu",
       CPU.cores = 10,
+      seedNumber = seedInUse,
       K.range = c(2, 10),
       overwrite = TRUE)
   }
