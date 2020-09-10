@@ -1,4 +1,24 @@
+
+# To convert ICAMS-formatted catalog to 
+# catalog format acceptable by EMu,
+# Prep.For.Running.EMu.R needs to be run
+# before running this script.
+
+#################################################################################################
+###### load prerequisites
+#################################################################################################
+
 import os,sys,subprocess
+
+#### Read old working directory
+oldWorkingDir = os.getcwd()
+
+# Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
+# before running this script.
+# SynSigRun home can be retrieved by usethis::proj_path() in R
+#
+# PATH = paste0(<SynSigRun_home>,"/data-raw/scripts.for.SBS1SBS5")
+# os.setcwd(PATH)
 
 #### Naming the seeds
 seedNumbers = (1, 691, 1999, 3511, 8009,
@@ -26,6 +46,7 @@ for index in range(1,21):
         print("\n\n======================================\n")
         print(str(index)+"-th running EMu for dataset "+str(datasetName)+" ...")
         print("\n\n======================================\n")
+        ## The first argument should be replaced by the locatation of the compiled EMu in your machine.
         arguments = ['~/practice/3_Signature_Challenge/EMu/EMu/build/EMu',
             '--force',str(Kexact),
             '--mut',inputCatalog,
@@ -33,3 +54,7 @@ for index in range(1,21):
             '--pre',outputPath]
         process = subprocess.Popen(" ".join(arguments),shell = True)
         process.wait()
+
+
+## Restore old working directory		
+os.chdir(oldWorkingDir)

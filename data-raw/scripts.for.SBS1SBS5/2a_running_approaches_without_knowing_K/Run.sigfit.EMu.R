@@ -9,6 +9,9 @@
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
+library(sigfit)
+library(rstan)
+library(rstantools)
 
 
 
@@ -28,21 +31,24 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 
 
 
-## Run Extraction and attribution packages
-## sigproextractor (Python package) and MultiModalMuSig (Julia package)
-## needs to be run with external script.
+## Run approaches sigfit.EMu
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 
     cat("\n===========================================\n")
-    cat(paste0("Running signeR on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat(paste0("Running sigfit on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
-    RunsigneR(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-              out.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/signeR.results/seed.",seedInUse),
-              seedNumber = seedInUse,
-              K.exact = 2,
-              overwrite = T)
+    Runsigfit(
+      input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
+      out.dir = paste0(datasetName,
+                       "/sp.sp/ExtrAttr/sigfit.EMu.results/seed.",
+                       seedInUse),
+      model = "emu",
+      CPU.cores = 10,
+      seedNumber = seedInUse,
+      K.range = c(2, 10),
+      overwrite = TRUE)
   }
 }
 

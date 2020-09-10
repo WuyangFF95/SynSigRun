@@ -1,7 +1,7 @@
 
 # Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
 # before running this script.
-# SynSigRun home can be retrieved by usethis::proj_path
+# SynSigRun home can be retrieved by usethis::proj_path()
 #
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
@@ -26,6 +26,8 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
                 27847, 34637, 49081, 75679, 103333,
                 145879, 200437, 310111, 528401, 1076753)
 
+
+
 ## Run SignatureAnalyzer extraction and attribution code.
 ## Note: This script is only tested on Linux
 ## and might not work well on Windows.
@@ -37,12 +39,12 @@ for(seedInUse in seedsInUse){
     if(file.exists(paste0(out.dir,"/best.run/sa.output.exp.csv")))
       next
     message("\n\n########################################################\n\n")
-    message(paste0("Begin running SignatureAnalyzer with K.exact = 2",datasetName," using seed ",seedInUse,"...\n"))
+    message(paste0("Begin running SignatureAnalyzer with maxK = 10",datasetName," using seed ",seedInUse,"...\n"))
     message("\n\n########################################################\n\n")
 
     SynSigRun:::SAMultiRunOneCatalog(
       num.runs = 20,
-      signatureanalyzer.code.dir = paste0("~/bin/anaconda3/envs/r-3.6.1/lib/R/library/SynSigRun/","/data-raw/SignatureAnalzyer.052418"),
+      signatureanalyzer.code.dir = paste0(usethis::proj_path(),"/data-raw/SignatureAnalzyer.052418"),
       input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
       out.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/SignatureAnalyzer.results/seed.",seedInUse),
       maxK = 2,
@@ -60,4 +62,3 @@ for(seedInUse in seedsInUse){
       overwrite = FALSE)
   }
 }
-

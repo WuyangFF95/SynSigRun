@@ -1,7 +1,7 @@
 
 # To convert ICAMS-formatted catalog to 
-# catalog format acceptable by helmsman,
-# Prep.For.Running.helmsman.R needs to be run
+# catalog format acceptable by EMu,
+# Prep.For.Running.EMu.R needs to be run
 # before running this script.
 
 #################################################################################################
@@ -41,6 +41,9 @@ for index in range(1,21):
         inputPath = "/".join([datasetName,"sp.sp/ExtrAttr/EMu.results/run."+str(index)+"/"])
         inputCatalog = "/".join([inputPath,"ground.truth.syn.catalog.tsv"])
         outputPath = inputPath
+        print("\n\n======================================\n")
+        print(str(index)+"-th running EMu for dataset "+str(datasetName)+" ...")
+        print("\n\n======================================\n")
         ## The first argument should be replaced by the locatation of the compiled EMu in your machine.
         arguments = ['~/practice/3_Signature_Challenge/EMu/EMu/build/EMu',
             '--mut',inputCatalog,

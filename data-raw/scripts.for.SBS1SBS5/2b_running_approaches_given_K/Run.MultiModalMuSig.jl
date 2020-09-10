@@ -1,3 +1,12 @@
+
+# Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
+# before running this script.
+# SynSigRun home can be retrieved by usethis::proj_path() in R.
+#
+# PATH = string(<SynSigRun_home>,"/data-raw/scripts.for.SBS1SBS5")
+#
+# cd(PATH)
+
 using MultiModalMuSig
 using CSV
 using DataFrames

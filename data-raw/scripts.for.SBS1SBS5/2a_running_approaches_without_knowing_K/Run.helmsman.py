@@ -39,6 +39,8 @@ for slope in slopes:
     for Rsq in Rsqs:
         datasetNames = datasetNames + ("S."+str(slope)+".Rsq."+str(Rsq),)
 
+CPUNumber = 5
+
 
 for seedNumber in seedNumbers:
     for datasetName in datasetNames:
@@ -47,6 +49,7 @@ for seedNumber in seedNumbers:
         outputPath = "/".join([inputPath,"seed."+str(seedNumber)])
         ## The first argument should be replaced by the locatation of helmsman.py in your machine.
         arguments = ['python3','~/practice/3_Signature_Challenge/helmsman/helmsman.py',
+            '--cpus',str(CPUNumber),
             '--seed',str(seedNumber),'--mode','agg',
             '--input',inputCatalog,
             '--projectdir',outputPath,

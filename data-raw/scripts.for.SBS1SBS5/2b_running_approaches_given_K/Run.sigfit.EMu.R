@@ -31,9 +31,14 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 
 
 
-## Run approaches sigfit.NMF and sigfit.EMu
+## Run approaches sigfit.EMu
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+
+    cat("\n===========================================\n")
+    cat(paste0("Running sigfit on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat("\n===========================================\n")
+
     Runsigfit(
       input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
       out.dir = paste0(datasetName,
@@ -41,6 +46,7 @@ for(seedInUse in seedsInUse){
                        seedInUse),
       model = "emu",
       CPU.cores = 10,
+      seedNumber = seedInUse,
       K.exact = 2,
       overwrite = TRUE)
   }

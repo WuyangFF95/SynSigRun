@@ -34,16 +34,31 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
     ## Run extraction and attribution
-    SynSigRun:::SignatureAnalyzerOneRun(
+    ## SignatureAnalyzer needs to run 20 parallel runs,
+    ## and pick the best run as the final result. 
+    if(file.exists(paste0(out.dir,"/best.run/sa.output.exp.csv")))
+      next
+    message("\n\n########################################################\n\n")
+    message(paste0("Begin running SignatureAnalyzer with maxK = 2",datasetName," using seed ",seedInUse,"...\n"))
+    message("\n\n########################################################\n\n")
+
+    SynSigRun:::SAMultiRunOneCatalog(
+      num.runs = 20,
       signatureanalyzer.code.dir = paste0(usethis::proj_path(),"/data-raw/SignatureAnalzyer.052418"),
       input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
       out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",seedInUse),
-      seedNumber = seedInUse,
-      input.exposures = NULL,
       maxK = 10,
-      tol = 1e-07, test.only = FALSE,
+      tol = 1e-7,
+      test.only = FALSE,
       delete.tmp.files = TRUE,
-      verbose = 0,
-      overwrite = TRUE)
+      overwrite = FALSE,
+      mc.cores = 20,
+      verbose = FALSE,
+      seed = seedInUse)
+
+    SynSigRun:::CopyBestSignatureAnalyzerResult(
+      sa.results.dir = paste0(datasetName,"/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",seedInUse),
+      verbose = TRUE,
+      overwrite = FALSE)
   }
 }

@@ -36,13 +36,20 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## NMF will have an error if K.range includes 1!
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+
+    cat("\n===========================================\n")
+    cat(paste0("Running TCSM on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat("\n===========================================\n")
+
+
     Runtcsm(
       input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
       out.dir = paste0(datasetName,
-        "/sp.sp/ExtrAttrExact/tcsm.results/seed.",
+        "/sp.sp/ExtrAttrExact/TCSM.results/seed.",
         seedInUse),
+      seedNumber = seedInUse,
       CPU.cores = 10,
-      K.range = c(2, 2),
+      K.exact = 2,
       overwrite = TRUE)
   }
 }

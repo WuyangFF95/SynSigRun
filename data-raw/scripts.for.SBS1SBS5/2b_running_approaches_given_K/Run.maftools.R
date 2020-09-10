@@ -39,7 +39,7 @@ for(seedInUse in seedsInUse){
     out.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/maftools.results/seed.",seedInUse)
 
     cat("\n===========================================\n")
-    cat(paste0("Running MutationalPatterns on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat(paste0("Running maftools on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
 
