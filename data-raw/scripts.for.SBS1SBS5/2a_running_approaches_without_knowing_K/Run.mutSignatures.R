@@ -34,13 +34,18 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## needs to be run with external script.
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+
+    cat("\n===========================================\n")
+    cat(paste0("Running mutSignatures on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat("\n===========================================\n")
+
     RunmutSignatures(
       input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
       out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/mutSignatures.results/seed.", seedInUse),
       CPU.cores = 10,
       iterations = 1000,
       seedNumber = seedInUse,
-      K.range = c(1,10),
+      K.range = c(2,10),
       overwrite = T)
   }
 }

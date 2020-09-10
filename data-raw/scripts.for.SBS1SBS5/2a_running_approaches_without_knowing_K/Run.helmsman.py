@@ -17,9 +17,10 @@ oldWorkingDir = os.getcwd()
 
 # Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
 # before running this script.
-#### Set GLOBAL working directory
-os.chdir("../")
-workingDir = os.getcwd()
+# SynSigRun home can be retrieved by usethis::proj_path() in R
+#
+# PATH = paste0(<SynSigRun_home>,"/data-raw/scripts.for.SBS1SBS5")
+# os.setcwd(PATH)
 
 
 
@@ -44,6 +45,7 @@ for seedNumber in seedNumbers:
         inputPath = "/".join([datasetName,"sp.sp/ExtrAttr/helmsman.NMF.results"])
         inputCatalog = "/".join([inputPath,"ground.truth.syn.catalog.tsv"])
         outputPath = "/".join([inputPath,"seed."+str(seedNumber)])
+        ## The first argument should be replaced by the locatation of helmsman.py in your machine.
         arguments = ['python3','~/practice/3_Signature_Challenge/helmsman/helmsman.py',
             '--seed',str(seedNumber),'--mode','agg',
             '--input',inputCatalog,

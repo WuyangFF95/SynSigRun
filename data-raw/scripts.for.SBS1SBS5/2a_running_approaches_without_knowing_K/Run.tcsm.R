@@ -41,6 +41,7 @@ for(seedInUse in seedsInUse){
       out.dir = paste0(datasetName,
         "/sp.sp/ExtrAttr/tcsm.results/seed.",
         seedInUse),
+      seedNumber = seedInUse,
       CPU.cores = 10,
       K.range = c(2, 10),
       overwrite = TRUE)

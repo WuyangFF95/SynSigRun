@@ -32,7 +32,6 @@ for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
     SynSigRun::CreatehelmsmanOutput(
       catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-      read.catalog.function = ICAMS::ReadCatalog,
       out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/helmsman.NMF.results",
                        "/seed.",seedInUse),
       overwrite = T)

@@ -38,10 +38,13 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## NMF will have an error if K.range includes 1!
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+
+    cat("\n===========================================\n")
+    cat(paste0("Running sigfit on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat("\n===========================================\n")
+
     Runsigfit(
       input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-      read.catalog.function = ICAMS::ReadCatalog,
-      write.catalog.function = ICAMS::WriteCatalog,
       out.dir = paste0(datasetName,
         "/sp.sp/ExtrAttr/sigfit.NMF.results/seed.",
         seedInUse),
@@ -52,8 +55,6 @@ for(seedInUse in seedsInUse){
 
     Runsigfit(
       input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-      read.catalog.function = ICAMS::ReadCatalog,
-      write.catalog.function = ICAMS::WriteCatalog,
       out.dir = paste0(datasetName,
                        "/sp.sp/ExtrAttr/sigfit.EMu.results/seed.",
                        seedInUse),

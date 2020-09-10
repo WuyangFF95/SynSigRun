@@ -36,6 +36,11 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## NMF will have an error if K.range includes 1!
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+
+    cat("\n===========================================\n")
+    cat(paste0("Running mutSpec on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat("\n===========================================\n")
+
     RunmutSpec(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
       out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/mutSpec.results/seed.", seedInUse),
       CPU.cores = 10,

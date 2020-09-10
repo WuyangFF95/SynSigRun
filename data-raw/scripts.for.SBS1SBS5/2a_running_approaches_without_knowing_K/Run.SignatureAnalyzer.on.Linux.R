@@ -1,7 +1,7 @@
 
 # Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
 # before running this script.
-# SynSigRun home can be retrieved by usethis::proj_path
+# SynSigRun home can be retrieved by usethis::proj_path()
 #
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
@@ -35,7 +35,7 @@ for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
     ## Run extraction and attribution
     SynSigRun:::SignatureAnalyzerOneRun(
-      signatureanalyzer.code.dir = paste0(usethis::proj_path,"/data-raw/SignatureAnalzyer.052418"),
+      signatureanalyzer.code.dir = paste0(usethis::proj_path(),"/data-raw/SignatureAnalzyer.052418"),
       input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
       out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",seedInUse),
       seedNumber = seedInUse,
