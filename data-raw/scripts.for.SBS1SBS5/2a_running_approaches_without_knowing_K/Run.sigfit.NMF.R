@@ -13,6 +13,12 @@ library(sigfit)
 library(rstan)
 library(rstantools)
 
+## For faster computation, enable parallel computing in rstan.
+##
+## Allow precompiled rstan program to be written temporarily,
+## so that parallel call may be faster
+rstan::rstan_options(auto_write = TRUE)
+
 
 
 ## Specify slopes and Rsqs for the datasets

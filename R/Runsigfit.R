@@ -276,14 +276,6 @@ Runsigfit <-
       stopifnot(is.numeric(CPU.cores))
     }
 
-    ## For faster computation, enable parallel computing in rstan.
-    ##
-    ## Allow precompiled rstan program to be written temporarily,
-    ## so that parallel call may be faster
-    rstan::rstan_options(auto_write = TRUE)
-    ## Use CPU.cores cores for parallel computing
-    options(mc.cores = CPU.cores)
-
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which sigfit accepts:
     ## 1. Remove the catalog related attributes in convSpectra
@@ -321,7 +313,10 @@ Runsigfit <-
                                    nsignatures = K.range,  ## The possible number of signatures a spectra may have.
                                    model = model,          ## Method to use: we choose "nmf" by default. We can also choose "emu"
                                    iter = 1000,            ## Number of iterations in the run
-                                   seed = seedNumber)
+                                   seed = seedNumber,
+                                   ## Number of CPU cores. Pass to sampling function
+                                   ## rstan::sampling() called by sifit::fit_signatures
+                                   cores = CPU.cores)
       grDevices::dev.off()
       K.best <- mcmc_samples_extr$best ## Choose K.best
       print(paste0("The best number of signatures is found.",
@@ -343,7 +338,10 @@ Runsigfit <-
                                  nsignatures = K.best,   ## The possible number of signatures a spectra may have.
                                  model = model,          ## Method to use: we choose "nmf" by default. We can also choose "emu"
                                  iter = 5000,            ## Number of iterations in the run
-                                 seed = seedNumber)
+                                 seed = seedNumber,
+                                 ## Number of CPU cores. Pass to sampling function
+                                 ## rstan::sampling() called by sifit::fit_signatures
+                                 cores = CPU.cores)
     grDevices::dev.off()
 
     extrSigsObject <- sigfit::retrieve_pars(mcmc_samples_extr_precise,
@@ -377,7 +375,10 @@ Runsigfit <-
                                                iter = 2000,
                                                warmup = 1000,
                                                chains = 1,
-                                               seed = 1)
+                                               seed = 1,
+                                               ## Number of CPU cores. Pass to sampling function
+                                               ## rstan::sampling() called by sifit::fit_signatures
+                                               cores = CPU.cores)
 
     ## exposuresObj$mean contain the mean of inferred exposures across multiple
     ## MCMC samples. Note that inferred exposure in exposuresObj$mean are un-normalized.
