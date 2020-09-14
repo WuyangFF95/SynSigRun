@@ -33,12 +33,12 @@ seedsInUse <- as.character(c(1, 691, 1999, 3511, 8009,
 
 
 extrAttrToolNames <-
-  c("hdp","MutationalPatterns","sigfit.EMu",
+  c("hdp","sigfit.EMu",
     "sigfit.NMF","signeR","TCSM",
     "helmsman.NMF","MultiModalMuSig.CTM",
     "MultiModalMuSig.LDA","SigProExtractor","SignatureAnalyzer")
 toolNameWOSeed <- "EMu"
-toolNameWFixedSeed <- "maftools"
+toolNameWFixedSeed <- c("maftools","MutationalPatterns")
 
 if(!dir.exists(paste0("../TrendDiag/ExtrAttr/")))
   dir.create(paste0("../TrendDiag/ExtrAttr/"),recursive = T)

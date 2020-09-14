@@ -27,10 +27,16 @@ extrAttrToolNames <-
   c("hdp","sigfit.EMu",
     "sigfit.NMF","signeR","TCSM",
     "helmsman.NMF","MultiModalMuSig.CTM",
-    "MultiModalMuSig.LDA",
-    "SigProExtractor","SignatureAnalyzer")
+    "MultiModalMuSig.LDA","SigProExtractor","SignatureAnalyzer")
 toolNameWOSeed <- "EMu"
-toolNameWFixedSeed <- "maftools"
+toolNameWFixedSeed <- c("maftools","MutationalPatterns")
+
+for(toolName in c(extrAttrToolNames,toolNameWFixedSeed,toolNameWOSeed)){
+  dirToBeCreated <- paste0("../../TrendDiag/ExtrAttrExact/",toolName,"/")
+  if(!dir.exists(dirToBeCreated))
+    dir.create(dirToBeCreated,recursive = T)
+}
+
 
 ## Linear regression for the MEDIAN performance
 ## of each computational approach.

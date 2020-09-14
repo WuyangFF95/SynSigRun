@@ -11,6 +11,7 @@
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
 
+
 require(ICAMS)
 require(SynSigEval)
 
@@ -28,16 +29,20 @@ for(slope in slopes){
                       paste0("S.",slope,".Rsq.",Rsq))
   }
 }
-## Specify tool Names
+## Specify names of computational approaches
 # R-based tools which can do both extraction and attribution,
 # excluding SignatureAnalyzer (due to special folder structure)
 # and maftools (its seed is hard-coded)
-RBasedExtrAttrToolNames <- c("hdp","MutationalPatterns",
+RBasedExtrAttrToolNames <- c("hdp",
                              "sigfit.EMu","sigfit.NMF","signeR",
                              "TCSM")
 # Python or other language based tools.
-# excluding maftools (seed is fixed) and EMu (cannot designate seed)
+# excluding maftools and MutationalPatterns (seed is hard-coded) and EMu (cannot designate seed)
 otherExtrAttrToolNames <- c("MultiModalMuSig.CTM","MultiModalMuSig.LDA")
+
+# List computational approaches with hard-coded seed or do not accept seeds.
+toolNameWOSeed <- "EMu"
+toolNamesWFixedSeed <- c("maftools","MutationalPatterns")
 
 
 ## Specify seeds used in analysis.
@@ -99,12 +104,14 @@ for(datasetName in datasetNames){
         overwrite = T)
     }
   }
-  ## Summarize maftools
-  SynSigEval::SummarizeSigOneExtrAttrSubdir(
-    run.dir = paste0(datasetName,
-                     "/sp.sp/ExtrAttr/maftools.results/seed.123456","/"),
-    ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
-    overwrite = T)
+  ## Summarize maftools and MutationalPatterns which have a hard-coded seed.
+  for(toolName in toolNamesWFixedSeed) {
+    SynSigEval::SummarizeSigOneExtrAttrSubdir(
+      run.dir = paste0(datasetName,
+                       "/sp.sp/ExtrAttr/",toolName,".results/seed.123456","/"),
+      ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+      overwrite = T)
+  }
   ## Summarize EMu
   for(nrun in 1:20){
     SynSigEval::SummarizeSigOneExtrAttrSubdir(
@@ -137,13 +144,15 @@ for(datasetName in datasetNames){
     tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/","EMu",
                       ".results/"),
     run.names = paste0("run.",1:20))
-  ## For each dataset, summarize 1 run by maftools
-  SynSigEval::SummarizeMultiRuns(
-    datasetName = datasetName,
-    toolName = "maftools",
-    tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/","maftools",
-                      ".results/"),
-    run.names = paste0("seed.","123456"))
+  ## For each dataset, summarize 1 run by maftools and MutationalPatterns
+  for(toolName in toolNamesWFixedSeed){
+    SynSigEval::SummarizeMultiRuns(
+      datasetName = datasetName,
+      toolName = toolName,
+    tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",toolName,
+                        ".results/"),
+      run.names = paste0("seed.","123456"))
+  }
 }
 
 ## Part III: Write Summary table of multiple tools for each dataset
@@ -153,9 +162,9 @@ for(slope in slopes){
     SynSigEval::SummarizeMultiToolsOneDataset(
       third.level.dir = paste0(datasetName,"/sp.sp/ExtrAttr/"),
       toolName = c(RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-                   "EMu","maftools"),
+                   "EMu",toolNamesWFixedSeed),
       tool.dirnames = paste0(c(RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-                               "EMu","maftools"),".results"),
+                               "EMu",toolNamesWFixedSeed),".results"),
       datasetGroup = Rsq,
       datasetGroupName = "Pearson's R^2",
       datasetSubGroup = slope,
@@ -172,7 +181,7 @@ names(datasetSubGroup) <- datasetNames
 
 for(toolName in c(
   RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-  "maftools","EMu")){
+  toolNamesWFixedSeed,"EMu")){
   SummarizeOneToolMultiDatasets(
     dataset.dirs = datasetNames,
     datasetGroup = datasetGroup,

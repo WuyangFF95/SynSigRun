@@ -24,17 +24,19 @@ seedsInUse <- as.character(c(1, 691, 1999, 3511, 8009,
 
 
 extrAttrToolNames <-
-  c("hdp","MutationalPatterns","sigfit.EMu",
+  c("hdp","sigfit.EMu",
     "sigfit.NMF","signeR","TCSM",
     "helmsman.NMF","MultiModalMuSig.CTM",
-    "MultiModalMuSig.LDA",
-    "SigProExtractor","SignatureAnalyzer")
+    "MultiModalMuSig.LDA","SigProExtractor","SignatureAnalyzer")
 toolNameWOSeed <- "EMu"
-toolNameWFixedSeed <- "maftools"
+toolNameWFixedSeed <- c("maftools","MutationalPatterns")
 
 for(toolName in c(extrAttrToolNames,toolNameWFixedSeed,toolNameWOSeed)){
-  dir.create(paste0("../../TrendDiag/ExtrAttr/",toolName,"/"),recursive = T)
+  dirToBeCreated <- paste0("../../TrendDiag/ExtrAttr/",toolName,"/")
+  if(!dir.exists(dirToBeCreated))
+    dir.create(dirToBeCreated,recursive = T)
 }
+
 
 ## Linear regression for the MEDIAN performance
 ## of each computational approach.

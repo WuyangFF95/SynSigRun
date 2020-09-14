@@ -55,7 +55,7 @@ for(datasetName in datasetNames){
     signatures <- SynSigEval::ReadEMuCatalog(
       paste0(resultDir,"/",signatureFile),
       mutTypes = ICAMS::catalog.row.order$SBS96,
-      sampleOrSigNames = NULL,
+      sigOrSampleNames = NULL,
       region = "unknown",
       catalog.type = "counts.signature")
     ICAMS::WriteCatalog(
