@@ -10,8 +10,6 @@ SignatureAnalyzerPrepHyper1Secondary(
   primary.catalog,
   hyper.catalog,
   secondary.catalog,
-  read.fn,
-  write.fn,
   overwrite = TRUE
 )
 }
@@ -31,10 +29,6 @@ secondary analysis.}
 the secondary analysis will be performed; this is a
 \code{cbind} of pseudo-spectra generated from the PRIMARY
 signatures with the \code{hyper.catalog}.}
-
-\item{read.fn}{Function to use for reading signatures.}
-
-\item{write.fn}{Function to use for writing signatures.}
 
 \item{overwrite}{If \code{TRUE} overwrite possible previously
 computed files and/or directories.}

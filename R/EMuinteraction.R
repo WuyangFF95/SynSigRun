@@ -80,7 +80,7 @@ ReadEMuExposureFile <-
 #' names of samples should be provided.
 #'
 #' @param region Catalog region. Can be a specific genomic
-#' or exonic region, or "unknown".
+#' or exomic region, or "unknown".
 #' Default: "unknown"
 #'
 #' @param catalog.type Is the catalog a signature catalog,
@@ -117,10 +117,10 @@ ReadEMuCatalog <-
     ## add rownames and colnames.
     catalog <- t(catalog)
     rownames(catalog) <- mutTypes
-    if(is.null(sampleOrSigNames)){
-      sampleOrSigNames <- paste0("EMu.",1:ncol(catalog))
+    if(is.null(sigOrSampleNames)){
+      sigOrSampleNames <- paste0("EMu.",1:ncol(catalog))
     }
-    colnames(catalog) <- sampleOrSigNames
+    colnames(catalog) <- sigOrSampleNames
     ## Convert to ICAMS-formatted catalog
     catalog <-
       ICAMS::as.catalog(object = catalog,
@@ -151,7 +151,7 @@ ReadEMuCatalog <-
 #' in EMu-formatted catalogs: Rows are signatures;
 #' the first column is the name of the mutation type, while the remaining
 #' columns are samples (tumors).
-#' These EMu-formated catalogs will the input when running EMu program
+#' These EMu-formatted catalogs will the input when running EMu program
 #' later on compiled binary.
 #'
 #' @importFrom utils capture.output

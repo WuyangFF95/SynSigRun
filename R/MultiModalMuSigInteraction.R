@@ -27,7 +27,7 @@ ICAMSCatalog2MM <- function(catalog) {
 #' or matrix in MultiModalMuSig format.
 #'
 #' @param region Catalog region. Can be a specific genomic
-#' or exonic region, or "unknown".
+#' or exomic region, or "unknown".
 #' Default: "unknown"
 #'
 #' @param catalog.type Is the catalog a signature catalog,
@@ -129,7 +129,7 @@ ReadExposureMM <- function(exposureFile){
 #' in MultiModalMuSig-formatted catalogs: Rows are signatures;
 #' the first column is the name of the mutation type, while the remaining
 #' columns are samples (tumors).
-#' These MM-formated catalogs will the input when running MultiModalMuSig program
+#' These MM-formatted catalogs will the input when running MultiModalMuSig program
 #' later on Julia platform.
 #'
 #' @export
@@ -142,7 +142,7 @@ CreateMultiModalMuSigOutput <-
 
   ## If catalog is a string of file path
   if(is.character(catalog)){
-    ## Read in catalog matrix using read.catalog.function.
+    ## Read in catalog matrix using ICAMS::ReadCatalog.
     catMatrix <- ICAMS::ReadCatalog(catalog, strict = FALSE)
     ## Convert catalog to MM format
     catMatrix <- ICAMSCatalog2MM(catMatrix)
