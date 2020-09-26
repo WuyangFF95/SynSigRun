@@ -59,37 +59,56 @@ on parameters derived from signature profiles
 and attributions (exposures).
 }
 
-\section{Run mutationalanalysis software packages}{
-
-}
-
-\section{(In SynSigEval) Summarize results (of signature extraction)}{
+\section{Run mutational analysis software packages}{
 
 
 Relevant functions are: \enumerate{
 
-\item \code{\link{SummarizeSigProExtractor}}
-\item \code{\link{SignatureAnalyzerSummarizeTopLevel}}
-\item \code{\link{SignatureAnalyzerSummarizeSBS1SBS5}}
+\item \code{\link{RunhdpLessHier}}
+\item \code{\link{Runmaftools}}
+\item \code{\link{RunMutationalPatterns}}
+\item \code{\link{RunsigneR}}
+\item \code{\link{Runtcsm}}
 
 }
 }
 
-\section{Comparing two sets of mutational signatures}{
+\section{(In SynSigEval) Summarize results}{
+
+
+Summarize results of of signature extraction
+and exposure inferrence (a.k.a. signature attribution):
+
+Relevant functions are: \enumerate{
+
+\item \code{SummarizeSigOnehelmsmanSubdir}
+\item \code{SignatureAnalyzerSummarizeTopLevel}
+\item \code{SignatureAnalyzerSummarizeSBS1SBS5}
+\item \code{SummarizeSigOneSigProExtractorSubdir}
+\item \code{SummarizeSigProExtractor}
+\item \code{SummarizeSigOneExtrAttrSubdir}
+
+
+}
+}
+
+\section{(In ICAMSxtra) Comparing two sets of mutational signatures}{
 
 
 Functions for comparing mutational signatures and
 sets of mutational signatures. Often we will be interested
 in comparing signature profiles extracted from synthetic data to the
-ground-truth signature profiles.
+ground-truth signature profiles: \enumerate{
 
-\code{\link{Match1Sig}},
-\code{\link{MatchSigs1Direction}},
-\code{\link{MatchSigs2Directions}},
-\code{\link{MatchSigsAndRelabel}}
+\item \code{Match1Sig}
+\item \code{MatchSigs1Direction}
+\item \code{MatchSigs2Directions}
+\item \code{MatchSigsAndRelabel}
+
+}
 }
 
-\section{Folder structure for SynSigEval v0.2}{
+\section{Folder structure for SynSigRun and SynSigEval}{
 
 
 Summary function will fit to the new 5-level folder structure:
@@ -102,7 +121,7 @@ All spectra datasets under any second.level.dir have the same signature and
 the same exposure counts.
 
 Third Level - \code{third.level.dir}: It can be ("Attr") for storing results of packages
-which can only do exposure attribution of known signatures ("Attr");
+which can only do signature attribution of known signatures ("Attr");
 it can also be ("ExtrAttr"), folder to store results of software packages which
 can do de-novo extraction and following attribution.
 
