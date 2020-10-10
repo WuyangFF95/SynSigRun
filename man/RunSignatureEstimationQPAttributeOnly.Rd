@@ -38,14 +38,16 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The inferred exposure of \code{SignatureEstimation}, invisibly.
+Invisibly returns a list which contains: \itemize{
+\item $exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+\item $SEoutput: A list which contains: \itemize{
+  \item $exposures: exposure proportion in SignatureEstimation format,
+  and errors invisibly.
+  \item $errors: mean squared error (MSE) between normalized reconstructed
+   spectra and normalized ground-truth mutational spectra.}
+}
 }
 \description{
 Run SignatureEstimation Quadratic Programming (QP) attribution
 on a spectra catalog file and known signatures.
-}
-\details{
-Creates several
- files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
- TODO(Steve): list the files
 }

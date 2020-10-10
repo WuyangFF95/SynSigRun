@@ -32,12 +32,14 @@ InstallSignatureEstimation <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The inferred exposure of \code{SignatureEstimation}, invisibly.
-#'
-#' @details Creates several
-#'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
-#'  TODO(Steve): list the files
-#'
+#' @return Invisibly returns a list which contains: \itemize{
+#' \item $exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+#' \item $SEoutput: A list which contains: \itemize{
+#'   \item $exposures: exposure proportion in SignatureEstimation format,
+#'   and errors invisibly.
+#'   \item $errors: mean squared error (MSE) between normalized reconstructed
+#'    spectra and normalized ground-truth mutational spectra.}
+#' }
 #' @importFrom utils capture.output
 #'
 #' @export
@@ -93,25 +95,18 @@ RunSignatureEstimationQPAttributeOnly <-
     class(gtSignaturesSE) <- "matrix"
 
     ## Obtain inferred exposures using decomposeQP/decomposeSA function
-    ## Note: SignatureEstimation::decomposeQP/decomposeSA() can only attribute ONE tumor at each run!
-    num.tumors <- ncol(convSpectra)
-    ## In each cycle, obtain inferred exposures for each tumor.
-    exposureCounts <- data.frame()
 
-    for(ii in 1:num.tumors){
-      outputList <- SignatureEstimation::findSigExposures(
-        M = convSpectra[, ii,drop = F],
+
+    SEoutput <- SignatureEstimation::findSigExposures(
+        M = convSpectra,
         P = gtSignaturesSE,
         decomposition.method = SignatureEstimation::decomposeQP)
 
 
-      ## Obtain absolute exposure counts for current tumor
-      exposuresOneTumor <- outputList$exposures ## Relative exposures (exposure proportions)
-      exposuresOneTumor <- exposuresOneTumor * sum(convSpectra[,ii,drop = FALSE])
-
-      ## Bind exposures for current tumor to exposure data.frame
-      exposureCounts <- rbind(exposureCounts,t(exposuresOneTumor))
-    }
+    ## Obtain absolute exposure counts for current tumor
+    ## from SEoutput$exposures which is Relative exposures (exposure proportions)
+    exposureCounts <- t(SEoutput$exposures)
+    exposureCounts <- exposureCounts * colSums(convSpectra)
     exposureCounts <- t(exposureCounts)
 
     ## Copy ground.truth.sigs to out.dir
@@ -129,8 +124,16 @@ RunSignatureEstimationQPAttributeOnly <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Return the exposures inferred, invisibly
-    invisible(exposureCounts)
+    ## exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+    ## SEoutput:
+    ## $exposures: exposure proportion in SignatureEstimation format,
+    ## and errors invisibly.
+    ## $errors: mean squared error (MSE) between normalized reconstructed
+    ## spectra and normalized ground-truth mutational spectra.
+    invisible(list(
+      exposureCounts = exposureCounts,
+      SEoutput = SEoutput
+      ))
   }
 
 
@@ -159,12 +162,14 @@ RunSignatureEstimationQPAttributeOnly <-
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The inferred exposure of \code{SignatureEstimation}, invisibly.
-#'
-#' @details Creates several
-#'  files in \code{paste0(out.dir, "/sa.output.rdata")}. These are
-#'  TODO(Steve): list the files
-#'
+#' @return Invisibly returns a list which contains: \itemize{
+#' \item $exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+#' \item $SEoutput: A list which contains: \itemize{
+#'   \item $exposures: exposure proportion in SignatureEstimation format,
+#'   and errors invisibly.
+#'   \item $errors: mean squared error (MSE) between normalized reconstructed
+#'    spectra and normalized ground-truth mutational spectra.}
+#' }
 #' @importFrom utils capture.output
 #'
 #' @export
@@ -191,7 +196,7 @@ RunSignatureEstimationSAAttributeOnly <-
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
-                                     strict = FALSE)
+                                  strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
 
@@ -220,27 +225,19 @@ RunSignatureEstimationSAAttributeOnly <-
     class(gtSignaturesSE) <- "matrix"
 
     ## Obtain inferred exposures using decomposeQP/decomposeSA function
-    ## Note: SignatureEstimation::decomposeQP/decomposeSA() can only attribute ONE tumor at each run!
-    num.tumors <- ncol(convSpectra)
-    ## In each cycle, obtain inferred exposures for each tumor.
-    exposureCounts <- data.frame()
 
-    for(ii in 1:num.tumors){
-      outputList <- SignatureEstimation::findSigExposures(
-        M = convSpectra[, ii,drop = F],
+
+    SEoutput <- SignatureEstimation::findSigExposures(
+        M = convSpectra,
         P = gtSignaturesSE,
         decomposition.method = SignatureEstimation::decomposeSA)
 
 
-      ## Obtain absolute exposure counts for current tumor
-      exposuresOneTumor <- outputList$exposures ## Relative exposures (exposure proportions)
-      exposuresOneTumor <- exposuresOneTumor * sum(convSpectra[,ii,drop = FALSE])
-
-      ## Bind exposures for current tumor to exposure data.frame
-      exposureCounts <- rbind(exposureCounts,t(exposuresOneTumor))
-    }
+    ## Obtain absolute exposure counts for current tumor
+    ## from SEoutput$exposures which contains Relative exposures (exposure proportions)
+    exposureCounts <- t(SEoutput$exposures)
+    exposureCounts <- exposureCounts * colSums(convSpectra)
     exposureCounts <- t(exposureCounts)
-
 
     ## Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
@@ -257,6 +254,14 @@ RunSignatureEstimationSAAttributeOnly <-
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
-    ## Return the exposures inferred, invisibly
-    invisible(exposureCounts)
+    ## exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+    ## SEoutput:
+    ## $exposures: exposure proportion in SignatureEstimation format,
+    ## and errors invisibly.
+    ## $errors: mean squared error (MSE) between normalized reconstructed
+    ## spectra and normalized ground-truth mutational spectra.
+    invisible(list(
+      exposureCounts = exposureCounts,
+      SEoutput = SEoutput
+      ))
   }
