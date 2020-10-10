@@ -40,6 +40,7 @@ Default: FALSE}
 \value{
 Invisibly returns a list which contains: \itemize{
 \item $exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+\item $exposureErrors: the MSE in ICAMSxtra format,
 \item $SEoutput: A list which contains: \itemize{
   \item $exposures: exposure proportion in SignatureEstimation format,
   and errors invisibly.

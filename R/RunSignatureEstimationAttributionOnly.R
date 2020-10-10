@@ -34,12 +34,14 @@ InstallSignatureEstimation <- function(){
 #'
 #' @return Invisibly returns a list which contains: \itemize{
 #' \item $exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+#' \item $exposureErrors: the MSE in ICAMSxtra format,
 #' \item $SEoutput: A list which contains: \itemize{
 #'   \item $exposures: exposure proportion in SignatureEstimation format,
 #'   and errors invisibly.
 #'   \item $errors: mean squared error (MSE) between normalized reconstructed
 #'    spectra and normalized ground-truth mutational spectra.}
 #' }
+#'
 #' @importFrom utils capture.output
 #'
 #' @export
@@ -103,11 +105,18 @@ RunSignatureEstimationQPAttributeOnly <-
         decomposition.method = SignatureEstimation::decomposeQP)
 
 
-    ## Obtain absolute exposure counts for current tumor
-    ## from SEoutput$exposures which is Relative exposures (exposure proportions)
+    ## Obtain absolute exposure counts for tumos
+    ## from SEoutput$exposures which refers to relative exposures (exposure proportions)
     exposureCounts <- t(SEoutput$exposures)
     exposureCounts <- exposureCounts * colSums(convSpectra)
     exposureCounts <- t(exposureCounts)
+
+    ## Obtain absolute mean squared error (MSE) for tumors
+    ## from SEoutput$errors which refers to relative MSE
+    exposureErrors <- t(SEoutput$errors)
+    exposureErrors <- exposureErrors * colSums(convSpectra)
+    exposureErrors <- t(exposureErrors)
+
 
     ## Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
@@ -118,6 +127,10 @@ RunSignatureEstimationQPAttributeOnly <-
     SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
+    ## Write inferred exposures into a SynSig formatted exposure file.
+    SynSigGen::WriteExposure(exposureErrors,
+                             paste0(out.dir,"/exposure.MSE.errors.csv"))
+
     ## Save seeds and session information
     ## for better reproducibility
     capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
@@ -125,15 +138,19 @@ RunSignatureEstimationQPAttributeOnly <-
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
     ## exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+    ## exposureErrors: the MSE in ICAMSxtra format.
     ## SEoutput:
     ## $exposures: exposure proportion in SignatureEstimation format,
     ## and errors invisibly.
     ## $errors: mean squared error (MSE) between normalized reconstructed
     ## spectra and normalized ground-truth mutational spectra.
-    invisible(list(
+    retval <- list(
       exposureCounts = exposureCounts,
+      exposureErrors = exposureErrors,
       SEoutput = SEoutput
-      ))
+    )
+
+    invisible(retval)
   }
 
 
@@ -164,12 +181,14 @@ RunSignatureEstimationQPAttributeOnly <-
 #'
 #' @return Invisibly returns a list which contains: \itemize{
 #' \item $exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+#' \item $exposureErrors: the MSE in ICAMSxtra format,
 #' \item $SEoutput: A list which contains: \itemize{
 #'   \item $exposures: exposure proportion in SignatureEstimation format,
 #'   and errors invisibly.
 #'   \item $errors: mean squared error (MSE) between normalized reconstructed
 #'    spectra and normalized ground-truth mutational spectra.}
 #' }
+#'
 #' @importFrom utils capture.output
 #'
 #' @export
@@ -233,11 +252,18 @@ RunSignatureEstimationSAAttributeOnly <-
         decomposition.method = SignatureEstimation::decomposeSA)
 
 
-    ## Obtain absolute exposure counts for current tumor
-    ## from SEoutput$exposures which contains Relative exposures (exposure proportions)
+    ## Obtain absolute exposure counts for tumos
+    ## from SEoutput$exposures which refers to relative exposures (exposure proportions)
     exposureCounts <- t(SEoutput$exposures)
     exposureCounts <- exposureCounts * colSums(convSpectra)
     exposureCounts <- t(exposureCounts)
+
+    ## Obtain absolute mean squared error (MSE) for tumors
+    ## from SEoutput$errors which refers to relative MSE
+    exposureErrors <- t(SEoutput$errors)
+    exposureErrors <- exposureErrors * colSums(convSpectra)
+    exposureErrors <- t(exposureErrors)
+
 
     ## Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
@@ -246,7 +272,11 @@ RunSignatureEstimationSAAttributeOnly <-
 
     ## Write inferred exposures into a SynSig formatted exposure file.
     SynSigGen::WriteExposure(exposureCounts,
-                  paste0(out.dir,"/inferred.exposures.csv"))
+                             paste0(out.dir,"/inferred.exposures.csv"))
+
+    ## Write inferred exposures into a SynSig formatted exposure file.
+    SynSigGen::WriteExposure(exposureErrors,
+                             paste0(out.dir,"/exposure.MSE.errors.csv"))
 
     ## Save seeds and session information
     ## for better reproducibility
@@ -255,13 +285,17 @@ RunSignatureEstimationSAAttributeOnly <-
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
 
     ## exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+    ## exposureErrors: the MSE in ICAMSxtra format.
     ## SEoutput:
     ## $exposures: exposure proportion in SignatureEstimation format,
     ## and errors invisibly.
     ## $errors: mean squared error (MSE) between normalized reconstructed
     ## spectra and normalized ground-truth mutational spectra.
-    invisible(list(
+    retval <- list(
       exposureCounts = exposureCounts,
+      exposureErrors = exposureErrors,
       SEoutput = SEoutput
-      ))
+    )
+
+    invisible(retval)
   }
