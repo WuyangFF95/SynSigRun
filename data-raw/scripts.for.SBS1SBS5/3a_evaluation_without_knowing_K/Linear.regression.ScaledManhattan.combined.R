@@ -180,18 +180,30 @@ dev.off()
 ## Plot multiple summary plots into one page.
 ## These PDF files with multiple panels are ready for publication.
 {
-  pdf("../TrendDiag/ExtrAttr/ScaledManhattanCombined.pdf", width = 15, height = 15)
+  pdf("../TrendDiag/ExtrAttr/ScaledManhattanCombined.SBS1.pdf", width = 15, height = 8)
   ggObj <- ggpubr::ggarrange(
     ggVsRsq$SBS1 + rremove("legend"),
-    ggVsRsq$SBS5 + rremove("legend"),
-    ggVsRatio$SBS1 + rremove("legend"),
-    ggVsRatio$SBS5,
-    labels = c("A","B","C","D"),
+    ggVsRatio$SBS1,
+    labels = c("A","B"),
     font.label = list(size = 14, color = "black", face = "bold", family = "sans"),
-    nrow = 2, ncol = 2,
+    nrow = 1, ncol = 2,
     common.legend = T)
   plot(ggObj)
   dev.off()
+}
+
+{
+  pdf("../TrendDiag/ExtrAttr/ScaledManhattanCombined.SBS5.pdf", width = 15, height = 8)
+  ggObj <- ggpubr::ggarrange(
+    ggVsRsq$SBS5 + rremove("legend"),
+    ggVsRatio$SBS5,
+    labels = c("A","B","C","D"),
+    font.label = list(size = 14, color = "black", face = "bold", family = "sans"),
+    nrow = 1, ncol = 2,
+    common.legend = T)
+  plot(ggObj)
+  dev.off()
+
 }
 
 save.image("../TrendDiag/ExtrAttr/Manhattan.Combined.Rdata")
