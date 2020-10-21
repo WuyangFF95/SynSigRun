@@ -96,7 +96,7 @@ Runmaftools <-
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
     ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which HDP accepts:
+    ## into a matrix which maftools accepts:
     ## 1. Remove the catalog related attributes in convSpectra
     ## 2. Transpose the catalog
     convSpectra <- spectra
@@ -128,27 +128,25 @@ Runmaftools <-
     ## Run NMF using ICAMS-formatted spectra catalog
     ## Determine the best number of signatures (K.best).
     ## If K.exact is provided, use K.exact as the K.best.
-    ## If K.range is provided, determine K.best by doing raw extraction.
+    ## If K.range is provided, determine K.best by doing raw extraction
+    ## with maftools::estimateSignature
     if(bool1){
-      grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
-      sigs_nmf <- maftools::extractSignatures(mat = convSpectra,
-                          n = K.exact,     ## n specifies number of signatures you want to assess
-                          parallel  = CPU.cores)
-      grDevices::dev.off()
       K.best <- K.exact
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
-      K.range <- seq.int(K.range[1],K.range[2])
-      gof_nmf <- NMF::nmf(
-        convSpectra[["nmf_matrix"]],
-        rank = K.range, ## Rank specifies number of signatures you want to assess
-        method = "brunet",  ## "brunet" is the default NMF method in NMF package.
-        .options = paste0("p", CPU.cores),
-        seed = 123456)
-      gc()
-      gc()
-      gc()
+      ## Change K.range to a full vector
+      ## if it is already a full vector, just keep it.
+      K.range <- seq.int(min(K.range),max(K.range))
+
+      res <- maftools::estimateSignatures(
+        mat = convSpectra,
+        nMin = K.range[1],
+        nTry = K.range[2],
+        parallel = CPU.cores)
+
+      gof_nmf <- res$nmfObj
+
       ## Choose the best signature number (K.best) active in the spectra
       ## catalog (input.catalog).
       ##
@@ -158,6 +156,11 @@ Runmaftools <-
       ## cophenetic correlation coefficient starts decreasing.
       for(current.K in K.range)
       {
+        ## Stop the cycle if current.K reaches the maximum.
+        ## At max(K.range), next.summary becomes meaningless.
+        if(current.K == max(K.range))
+          break
+
         current.summary <- NMF::summary(gof_nmf$fit[[as.character(current.K)]])
         current.cophenetic.coefficient <- current.summary["cophenetic"]
 
@@ -171,26 +174,23 @@ Runmaftools <-
       ## is greater than cophenetic from (current.K+1).
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
-
-      grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
-      sigs_nmf <- maftools::extractSignatures(convSpectra,
-                          n = K.best,     ## nTry speciies maximal number of signatures you want to assess
-                          parallel  = CPU.cores)
-      grDevices::dev.off()
-
     }
 
 
+    grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
+    sigs_nmf <- maftools::extractSignatures(mat = convSpectra,
+                                            n = K.best,     ## n specifies number of signatures you want to assess
+                                            parallel  = CPU.cores)
+    grDevices::dev.off()
     ## Generates a list contain extracted signatures
-    extractedSignatures <- sigs_nmf$signatures   ## normalized signature matrix
+    ## sigs_nmf$signatures is already normalized.
+    extractedSignatures <- sigs_nmf$signatures
     ## Add signature names for signature matrix extractedSignatures
     colnames(extractedSignatures) <-
       paste("maftools",1:ncol(extractedSignatures),sep=".")
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                              region = "unknown",
                                              catalog.type = "counts.signature")
-
-
     ## Output extracted signatures in ICAMS format
     ICAMS::WriteCatalog(extractedSignatures,
                         paste0(out.dir,"/extracted.signatures.csv"))
@@ -199,10 +199,9 @@ Runmaftools <-
     ## Derive exposure count attribution results.
 
 
-    ## exposure attributions (in percentage)
+    ## exposure attributions (in percentage, normalized)
     exposureRaw <- (sigs_nmf$contributions)
     rownames(exposureRaw) <- paste("maftools",1:nrow(exposureRaw),sep=".")
-
     ## convert exposure ratio to exposure counts
     exposureCounts <- exposureRaw
     for(sample in colnames(exposureCounts)){
