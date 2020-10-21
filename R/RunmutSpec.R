@@ -133,10 +133,17 @@ RunmutSpec <-
     if(bool2){
 
       # Estimate the number of signatures with our data
-
-      nbSign  <- seq.int(K.range[1],K.range[2]) ## Change K.range to a full vector
+      ## Change K.range to a full vector
+      ## if it is already a full vector, just keep it.
+      K.range <- seq.int(min(K.range),max(K.range))
       # The minum number of signatures can't be lower than 2
-      estim_r <- NMF::nmf(convSpectra, method="brunet", nbSign, nrun=50, .opt=nbCPU)
+      estim_r <- NMF::nmf(
+        convSpectra,
+        rank = K.range,
+        method = "brunet",
+        seed = seedNumber,
+        nrun=50,
+        .opt=nbCPU)
       gc()
       gc()
       gc()
@@ -144,8 +151,13 @@ RunmutSpec <-
       # Shuffle original data
       v_random <- NMF::randomize(convSpectra)
       # Estimate quality measures from the shuffled data
-      estim_r_random <- NMF::nmf(v_random, method="brunet", nbSign, nrun=50, .opt=nbCPU)
-
+      estim_r_random <- NMF::nmf(
+        v_random,
+        rank = K.range,
+        method = "brunet",
+        seed = seed,
+        nrun = 50,
+        .opt = nbCPU)
 
       ## Garbage collection
       gc()
@@ -171,6 +183,11 @@ RunmutSpec <-
       ## cophenetic correlation coefficient starts decreasing.
       for(current.K in K.range)
       {
+        ## Stop the cycle if current.K reaches the maximum.
+        ## At max(K.range), next.summary becomes meaningless.
+        if(current.K == max(K.range))
+          break
+
         current.summary <- NMF::summary(estim_r$fit[[as.character(current.K)]])
         current.cophenetic.coefficient <- current.summary["cophenetic"]
 
@@ -191,7 +208,13 @@ RunmutSpec <-
     gc()
     gc()
     gc()
-    res  <- NMF::nmf(convSpectra, K.best, "brunet", nrun=200, .opt=nbCPU)
+    res <- NMF::nmf(
+      convSpectra,
+      rank = K.best,
+      method = "brunet",
+      seed = seedNumber,
+      nrun = 200,
+      .opt = nbCPU)
     gc()
     gc()
     gc()
@@ -199,9 +222,10 @@ RunmutSpec <-
 
 
     # Recover the matrix W and H
-    matrixW <- NMF::basis(res)
-    matrixH <- NMF::coef(res) ## un-normalized signature matrix
-    extractedSignatures <- t(t(matrixW) / colSums(matrixW))   ## normalize each signature's sum to 1
+    matrixW <- NMF::basis(res) ## un-normalized signature matrix
+    matrixH <- NMF::coef(res)
+    ## normalize each signature's sum to 1
+    extractedSignatures <- apply(matrixW,2,function(x) x/sum(x))
     ## Add signature names for signature matrix extractedSignatures
     colnames(extractedSignatures) <-
       paste("mutSpec",1:ncol(extractedSignatures),sep=".")
@@ -219,14 +243,19 @@ RunmutSpec <-
     ## WARNING: mutSpec can only do exposure attribution
     ## using SBS96 spectra catalog and signature catalog!
 
-    ## exposure attributions (in mutation counts)
-    exposureCounts <- matrixH
-    for(ii in 1:ncol(exposureCounts)){
-      exposureCounts[,ii] <- exposureCounts[,ii] * colSums(convSpectra)[ii]
-    }
+    ## Rawexposure attributions
+    rawExposures <- matrixH
     ## Add signature names for signature matrix extractedSignatures
-    rownames(exposureCounts) <-
-      paste("mutSpec",1:nrow(exposureCounts),sep=".")
+    rownames(rawExposures) <-
+      paste("mutSpec",1:nrow(rawExposures),sep=".")
+    ## normalize exposure matrix
+    exposureCounts <- apply(rawExposures,2,function(x) x/sum(x))
+    ## Make exposureCounts real exposure counts.
+    for (sample in seq(1,ncol(exposureCounts))){
+      exposureCounts[,sample] <-
+        colSums(spectra)[sample] * exposureCounts[,sample]
+    }
+
 
     ## Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
