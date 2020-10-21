@@ -215,7 +215,7 @@ RunMutationalPatterns <-
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
     ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which HDP accepts:
+    ## into a matrix which MutationalPatterns accepts:
     ## 1. Remove the catalog related attributes in convSpectra
     ## 2. Transpose the catalog
     convSpectra <- spectra
@@ -254,9 +254,9 @@ RunMutationalPatterns <-
     }
     if(bool2){
       K.range <- seq.int(K.range[1],K.range[2]) ## Change K.range to a full vector
-      gof_nmf <- NMF::nmf(convSpectra,
+      gof_nmf <- NMF::nmf(convSpectra + 1e-04, ## adds a small psuedocount
                           rank = K.range,     ## Rank specifies number of signatures you want to assess
-                          nrun = 200,
+                          nrun = 10,
                           method = "brunet",  ## "brunet" is the default NMF method in NMF package.
                           .options = paste0("p", CPU.cores),
                           seed = seedNumber)
@@ -274,6 +274,11 @@ RunMutationalPatterns <-
       ## cophenetic correlation coefficient starts decreasing.
       for(current.K in K.range)
       {
+        ## Stop the cycle if current.K reaches the maximum.
+        ## At max(K.range), next.summary becomes meaningless.
+        if(current.K == max(K.range))
+          break
+
         current.summary <- NMF::summary(gof_nmf$fit[[as.character(current.K)]])
         current.cophenetic.coefficient <- current.summary["cophenetic"]
 
@@ -300,31 +305,31 @@ RunMutationalPatterns <-
     gc()
     ## names(sigs_nmf)
     ## [1] "signatures"    "contribution"  "reconstructed"
-    sigsRaw <- sigs_nmf$signatures ## un-normalized signature matrix
-    extractedSignatures <- t(t(sigsRaw) / colSums(sigsRaw))   ## normalize each signature's sum to 1
-    ## Add signature names for signature matrix extractedSignatures
-    colnames(extractedSignatures) <-
+    ## un-normalized signature matrix
+    sigsRaw <- sigs_nmf$signatures
+    colnames(sigsRaw) <-
       paste("MutationalPatterns",1:ncol(extractedSignatures),sep=".")
+    extractedSignatures <- apply(sigsRaw,2,function(x) x/sum(x))   ## normalize each signature's sum to 1
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                              region = "unknown",
                                              catalog.type = "counts.signature")
-
-
     ## Output extracted signatures in ICAMS format
     ICAMS::WriteCatalog(extractedSignatures,
                            paste0(out.dir,"/extracted.signatures.csv"))
 
 
     ## Derive exposure count attribution results.
-    ## WARNING: MutationalPatterns can only do exposure attribution
-    ## using SBS96 spectra catalog and signature catalog!
-    exposureObject <- MutationalPatterns::fit_to_signatures(mut_matrix = convSpectra,
-                                                            signatures = extractedSignatures)
-    gc()
-    gc()
-    gc()
     ## exposure attributions (in mutation counts)
-    exposureCounts <- (exposureObject$contribution)
+    rawExposures <- sigs_nmf$contribution
+    rownames(rawExposures) <-
+      paste("MutationalPatterns",1:nrow(rawExposures),sep=".")
+    ## normalize exposure matrix
+    exposureCounts <- apply(rawExposures,2,function(x) x/sum(x))
+    ## Make exposureCounts real exposure counts.
+    for (sample in seq(1,ncol(exposureCounts))){
+      exposureCounts[,sample] <-
+        colSums(spectra)[sample] * exposureCounts[,sample]
+    }
     ## Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
