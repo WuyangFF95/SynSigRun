@@ -155,7 +155,7 @@ RunmutSpec <-
         v_random,
         rank = K.range,
         method = "brunet",
-        seed = seed,
+        seed = seedNumber,
         nrun = 50,
         .opt = nbCPU)
 
