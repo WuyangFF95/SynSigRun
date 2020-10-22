@@ -51,7 +51,7 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The attributed exposure of \code{SomaticSignatures}, invisibly.
+The inferred exposure of \code{SomaticSignatures}, invisibly.
 }
 \description{
 Run SomaticSignatures extraction and attribution on a spectra catalog file

@@ -83,7 +83,7 @@ in \code{input.catalog}.}
 \item{verbose}{If \code{TRUE} then \code{message} progress information.}
 }
 \value{
-The attributed exposure of \code{hdp}, invisibly.
+The inferred exposure of \code{hdp}, invisibly.
 }
 \description{
 Run hdp extraction and attribution on a spectra catalog file

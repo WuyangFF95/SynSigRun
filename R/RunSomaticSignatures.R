@@ -48,7 +48,7 @@ InstallSomaticSignatures <- function(){
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The attributed exposure of \code{SomaticSignatures}, invisibly.
+#' @return The inferred exposure of \code{SomaticSignatures}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{out.dir}. These are:
@@ -90,6 +90,16 @@ RunSomaticSignatures <-
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
+    ## convSpectra: convert the ICAMS-formatted spectra catalog
+    ## into a matrix which SomaticSignatures accepts:
+    ## 1. Remove the catalog related attributes in convSpectra
+    ## 2. Transpose the catalog
+    convSpectra <- spectra
+    class(convSpectra) <- "matrix"
+    attr(convSpectra,"catalog.type") <- NULL
+    attr(convSpectra,"region") <- NULL
+    dimnames(convSpectra) <- dimnames(spectra)
+    sample.number <- dim(spectra)[2]
 
     ## Create output directory
     if (dir.exists(out.dir)) {
@@ -98,41 +108,104 @@ RunSomaticSignatures <-
       dir.create(out.dir, recursive = T)
     }
 
-    ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which SomaticSignatures accepts:
-    ## 1. Remove the catalog related attributes in convSpectra
-    convSpectra <- spectra
-    class(convSpectra) <- "matrix"
-    attr(convSpectra,"catalog.type") <- NULL
-    attr(convSpectra,"region") <- NULL
-    dimnames(convSpectra) <- dimnames(spectra)
-    sample.number <- dim(spectra)[2]
+    ## Before running NMF packge,
+    ## Load it explicitly to prevent errors.
+    requireNamespace("NMF")
 
+    ## Run NMF using ICAMS-formatted spectra catalog
+    ## Determine the best number of signatures (K.best).
+    ## If K.exact is provided, use K.exact as the K.best.
+    ## If K.range is provided, determine K.best by doing raw extraction.
+    if(bool1){
+      K.best <- K.exact
+      print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
+    }
+    if(bool2){
+
+      ## SomaticSignatures used approach in Hutchins et al.
+      ## (2008) to estimate K.
+      ## This requires calculation of second derivative of
+      ## RSS at >2 integers, and thus requires at least 4 Ks
+      ## to be assessed.
+      if(max(K.range) - min(K.range) < 3)
+        stop("To calculate second derivative, K.range should span at least 4 integers.\n")
+
+      assess <- SomaticSignatures::assessNumberSignatures(
+        convSpectra,
+        nSigs = seq.int(min(K.range),max(K.range)),
+        decomposition = nmfDecomposition,
+        seed = seedNumber)
+      rownames(assess) <- as.character(assess[,"NumberSignatures"])
+
+      ## Choose K.best as the smallest current.K
+      ## which is an inflection point (changing sign of second derivative)
+      ## of RSS value.
+      ## For discrete function, we used forward formula to calculate
+      ## first and second derivatives.
+
+      ## memory is for storing the old second derivative
+      memory <- NULL
+
+      for(current.K in seq.int(K.range[1],K.range[2] - 2))
+      {
+        RSS.K <- assess[as.character(current.K),"RSS"]
+        RSS.Kplus1 <- assess[as.character(current.K + 1),"RSS"]
+        RSS.Kplus2 <- assess[as.character(current.K + 2),"RSS"]
+
+        second.deriv <- (RSS.Kplus2 + RSS.K - RSS.Kplus1) / 2
+
+        ## Choose the current.K if the second derivative equals to 0.
+        if(second.deriv == 0)
+          break
+
+        ## Choose the current.K if the current second derivative has
+        ## opposite sign.
+        if(!is.null(memory)){
+          if(memory * second.deriv < 0)
+            break
+        }
+        memory <- second.deriv
+      }
+      K.best <- current.K
+      print(paste0("The best number of signatures is found.",
+                   "It equals to: ",K.best))
+    }
     ## Signature extraction
-    ## TODO(Wuyang)
-    extractedSignatures <- NULL
-
-    ## Write extracted signatures
+    res <- SomaticSignatures::identifySignatures(
+      convSpectra,
+      K.best,
+      nmfDecomposition,
+      seed = seedNumber)
+    gc()
+    gc()
+    gc()
+    ## un-normalized signature matrix
+    sigsRaw <- res@signatures
+    colnames(sigsRaw) <-
+      paste("SS.NMF",1:ncol(sigsRaw),sep=".")
+    extractedSignatures <- apply(sigsRaw,2,function(x) x/sum(x))   ## normalize each signature's sum to 1
+    extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
+                                             region = "unknown",
+                                             catalog.type = "counts.signature")
+    ## Output extracted signatures in ICAMS format
     ICAMS::WriteCatalog(extractedSignatures,
                         paste0(out.dir,"/extracted.signatures.csv"))
 
 
     ## Derive exposure count attribution results.
-    ## TODO(Wuyang)
-    extractionObject <- NULL
-    exposureCounts <- extractionObject$Ehat ## Unnormalized exposures
-    ## Temporary workout
-    K.best <- NULL
-    rownames(exposureCounts) <- paste("SomaticSignatures",seq(1,K.best),sep = ".") ## Assign row names of exposure matrix as names of signatures
-    colnames(exposureCounts) <- colnames(spectra) ## Assign column names of exposure matrix as names of tumors
-    ## Normalize the attributed counts so that each column represents exposure of a signature
-    for(ii in 1:ncol(exposureCounts)) {
-      exposureCounts[,ii] <- exposureCounts[,ii] / sum(exposureCounts[,ii])
-      exposureCounts[,ii] <- exposureCounts[,ii] * colSums(spectra)[ii]
+    rawExposures <- t(res@samples)
+    rownames(rawExposures) <-
+      paste("SS.NMF",1:nrow(rawExposures),sep=".")
+    ## normalize exposure matrix
+    exposureCounts <- apply(rawExposures,2,function(x) x/sum(x))
+    ## Make exposureCounts real exposure counts.
+    for (sample in seq(1,ncol(exposureCounts))){
+      exposureCounts[,sample] <-
+        colSums(spectra)[sample] * exposureCounts[,sample]
     }
-    ## Save exposure attribution results
+    ## Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
-                  paste0(out.dir,"/attributed.exposures.csv"))
+                  paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information

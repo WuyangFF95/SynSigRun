@@ -69,7 +69,7 @@ Installhdp <- function(){
 #'
 #' @param verbose If \code{TRUE} then \code{message} progress information.
 #'
-#' @return The attributed exposure of \code{hdp}, invisibly.
+#' @return The inferred exposure of \code{hdp}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{out.dir}. These are:
