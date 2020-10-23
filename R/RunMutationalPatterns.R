@@ -308,7 +308,7 @@ RunMutationalPatterns <-
     ## un-normalized signature matrix
     sigsRaw <- sigs_nmf$signatures
     colnames(sigsRaw) <-
-      paste("MutationalPatterns",1:ncol(extractedSignatures),sep=".")
+      paste("MutationalPatterns",1:ncol(sigsRaw),sep=".")
     extractedSignatures <- apply(sigsRaw,2,function(x) x/sum(x))   ## normalize each signature's sum to 1
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                              region = "unknown",
