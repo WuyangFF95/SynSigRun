@@ -38,13 +38,13 @@ for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 
     cat("\n===========================================\n")
-    cat(paste0("Running mutSpec on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat(paste0("Running mutSpec.NMF on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
     RunmutSpec(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/mutSpec.results/seed.", seedInUse),
+      out.dir = paste0(datasetName, "/sp.sp/ExtrAttrExact/mutSpec.NMF.results/seed.", seedInUse),
       CPU.cores = 10,
-      K.range = c(2,10),
+      K.exact = 2,
       overwrite = TRUE)
   }
 }
