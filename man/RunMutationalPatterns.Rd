@@ -53,7 +53,10 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The inferred exposure of \code{MutationalPatterns}, invisibly.
+A list contains:\itemize{
+\item $signature extracted signatures,
+\item $exposure inferred exposures,
+} of \code{MutationalPatterns}, invisibly.
 }
 \description{
 WARNING: MutationalPatterns can only do exposure attribution

@@ -171,7 +171,10 @@ RunMutationalPatternsAttributeOnly <-
 #' @param overwrite If TRUE, overwrite existing output.
 #' Default: FALSE
 #'
-#' @return The inferred exposure of \code{MutationalPatterns}, invisibly.
+#' @return A list contains:\itemize{
+#' \item $signature extracted signatures,
+#' \item $exposure inferred exposures,
+#' } of \code{MutationalPatterns}, invisibly.
 #'
 #' @details Creates several
 #'  files in \code{out.dir}. These are:

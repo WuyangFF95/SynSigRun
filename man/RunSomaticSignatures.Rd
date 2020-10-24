@@ -2,11 +2,12 @@
 % Please edit documentation in R/RunSomaticSignatures.R
 \name{RunSomaticSignatures}
 \alias{RunSomaticSignatures}
-\title{Run SomaticSignatures extraction and attribution on a spectra catalog file}
+\title{Run SomaticSignatures.NMF extraction and attribution on a spectra catalog file}
 \usage{
 RunSomaticSignatures(
   input.catalog,
   out.dir,
+  CPU.cores = NULL,
   seedNumber = 1,
   K.exact = NULL,
   K.range = NULL,
@@ -22,6 +23,13 @@ Columns are samples (tumors), rows are mutation types.}
 abort if it already exits.  Log files will be in
 \code{paste0(out.dir, "/tmp")}.}
 
+\item{CPU.cores}{Number of CPUs to use in running
+SomaticSignatures.NMF. For a server, 30 cores would be a good
+choice; while for a PC, you may only choose 2-4 cores.
+By default (CPU.cores = NULL), the CPU.cores would be equal
+to \code{(parallel::detectCores())/2}, total number of CPUs
+divided by 2.}
+
 \item{seedNumber}{Specify the pseudo-random seed number
 used to run SomaticSignatures. Setting seed can make the
 attribution of SomaticSignatures repeatable.
@@ -34,7 +42,7 @@ are active in the \code{input.catalog}, which is the
 \code{ICAMS}-formatted spectra file.
 
 \code{K.range} is A numeric vector \code{(K.min,K.max)}
-of length 2 which tell SomaticSignatures to search the best
+of length 2 which tell SomaticSignatures.NMF to search the best
 signature number active in spectra, K, in this range of Ks.
 Specify \code{K.range} if you don't know how many signatures
 are active in the \code{input.catalog}.
@@ -51,10 +59,13 @@ Default: FALSE}
 Default: FALSE}
 }
 \value{
-The inferred exposure of \code{SomaticSignatures}, invisibly.
+A list contains: \itemize{
+\item $signature extracted signatures,
+\item $exposure inferred exposures,
+} of \code{SomaticSignatures.NMF}, invisibly.
 }
 \description{
-Run SomaticSignatures extraction and attribution on a spectra catalog file
+Run SomaticSignatures.NMF extraction and attribution on a spectra catalog file
 }
 \details{
 Creates several
