@@ -155,7 +155,7 @@ RunSomaticSignatures <-
       assess <- SomaticSignatures::assessNumberSignatures(
         convSpectra,
         nSigs = seq.int(min(K.range),max(K.range)),
-        decomposition = nmfDecomposition,
+        decomposition = SomaticSignatures::nmfDecomposition,
         seed = seedNumber)
       rownames(assess) <- as.character(assess[,"NumberSignatures"])
 
@@ -196,7 +196,7 @@ RunSomaticSignatures <-
     res <- SomaticSignatures::identifySignatures(
       convSpectra,
       K.best,
-      nmfDecomposition,
+      SomaticSignatures::nmfDecomposition,
       seed = seedNumber)
     gc()
     gc()
