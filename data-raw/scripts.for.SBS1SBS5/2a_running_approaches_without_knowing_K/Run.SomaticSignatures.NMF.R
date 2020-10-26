@@ -44,7 +44,7 @@ for(seedInUse in seedsInUse){
     RunSomaticSignatures(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
       out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/SomaticSignatures.NMF.results/seed.", seedInUse),
       CPU.cores = 10,
-      K.exact = 2,
+      K.range = c(2,10),
       overwrite = TRUE)
   }
 }
