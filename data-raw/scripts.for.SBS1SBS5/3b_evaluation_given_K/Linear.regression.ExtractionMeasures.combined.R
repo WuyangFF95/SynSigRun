@@ -52,7 +52,7 @@ load("FinalSummary.RDa")
 ## and SBS1:SBS5 ratios (datasetSubGroups)
 summaries <- list()
 
-for(index in c("TPR","FDR")){
+for(index in c("TPR","PPV")){
 
   summaries[[index]] <-
     FinalSummary$FinalExtr[[index]]
@@ -82,7 +82,7 @@ for(index in c("SBS1","SBS5")){
 ## Plot trend of means for each computational approach.
 ggVsRsq <- list()
 ggVsRatio <- list()
-for(index in c("TPR","FDR","SBS1","SBS5")){
+for(index in c("TPR","PPV","SBS1","SBS5")){
 
   numTools <- length(unique(summaries[[index]]$toolName))
 
@@ -102,7 +102,10 @@ for(index in c("TPR","FDR","SBS1","SBS5")){
     ## Change colour scale for lines
     scale_color_manual(values = rainbow(numTools)) +
     ## Make line segment in legend longer.
-    ggplot2::theme(legend.key.width = grid::unit(1,"inches")) +
+    ggplot2::theme(
+      legend.position = "right",
+      legend.key.width = grid::unit(0.5,"inches")
+    ) +
     ## Change x axis to log2 scaled.
     ## Show tick marks exactly at possible Pearson's R^2 values.
     ## (0.1, 0.2, 0.3, 0.6)
@@ -137,7 +140,10 @@ for(index in c("TPR","FDR","SBS1","SBS5")){
     ## Change colour scale for lines
     scale_color_manual(values = rainbow(numTools)) +
     ## Make line segment in legend longer.
-    ggplot2::theme(legend.key.width = grid::unit(1,"inches")) +
+    ggplot2::theme(
+      legend.position = "right",
+      legend.key.width = grid::unit(0.5,"inches")
+    ) +
     ## Change x axis to log10 scaled.
     ## Show tick marks exactly at possible SBS1:SBS5 exposure ratio values.
     ## (0.1, 0.5, 1, 2, 10)
@@ -159,87 +165,74 @@ for(index in c("TPR","FDR","SBS1","SBS5")){
 
 ## Plot these summary plots separately, with customized x labels and y labels.
 {
-pdf("../TrendDiag/ExtrAttrExact/cosSimSBS1AgainstRsq.pdf",12,10)
+pdf("../TrendDiag/ExtrAttrExact/cosSimSBS1AgainstRsq.pdf",10,8)
   ggVsRsq$SBS1 <- ggVsRsq$SBS1 + ggplot2::labs(y = "Cosine similarity to SBS1")
 plot(ggVsRsq$SBS1)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/cosSimSBS5AgainstRsq.pdf",12,10)
+pdf("../TrendDiag/ExtrAttrExact/cosSimSBS5AgainstRsq.pdf",10,8)
 ggVsRsq$SBS5 <- ggVsRsq$SBS5 + ggplot2::labs(y = "Cosine similarity to SBS5")
 plot(ggVsRsq$SBS5)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/TPRAgainstRsq.pdf",12,10)
+pdf("../TrendDiag/ExtrAttrExact/TPRAgainstRsq.pdf",10,8)
 ggVsRsq$TPR <- ggVsRsq$TPR + ggplot2::labs(y = "True Positive Rate")
 plot(ggVsRsq$TPR)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/FDRAgainstRsq.pdf",12,10)
-ggVsRsq$FDR <- ggVsRsq$FDR + ggplot2::labs(y = "False Discovery Rate")
-plot(ggVsRsq$FDR)
+pdf("../TrendDiag/ExtrAttrExact/PPVAgainstRsq.pdf",10,8)
+ggVsRsq$PPV <- ggVsRsq$PPV + ggplot2::labs(y = "Positive Predictive Value")
+plot(ggVsRsq$PPV)
 dev.off()
 }
 
 {
-pdf("../TrendDiag/ExtrAttrExact/cosSimSBS1AgainstSBS1SBS5Ratio.pdf",12,10)
+pdf("../TrendDiag/ExtrAttrExact/cosSimSBS1AgainstSBS1SBS5Ratio.pdf",10,8)
   ggVsRatio$SBS1 <- ggVsRatio$SBS1 + ggplot2::labs(y = "Cosine similarity to SBS1")
 plot(ggVsRatio$SBS1)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/cosSimSBS5AgainstSBS1SBS5Ratio.pdf",12,10)
+pdf("../TrendDiag/ExtrAttrExact/cosSimSBS5AgainstSBS1SBS5Ratio.pdf",10,8)
 ggVsRatio$SBS5 <- ggVsRatio$SBS5 + ggplot2::labs(y = "Cosine similarity to SBS5")
 plot(ggVsRatio$SBS5)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/TPRAgainstSBS1SBS5Ratio.pdf",12,10)
+pdf("../TrendDiag/ExtrAttrExact/TPRAgainstSBS1SBS5Ratio.pdf",10,8)
 ggVsRatio$TPR <- ggVsRatio$TPR + ggplot2::labs(y = "True Positive Rate")
 plot(ggVsRatio$TPR)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttrExact/FDRAgainstSBS1SBS5Ratio.pdf",12,10)
-ggVsRatio$FDR <- ggVsRatio$FDR + ggplot2::labs(y = "False Discovery Rate")
-plot(ggVsRatio$FDR)
+pdf("../TrendDiag/ExtrAttrExact/PPVAgainstSBS1SBS5Ratio.pdf",10,8)
+ggVsRatio$PPV <- ggVsRatio$PPV + ggplot2::labs(y = "Positive Predictive Value")
+plot(ggVsRatio$PPV)
 dev.off()
 }
 
 ## Plot multiple summary plots into one page.
 ## These PDF files with multiple panels are ready for publication.
 {
-  pdf("../TrendDiag/ExtrAttrExact/cosSimCombined.SBS1.pdf", width = 15, height = 8)
+  pdf("../TrendDiag/ExtrAttrExact/cosSimCombined.SBS1.pdf", width = 10, height = 15)
   ggObj <- ggpubr::ggarrange(
     ggVsRsq$SBS1 + rremove("legend"),
     ggVsRatio$SBS1,
     labels = c("A","B"),
     font.label = list(size = 14, color = "black", face = "bold", family = "sans"),
-    nrow = 1, ncol = 2,
+    nrow = 2, ncol = 1,
+    legend = "right",
     common.legend = T)
   plot(ggObj)
   dev.off()
 }
 
 {
-  pdf("../TrendDiag/ExtrAttrExact/cosSimCombined.SBS5.pdf", width = 15, height = 8)
+  pdf("../TrendDiag/ExtrAttrExact/cosSimCombined.SBS5.pdf", width = 10, height = 15)
   ggObj <- ggpubr::ggarrange(
     ggVsRsq$SBS5 + rremove("legend"),
     ggVsRatio$SBS5,
     labels = c("A","B"),
     font.label = list(size = 14, color = "black", face = "bold", family = "sans"),
-    nrow = 1, ncol = 2,
-    common.legend = T)
-  plot(ggObj)
-  dev.off()
-}
-
-{
-  pdf("../TrendDiag/ExtrAttrExact/TPRFDRCombined.pdf", width = 15, height = 15)
-  ggObj <- ggpubr::ggarrange(
-    ggVsRsq$FDR + rremove("legend"),
-    ggVsRatio$FDR + rremove("legend"),
-    ggVsRsq$TPR + rremove("legend"),
-    ggVsRatio$TPR,
-    labels = c("A","B","C","D"),
-    font.label = list(size = 14, color = "black", face = "bold", family = "sans"),
-    nrow = 2, ncol = 2,
+    nrow = 2, ncol = 1,
+    legend = "right",
     common.legend = T)
   plot(ggObj)
   dev.off()

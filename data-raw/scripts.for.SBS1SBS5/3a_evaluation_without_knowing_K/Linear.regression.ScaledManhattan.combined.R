@@ -97,7 +97,10 @@ for(index in c("SBS1","SBS5")){
     ## Change colour scale for lines
     scale_color_manual(values = rainbow(numTools)) +
     ## Make line segment in legend longer.
-    ggplot2::theme(legend.key.width = grid::unit(1,"inches")) +
+    ggplot2::theme(
+      legend.position = "right",
+      legend.key.width = grid::unit(0.5,"inches")
+    ) +
     ## Change x axis to log2 scaled.
     ## Show tick marks exactly at possible Pearson's R^2 values.
     ## (0.1, 0.2, 0.3, 0.6)
@@ -132,7 +135,10 @@ for(index in c("SBS1","SBS5")){
     ## Change colour scale for lines
     scale_color_manual(values = rainbow(numTools)) +
     ## Make line segment in legend longer.
-    ggplot2::theme(legend.key.width = grid::unit(1,"inches")) +
+    ggplot2::theme(
+      legend.position = "right",
+      legend.key.width = grid::unit(0.5,"inches")
+    ) +
     ## Change x axis to log10 scaled.
     ## Show tick marks exactly at possible SBS1:SBS5 exposure ratio values.
     ## (0.1, 0.5, 1, 2, 10)
@@ -154,24 +160,24 @@ for(index in c("SBS1","SBS5")){
 
 ## Plot these summary plots separately, with customized x labels and y labels.
 {
-pdf("../TrendDiag/ExtrAttr/ScaledManhattanSBS1AgainstRsq.pdf",12,10)
+pdf("../TrendDiag/ExtrAttr/ScaledManhattanSBS1AgainstRsq.pdf",10,8)
   ggVsRsq$SBS1 <- ggVsRsq$SBS1 + ggplot2::labs(y = "Scaled Manhattan distance of SBS1")
 plot(ggVsRsq$SBS1)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttr/ScaledManhattanSBS5AgainstRsq.pdf",12,10)
+pdf("../TrendDiag/ExtrAttr/ScaledManhattanSBS5AgainstRsq.pdf",10,8)
 ggVsRsq$SBS5 <- ggVsRsq$SBS5 + ggplot2::labs(y = "Scaled Manhattan distance of SBS5")
 plot(ggVsRsq$SBS5)
 dev.off()
 }
 
 {
-pdf("../TrendDiag/ExtrAttr/ScaledManhattanSBS1AgainstSBS1SBS5Ratio.pdf",12,10)
+pdf("../TrendDiag/ExtrAttr/ScaledManhattanSBS1AgainstSBS1SBS5Ratio.pdf",10,8)
   ggVsRatio$SBS1 <- ggVsRatio$SBS1 + ggplot2::labs(y = "Scaled Manhattan distance of SBS1")
 plot(ggVsRatio$SBS1)
 dev.off()
 
-pdf("../TrendDiag/ExtrAttr/ScaledManhattanSBS5AgainstSBS1SBS5Ratio.pdf",12,10)
+pdf("../TrendDiag/ExtrAttr/ScaledManhattanSBS5AgainstSBS1SBS5Ratio.pdf",10,8)
 ggVsRatio$SBS5 <- ggVsRatio$SBS5 + ggplot2::labs(y = "Scaled Manhattan distance of SBS5")
 plot(ggVsRatio$SBS5)
 dev.off()
@@ -180,30 +186,31 @@ dev.off()
 ## Plot multiple summary plots into one page.
 ## These PDF files with multiple panels are ready for publication.
 {
-  pdf("../TrendDiag/ExtrAttr/ScaledManhattanCombined.SBS1.pdf", width = 15, height = 8)
+  pdf("../TrendDiag/ExtrAttr/ScaledManhattanCombined.SBS1.pdf", width = 10, height = 15)
   ggObj <- ggpubr::ggarrange(
     ggVsRsq$SBS1 + rremove("legend"),
     ggVsRatio$SBS1,
     labels = c("A","B"),
     font.label = list(size = 14, color = "black", face = "bold", family = "sans"),
-    nrow = 1, ncol = 2,
+    nrow = 2, ncol = 1,
+    legend = "right",
     common.legend = T)
   plot(ggObj)
   dev.off()
 }
 
 {
-  pdf("../TrendDiag/ExtrAttr/ScaledManhattanCombined.SBS5.pdf", width = 15, height = 8)
+  pdf("../TrendDiag/ExtrAttr/ScaledManhattanCombined.SBS5.pdf", width = 10, height = 15)
   ggObj <- ggpubr::ggarrange(
     ggVsRsq$SBS5 + rremove("legend"),
     ggVsRatio$SBS5,
-    labels = c("A","B","C","D"),
+    labels = c("A","B"),
     font.label = list(size = 14, color = "black", face = "bold", family = "sans"),
-    nrow = 1, ncol = 2,
+    nrow = 2, ncol = 1,
+    legend = "right",
     common.legend = T)
   plot(ggObj)
   dev.off()
-
 }
 
 save.image("../TrendDiag/ExtrAttr/Manhattan.Combined.Rdata")
