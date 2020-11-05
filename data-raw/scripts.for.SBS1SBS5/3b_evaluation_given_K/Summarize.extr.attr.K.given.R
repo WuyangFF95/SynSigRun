@@ -34,7 +34,10 @@ for(slope in slopes){
 # excluding SignatureAnalyzer (due to special folder structure)
 # and maftools (its seed is hard-coded)
 RBasedExtrAttrToolNames <- c("hdp",
-                             "sigfit.EMu","sigfit.NMF","signeR",
+                             "mutSpec.NMF",
+                             "sigfit.EMu","sigfit.NMF",
+                             "signature.tools.lib","signeR",
+                             "SomaticSignatures.NMF",
                              "TCSM")
 # Python or other language based tools.
 # excluding maftools and MutationalPatterns (seed is hard-coded) and EMu (cannot designate seed)
