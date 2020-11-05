@@ -36,7 +36,9 @@ extrAttrToolNames <-
   c("hdp","sigfit.EMu",
     "sigfit.NMF","signeR","TCSM",
     "helmsman.NMF","MultiModalMuSig.CTM",
-    "MultiModalMuSig.LDA","SigProExtractor","SignatureAnalyzer")
+    "MultiModalMuSig.LDA","mutSpec.NMF",
+    "SigProExtractor","SignatureAnalyzer",
+    "SomaticSignatures.NMF")
 toolNameWOSeed <- "EMu"
 toolNameWFixedSeed <- c("maftools","MutationalPatterns")
 
