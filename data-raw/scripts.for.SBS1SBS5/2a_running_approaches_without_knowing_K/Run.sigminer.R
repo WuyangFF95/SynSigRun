@@ -38,7 +38,7 @@ for(seedInUse in seedsInUse){
     cat("\n===========================================\n")
 
     Runsigminer(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName, "/sp.sp/ExtrAttrExact/sigminer.results/seed.", seedInUse),
+      out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/sigminer.results/seed.", seedInUse),
       CPU.cores = 10,
       K.max = 10,
       overwrite = TRUE)

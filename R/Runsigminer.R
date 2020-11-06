@@ -122,7 +122,7 @@ Runsigminer <-
     requireNamespace("NMF")
 
     ## Run sigminer using ICAMS-formatted spectra catalog
-    print(paste0("Assuming there are at most ",K.best," signatures active in input spectra."))
+    print(paste0("Assuming there are at most ",K.max," signatures active in input spectra."))
     assess <- sigminer::sig_auto_extract(
       nmf_matrix = convSpectra,
       result_prefix = "BayesNMF",
