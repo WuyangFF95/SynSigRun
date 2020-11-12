@@ -41,25 +41,11 @@ for seedInUse in seedsInUse
 		string(seedInUse)*"/ground.truth.syn.catalog.tsv", delim='\t');
 
 		## Run model fitting
-		## After the model is fitted, we may obtain extracted signatures and attributed exposures
+		## After the model is fitted, we may obtain extracted signatures and inferred exposures
 		X = format_counts_lda(snv_counts);
 
-		## Save the likelihood for each K.
-		likelihoods = [];
-		for K in (2,)
-			## Specify seed used before fitting model for each dataset,
-			## for each signature number (K)
-			Random.seed!(seedInUse);
-			model = LDA(K, 0.1, 0.1, 96, X);
-			fit!(model, tol=1e-5);
-			likelihood = MultiModalMuSig.calculate_loglikelihood(model);
-			append!(likelihoods, likelihood);
-		end
-
-		## Find which K is the best likelihood.
-		max_likelihood = maximum(likelihoods);
-		KBest = [i for (i, x) in enumerate(likelihoods) if x == max_likelihood];
-		KBest = KBest[1]; ## LDA accepts K as an integer rather than an array
+		## Specify the best K
+		KBest = 2
 
 		## Obtain extracted signatures given the best K.
 		## In MultiModalMuSig format, later converted to ICAMS format
@@ -77,7 +63,7 @@ for seedInUse in seedsInUse
 		snv_signatures,
 		delim = "\t");
 
-		## Obtain attributed exposures
+		## Obtain inferred exposures
 		snv_exposures = DataFrame(model.θ);
 		sample_names = names(snv_counts)[2:(size(snv_counts)[2])];
 		names!(snv_exposures, sample_names);# Set column names for DataFrame snv_exposures
@@ -90,9 +76,9 @@ for seedInUse in seedsInUse
 		snv_exposures[:signature_name] = sig_names
 		snv_exposures = snv_exposures[:,[:signature_name; sample_names]]
 
-		# Write attributed exposures
+		# Write inferred exposures
 		CSV.write(datasetName*"/sp.sp/ExtrAttrExact/MultiModalMuSig.LDA.results/seed."*
-		string(seedInUse)*"/attributed.exposures.tsv",
+		string(seedInUse)*"/inferred.exposures.tsv",
 		snv_exposures,
 		delim = "\t")
 	end
@@ -118,24 +104,11 @@ for seedInUse in seedsInUse
 		string(seedInUse)*"/ground.truth.syn.catalog.tsv", delim='\t');
 
 		## Run model fitting
-		## After the model is fitted, we may obtain extracted signatures and attributed exposures
+		## After the model is fitted, we may obtain extracted signatures and inferred exposures
 		X = format_counts_mmctm(snv_counts);
 
-		## Save the likelihood for each K.
-		likelihoods = [];
-		for K in (2,)
-			## Specify seed used before fitting model for each dataset,
-			## for each signature number (K)
-			Random.seed!(seedInUse);
-			model = MMCTM([K], [0.1], X);
-			fit!(model, tol=1e-5);
-			likelihood = MultiModalMuSig.calculate_loglikelihoods(model);
-			append!(likelihoods, likelihood);
-		end
-
-		## Find which K is the best likelihood.
-		max_likelihood = maximum(likelihoods);
-		KBest = [i for (i, x) in enumerate(likelihoods) if x == max_likelihood];
+		## Specify the best K
+		KBest = [2];
 
 		## Obtain extracted signatures given the best K.
 		## In MultiModalMuSig format, later converted to ICAMS format
@@ -154,7 +127,7 @@ for seedInUse in seedsInUse
 		snv_signatures,
 		delim = "\t");
 
-		## Obtain attributed exposures
+		## Obtain inferred exposures
 		snv_exposures = DataFrame(vcat(model.props...));
 		sample_names = names(snv_counts)[2:(size(snv_counts)[2])];
 		names!(snv_exposures, sample_names);# Set column names for DataFrame snv_exposures
@@ -167,9 +140,9 @@ for seedInUse in seedsInUse
 		snv_exposures[:signature_name] = sig_names
 		snv_exposures = snv_exposures[:,[:signature_name; sample_names]]
 
-		# Write attributed exposures
+		# Write inferred exposures
 		CSV.write(datasetName*"/sp.sp/ExtrAttrExact/MultiModalMuSig.CTM.results/seed."*
-		string(seedInUse)*"/attributed.exposures.tsv",
+		string(seedInUse)*"/inferred.exposures.tsv",
 		snv_exposures,
 		delim = "\t")
 	end

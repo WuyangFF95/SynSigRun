@@ -46,7 +46,7 @@ for seedInUse in seedsInUse
 
 		## Save the likelihood for each K.
 		likelihoods = [];
-		for K in 1:10
+		for K in 2:10
 			## Specify seed used before fitting model for each dataset,
 			## for each signature number (K)
 			Random.seed!(seedInUse);
@@ -123,7 +123,7 @@ for seedInUse in seedsInUse
 
 		## Save the likelihood for each K.
 		likelihoods = [];
-		for K in 1:10
+		for K in 2:10
 			## Specify seed used before fitting model for each dataset,
 			## for each signature number (K)
 			Random.seed!(seedInUse);

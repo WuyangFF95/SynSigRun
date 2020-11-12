@@ -29,11 +29,7 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 
 
 
-## Run Extraction and attribution packages
-## sigproextractor (Python package) and MultiModalMuSig (Julia package)
-## needs to be run with external script.
-
-## NMF will have an error if K.range includes 1!
+## Run TCSM.
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 

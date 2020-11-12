@@ -33,14 +33,17 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 
-    cat("\n===========================================\n")
-    cat(paste0("Running sigminer on data set ",datasetName," using seed ",seedInUse,"...\n"))
-    cat("\n===========================================\n")
+    out.dir = paste0(datasetName, "/sp.sp/ExtrAttrExact/sigminer.results/seed.", seedInUse)
 
-    Runsigminer(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName, "/sp.sp/ExtrAttrExact/sigminer.results/seed.", seedInUse),
-      CPU.cores = 10,
-      K.max = 2,
-      overwrite = TRUE)
+    if(!file.exists(paste0(out.dir,"/inferred.exposures.csv"))){
+	  cat("\n===========================================\n")
+      cat(paste0("Running sigminer on data set ",datasetName," using seed ",seedInUse,"...\n"))
+      cat("\n===========================================\n")
+      Runsigminer(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
+        out.dir = out.dir,
+        CPU.cores = 10,
+        K.max = 2,
+        overwrite = TRUE)
+    }
   }
 }

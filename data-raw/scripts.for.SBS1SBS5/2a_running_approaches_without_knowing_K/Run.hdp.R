@@ -31,7 +31,7 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 
-    out.dir <- paste0(datasetName,"/sp.sp/ExtrAttrExact/hdp.results/seed.",seedInUse)
+    out.dir <- paste0(datasetName,"/sp.sp/ExtrAttr/hdp.results/seed.",seedInUse)
     if(!file.exists(paste0(out.dir,"/inferred.exposures.csv"))) {
       message("\n\n########################################################\n\n")
       message(paste0("Begin running catalog with K.guess = 10",datasetName," using seed ",seedInUse,"...\n"))
@@ -41,7 +41,7 @@ for(seedInUse in seedsInUse){
         input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
         out.dir = out.dir,
         CPU.cores = 4,
-        K.guess = 2,
+        K.guess = 10,
         multi.types = FALSE,
         remove.noise = TRUE,
         seedNumber = seedInUse,

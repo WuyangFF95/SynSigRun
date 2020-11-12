@@ -29,11 +29,11 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 
 
 
-## Run Extraction and attribution packages
-## sigproextractor (Python package) and MultiModalMuSig (Julia package)
-## needs to be run with external script.
+## Run signature.tools.lib
+CPU.cores = 10
+K.exact = 2
 
-## NMF will have an error if K.range includes 1!
+
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 
@@ -43,8 +43,6 @@ for(seedInUse in seedsInUse){
 
     input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv")
     out.dir = paste0(datasetName, "/sp.sp/ExtrAttrExact/signature.tools.lib.results/seed.", seedInUse,"/")
-    CPU.cores = 10
-    K.exact = 2
 
     spectra <- ICAMS::ReadCatalog(
 	  input.catalog,

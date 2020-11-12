@@ -51,7 +51,7 @@ toolName = "sigproextractor"
 toolAcronym = "sp"
 
 ## Set global parameters
-minK = 1
+minK = 2
 maxK = 10
 numiters = 1000
 numcpus = 10
