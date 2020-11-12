@@ -166,7 +166,7 @@ RunSignatureAnalyzerOnFile <-
         # source("SignatureAnalyzer.PCAWG.function.R") above.
         # BayesNMF.L1W.L2H will output:
         # [[1]]: extracted signatures
-        # [[2]]: RAW-attributed exposures (not finalized)
+        # [[2]]: RAW-inferred exposures (not finalized)
         # [[3]]: likelihood -
         # [[4]]: evidence -
         # [[5]]: relevance -
@@ -189,7 +189,7 @@ RunSignatureAnalyzerOnFile <-
 
     # exp.raw is not the exposure SignatureAnalyzer is supposed to eventually
     # output. A separate function to be called on the output from the current
-    # function will compuate fine-tuned attributed exposures.
+    # function will compuate fine-tuned inferred exposures.
     exp.raw <- out.data[[2]]
     exp.raw <- exp.raw[sigs.to.use, , drop = FALSE]
     rownames(exp.raw) <- new.names
