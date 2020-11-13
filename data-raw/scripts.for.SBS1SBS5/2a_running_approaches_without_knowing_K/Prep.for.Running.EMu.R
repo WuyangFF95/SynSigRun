@@ -8,7 +8,7 @@
 
 ## Load required packages
 library(ICAMS)
-library(SynSigRun)
+library(SynSigEval)
 
 ## Specify slopes and Rsqs for the datasets
 slopes <- c(0.1,0.5,1,2,10)
