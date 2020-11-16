@@ -35,7 +35,8 @@ for(slope in slopes){
 # and maftools (its seed is hard-coded)
 RBasedExtrAttrToolNames <- c("hdp",
                              "mutSpec.NMF",
-                             "sigfit.EMu","sigfit.NMF","signeR",
+                             "sigfit.EMu","sigfit.NMF",
+                             "sigminer","signeR",
                              "TCSM","SomaticSignatures.NMF")
 # Python or other language based tools.
 # excluding maftools and MutationalPatterns (seed is hard-coded) and EMu (cannot designate seed)

@@ -36,6 +36,7 @@ for(slope in slopes){
 RBasedExtrAttrToolNames <- c("hdp",
                              "mutSpec.NMF",
                              "sigfit.EMu","sigfit.NMF",
+                             "sigminer",
                              "signature.tools.lib","signeR",
                              "SomaticSignatures.NMF",
                              "TCSM")
