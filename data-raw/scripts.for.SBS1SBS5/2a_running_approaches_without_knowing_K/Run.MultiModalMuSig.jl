@@ -41,7 +41,7 @@ for seedInUse in seedsInUse
 		string(seedInUse)*"/ground.truth.syn.catalog.tsv", delim='\t');
 
 		## Run model fitting
-		## After the model is fitted, we may obtain extracted signatures and attributed exposures
+		## After the model is fitted, we may obtain extracted signatures and inferred exposures
 		X = format_counts_lda(snv_counts);
 
 		## Save the likelihood for each K.
@@ -77,7 +77,7 @@ for seedInUse in seedsInUse
 		snv_signatures,
 		delim = "\t");
 
-		## Obtain attributed exposures
+		## Obtain inferred exposures
 		snv_exposures = DataFrame(model.θ);
 		sample_names = names(snv_counts)[2:(size(snv_counts)[2])];
 		names!(snv_exposures, sample_names);# Set column names for DataFrame snv_exposures
@@ -90,9 +90,9 @@ for seedInUse in seedsInUse
 		snv_exposures[:signature_name] = sig_names
 		snv_exposures = snv_exposures[:,[:signature_name; sample_names]]
 
-		# Write attributed exposures
+		# Write inferred exposures
 		CSV.write(datasetName*"/sp.sp/ExtrAttr/MultiModalMuSig.LDA.results/seed."*
-		string(seedInUse)*"/attributed.exposures.tsv",
+		string(seedInUse)*"/inferred.exposures.tsv",
 		snv_exposures,
 		delim = "\t")
 	end
@@ -118,7 +118,7 @@ for seedInUse in seedsInUse
 		string(seedInUse)*"/ground.truth.syn.catalog.tsv", delim='\t');
 
 		## Run model fitting
-		## After the model is fitted, we may obtain extracted signatures and attributed exposures
+		## After the model is fitted, we may obtain extracted signatures and inferred exposures
 		X = format_counts_mmctm(snv_counts);
 
 		## Save the likelihood for each K.
@@ -154,7 +154,7 @@ for seedInUse in seedsInUse
 		snv_signatures,
 		delim = "\t");
 
-		## Obtain attributed exposures
+		## Obtain inferred exposures
 		snv_exposures = DataFrame(vcat(model.props...));
 		sample_names = names(snv_counts)[2:(size(snv_counts)[2])];
 		names!(snv_exposures, sample_names);# Set column names for DataFrame snv_exposures
@@ -167,9 +167,9 @@ for seedInUse in seedsInUse
 		snv_exposures[:signature_name] = sig_names
 		snv_exposures = snv_exposures[:,[:signature_name; sample_names]]
 
-		# Write attributed exposures
+		# Write inferred exposures
 		CSV.write(datasetName*"/sp.sp/ExtrAttr/MultiModalMuSig.CTM.results/seed."*
-		string(seedInUse)*"/attributed.exposures.tsv",
+		string(seedInUse)*"/inferred.exposures.tsv",
 		snv_exposures,
 		delim = "\t")
 	end
