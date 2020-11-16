@@ -9,7 +9,7 @@
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
-
+library(signeR)
 
 
 ## Specify slopes and Rsqs for the datasets

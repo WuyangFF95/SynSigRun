@@ -9,6 +9,7 @@
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
+library(signeR)
 
 
 

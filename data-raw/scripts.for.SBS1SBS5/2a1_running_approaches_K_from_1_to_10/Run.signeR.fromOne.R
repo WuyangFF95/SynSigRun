@@ -9,6 +9,7 @@
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
+library(signeR)
 
 
 
@@ -39,7 +40,7 @@ for(seedInUse in seedsInUse){
     RunsigneR(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
               out.dir = paste0(datasetName,"/sp.sp/ExtrAttrFromOne/signeR.results/seed.",seedInUse),
               seedNumber = seedInUse,
-              K.range = c(2,10),
+              K.range = c(1,10),
               overwrite = T)
   }
 }
