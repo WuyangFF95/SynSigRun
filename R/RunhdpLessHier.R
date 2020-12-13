@@ -367,11 +367,17 @@ RunhdpLessHier <-
       if (verbose) message("Calling hdp::comp_dp_distn to generate exposure probability")
       exposureProbs <- hdp::comp_dp_distn(mut_example_multi_extracted)$mean
       dim(exposureProbs)
-      exposureProbs <- exposureProbs[(num.tumor.types + 2):dim(exposureProbs)[1],]
+      if(num.tumor.types > 1){
+        exposureProbs <- exposureProbs[(num.tumor.types + 2):dim(exposureProbs)[1],]
+      } else {
+        exposureProbs <- exposureProbs[2:dim(exposureProbs)[1],]
+      }
       rownames(exposureProbs) <- rownames(convSpectra)[1:dim(exposureProbs)[1]]
       ## Remove NA or NULL "hdp.0" signature in exposureProbs matrix.
-      if(flagRemoveHDP0)
+      if(flagRemoveHDP0){
+        sigToBeRemoved <- which(colnames(exposureProbs) == "0")
         exposureProbs <- exposureProbs[,-(sigToBeRemoved),drop = FALSE]
+      }
       ## Change signature names in exposureCounts
       ## from "0","1","2" to "hdp.0","hdp.1","hdp.2"
       colnames(exposureProbs) <- colnames(extractedSignatures)
@@ -406,7 +412,8 @@ RunhdpLessHier <-
     retval <- list(signature            = extractedSignatures,
                    exposure             = exposureCounts,
                    exposure.p           = exposureProbs,
-                   mut_example_multi    = mut_example_multi)
+                   mut_example_multi    = mut_example_multi,
+                   mut_example_multi_extracted = mut_example_multi_extracted)
 
     save(retval,file = paste0(out.dir,"/Runhdp.retval.RData"))
 
