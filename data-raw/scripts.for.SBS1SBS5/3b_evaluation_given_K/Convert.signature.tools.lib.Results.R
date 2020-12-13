@@ -58,6 +58,10 @@ for(datasetName in datasetNames){
       signatures,
       region = "unknown",
       catalog.type = "counts.signature")
+    ## extracted signatures need to be normalized.
+    for(sigName in colnames(signatures)){
+      signatures[,sigName] <- signatures[,sigName] / sum(signatures[,sigName])
+    }
     ICAMS::WriteCatalog(
       signatures,
       paste0(resultDir,"/../../extracted.signatures.csv"))

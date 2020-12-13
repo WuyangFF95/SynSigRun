@@ -42,7 +42,7 @@ for(datasetName in datasetNames){
     ## _{K}_assigned.txt
     resultDir <-
       paste0(datasetName,
-            "/sp.sp/ExtrAttr/EMu.results/",
+            "/sp.sp/ExtrAttrFromOne/EMu.results/",
             "run.",nrun,"/")
 
     files <- list.files(resultDir)
@@ -58,17 +58,34 @@ for(datasetName in datasetNames){
       sigOrSampleNames = NULL,
       region = "unknown",
       catalog.type = "counts.signature")
+    ## extracted signatures need to be normalized.
+    for(sigName in colnames(signatures)){
+      signatures[,sigName] <- signatures[,sigName] / sum(signatures[,sigName])
+    }
     ICAMS::WriteCatalog(
       signatures,
       paste0(resultDir,"/extracted.signatures.csv"))
 
     ## Convert exposures
-    exposure <- SynSigEval::ReadEMuExposureFile(
+    rawExposure <- SynSigEval::ReadEMuExposureFile(
       exposureFile = paste0(resultDir,"/",exposureFile),
       sigNames = NULL,
       sampleNames = paste0("TwoCorreSigsGen::",1:500))
+    ## The sum of exposure of each spectrum needs to
+    ## be normalized to the total number of mutations
+    ## in each spectrum.
+    spectra <- ICAMS::ReadCatalog(
+      file = paste0(datasetName,
+                    "/sp.sp/ground.truth.syn.catalog.csv"),
+      catalog.type = "counts",
+      strict = FALSE)
+    exposureCounts <- rawExposure
+    for(sample in colnames(exposureCounts)){
+      exposureCounts[,sample] <- rawExposure[,sample] / sum(rawExposure[,sample]) * sum(spectra[,sample])
+    }
+
     SynSigGen::WriteExposure(
-      exposure,
+      exposureCounts,
       paste0(resultDir,"/inferred.exposures.csv"))
 
   }
