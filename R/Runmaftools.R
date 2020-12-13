@@ -176,12 +176,6 @@ Runmaftools <-
                    "It equals to: ",K.best))
     }
 
-
-    grDevices::pdf(paste0(out.dir,"/maftools.plots.pdf"))
-    sigs_nmf <- maftools::extractSignatures(mat = convSpectra,
-                                            n = K.best,     ## n specifies number of signatures you want to assess
-                                            parallel  = CPU.cores)
-    grDevices::dev.off()
     ## Generates a list contain extracted signatures
     ## sigs_nmf$signatures is already normalized.
     extractedSignatures <- sigs_nmf$signatures
