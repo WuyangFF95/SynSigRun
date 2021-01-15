@@ -7,7 +7,7 @@
 RunmutSignatures(
   input.catalog,
   out.dir,
-  algorithm = "alexa",
+  algorithm = "brunet",
   CPU.cores = NULL,
   iterations = 1000,
   seedNumber = 1,
