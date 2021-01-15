@@ -199,7 +199,7 @@ RunmutSignaturesAttributeOnly <-
 RunmutSignatures <-
   function(input.catalog,
            out.dir,
-           algorithm = "alexa",
+           algorithm = "brunet",
            CPU.cores = NULL,
            iterations = 1000,
            seedNumber = 1,
@@ -304,7 +304,8 @@ RunmutSignatures <-
       num_totIterations = iterations,
       num_parallelCores = CPU.cores, # set to 1 to avoid parallelization
       debug = FALSE,
-      algorithm = algorithm) ## Use Brunet NMF
+      algorithm = algorithm, ## "brunet" or "alexa" to use Brunet NMF
+      seed = seedNumber)
     ## 2. Precise extraction,
     ## and report signatures and exposures from preciseExtr object.
 
