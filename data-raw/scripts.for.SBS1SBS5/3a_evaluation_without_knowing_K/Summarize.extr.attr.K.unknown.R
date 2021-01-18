@@ -62,46 +62,42 @@ for(datasetName in datasetNames){
     ## Summarize R-based Extraction and attribution tools.
     for(extrAttrToolName in RBasedExtrAttrToolNames){
       SynSigEval::SummarizeSigOneExtrAttrSubdir(
-        run.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrToolName,
-                            ".results/seed.",seedInUse,"/"),
-        ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+        run.dir = paste0("3a.Original_output_K_unspecified/",extrAttrToolName,
+                         ".results/",datasetName,"/seed.",seedInUse,"/"),
+        ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
         overwrite = T)
     }
     ## Summarize non-R Extraction and attribution tools.
     for(extrAttrToolName in otherExtrAttrToolNames){
       SynSigEval::SummarizeSigOneExtrAttrSubdir(
-        run.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrToolName,
-                         ".results/seed.",seedInUse,"/"),
-        ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+        run.dir = paste0("3a.Original_output_K_unspecified/",extrAttrToolName,
+                         ".results/",datasetName,"/seed.",seedInUse,"/"),
+        ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
         overwrite = T)
     }
     ## Summarize SigProExtractor
     SynSigEval::SummarizeSigOneSigProExtractorSubdir(
-      run.dir = paste0(datasetName,
-                       "/sp.sp/ExtrAttr/SigProExtractor.results/seed.",
-                       seedInUse,"/"),
-      ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+      run.dir = paste0("3a.Original_output_K_unspecified/SigProExtractor.results/",
+                       datasetName,"/seed.",seedInUse,"/"),
+      ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
       overwrite = T)
     ## Summarize helmsman.NMF
     SynSigEval::SummarizeSigOnehelmsmanSubdir(
-      run.dir = paste0(datasetName,
-                       "/sp.sp/ExtrAttr/helmsman.NMF.results/seed.",
-                       seedInUse,"/"),
-      ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+      run.dir = paste0("3a.Original_output_K_unspecified/helmsman.NMF.results/",
+                       datasetName,"/seed.",seedInUse,"/"),
+      ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
       overwrite = T)
     ## Summarize SignatureAnalyzer
     {
       SynSigEval::CopyBestSignatureAnalyzerResult(
-        sa.results.dir = paste0(datasetName,
-                                "/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",
-                                seedInUse,"/"),
+        sa.results.dir = paste0("3a.Original_output_K_unspecified/SignatureAnalyzer.results/",
+                                datasetName,"/seed.",seedInUse,"/"),
         overwrite = T)
 
       SynSigEval:::SummarizeSigOneSASubdir(
-        run.dir = paste0(datasetName,
-                         "/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",
-                         seedInUse,"/"),
-        ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+        run.dir = paste0("3a.Original_output_K_unspecified/SignatureAnalyzer.results/",
+                         datasetName,"/seed.",seedInUse,"/"),
+        ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
         which.run = "/best.run/",
         overwrite = T)
     }
@@ -109,9 +105,9 @@ for(datasetName in datasetNames){
   ## Summarize maftools and MutationalPatterns which have a hard-coded seed.
   for(toolName in toolNamesWFixedSeed) {
     SynSigEval::SummarizeSigOneExtrAttrSubdir(
-      run.dir = paste0(datasetName,
-                       "/sp.sp/ExtrAttr/",toolName,".results/seed.123456","/"),
-      ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+        run.dir = paste0("3a.Original_output_K_unspecified/",toolName,
+                         ".results/",datasetName,"/seed.123456/"),
+        ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
       overwrite = T)
   }
   ## Summarize EMu
@@ -120,6 +116,9 @@ for(datasetName in datasetNames){
       run.dir = paste0(datasetName,"/sp.sp/ExtrAttr/","EMu",
                        ".results/run.",nrun,"/"),
       ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+	  run.dir = paste0("3a.Original_output_K_unspecified/EMu.results/",
+                       datasetName,"/seed.",seedInUse,"/"),
+      ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
       overwrite = T)
   }
 }
@@ -134,8 +133,8 @@ for(datasetName in datasetNames){
     SynSigEval::SummarizeMultiRuns(
       datasetName = datasetName,
       toolName = extrAttrToolName,
-      tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",extrAttrToolName,
-                          ".results/"),
+      tool.dir = paste0("3a.Original_output_K_unspecified/",extrAttrToolName,
+                        ".results/",datasetName,"/"),
       run.names = paste0("seed.",seedsInUse))
   }
   ## For each dataset, summarize 20 runs
@@ -143,37 +142,21 @@ for(datasetName in datasetNames){
   SynSigEval::SummarizeMultiRuns(
     datasetName = datasetName,
     toolName = "EMu",
-    tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/","EMu",
-                      ".results/"),
+    tool.dir = paste0("3a.Original_output_K_unspecified/",
+                      "EMu.results/",datasetName,"/"),
     run.names = paste0("run.",1:20))
   ## For each dataset, summarize 1 run by maftools and MutationalPatterns
   for(toolName in toolNamesWFixedSeed){
     SynSigEval::SummarizeMultiRuns(
       datasetName = datasetName,
       toolName = toolName,
-    tool.dir = paste0(datasetName,"/sp.sp/ExtrAttr/",toolName,
-                        ".results/"),
+      tool.dir = paste0("3a.Original_output_K_unspecified/",toolName,
+                      ".results/",datasetName,"/"),
       run.names = paste0("seed.","123456"))
   }
 }
 
-## Part III: Write Summary table of multiple tools for each dataset
-for(slope in slopes){
-  for(Rsq in Rsqs){
-    datasetName <- paste0("S.",slope,".Rsq.",Rsq)
-    SynSigEval::SummarizeMultiToolsOneDataset(
-      third.level.dir = paste0(datasetName,"/sp.sp/ExtrAttr/"),
-      toolName = c(RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-                   "EMu",toolNamesWFixedSeed),
-      tool.dirnames = paste0(c(RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-                               "EMu",toolNamesWFixedSeed),".results"),
-      datasetGroup = Rsq,
-      datasetGroupName = "Pearson's R^2",
-      datasetSubGroup = slope,
-      datasetSubGroupName = "SBS1:SBS5 mutation count ratio")
-  }
-}
-## Part IV: Generate a summary table and boxplot for results
+## Part III: Generate a summary table and boxplot for results
 ## of multiple datasets, from each separate tool.
 datasetGroup <- rep(c(0.1,0.2,0.3,0.6),5)
 names(datasetGroup) <- datasetNames
@@ -181,28 +164,32 @@ datasetSubGroup <- rep(c(0.1,0.5,1,2,10),each = 4)
 names(datasetSubGroup) <- datasetNames
 
 
-for(toolName in c(
+toolsToEval <- c(
   RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-  toolNamesWFixedSeed,"EMu")){
+  toolNamesWFixedSeed,"EMu")
+
+for(toolName in toolsToEval){
   SummarizeOneToolMultiDatasets(
-    dataset.dirs = datasetNames,
+    datasetNames = datasetNames,
     datasetGroup = datasetGroup,
     datasetGroupName = "Pearson's R^2",
     datasetSubGroup = datasetSubGroup,
     datasetSubGroupName = "SBS1:SBS5 mutation count ratio",
     toolName = toolName,
-    tool.dirname = paste0("sp.sp/ExtrAttr/",toolName,".results/"),
-    out.dir = paste0("FinalToolWiseSummary/ExtrAttr/",toolName,"/"),
+    toolPath = paste0("3a.Original_output_K_unspecified/",toolName,".results/"),
+    out.dir = paste0("2a.ToolWise_Summary_for_K_unspecified/",toolName,"/"),
+    display.datasetName = FALSE,
     overwrite = T)
 }
 
 
 
-## Part V: Generate a combined summary table for results
+## Part I: Generate a combined summary table for results
 ## of multiple datasets, from multiple tools
 FinalExtrAttr <- SummarizeMultiToolsMultiDatasets(
-  dataset.dirs = datasetNames,
-  second.third.level.dirname = "sp.sp/ExtrAttr",
-  out.dir = "./FinalExtrAttrSummary", overwrite = T)
+  toolSummaryPaths = paste0("2a.ToolWise_Summary_for_K_unspecified/",toolsToEval,"/"),
+  out.dir = "1a.Summary_for_K_unspecified/",
+  display.datasetName = FALSE,
+  overwrite = T)
 
 

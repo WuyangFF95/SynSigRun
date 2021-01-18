@@ -64,9 +64,9 @@ for(datasetName in datasetNames){
     ## Summarize R-based Extraction and attribution tools.
     for(extrAttrToolName in RBasedExtrAttrToolNames){
       SynSigEval::SummarizeSigOneExtrAttrSubdir(
-        run.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/",extrAttrToolName,
-                            ".results/seed.",seedInUse,"/"),
-        ground.truth.exposure.dir = paste0(datasetName,"/sp.sp/"),
+        run.dir = paste0("3b.Original_output_K_as_2/",extrAttrToolName,
+                         ".results/",datasetName,"/seed.",seedInUse,"/"),
+        ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
         overwrite = T)
     }
     ## Summarize non-R Extraction and attribution tools.
@@ -136,8 +136,8 @@ for(datasetName in datasetNames){
     SynSigEval::SummarizeMultiRuns(
       datasetName = datasetName,
       toolName = extrAttrToolName,
-      tool.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/",extrAttrToolName,
-                          ".results/"),
+      tool.dir = paste0("3b.Original_output_K_as_2/",extrAttrToolName,
+                        ".results/",datasetName,"/"),
       run.names = paste0("seed.",seedsInUse))
   }
   ## For each dataset, summarize 20 runs
@@ -145,16 +145,16 @@ for(datasetName in datasetNames){
   SynSigEval::SummarizeMultiRuns(
     datasetName = datasetName,
     toolName = "EMu",
-    tool.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/","EMu",
-                      ".results/"),
+    tool.dir = paste0("3b.Original_output_K_as_2/",
+                      "EMu.results/",datasetName,"/"),
     run.names = paste0("run.",1:20))
   ## For each dataset, summarize 1 run by maftools and MutationalPatterns
   for(toolName in toolNamesWFixedSeed){
     SynSigEval::SummarizeMultiRuns(
       datasetName = datasetName,
       toolName = toolName,
-      tool.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/",toolName,
-                        ".results/"),
+      tool.dir = paste0("3b.Original_output_K_as_2/",toolName,
+                      ".results/",datasetName,"/"),
       run.names = paste0("seed.","123456"))
   }
 }
@@ -182,19 +182,22 @@ names(datasetGroup) <- datasetNames
 datasetSubGroup <- rep(c(0.1,0.5,1,2,10),each = 4)
 names(datasetSubGroup) <- datasetNames
 
-
-for(toolName in c(
+toolsToEval <- c(
   RBasedExtrAttrToolNames,otherExtrAttrToolNames,
-  toolNamesWFixedSeed,"EMu")){
+  toolNamesWFixedSeed,"EMu")
+
+
+for(toolName in toolsToEval){
   SummarizeOneToolMultiDatasets(
-    dataset.dirs = datasetNames,
+    datasetNames = datasetNames,
     datasetGroup = datasetGroup,
     datasetGroupName = "Pearson's R^2",
     datasetSubGroup = datasetSubGroup,
     datasetSubGroupName = "SBS1:SBS5 mutation count ratio",
     toolName = toolName,
-    tool.dirname = paste0("sp.sp/ExtrAttrExact/",toolName,".results/"),
-    out.dir = paste0("FinalToolWiseSummary/ExtrAttrExact/",toolName,"/"),
+    toolPath = paste0("3b.Original_output_K_as_2/",toolName,".results/"),
+    out.dir = paste0("2b.ToolWise_Summary_for_K_as_2/",toolName,"/"),
+    display.datasetName = FALSE,
     overwrite = T)
 }
 
@@ -203,8 +206,9 @@ for(toolName in c(
 ## Part V: Generate a combined summary table for results
 ## of multiple datasets, from multiple tools
 FinalExtrAttrExact <- SummarizeMultiToolsMultiDatasets(
-  dataset.dirs = datasetNames,
-  second.third.level.dirname = "sp.sp/ExtrAttrExact",
-  out.dir = "./FinalExtrAttrExactSummary", overwrite = T)
+  toolSummaryPaths = paste0("2b.ToolWise_Summary_for_K_as_2/",toolsToEval,"/"),
+  out.dir = "1b.Summary_for_K_as_2/",
+  display.datasetName = FALSE,
+  overwrite = T)
 
 
