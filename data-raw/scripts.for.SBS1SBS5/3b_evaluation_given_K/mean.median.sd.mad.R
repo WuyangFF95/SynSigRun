@@ -1,8 +1,10 @@
 require(data.table)
+require(gtools)
 
 oldWd <- getwd()
-setwd("../../practice/3_Signature_Challenge/3.2_SBS1-SBS5-Correlation_Project/new_results/FinalExtrAttrExactSummary")
-load("FinalSummary.RDa")
+newWd <- "../../practice/3_Signature_Challenge/3.2_SBS1-SBS5-Correlation_Project/research_data/1b.Summary_for_K_as_2/"
+setwd(newWd)
+load(paste0("FinalSummary.RDa"))
 
 dtList <- list()
 summaryList <- list()
@@ -12,7 +14,7 @@ for(measure in c("TPR","PPV","compositeMeasure")){
   dtList[[measure]] <- FinalSummary$FinalExtr[[measure]]
   summaryList[[measure]] <- data.frame()
 
-  for(tool in unique(dtList[[measure]]$toolName)){
+  for(tool in mixedsort(unique(dtList[[measure]]$toolName))){
     nrows <- which(dtList[[measure]]$toolName == tool)
     currValues <- dtList[[measure]]$value[nrows]
     summaryList[[measure]] <- rbind(
@@ -36,7 +38,7 @@ for(gtSigName in c("SBS1","SBS5")){
   dtList[[gtSigName]] <- FinalSummary$FinalExtr$cosSim[[gtSigName]]
   summaryList[[gtSigName]] <- data.frame()
 
-  for(tool in unique(dtList[[gtSigName]]$toolName)){
+  for(tool in mixedsort(unique(dtList[[gtSigName]]$toolName))){
     nrows <- which(dtList[[gtSigName]]$toolName == tool)
     currValues <- dtList[[gtSigName]]$value[nrows]
     summaryList[[gtSigName]] <- rbind(
@@ -53,15 +55,18 @@ for(gtSigName in c("SBS1","SBS5")){
   }
 }
 
+dir.create("summary.tables", recursive = T)
 
 for(measure in c("TPR","PPV","compositeMeasure")){
-  data.table::fwrite(summaryList[[measure]],
-                     paste0("summary.of.",measure,".csv") )
+  data.table::fwrite(
+    summaryList[[measure]],
+    paste0("summary.tables/summary.of.",measure,".csv"))
 }
 
 for(gtSigName in c("SBS1","SBS5")){
-  data.table::fwrite(summaryList[[measure]],
-                     paste0("summary.of.cosine.similarity.to.",gtSigName,".csv") )
+  data.table::fwrite(
+    summaryList[[gtSigName]],
+    paste0("summary.tables/summary.of.cosine.similarity.to.",gtSigName,".csv"))
 }
 
 setwd(oldWd)
