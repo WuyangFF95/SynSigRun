@@ -6,6 +6,10 @@
 # setwd(PATH)
 
 
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2b.Full_output_K_as_2"
+
+
 ## Load required packages
 library(ICAMS)
 library(signature.tools.lib)
@@ -37,16 +41,16 @@ K.exact = 2
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 
+    out.dir <- paste0(topLevelFolder4Run,"/signature.tools.lib.results/",datasetName,"/seedInUse.",seedInUse)
     cat("\n===========================================\n")
-    cat(paste0("Running signature.tools.lib\ on data set ",datasetName," using seed ",seedInUse,"...\n"))
+    cat(paste0("Running signature.tools.lib on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
-    input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv")
-    out.dir = paste0(datasetName, "/sp.sp/ExtrAttrExact/signature.tools.lib.results/seed.", seedInUse,"/")
+    input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
 
     spectra <- ICAMS::ReadCatalog(
-	  input.catalog,
-	  strict = FALSE)
+      input.catalog,
+      strict = FALSE)
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which signature.tools.lib accepts:
     ## 1. Remove the catalog related attributes in convSpectra

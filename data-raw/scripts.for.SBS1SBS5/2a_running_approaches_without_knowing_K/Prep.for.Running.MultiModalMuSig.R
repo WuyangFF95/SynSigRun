@@ -6,6 +6,10 @@
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
 
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2a.Full_output_K_unspecified"
+
+
 ## Load required packages
 library(ICAMS)
 library(SynSigEval)
@@ -27,19 +31,19 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
                 145879, 200437, 310111, 528401, 1076753)
 
 ## Create MultimodalMuSig-formatted input-catalog under
-## <dataset.top.level.dir>/sp.sp/ExtrAttr/MultimodalMuSig.LDA.results and
-## <dataset.top.level.dir>/sp.sp/ExtrAttr/MultimodalMuSig.CTM.results
+## <topLevelFolder4Run>/MultimodalMuSig.LDA.results/<datasetName> and
+## <topLevelFolder4Run>/MultimodalMuSig.CTM.results/<datasetName>
 for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
     CreateMultiModalMuSigOutput(
-      catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/MultiModalMuSig.LDA.results",
-                       "/seed.",seedInUse),
+      catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = paste0(topLevelFolder4Run,"/MultiModalMuSig.LDA.results/",
+	            datasetName,"/seed.",seedInUse),
       overwrite = T)
     CreateMultiModalMuSigOutput(
-      catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/MultiModalMuSig.CTM.results",
-                       "/seed.",seedInUse),
+      catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = paste0(topLevelFolder4Run,"/MultiModalMuSig.CTM.results/",
+	            datasetName,"/seed.",seedInUse),
       overwrite = T)
   }
 }

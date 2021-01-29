@@ -6,6 +6,11 @@
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
 
+
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2a.Full_output_K_unspecified"
+
+
 ## Load required packages
 library(ICAMS)
 library(SynSigEval)
@@ -30,10 +35,11 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## <dataset.top.level.dir>/sp.sp/ExtrAttr/helmsman.results
 for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
-    SynSigRun::CreatehelmsmanOutput(
-      catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/helmsman.NMF.results",
-                       "/seed.",seedInUse),
+    out.dir <- paste0(topLevelFolder4Run,"/helmsman.NMF.results/",datasetName,"/seed.",seedInUse)
+    dir.create(out.dir, recursive = TRUE)
+    SynSigEval::CreatehelmsmanOutput(
+      catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = out.dir,
       overwrite = T)
   }
 }

@@ -9,7 +9,7 @@ require(SynSigGen)
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
 SynSigGen::CreateSBS1SBS5CorrelatedSyntheticData(
-  top.level.dir = "../",
+  top.level.dir = "../research_data/0.Input_datasets",
   regress.dir = NULL,
   overwrite = FALSE,
   add.info = TRUE,

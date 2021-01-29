@@ -6,6 +6,10 @@
 # setwd(PATH)
 
 
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2a.Full_output_K_unspecified"
+
+
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
@@ -33,13 +37,15 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 
-    out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/sigminer.results/seed.", seedInUse)
+    out.dir <- paste0(topLevelFolder4Run,"/sigminer.results/",datasetName,"/seedInUse.",seedInUse)
+    if(file.exists(paste0(out.dir,"/inferred.exposures.csv"))) next
 
     if(!file.exists(paste0(out.dir,"/inferred.exposures.csv"))){
-	  cat("\n===========================================\n")
+    cat("\n===========================================\n")
       cat(paste0("Running sigminer on data set ",datasetName," using seed ",seedInUse,"...\n"))
       cat("\n===========================================\n")
-      Runsigminer(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
+      Runsigminer(
+        input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
         out.dir = out.dir,
         CPU.cores = 10,
         K.max = 10,

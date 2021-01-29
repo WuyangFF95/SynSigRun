@@ -21,6 +21,8 @@ oldWorkingDir = os.getcwd()
 #
 # PATH = paste0(<SynSigRun_home>,"/data-raw/scripts.for.SBS1SBS5")
 # os.setcwd(PATH)
+topLevelFolder4Data = "../research_data/0.Input_datasets"
+topLevelFolder4Run = "../research_data/2b.Full_output_K_as_2"
 
 
 
@@ -44,11 +46,11 @@ CPUNumber = 5
 
 for seedNumber in seedNumbers:
     for datasetName in datasetNames:
-        inputPath = "/".join([datasetName,"sp.sp/ExtrAttrExact/helmsman.NMF.results"])
-        inputCatalog = "/".join([inputPath,"ground.truth.syn.catalog.tsv"])
+        inputPath = "/".join([topLevelFolder4Run,"helmsman.NMF.results",datasetName,"seed."+str(seedNumber)])
+        inputCatalog = inputPath+"/ground.truth.syn.catalog.tsv"
         outputPath = "/".join([inputPath,"seed."+str(seedNumber)])
-        ## The first argument should be replaced by the locatation of helmsman.py in your machine.
-        arguments = ['python3','~/practice/3_Signature_Challenge/helmsman/helmsman.py',
+        ## The path of helmsman should be replaced by the locatation of helmsman.py in your machine.
+        arguments = ['python3','/home/wuyang/practice/3_Signature_Challenge/helmsman/helmsman.py',
             '--cpus',str(CPUNumber),
             '--seed',str(seedNumber),'--mode','agg',
             '--input',inputCatalog,

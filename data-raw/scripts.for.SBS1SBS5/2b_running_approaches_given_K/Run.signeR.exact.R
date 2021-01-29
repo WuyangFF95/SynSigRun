@@ -6,11 +6,15 @@
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
 
+
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2b.Full_output_K_as_2"
+
+
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
 library(signeR)
-
 
 
 ## Specify slopes and Rsqs for the datasets
@@ -32,13 +36,16 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## Run signeR
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+  
+    out.dir <- paste0(topLevelFolder4Run,"/signeR.results/",datasetName,"/seed.",seedInUse)
+    if(file.exists(paste0(out.dir,"/inferred.exposures.csv"))) next
 
     cat("\n===========================================\n")
     cat(paste0("Running signeR on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
-    RunsigneR(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-              out.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/signeR.results/seed.",seedInUse),
+    RunsigneR(input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+              out.dir = out.dir,
               seedNumber = seedInUse,
               K.exact = 2,
               overwrite = T)

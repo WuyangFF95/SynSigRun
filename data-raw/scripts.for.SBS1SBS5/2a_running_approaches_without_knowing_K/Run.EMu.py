@@ -19,6 +19,7 @@ oldWorkingDir = os.getcwd()
 #
 # PATH = paste0(<SynSigRun_home>,"/data-raw/scripts.for.SBS1SBS5")
 # os.setcwd(PATH)
+topLevelFolder4Run = "../research_data/2a.Full_output_K_unspecified"
 
 #### Naming the seeds
 seedNumbers = (1, 691, 1999, 3511, 8009,
@@ -36,16 +37,18 @@ for slope in slopes:
         datasetNames = datasetNames + ("S."+str(slope)+".Rsq."+str(Rsq),)
 
 
-for index in range(1,21):
+
+
+for nrun in range(1,21):
     for datasetName in datasetNames:
-        inputPath = "/".join([datasetName,"sp.sp/ExtrAttr/EMu.results/run."+str(index)+"/"])
+        inputPath = topLevelFolder4Run+"/EMu.results/"+datasetName+"/run."+str(nrun)+"/"
         inputCatalog = "/".join([inputPath,"ground.truth.syn.catalog.tsv"])
         outputPath = inputPath
         print("\n\n======================================\n")
-        print(str(index)+"-th running EMu for dataset "+str(datasetName)+" ...")
+        print(str(nrun)+"-th running EMu for dataset "+str(datasetName)+" ...")
         print("\n\n======================================\n")
         ## The first argument should be replaced by the locatation of the compiled EMu in your machine.
-        arguments = ['~/practice/3_Signature_Challenge/EMu/EMu/build/EMu',
+        arguments = ['/home/wuyang/practice/3_Signature_Challenge/EMu/EMu/build/EMu',
             '--mut',inputCatalog,
             '--opp','human-genome',
             '--pre',outputPath]

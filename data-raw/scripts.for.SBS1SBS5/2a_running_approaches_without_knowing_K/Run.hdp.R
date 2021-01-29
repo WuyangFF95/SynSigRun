@@ -6,6 +6,10 @@
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
 
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2a.Full_output_K_unspecified"
+
+
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
@@ -31,24 +35,25 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 
-    out.dir <- paste0(datasetName,"/sp.sp/ExtrAttr/hdp.results/seed.",seedInUse)
-    if(!file.exists(paste0(out.dir,"/inferred.exposures.csv"))) {
-      message("\n\n########################################################\n\n")
-      message(paste0("Begin running catalog with K.guess = 10",datasetName," using seed ",seedInUse,"...\n"))
-      message("\n\n########################################################\n\n")
+    out.dir <- paste0(topLevelFolder4Run,"/hdp.results/",datasetName,"/seed.",seedInUse)
+    if(file.exists(paste0(out.dir,"/inferred.exposures.csv"))) next
 
-      Runhdp(
-        input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-        out.dir = out.dir,
-        CPU.cores = 4,
-        K.guess = 10,
-        multi.types = FALSE,
-        remove.noise = TRUE,
-        seedNumber = seedInUse,
-        post.burnin     = 20000,
-        post.n          = 1000,
-        post.space      = 50,
-        overwrite       = T)
-    }
+    message("\n\n########################################################\n\n")
+    message(paste0("Begin running catalog with K.guess = 10",datasetName," using seed ",seedInUse,"...\n"))
+    message("\n\n########################################################\n\n")
+
+    Runhdp(
+      input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = out.dir,
+      CPU.cores = 4,
+      K.guess = 10,
+      multi.types = FALSE,
+      remove.noise = TRUE,
+      seedNumber = seedInUse,
+      post.burnin     = 20000,
+      post.n          = 1000,
+      post.space      = 50,
+      overwrite       = T)
+
   }
 }

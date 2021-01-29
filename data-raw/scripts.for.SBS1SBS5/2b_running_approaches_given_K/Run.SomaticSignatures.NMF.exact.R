@@ -6,6 +6,10 @@
 # setwd(PATH)
 
 
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2b.Full_output_K_as_2"
+
+
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
@@ -33,13 +37,16 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## NMF will have an error if K.range includes 1!
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+  
+    out.dir <- paste0(topLevelFolder4Run,"/SomaticSignatures.NMF.results/",datasetName,"/run.",nrun)
+    if(file.exists(paste0(out.dir,"/inferred.exposures.csv"))) next
 
     cat("\n===========================================\n")
     cat(paste0("Running SomaticSignatures.NMF on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
-    RunSomaticSignatures(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName, "/sp.sp/ExtrAttrExact/SomaticSignatures.NMF.results/seed.", seedInUse),
+    RunSomaticSignatures(input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = out.dir,
       CPU.cores = 10,
       K.exact = 2,
       overwrite = TRUE)

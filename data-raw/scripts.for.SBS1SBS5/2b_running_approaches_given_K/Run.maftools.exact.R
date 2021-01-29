@@ -6,6 +6,10 @@
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
 
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2b.Full_output_K_as_2"
+
+
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
@@ -36,14 +40,15 @@ seedsInUse <- c(123456)
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 
-    out.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/maftools.results/seed.",seedInUse)
+    out.dir <- paste0(topLevelFolder4Run,"/maftools.results/",datasetName,"/seed.",seedInUse)
+    if(file.exists(paste0(out.dir,"/inferred.exposures.csv"))) next
 
     cat("\n===========================================\n")
     cat(paste0("Running maftools on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
 
-    Runmaftools(input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
+    Runmaftools(input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
               out.dir = out.dir,
               CPU.cores = 10,
               K.exact = 2,

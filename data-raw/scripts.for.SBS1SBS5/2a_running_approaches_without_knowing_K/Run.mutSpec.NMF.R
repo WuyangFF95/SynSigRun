@@ -5,6 +5,9 @@
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
 
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2a.Full_output_K_unspecified"
+
 
 ## Load required packages
 library(ICAMS)
@@ -33,13 +36,16 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## NMF will have an error if K.range includes 1!
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+  
+    out.dir <- paste0(topLevelFolder4Run,"/mutSpec.NMF.results/",datasetName,"/seed.",seedInUse)
+    if(file.exists(paste0(out.dir,"/inferred.exposures.csv"))) next
 
     cat("\n===========================================\n")
     cat(paste0("Running mutSpec.NMF on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
-    RunmutSpec(input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName, "/sp.sp/ExtrAttr/mutSpec.NMF.results/seed.", seedInUse),
+    RunmutSpec(input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = out.dir,
       CPU.cores = 10,
       K.range = c(2,10),
       overwrite = TRUE)

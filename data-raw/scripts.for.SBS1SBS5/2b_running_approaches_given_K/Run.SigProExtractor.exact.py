@@ -18,9 +18,9 @@ oldWorkingDir = os.getcwd()
 
 # Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
 # before running this script.
-#### Set GLOBAL working directory
-os.chdir("../")
-workingDir = os.getcwd()
+#### GLOBAL working directories for input dataset and software full output
+topLevelFolder4Data = "../research_data/0.Input_datasets"
+topLevelFolder4Run = "../research_data/2b.Full_output_K_as_2"
 
 
 #### Naming the seeds
@@ -39,11 +39,6 @@ for slope in slopes:
         datasetNames = datasetNames + ("S."+str(slope)+".Rsq."+str(Rsq),)
 
 
-
-#### Set GLOBAL working directory
-workingDir = os.getcwd()
-
-
 #### Import sigproextractor: de novo extraction+attribution module
 import sigproextractor
 from sigproextractor import sigpro as sig
@@ -58,9 +53,9 @@ numcpus = 10
 ## Run sigproextractor for each dataset for each seed.
 for seedNumber in seedNumbers:
     for datasetName in datasetNames:
-        inputDir = "/".join([datasetName,"sp.sp/"])
-        inputCatalog = "/".join([inputDir,"ground.truth.syn.catalog.csv"])
-        outputDir = "/".join([inputDir,"ExtrAttrExact/SigProExtractor.results/seed."+str(seedNumber)])
+        inputDir = topLevelFolder4Data+"/"+datasetName
+        inputCatalog = inputDir+"/ground.truth.syn.catalog.csv"
+        outputDir = topLevelFolder4Run+"/SigProExtractor.results/"+datasetName+"/seed."+str(seedNumber)
         ## Set seed
         random.seed(seedNumber) ## Set seed to seedNumber
         ## extract signatures and attribute exposures

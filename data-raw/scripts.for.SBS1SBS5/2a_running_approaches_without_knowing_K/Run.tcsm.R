@@ -6,6 +6,11 @@
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
 
+
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2a.Full_output_K_unspecified"
+
+
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
@@ -32,6 +37,10 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## Run TCSM.
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
+  
+    out.dir <- paste0(topLevelFolder4Run,"/TCSM.results/",datasetName,"/seedInUse.",seedInUse)
+    if(file.exists(paste0(out.dir,"/inferred.exposures.csv"))) next
+  
 
     cat("\n===========================================\n")
     cat(paste0("Running TCSM on data set ",datasetName," using seed ",seedInUse,"...\n"))
@@ -39,10 +48,8 @@ for(seedInUse in seedsInUse){
 
 
     Runtcsm(
-      input.catalog = paste0(datasetName, "/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName,
-        "/sp.sp/ExtrAttr/TCSM.results/seed.",
-        seedInUse),
+      input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = out.dir,
       seedNumber = seedInUse,
       CPU.cores = 10,
       K.range = c(2, 10),

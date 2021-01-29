@@ -6,6 +6,11 @@
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
 
+
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2b.Full_output_K_as_2"
+
+
 ## Load required packages
 library(ICAMS)
 library(SynSigRun)
@@ -36,17 +41,18 @@ for(seedInUse in seedsInUse){
     ## Run extraction and attribution
     ## SignatureAnalyzer needs to run 20 parallel runs,
     ## and pick the best run as the final result. 
-    if(file.exists(paste0(out.dir,"/best.run/sa.output.exp.csv")))
-      next
+    out.dir <- paste0(topLevelFolder4Run,"/SignatureAnalyzer.results/",datasetName,"/seed.",seedInUse)
+    if(file.exists(paste0(out.dir,"/best.run/sa.output.exp.csv"))) next
+      
     message("\n\n########################################################\n\n")
-    message(paste0("Begin running SignatureAnalyzer with maxK = 10",datasetName," using seed ",seedInUse,"...\n"))
+    message(paste0("Begin running SignatureAnalyzer with maxK = 2",datasetName," using seed ",seedInUse,"...\n"))
     message("\n\n########################################################\n\n")
 
     SynSigRun:::SAMultiRunOneCatalog(
       num.runs = 20,
       signatureanalyzer.code.dir = paste0(usethis::proj_path(),"/data-raw/SignatureAnalzyer.052418"),
-      input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName,"/sp.sp/ExtrAttrExact/SignatureAnalyzer.results/seed.",seedInUse),
+      input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = out.dir,
       maxK = 2,
       tol = 1e-7,
       test.only = FALSE,
