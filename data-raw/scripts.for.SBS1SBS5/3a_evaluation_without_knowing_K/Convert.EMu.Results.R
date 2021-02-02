@@ -12,7 +12,8 @@
 #
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
-
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2a.Full_output_K_unspecified"
 
 
 ## Specify slopes and Rsqs for the datasets
@@ -40,10 +41,8 @@ for(datasetName in datasetNames){
     ## _{K}_ml_spectra.txt
     ## Attributed exposure file name:
     ## _{K}_assigned.txt
-    resultDir <-
-      paste0(datasetName,
-            "/sp.sp/ExtrAttr/EMu.results/",
-            "run.",nrun,"/")
+    resultDir <- paste0(topLevelFolder4Run,"/EMu.results/",datasetName,"/run.",nrun)
+
 
     files <- list.files(resultDir)
 
@@ -75,8 +74,8 @@ for(datasetName in datasetNames){
     ## be normalized to the total number of mutations
     ## in each spectrum.
     spectra <- ICAMS::ReadCatalog(
-      file = paste0(datasetName,
-                    "/sp.sp/ground.truth.syn.catalog.csv"),
+      file = paste0(topLevelFolder4Data, "/", datasetName,
+                    "/ground.truth.syn.catalog.csv"),
       catalog.type = "counts",
       strict = FALSE)
     exposureCounts <- rawExposure

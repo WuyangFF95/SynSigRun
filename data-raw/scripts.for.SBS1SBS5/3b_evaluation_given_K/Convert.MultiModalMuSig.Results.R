@@ -1,9 +1,8 @@
 
-## Run 2a_running_approaches_without_knowing_K/Run.MultiModalMuSig.jl
-## and 2b_running_approaches_given_K/Run.MultiModalMuSig.jl
+## Run 2b_running_approaches_given_K/Run.MultiModalMuSig.exact.jl
 ## Before running this script.
 ##
-## Run this script before running Summarize.all.results.R
+## Run this script before running Summarize.extr.attr.K.given.R
 
 
 
@@ -13,7 +12,8 @@
 #
 # PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
 # setwd(PATH)
-
+topLevelFolder4Data <- "../research_data/0.Input_datasets"
+topLevelFolder4Run <- "../research_data/2b.Full_output_K_as_2"
 
 
 ## Specify slopes and Rsqs for the datasets
@@ -38,10 +38,7 @@ for(datasetName in datasetNames){
     for(approach in c("LDA","CTM")){
       ## Convert signatures
       signatures <- SynSigEval::MMCatalog2ICAMS(
-        paste0(datasetName,
-               "/sp.sp/ExtrAttrExact/MultiModalMuSig.",approach,".results/",
-               "seed.",seedInUse,
-               "/extracted.signatures.tsv"),
+        paste0(resultDir,"/extracted.signatures.tsv"),
         region = "unknown",
         catalog.type = "counts.signature")
       ## extracted signatures need to be normalized.
@@ -50,23 +47,17 @@ for(datasetName in datasetNames){
       }
       ICAMS::WriteCatalog(
         signatures,
-        paste0(datasetName,
-               "/sp.sp/ExtrAttrExact/MultiModalMuSig.",approach,".results/",
-               "seed.",seedInUse,
-               "/extracted.signatures.csv"))
+        paste0(resultDir,"/extracted.signatures.csv"))
 
       ## Convert exposures
       rawExposure <- SynSigEval::ReadExposureMM(
-        paste0(datasetName,
-               "/sp.sp/ExtrAttrExact/MultiModalMuSig.",approach,".results/",
-               "seed.",seedInUse,
-               "/inferred.exposures.tsv"))
+        paste0(resultDir, "inferred.exposures.tsv"))
       ## The sum of exposure of each spectrum needs to
       ## be normalized to the total number of mutations
       ## in each spectrum.
       spectra <- ICAMS::ReadCatalog(
-        file = paste0(datasetName,
-                      "/sp.sp/ground.truth.syn.catalog.csv"),
+        file = paste0(topLevelFolder4Data, "/", datasetName,
+                      "/ground.truth.syn.catalog.csv"),
         catalog.type = "counts",
         strict = FALSE)
       exposureCounts <- rawExposure
@@ -76,10 +67,7 @@ for(datasetName in datasetNames){
 
       SynSigGen::WriteExposure(
         exposureCounts,
-        paste0(datasetName,
-               "/sp.sp/ExtrAttrExact/MultiModalMuSig.",approach,".results/",
-               "seed.",seedInUse,
-               "/inferred.exposures.csv"))
+        paste0(resultDir, "/inferred.exposures.csv"))
     }
   }
 }
