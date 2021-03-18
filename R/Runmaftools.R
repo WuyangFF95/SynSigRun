@@ -46,12 +46,15 @@ Installmaftools <- function(){
 #'
 #' Default: NULL
 #'
+#' @param pConstant A small positive value to add to every entry in the
+#' \code{input.catalog}. Specify a value ONLY if an
+#' "non-conformable arrays error" is raised.
+#'
+#'
 #' @param test.only If TRUE, only analyze the first 10 columns
 #' read in from \code{input.catalog}.
-#' Default: FALSE
 #'
 #' @param overwrite If TRUE, overwrite existing output.
-#' Default: FALSE
 #'
 #' @return The extracted signatures of \code{maftools}, invisibly.
 #'
@@ -71,6 +74,7 @@ Runmaftools <-
            CPU.cores = NULL,
            K.exact = NULL,
            K.range = NULL,
+           pConstant = NULL,
            test.only = FALSE,
            overwrite = FALSE) {
 
@@ -96,9 +100,12 @@ Runmaftools <-
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
     ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which maftools accepts:
+    ## into a matrix which maftools::estimateSignatures() and
+    ## matools::extractSignatures() accepts:
     ## 1. Remove the catalog related attributes in convSpectra
     ## 2. Transpose the catalog
+    ## The matools spectra can also be created by
+    ## matools::trinucleotideMatrix().
     convSpectra <- spectra
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
@@ -143,7 +150,8 @@ Runmaftools <-
         mat = convSpectra,
         nMin = K.range[1],
         nTry = K.range[2],
-        parallel = CPU.cores)
+        parallel = CPU.cores,
+        pConstant = pConstant)
 
       gof_nmf <- res$nmfObj
 
@@ -175,6 +183,13 @@ Runmaftools <-
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
     }
+
+    ## Extract signatures using maftools::extractSignatures
+    sigs_nmf <- maftools::extractSignatures(
+      convSpectra,
+      n = K.best,
+      parallel = CPU.cores,
+      pConstant = pConstant)
 
     ## Generates a list contain extracted signatures
     ## sigs_nmf$signatures is already normalized.

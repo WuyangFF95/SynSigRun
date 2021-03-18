@@ -10,6 +10,7 @@ Runmaftools(
   CPU.cores = NULL,
   K.exact = NULL,
   K.range = NULL,
+  pConstant = NULL,
   test.only = FALSE,
   overwrite = FALSE
 )
@@ -45,12 +46,14 @@ WARNING: You must specify only one of \code{K.exact} or \code{K.range}!
 
 Default: NULL}
 
-\item{test.only}{If TRUE, only analyze the first 10 columns
-read in from \code{input.catalog}.
-Default: FALSE}
+\item{pConstant}{A small positive value to add to every entry in the
+\code{input.catalog}. Specify a value ONLY if an
+"non-conformable arrays error" is raised.}
 
-\item{overwrite}{If TRUE, overwrite existing output.
-Default: FALSE}
+\item{test.only}{If TRUE, only analyze the first 10 columns
+read in from \code{input.catalog}.}
+
+\item{overwrite}{If TRUE, overwrite existing output.}
 }
 \value{
 The extracted signatures of \code{maftools}, invisibly.
