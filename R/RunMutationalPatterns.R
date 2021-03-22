@@ -71,7 +71,7 @@ RunMutationalPatternsAttributeOnly <-
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
     spectra <-ICAMS::ReadCatalog(input.catalog,
-                                     strict = FALSE)
+                                 strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
     ## Remove the catalog related attributes in convSpectra
@@ -110,7 +110,7 @@ RunMutationalPatternsAttributeOnly <-
     exposureCounts <- exposureObject$contribution
     ## Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
-                  paste0(out.dir,"/inferred.exposures.csv"))
+                             paste0(out.dir,"/inferred.exposures.csv"))
 
     ## Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
@@ -164,6 +164,13 @@ RunMutationalPatternsAttributeOnly <-
 #'
 #' Default: NULL
 #'
+#' @param nrun.est.K Number of NMF runs for each possible number of signature.
+#' This is used in the step to estimate the most plausible number
+#' of signatures in input spectra catalog.
+#'
+#' @param nrun.extract number of NMF runs for extracting signatures and inferring
+#' exposures.
+#'
 #' @param test.only If TRUE, only analyze the first 10 columns
 #' read in from \code{input.catalog}.
 #' Default: FALSE
@@ -182,6 +189,12 @@ RunMutationalPatternsAttributeOnly <-
 #'
 #'  TODO(Wuyang)
 #'
+#' NOTE: The \code{seed} is hard-coded in
+#' MutationalPatterns as 123456.
+#'
+#' \code{pConstant} is harded-coded as 1e-04.
+#'
+#'
 #' @importFrom utils capture.output
 #'
 #' @export
@@ -192,6 +205,8 @@ RunMutationalPatterns <-
            CPU.cores = NULL,
            K.exact = NULL,
            K.range = NULL,
+           nrun.est.K = 10,
+           nrun.extract = 200,
            test.only = FALSE,
            overwrite = FALSE) {
 
@@ -257,9 +272,9 @@ RunMutationalPatterns <-
     }
     if(bool2){
       K.range <- seq.int(K.range[1],K.range[2]) ## Change K.range to a full vector
-      gof_nmf <- NMF::nmf(convSpectra + 1e-04, ## adds a small psuedocount
+      gof_nmf <- NMF::nmf(convSpectra + 1e-4,
                           rank = K.range,     ## Rank specifies number of signatures you want to assess
-                          nrun = 10,
+                          nrun = nrun.est.K,
                           method = "brunet",  ## "brunet" is the default NMF method in NMF package.
                           .options = paste0("p", CPU.cores),
                           seed = seedNumber)
@@ -292,7 +307,7 @@ RunMutationalPatterns <-
           break
       }
       K.best <- current.K ## Choose K.best as the smallest current.K whose cophenetic
-                          ## is greater than cophenetic from (current.K+1).
+      ## is greater than cophenetic from (current.K+1).
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
     }
@@ -302,7 +317,7 @@ RunMutationalPatterns <-
     sigs_nmf <- MutationalPatterns::extract_signatures(
       mut_matrix = convSpectra,
       rank = K.best,
-      nrun = 200)
+      nrun = nrun.extract)
     gc()
     gc()
     gc()
@@ -318,7 +333,7 @@ RunMutationalPatterns <-
                                              catalog.type = "counts.signature")
     ## Output extracted signatures in ICAMS format
     ICAMS::WriteCatalog(extractedSignatures,
-                           paste0(out.dir,"/extracted.signatures.csv"))
+                        paste0(out.dir,"/extracted.signatures.csv"))
 
 
     ## Derive exposure count attribution results.
@@ -335,7 +350,7 @@ RunMutationalPatterns <-
     }
     ## Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
-                  paste0(out.dir,"/inferred.exposures.csv"))
+                             paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information

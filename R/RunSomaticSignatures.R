@@ -49,6 +49,18 @@ InstallSomaticSignatures <- function(){
 #'
 #' Default: NULL
 #'
+#' @param nrun.est.K Number of NMF runs for each possible number of signature.
+#' This is used in the step to estimate the most plausible number
+#' of signatures in input spectra catalog.
+#'
+#' @param nrun.extract number of NMF runs for extracting signatures and inferring
+#' exposures.
+#'
+#' @param pConstant A small positive value (a.k.a. pseudocount)
+#' to add to every entry in the \code{input.catalog}.
+#' Specify a value ONLY if an "non-conformable arrays error"
+#' is raised.
+#'
 #' @param test.only If TRUE, only analyze the first 10 columns
 #' read in from \code{input.catalog}.
 #' Default: FALSE
@@ -78,6 +90,9 @@ RunSomaticSignatures <-
            seedNumber = 1,
            K.exact = NULL,
            K.range = NULL,
+           nrun.est.K = 30,
+           nrun.extract = 1,
+           pConstant = NULL,
            test.only = FALSE,
            overwrite = FALSE) {
 
@@ -100,7 +115,7 @@ RunSomaticSignatures <-
     ## Read in spectra data from input.catalog file
     ## spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
-                                     strict = FALSE)
+                                  strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
     ## convSpectra: convert the ICAMS-formatted spectra catalog
     ## into a matrix which SomaticSignatures accepts:
@@ -112,6 +127,8 @@ RunSomaticSignatures <-
     attr(convSpectra,"region") <- NULL
     dimnames(convSpectra) <- dimnames(spectra)
     sample.number <- dim(spectra)[2]
+    ## Add pConstant to convSpectra.
+    if(!is.null(pConstant)) convSpectra <- convSpectra + pConstant
 
     ## Create output directory
     if (dir.exists(out.dir)) {
@@ -156,7 +173,8 @@ RunSomaticSignatures <-
         convSpectra,
         nSigs = seq.int(min(K.range),max(K.range)),
         decomposition = SomaticSignatures::nmfDecomposition,
-        seed = seedNumber)
+        seed = seedNumber,
+        nrun = nrun.est.K)
       rownames(assess) <- as.character(assess[,"NumberSignatures"])
 
       ## Choose K.best as the smallest current.K
@@ -197,7 +215,8 @@ RunSomaticSignatures <-
       convSpectra,
       K.best,
       SomaticSignatures::nmfDecomposition,
-      seed = seedNumber)
+      seed = seedNumber,
+      nrun = nrun.extract)
     gc()
     gc()
     gc()
@@ -227,7 +246,7 @@ RunSomaticSignatures <-
     }
     ## Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
-                  paste0(out.dir,"/inferred.exposures.csv"))
+                             paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information

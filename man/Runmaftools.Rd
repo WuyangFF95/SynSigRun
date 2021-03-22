@@ -10,6 +10,7 @@ Runmaftools(
   CPU.cores = NULL,
   K.exact = NULL,
   K.range = NULL,
+  nrun.est.K = 10,
   pConstant = NULL,
   test.only = FALSE,
   overwrite = FALSE
@@ -46,9 +47,17 @@ WARNING: You must specify only one of \code{K.exact} or \code{K.range}!
 
 Default: NULL}
 
-\item{pConstant}{A small positive value to add to every entry in the
-\code{input.catalog}. Specify a value ONLY if an
-"non-conformable arrays error" is raised.}
+\item{nrun.est.K}{Number of NMF runs for each possible number of signature.
+This is used in the step to estimate the most plausible number
+of signatures in input spectra catalog.
+
+NOTE: Unlike other NMF-based packages, parameter \code{nrun.extract} is
+hard-coded as 1.}
+
+\item{pConstant}{A small positive value (a.k.a. pseudocount)
+to add to every entry in the \code{input.catalog}.
+Specify a value ONLY if an "non-conformable arrays error"
+is raised.}
 
 \item{test.only}{If TRUE, only analyze the first 10 columns
 read in from \code{input.catalog}.}

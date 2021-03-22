@@ -10,6 +10,8 @@ RunMutationalPatterns(
   CPU.cores = NULL,
   K.exact = NULL,
   K.range = NULL,
+  nrun.est.K = 10,
+  nrun.extract = 200,
   test.only = FALSE,
   overwrite = FALSE
 )
@@ -45,6 +47,13 @@ WARNING: You must specify only one of \code{K.exact} or \code{K.range}!
 
 Default: NULL}
 
+\item{nrun.est.K}{Number of NMF runs for each possible number of signature.
+This is used in the step to estimate the most plausible number
+of signatures in input spectra catalog.}
+
+\item{nrun.extract}{number of NMF runs for extracting signatures and inferring
+exposures.}
+
 \item{test.only}{If TRUE, only analyze the first 10 columns
 read in from \code{input.catalog}.
 Default: FALSE}
@@ -68,4 +77,9 @@ Creates several
  TODO(Steve): list the files
 
  TODO(Wuyang)
+
+NOTE: The \code{seed} is hard-coded in
+MutationalPatterns as 123456.
+
+\code{pConstant} is harded-coded as 1e-04.
 }

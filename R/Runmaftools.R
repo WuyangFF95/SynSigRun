@@ -46,10 +46,17 @@ Installmaftools <- function(){
 #'
 #' Default: NULL
 #'
-#' @param pConstant A small positive value to add to every entry in the
-#' \code{input.catalog}. Specify a value ONLY if an
-#' "non-conformable arrays error" is raised.
+#' @param nrun.est.K Number of NMF runs for each possible number of signature.
+#' This is used in the step to estimate the most plausible number
+#' of signatures in input spectra catalog.
 #'
+#' NOTE: Unlike other NMF-based packages, parameter \code{nrun.extract} is
+#' hard-coded as 1.
+#'
+#' @param pConstant A small positive value (a.k.a. pseudocount)
+#' to add to every entry in the \code{input.catalog}.
+#' Specify a value ONLY if an "non-conformable arrays error"
+#' is raised.
 #'
 #' @param test.only If TRUE, only analyze the first 10 columns
 #' read in from \code{input.catalog}.
@@ -74,6 +81,7 @@ Runmaftools <-
            CPU.cores = NULL,
            K.exact = NULL,
            K.range = NULL,
+           nrun.est.K = 10,
            pConstant = NULL,
            test.only = FALSE,
            overwrite = FALSE) {
@@ -110,6 +118,8 @@ Runmaftools <-
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
+    ## Add pConstant to convSpectra.
+    if(!is.null(pConstant)) convSpectra <- convSpectra + pConstant
     convSpectra <- list("nmf_matrix" = t(convSpectra))
 
     ## Create output directory
@@ -150,6 +160,7 @@ Runmaftools <-
         mat = convSpectra,
         nMin = K.range[1],
         nTry = K.range[2],
+        nrun = nrun.est.K,
         parallel = CPU.cores,
         pConstant = pConstant)
 
@@ -220,7 +231,7 @@ Runmaftools <-
 
     ## Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
-                  paste0(out.dir,"/inferred.exposures.csv"))
+                             paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information

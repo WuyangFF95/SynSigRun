@@ -40,6 +40,18 @@
 #'
 #' Default: NULL
 #'
+#' @param nrun.est.K Number of NMF runs for each possible number of signature.
+#' This is used in the step to estimate the most plausible number
+#' of signatures in input spectra catalog.
+#'
+#' @param nrun.extract number of NMF runs for extracting signatures and inferring
+#' exposures.
+#'
+#' @param pConstant A small positive value (a.k.a. pseudocount)
+#' to add to every entry in the \code{input.catalog}.
+#' Specify a value ONLY if an "non-conformable arrays error"
+#' is raised.
+#'
 #' @param test.only If TRUE, only analyze the first 10 columns
 #' read in from \code{input.catalog}.
 #' Default: FALSE
@@ -50,10 +62,12 @@
 #' @return The inferred exposure of \code{mutSpec}, invisibly.
 #'
 #' @details Creates several
-#'  files in \code{out.dir}. These are:
-#'  TODO(Steve): list the files
+#'  files in \code{out.dir}. These are: \itemize{
 #'
-#'  TODO(Wuyang)
+#'  \item \code{extracted.signatures.csv}
+#'  \item \code{inferred.exposures.csv}
+#'  \item \code{sessionInfo}
+#' }
 #'
 #' @importFrom utils capture.output
 #'
@@ -66,6 +80,9 @@ RunmutSpec <-
            seedNumber = 1,
            K.exact = NULL,
            K.range = NULL,
+           nrun.est.K = 50,
+           nrun.extract = 200,
+           pConstant = NULL,
            test.only = FALSE,
            overwrite = FALSE) {
 
@@ -98,6 +115,8 @@ RunmutSpec <-
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
+    ## Add pConstant to convSpectra.
+    if(!is.null(pConstant)) convSpectra <- convSpectra + pConstant
 
     ## Create output directory
     if (dir.exists(out.dir)) {
@@ -142,7 +161,7 @@ RunmutSpec <-
         rank = K.range,
         method = "brunet",
         seed = seedNumber,
-        nrun=50,
+        nrun = nrun.est.K,
         .opt=nbCPU)
       gc()
       gc()
@@ -156,7 +175,7 @@ RunmutSpec <-
         rank = K.range,
         method = "brunet",
         seed = seedNumber,
-        nrun = 50,
+        nrun = nrun.est.K,
         .opt = nbCPU)
 
       ## Garbage collection
@@ -213,7 +232,7 @@ RunmutSpec <-
       rank = K.best,
       method = "brunet",
       seed = seedNumber,
-      nrun = 200,
+      nrun = nrun.extract,
       .opt = nbCPU)
     gc()
     gc()
@@ -259,7 +278,7 @@ RunmutSpec <-
 
     ## Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
-                  paste0(out.dir,"/inferred.exposures.csv"))
+                             paste0(out.dir,"/inferred.exposures.csv"))
 
 
     ## Save seeds and session information
