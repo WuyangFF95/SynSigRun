@@ -46,7 +46,7 @@ for(seedInUse in seedsInUse){
     cat(paste0("Running signature.tools.lib on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
-    input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+    input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv")
 
     spectra <- ICAMS::ReadCatalog(
       input.catalog,
