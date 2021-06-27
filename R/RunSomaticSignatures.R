@@ -173,6 +173,7 @@ RunSomaticSignatures <-
         convSpectra,
         nSigs = seq.int(min(K.range),max(K.range)),
         decomposition = SomaticSignatures::nmfDecomposition,
+        .options = paste0("p", CPU.cores),
         seed = seedNumber,
         nrun = nrun.est.K)
       rownames(assess) <- as.character(assess[,"NumberSignatures"])
@@ -215,6 +216,7 @@ RunSomaticSignatures <-
       convSpectra,
       K.best,
       SomaticSignatures::nmfDecomposition,
+      .options = paste0("p", CPU.cores),
       seed = seedNumber,
       nrun = nrun.extract)
     gc()
