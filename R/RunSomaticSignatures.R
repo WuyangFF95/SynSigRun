@@ -190,7 +190,6 @@ RunSomaticSignatures <-
         .options = paste0("p", CPU.cores),
         seed = seedNumber,
         nrun = nrun.est.K)
-      rownames(assess) <- as.character(assess[,"NumberSignatures"])
 
       ## Choose K.best as the smallest current.K
       ## which is an inflection point (changing sign of second derivative)
@@ -208,45 +207,58 @@ RunSomaticSignatures <-
       ## See https://stackoverflow.com/questions/627055/compute-a-derivative-using-discrete-methods/637969#637969
       ## for more details.
       RSS.deriv <- numeric(0)
-	    for(current.K in seq.int(K.range[1],K.range[2])) {
+        for(current.K in seq.int(K.range[1],K.range[2])) {
 
-		    if (current.K == K.range[1]) {
-		      ## For the smallest possible K specified by user,
-		      ## calculate 1st-derivative using forward difference operator
-		      ## with spacing equals to 1.
-	        deriv.current.K <- RSS[current.K + 1,"RSS"] - RSS[current.K,"RSS"]
-		    } else if (current.K == K.range[2]) {
-		      ## For the largest possible K,
-		      ## calculate 1st-derivative using backward difference operator.
-		      deriv.current.K <- RSS[current.K,"RSS"] - RSS[current.K - 1,"RSS"]
-		    } else { ## Calculate 1st-derivative using central difference
-		      deriv.current.K <- (RSS[current.K + 1,"RSS"] - RSS[current.K - 1,"RSS"]) / 2
-		    }
+          RSS.K <- RSS %>% dplyr::filter(NumberSignatures == current.K) %>% select(RSS) %>% as.numeric
+          if(current.K > K.range[1]) RSS.Kminus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K - 1) %>% select(RSS) %>% as.numeric
+          if(current.K < K.range[2]) RSS.Kplus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K + 1) %>% select(RSS) %>% as.numeric
 
-        names(deriv.current.K) <- as.character(current.K)
-        RSS.deriv <- c(RSS.deriv, deriv.current.K)
-	    }
+            if (current.K == K.range[1]) {
+              ## For the smallest possible K specified by user,
+              ## calculate 1st-derivative using forward difference operator
+              ## with spacing equals to 1.
+              deriv.current.K <- RSS.Kplus1 - RSS.K
+            } else if (current.K == K.range[2]) {
+              ## For the largest possible K,
+              ## calculate 1st-derivative using backward difference operator.
+              deriv.current.K <- RSS.K - RSS.Kminus1
+            } else { ## Calculate 1st-derivative using central difference
+              deriv.current.K <- (RSS.Kplus1 - RSS.Kminus1) / 2
+            }
+
+          deriv.current.K <- as.numeric(deriv.current.K)
+          names(deriv.current.K) <- as.character(current.K)
+          RSS.deriv <- c(RSS.deriv, deriv.current.K)
+        }
       ## Add 1st-derivative to tibble_df RSS.
-      RSS <- RSS %>% dplyr::mutate(RSS.deriv = RSS.deriv)
+      RSS <- RSS %>% dplyr::mutate(RSS.deriv)
 
       ## Derive the second derivative of RSS using numerical differentiation
       ## of first derivative.
       RSS.deriv.2 <- numeric(0)
+
       for(current.K in seq.int(K.range[1],K.range[2])) {
+
+        RSS.deriv.K <- RSS %>% dplyr::filter(NumberSignatures == current.K) %>% select(RSS.deriv) %>% as.numeric
+        if(current.K > K.range[1]) RSS.deriv.Kminus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K - 1) %>% select(RSS.deriv) %>% as.numeric
+        if(current.K < K.range[2]) RSS.deriv.Kplus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K + 1) %>% select(RSS.deriv) %>% as.numeric
 
         if (current.K == K.range[1]) {
           ## For the smallest possible K specified by user,
-          ## calculate 1st-derivative of RSS.deriv using forward difference operator
+          ## calculate 1st-derivative of RSS.deriv
+          ## using forward difference operator
           ## with spacing equals to 1.
-          deriv.2.current.K <- RSS[current.K + 1,"RSS.deriv"] - RSS[current.K,"RSS.deriv"]
+          deriv.2.current.K <- RSS.deriv.Kplus1 - RSS.deriv.K
         } else if (current.K == K.range[2]) {
           ## For the largest possible K,
-          ## calculate 1st-derivative of RSS.deriv using backward difference operator.
-          deriv.2.current.K <- RSS[current.K,"RSS.deriv"] - RSS[current.K - 1,"RSS.deriv"]
+          ## calculate 1st-derivative of RSS.deriv
+          ## using backward difference operator.
+          deriv.2.current.K <- RSS.deriv.K - RSS.deriv.Kminus1
         } else { ## Calculate 1st-derivative of RSS.deriv using central difference
-          deriv.2.current.K <- (RSS[current.K + 1,"RSS.deriv"] - RSS[current.K - 1,"RSS.deriv"]) / 2
+          deriv.2.current.K <- (RSS.deriv.Kplus1 - RSS.deriv.Kminus1) / 2
         }
 
+        deriv.2.current.K <- as.numeric(deriv.2.current.K)
         names(deriv.2.current.K) <- as.character(current.K)
         RSS.deriv.2 <- c(RSS.deriv.2, deriv.2.current.K)
       }
@@ -264,11 +276,11 @@ RunSomaticSignatures <-
       for(current.K in seq.int(K.range[1],K.range[2]))
       {
 
-        deriv2.K <- RSS %>% dplyr::filter(NumberSignatures = current.K) %>% select(RSS.deriv.2)
+        deriv2.K <- RSS %>% dplyr::filter(NumberSignatures == current.K) %>% select(RSS.deriv.2) %>% as.numeric
         if(current.K > K.range[1])
-          deriv2.Kplus1 <- RSS %>% dplyr::filter(NumberSignatures = current.K + 1) %>% select(RSS.deriv.2)
+          deriv2.Kminus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K - 1) %>% select(RSS.deriv.2) %>% as.numeric
         if(current.K < K.range[2])
-          deriv2.Kminus1 <- RSS %>% dplyr::filter(NumberSignatures = current.K - 1) %>% select(RSS.deriv.2)
+          deriv2.Kplus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K + 1) %>% select(RSS.deriv.2) %>% as.numeric
 
         ## Choose the current.K if the second derivative at (current.K-1)
         ## and second derivative at (current.K+1) have opposite sign.
