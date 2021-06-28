@@ -170,6 +170,11 @@ RunSomaticSignatures <-
     }
     if(bool2){
 
+
+      cat("\n==========================================\n")
+      cat("Choosing the 1st inflection point of RSS function as K.best.\n")
+      cat("\n==========================================\n")
+
       ## SomaticSignatures used approach in Hutchins et al.
       ## (2008) to estimate K.
       ## This requires calculation of second derivative of
@@ -247,6 +252,11 @@ RunSomaticSignatures <-
       }
       ## Add 2nd-derivative to tibble_df RSS.
       RSS <- RSS %>% dplyr::mutate(RSS.deriv.2 = RSS.deriv.2)
+
+      ## Print RSS to standard output
+      cat("\n==========================================\n")
+      print(RSS)
+      cat("\n==========================================\n")
 
 
       ## Select the minimum K where signs of 2nd-derivative of
