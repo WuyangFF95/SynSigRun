@@ -83,9 +83,16 @@ A list contains: \itemize{
 Run SomaticSignatures.NMF extraction and attribution on a spectra catalog file
 }
 \details{
-Creates several
- files in \code{out.dir}. These are:
- TODO(Steve): list the files
+SomaticSignatures.NMF used approach in Hutchins et al. (2008)
+to estimate \code{K}: it selects the first inflection point of
+residual sum of squares (RSS) function by finding the smallest \code{K}
+where the second derivate of RSS at its neighbouring \code{K}s have
+opposite signs.
 
- TODO(Wuyang)
+This requires calculation of second derivative of residual sum
+of squares (RSS) at >2 integers, and thus requires at least 3 \code{K}s
+to be assessed.
+}
+\references{
+http://dx.doi.org/10.1093/bioinformatics/btn526
 }

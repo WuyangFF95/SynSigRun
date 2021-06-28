@@ -1,3 +1,13 @@
+## SynSigRun 0.1.1
+
+### Fixed
+
+In `RunSomaticSignatures()`:
+* Fixed the unused parameter `CPU.cores` 
+* Fixed the bug which spawns too many processes and exceeds `ulimit` in Linux.
+* Fixed error in calculation of second derivative of RSS.
+
+
 ## SynSigRun 0.0.5
 ### Added
 
