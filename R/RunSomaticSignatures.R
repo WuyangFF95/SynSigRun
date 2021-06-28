@@ -85,7 +85,7 @@ InstallSomaticSignatures <- function(){
 #'
 #' @references http://dx.doi.org/10.1093/bioinformatics/btn526
 #'
-#' @importFrom dplyr mutate filter
+#' @importFrom dplyr mutate filter select
 #' @importFrom magrittr %>%
 #' @importFrom tibble as_tibble tibble
 #' @importFrom utils capture.output
@@ -209,9 +209,9 @@ RunSomaticSignatures <-
       RSS.deriv <- numeric(0)
         for(current.K in seq.int(K.range[1],K.range[2])) {
 
-          RSS.K <- RSS %>% dplyr::filter(NumberSignatures == current.K) %>% select(RSS) %>% as.numeric
-          if(current.K > K.range[1]) RSS.Kminus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K - 1) %>% select(RSS) %>% as.numeric
-          if(current.K < K.range[2]) RSS.Kplus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K + 1) %>% select(RSS) %>% as.numeric
+          RSS.K <- RSS %>% dplyr::filter(NumberSignatures == current.K) %>% dplyr::select(RSS) %>% as.numeric
+          if(current.K > K.range[1]) RSS.Kminus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K - 1) %>% dplyr::select(RSS) %>% as.numeric
+          if(current.K < K.range[2]) RSS.Kplus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K + 1) %>% dplyr::select(RSS) %>% as.numeric
 
             if (current.K == K.range[1]) {
               ## For the smallest possible K specified by user,
@@ -239,9 +239,9 @@ RunSomaticSignatures <-
 
       for(current.K in seq.int(K.range[1],K.range[2])) {
 
-        RSS.deriv.K <- RSS %>% dplyr::filter(NumberSignatures == current.K) %>% select(RSS.deriv) %>% as.numeric
-        if(current.K > K.range[1]) RSS.deriv.Kminus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K - 1) %>% select(RSS.deriv) %>% as.numeric
-        if(current.K < K.range[2]) RSS.deriv.Kplus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K + 1) %>% select(RSS.deriv) %>% as.numeric
+        RSS.deriv.K <- RSS %>% dplyr::filter(NumberSignatures == current.K) %>% dplyr::select(RSS.deriv) %>% as.numeric
+        if(current.K > K.range[1]) RSS.deriv.Kminus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K - 1) %>% dplyr::select(RSS.deriv) %>% as.numeric
+        if(current.K < K.range[2]) RSS.deriv.Kplus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K + 1) %>% dplyr::select(RSS.deriv) %>% as.numeric
 
         if (current.K == K.range[1]) {
           ## For the smallest possible K specified by user,
@@ -276,11 +276,11 @@ RunSomaticSignatures <-
       for(current.K in seq.int(K.range[1],K.range[2]))
       {
 
-        deriv2.K <- RSS %>% dplyr::filter(NumberSignatures == current.K) %>% select(RSS.deriv.2) %>% as.numeric
+        deriv2.K <- RSS %>% dplyr::filter(NumberSignatures == current.K) %>% dplyr::select(RSS.deriv.2) %>% as.numeric
         if(current.K > K.range[1])
-          deriv2.Kminus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K - 1) %>% select(RSS.deriv.2) %>% as.numeric
+          deriv2.Kminus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K - 1) %>% dplyr::select(RSS.deriv.2) %>% as.numeric
         if(current.K < K.range[2])
-          deriv2.Kplus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K + 1) %>% select(RSS.deriv.2) %>% as.numeric
+          deriv2.Kplus1 <- RSS %>% dplyr::filter(NumberSignatures == current.K + 1) %>% dplyr::select(RSS.deriv.2) %>% as.numeric
 
         ## Choose the current.K if the second derivative at (current.K-1)
         ## and second derivative at (current.K+1) have opposite sign.
