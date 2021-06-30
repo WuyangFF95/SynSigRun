@@ -37,8 +37,8 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## NMF will have an error if K.range includes 1!
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
-  
-    out.dir <- paste0(topLevelFolder4Run,"/SomaticSignatures.NMF.results/",datasetName,"/run.",nrun)
+
+    out.dir <- paste0(topLevelFolder4Run,"/SomaticSignatures.NMF.results/",datasetName,"/seed.",seedInUse)
     if(file.exists(paste0(out.dir,"/inferred.exposures.csv"))) next
 
     cat("\n===========================================\n")
@@ -46,9 +46,11 @@ for(seedInUse in seedsInUse){
     cat("\n===========================================\n")
 
     RunSomaticSignatures(input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
-      out.dir = out.dir,
-      CPU.cores = 10,
-      K.exact = 2,
-      overwrite = TRUE)
+                         out.dir = out.dir,
+                         CPU.cores = 10,
+                         seedNumber = seedInUse,
+                         K.exact = 2,
+                         nrun.extract = 1,
+                         overwrite = TRUE)
   }
 }
