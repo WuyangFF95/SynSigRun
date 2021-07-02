@@ -1,14 +1,12 @@
-
-# Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
+# Set working directory to the folder which contains results of
+# computational approaches on SBS1-SBS5-correlated data sets
 # before running this script.
-# SynSigRun home can be retrieved by usethis::proj_path
 #
-# PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
+# PATH <- paste0("<path_to_results_on_SBS1-SBS5-correlated_datasets>")
+#
 # setwd(PATH)
-
-
-topLevelFolder4Data <- "../research_data/0.Input_datasets"
-topLevelFolder4Run <- "../research_data/2b.Full_output_K_as_2"
+topLevelFolder4Data <- "./0.Input_datasets"
+topLevelFolder4Run <- "./2b.Full_output_K_as_2"
 
 
 ## Load required packages
@@ -45,7 +43,7 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## Run approaches sigfit.NMF
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
-  
+
     out.dir = paste0(topLevelFolder4Run,"/sigfit.NMF.results/",datasetName,"/seed.",seedInUse)
     if(file.exists(paste0(out.dir,"/inferred.exposures.csv"))) next
 

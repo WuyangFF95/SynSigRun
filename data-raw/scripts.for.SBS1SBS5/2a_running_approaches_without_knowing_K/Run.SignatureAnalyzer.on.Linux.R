@@ -1,14 +1,13 @@
 
-# Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
+# Set working directory to the folder which contains results of
+# computational approaches on SBS1-SBS5-correlated data sets
 # before running this script.
-# SynSigRun home can be retrieved by usethis::proj_path()
 #
-# PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
+# PATH <- paste0("<path_to_results_on_SBS1-SBS5-correlated_datasets>")
+#
 # setwd(PATH)
-
-
-topLevelFolder4Data <- "../research_data/0.Input_datasets"
-topLevelFolder4Run <- "../research_data/2a.Full_output_K_unspecified"
+topLevelFolder4Data <- "./0.Input_datasets"
+topLevelFolder4Run <- "./2a.Full_output_K_unspecified"
 
 
 ## Load required packages
@@ -40,10 +39,10 @@ for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
     ## Run extraction and attribution
     ## SignatureAnalyzer needs to run 20 parallel runs,
-    ## and pick the best run as the final result. 
+    ## and pick the best run as the final result.
     out.dir <- paste0(topLevelFolder4Run,"/SignatureAnalyzer.results/",datasetName,"/seed.",seedInUse)
     if(file.exists(paste0(out.dir,"/best.run/sa.output.exp.csv"))) next
-      
+
     message("\n\n########################################################\n\n")
     message(paste0("Begin running SignatureAnalyzer with maxK = 10",datasetName," using seed ",seedInUse,"...\n"))
     message("\n\n########################################################\n\n")

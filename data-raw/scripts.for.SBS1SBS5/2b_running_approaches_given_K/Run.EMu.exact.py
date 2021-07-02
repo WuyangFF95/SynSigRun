@@ -13,13 +13,14 @@ import os,sys,subprocess
 #### Read old working directory
 oldWorkingDir = os.getcwd()
 
-# Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
+# Set working directory to the folder which contains results of
+# computational approaches on SBS1-SBS5-correlated data sets
 # before running this script.
-# SynSigRun home can be retrieved by usethis::proj_path() in R
 #
-# PATH = paste0(<SynSigRun_home>,"/data-raw/scripts.for.SBS1SBS5")
+# PATH = "<path_to_results_on_SBS1-SBS5-correlated_datasets>"
+#
 # os.setcwd(PATH)
-topLevelFolder4Run = "../research_data/2b.Full_output_K_as_2"
+topLevelFolder4Run = "./2b.Full_output_K_as_2"
 
 #### Naming the seeds
 seedNumbers = (1, 691, 1999, 3511, 8009,

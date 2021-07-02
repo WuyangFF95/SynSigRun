@@ -1,9 +1,9 @@
 
-# Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
+# Set working directory to the folder which contains results of
+# computational approaches on SBS1-SBS5-correlated data sets
 # before running this script.
-# SynSigRun home can be retrieved by usethis::proj_path() in R.
 #
-# PATH = string(<SynSigRun_home>,"/data-raw/scripts.for.SBS1SBS5")
+# PATH = string("<path_to_results_on_SBS1-SBS5-correlated_datasets")
 #
 # cd(PATH)
 
@@ -14,8 +14,8 @@ using VegaLite
 using Random
 
 ## Specify top level directories of spectra dataset and final output
-topLevelFolder4Data = "../research_data/0.Input_datasets"
-topLevelFolder4Run = "../research_data/2a.Full_output_K_unspecified"
+topLevelFolder4Data = "./0.Input_datasets"
+topLevelFolder4Run = "./2a.Full_output_K_unspecified"
 
 
 

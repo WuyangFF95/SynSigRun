@@ -1,8 +1,14 @@
 require(data.table)
 require(gtools)
 
+
+# Set working directory to the folder which contains top-level
+# Summaries of results on SBS1-SBS5-correlated data sets with K unspecified.
+#
+# PATH <- paste0("<path_to_results_on_SBS1-SBS5-correlated_datasets>/1a.Top_level_summary_for_K_unspecified")
+# setwd(PATH)
 oldWd <- getwd()
-newWd <- "../research_data/1a.Top_level_summary_for_K_unspecified/"
+newWd <- "./1a.Top_level_summary_for_K_unspecified/"
 setwd(newWd)
 load(paste0("FinalSummary.RDa"))
 

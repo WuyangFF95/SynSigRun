@@ -16,11 +16,16 @@ import gc ## Garbage collector
 oldWorkingDir = os.getcwd()
 
 
-# Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
+# Set working directory to the folder which contains results of
+# computational approaches on SBS1-SBS5-correlated data sets
 # before running this script.
+#
+# PATH = <path_to_results_on_SBS1-SBS5-correlated_datasets>"
+#
+# os.setcwd(PATH)
 #### GLOBAL working directories for input dataset and software full output
-topLevelFolder4Data = "../research_data/0.Input_datasets"
-topLevelFolder4Run = "../research_data/2b.Full_output_K_as_2"
+topLevelFolder4Data = "./0.Input_datasets"
+topLevelFolder4Run = "./2b.Full_output_K_as_2"
 
 
 #### Naming the seeds

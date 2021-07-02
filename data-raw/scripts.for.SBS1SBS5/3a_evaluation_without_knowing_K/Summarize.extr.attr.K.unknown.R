@@ -4,11 +4,11 @@
 # before running this script.
 
 
-# Set working directory to "<SynSigRun Home>/data-raw/scripts.for.SBS1SBS5"
+# Set working directory to the folder which contains results of
+# computational approaches on SBS1-SBS5-correlated data sets
 # before running this script.
-# SynSigRun home can be retrieved by usethis::proj_path
 #
-# PATH <- paste0(usethis::proj_path,"/data-raw/scripts.for.SBS1SBS5")
+# PATH <- paste0("<path_to_results_on_SBS1-SBS5-correlated_datasets>")
 # setwd(PATH)
 
 
