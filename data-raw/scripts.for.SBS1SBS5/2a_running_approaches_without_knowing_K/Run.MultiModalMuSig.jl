@@ -10,6 +10,7 @@
 using MultiModalMuSig
 using CSV
 using DataFrames
+using NamedArrays
 using VegaLite
 using Random
 
@@ -49,7 +50,7 @@ for seedInUse in seedsInUse
         X = format_counts_lda(snv_counts);
 
         ## Save the likelihood for each K.
-        likelihoods = [];
+        likelihoods = NamedArray( repeat([NaN],9) , (string.([2:10;])) );
         for K in 2:10
             ## Specify seed used before fitting model for each dataset,
             ## for each signature number (K)
@@ -57,13 +58,69 @@ for seedInUse in seedsInUse
             model = LDA(K, 0.1, 0.1, 96, X);
             fit!(model, tol=1e-5);
             likelihood = MultiModalMuSig.calculate_loglikelihood(model);
-            append!(likelihoods, likelihood);
+            likelihoods[string(K)] = likelihood;
         end
 
-        ## Find which K is the best likelihood.
-        max_likelihood = maximum(likelihoods);
-        KBest = [i for (i, x) in enumerate(likelihoods) if x == max_likelihood];
-        KBest = KBest[1]; ## LDA accepts K as an integer rather than an array
+        ## Elbow method: Find the inflection point of log-likelihood
+        ## Calculate the first derivative of likelihoods
+        ## Set names of deriv1 as "2"..."10"
+        deriv1 = NamedArray( repeat([NaN],9) , (string.([2:10;])) );    
+        for K in 2:10
+          if K == 2
+            ## For the smallest possible K specified by user,
+            ## calculate 1st-derivative using forward difference operator
+            ## with spacing equals to 1.
+            deriv1[string(K)] = likelihoods[string(K+1)] - likelihoods[string(K)]);
+          else if K == 10 
+            ## For the largest possible K,
+            ## calculate 1st-derivative using backward difference operator.
+            deriv1[string(K)] = likelihoods[string(K)] - likelihoods[string(K-1)]);
+          else ## Calculate 1st-derivative using central difference
+            deriv1[string(K)] = (likelihoods[string(K+1)] - likelihoods[string(K-1)]) / 2;
+          end
+        end
+
+        ## Calculate the second derivative of likelihoods
+        ## Set names of deriv2 as "2"..."10"
+        deriv2 = NamedArray( repeat([NaN],9) , (string.([2:10;])) );
+        for K in 2:10
+          if K == 2
+            ## For the smallest possible K specified by user,
+            ## calculate 1st-derivative of the 1st-derivative using forward difference operator
+            ## with spacing equals to 1.
+            deriv2[string(K)] = deriv1[string(K+1)] - deriv1[string(K)];
+          else if K == 10 
+            ## For the largest possible K,
+            ## calculate 1st-derivative of the 1st-derivative using backward difference operator.
+            deriv2[string(K)] = deriv1[string(K)] - deriv1[string(K-1)];
+          else ## Calculate 1st-derivative using central difference
+            deriv2[string(K)] = (deriv1[string(K+1)] - deriv1[string(K-1)]) / 2);
+          end
+        end
+
+        ## Choose the smallest K where 2nd-derivative of likelihood function
+        ## changes sign in its neighborhood.
+        for K in 2:10
+          ## If deriv2["2"] and deriv2["3"] have opposite sign
+          ## set KBest = 2
+          if K == 2
+            if sign(deriv2[string(K)]) * sign(deriv2[string(K+1)]) == -1
+              KBest = K
+              break
+            end
+          ## If deriv2[string(K-1)] and deriv2[string(K+1)] have opposite sign
+          ## set KBest = 2
+          else if K < 10
+            if sign(deriv2[string(K-1)]) * sign(deriv2[string(K+1)]) == -1
+              KBest = K
+              break
+            end
+          end
+          else
+            KBest = K
+          end
+        end
+
 
         ## Obtain extracted signatures given the best K.
         ## In MultiModalMuSig format, later converted to ICAMS format
@@ -123,7 +180,7 @@ for seedInUse in seedsInUse
         X = format_counts_mmctm(snv_counts);
 
         ## Save the likelihood for each K.
-        likelihoods = [];
+        likelihoods = NamedArray( repeat([NaN],9) , (string.([2:10;])) );
         for K in 2:10
             ## Specify seed used before fitting model for each dataset,
             ## for each signature number (K)
@@ -131,12 +188,69 @@ for seedInUse in seedsInUse
             model = MMCTM([K], [0.1], X);
             fit!(model, tol=1e-5);
             likelihood = MultiModalMuSig.calculate_loglikelihoods(model);
-            append!(likelihoods, likelihood);
+            likelihoods[string(K)] = likelihood;
         end
 
-        ## Find which K is the best likelihood.
-        max_likelihood = maximum(likelihoods);
-        KBest = [i for (i, x) in enumerate(likelihoods) if x == max_likelihood];
+        ## Elbow method: Find the inflection point of log-likelihood
+        ## Calculate the first derivative of likelihoods
+        ## Set names of deriv1 as "2"..."10"
+        deriv1 = NamedArray( repeat([NaN],9) , (string.([2:10;])) );    
+        for K in 2:10
+          if K == 2
+            ## For the smallest possible K specified by user,
+            ## calculate 1st-derivative using forward difference operator
+            ## with spacing equals to 1.
+            deriv1[string(K)] = likelihoods[string(K+1)] - likelihoods[string(K)]);
+          else if K == 10 
+            ## For the largest possible K,
+            ## calculate 1st-derivative using backward difference operator.
+            deriv1[string(K)] = likelihoods[string(K)] - likelihoods[string(K-1)]);
+          else ## Calculate 1st-derivative using central difference
+            deriv1[string(K)] = (likelihoods[string(K+1)] - likelihoods[string(K-1)]) / 2;
+          end
+        end
+
+        ## Calculate the second derivative of likelihoods
+        ## Set names of deriv2 as "2"..."10"
+        deriv2 = NamedArray( repeat([NaN],9) , (string.([2:10;])) );
+        for K in 2:10
+          if K == 2
+            ## For the smallest possible K specified by user,
+            ## calculate 1st-derivative of the 1st-derivative using forward difference operator
+            ## with spacing equals to 1.
+            deriv2[string(K)] = deriv1[string(K+1)] - deriv1[string(K)];
+          else if K == 10 
+            ## For the largest possible K,
+            ## calculate 1st-derivative of the 1st-derivative using backward difference operator.
+            deriv2[string(K)] = deriv1[string(K)] - deriv1[string(K-1)];
+          else ## Calculate 1st-derivative using central difference
+            deriv2[string(K)] = (deriv1[string(K+1)] - deriv1[string(K-1)]) / 2);
+          end
+        end
+
+        ## Choose the smallest K where 2nd-derivative of likelihood function
+        ## changes sign in its neighborhood.
+        for K in 2:10
+          ## If deriv2["2"] and deriv2["3"] have opposite sign
+          ## set KBest = 2
+          if K == 2
+            if sign(deriv2[string(K)]) * sign(deriv2[string(K+1)]) == -1
+              KBest = K
+              break
+            end
+          ## If deriv2[string(K-1)] and deriv2[string(K+1)] have opposite sign
+          ## set KBest = 2
+          else if K < 10
+            if sign(deriv2[string(K-1)]) * sign(deriv2[string(K+1)]) == -1
+              KBest = K
+              break
+            end
+          end
+          else
+            KBest = K
+          end
+        end
+
 
         ## Obtain extracted signatures given the best K.
         ## In MultiModalMuSig format, later converted to ICAMS format
