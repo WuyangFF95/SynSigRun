@@ -70,11 +70,11 @@ for seedInUse in seedsInUse
             ## For the smallest possible K specified by user,
             ## calculate 1st-derivative using forward difference operator
             ## with spacing equals to 1.
-            deriv1[string(K)] = likelihoods[string(K+1)] - likelihoods[string(K)]);
+            deriv1[string(K)] = likelihoods[string(K+1)] - likelihoods[string(K)];
           else if K == 10 
             ## For the largest possible K,
             ## calculate 1st-derivative using backward difference operator.
-            deriv1[string(K)] = likelihoods[string(K)] - likelihoods[string(K-1)]);
+            deriv1[string(K)] = likelihoods[string(K)] - likelihoods[string(K-1)];
           else ## Calculate 1st-derivative using central difference
             deriv1[string(K)] = (likelihoods[string(K+1)] - likelihoods[string(K-1)]) / 2;
           end
@@ -94,7 +94,7 @@ for seedInUse in seedsInUse
             ## calculate 1st-derivative of the 1st-derivative using backward difference operator.
             deriv2[string(K)] = deriv1[string(K)] - deriv1[string(K-1)];
           else ## Calculate 1st-derivative using central difference
-            deriv2[string(K)] = (deriv1[string(K+1)] - deriv1[string(K-1)]) / 2);
+            deriv2[string(K)] = (deriv1[string(K+1)] - deriv1[string(K-1)]) / 2;
           end
         end
 
@@ -200,11 +200,11 @@ for seedInUse in seedsInUse
             ## For the smallest possible K specified by user,
             ## calculate 1st-derivative using forward difference operator
             ## with spacing equals to 1.
-            deriv1[string(K)] = likelihoods[string(K+1)] - likelihoods[string(K)]);
+            deriv1[string(K)] = likelihoods[string(K+1)] - likelihoods[string(K)];
           else if K == 10 
             ## For the largest possible K,
             ## calculate 1st-derivative using backward difference operator.
-            deriv1[string(K)] = likelihoods[string(K)] - likelihoods[string(K-1)]);
+            deriv1[string(K)] = likelihoods[string(K)] - likelihoods[string(K-1)];
           else ## Calculate 1st-derivative using central difference
             deriv1[string(K)] = (likelihoods[string(K+1)] - likelihoods[string(K-1)]) / 2;
           end
@@ -224,7 +224,7 @@ for seedInUse in seedsInUse
             ## calculate 1st-derivative of the 1st-derivative using backward difference operator.
             deriv2[string(K)] = deriv1[string(K)] - deriv1[string(K-1)];
           else ## Calculate 1st-derivative using central difference
-            deriv2[string(K)] = (deriv1[string(K+1)] - deriv1[string(K-1)]) / 2);
+            deriv2[string(K)] = (deriv1[string(K+1)] - deriv1[string(K-1)]) / 2;
           end
         end
 
