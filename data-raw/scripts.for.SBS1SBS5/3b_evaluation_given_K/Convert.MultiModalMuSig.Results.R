@@ -51,7 +51,7 @@ for(datasetName in datasetNames){
 
       ## Convert exposures
       rawExposure <- SynSigEval::ReadExposureMM(
-        paste0(resultDir, "inferred.exposures.tsv"))
+        paste0(resultDir, "/inferred.exposures.tsv"))
       ## The sum of exposure of each spectrum needs to
       ## be normalized to the total number of mutations
       ## in each spectrum.
