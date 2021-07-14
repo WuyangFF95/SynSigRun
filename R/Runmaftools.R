@@ -118,8 +118,9 @@ Runmaftools <-
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
-    ## Add pConstant to convSpectra.
-    if(!is.null(pConstant)) convSpectra <- convSpectra + pConstant
+    ## pConstant is added to convSpectra in
+    ## functions maftools::estimateSignatures() and
+    ## maftools::extractSignatures().
     convSpectra <- list("nmf_matrix" = t(convSpectra))
 
     ## Create output directory
