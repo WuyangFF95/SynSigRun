@@ -44,10 +44,13 @@ for(seedInUse in seedsInUse){
     cat(paste0("Running mutSpec.NMF on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
-    RunmutSpec(input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+    RunmutSpec(
+      input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
       out.dir = out.dir,
       CPU.cores = 10,
+      seedNumber = seedInUse,
       K.exact = 2,
+      nrun.extract = 200,
       overwrite = TRUE)
   }
 }

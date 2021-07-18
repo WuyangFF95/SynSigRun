@@ -44,12 +44,13 @@ for(seedInUse in seedsInUse){
     cat(paste0("Running SomaticSignatures.NMF on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")
 
-    RunSomaticSignatures(input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
-                         out.dir = out.dir,
-                         CPU.cores = 10,
-                         seedNumber = seedInUse,
-                         K.exact = 2,
-                         nrun.extract = 1,
-                         overwrite = TRUE)
+    RunSomaticSignatures(
+      input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = out.dir,
+      CPU.cores = 10,
+      seedNumber = seedInUse,
+      K.exact = 2,
+      nrun.extract = 1,
+      overwrite = TRUE)
   }
 }

@@ -49,10 +49,12 @@ for(seedInUse in seedsInUse){
     cat("\n===========================================\n")
 
 
-    Runmaftools(input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
-              out.dir = out.dir,
-              CPU.cores = 10,
-              K.range = c(2,10),
-              overwrite = T)
+    Runmaftools(
+      input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = out.dir,
+      CPU.cores = 10,
+      K.range = c(2,10),
+      run.est.K = 10,
+      overwrite = T)
   }
 }

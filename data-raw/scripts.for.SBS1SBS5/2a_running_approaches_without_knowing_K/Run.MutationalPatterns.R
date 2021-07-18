@@ -50,11 +50,14 @@ for(seedInUse in seedsInUse){
     cat("\n===========================================\n")
 
 
-    RunMutationalPatterns(input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
-                          out.dir = out.dir,
-                          CPU.cores = 10,
-                          K.range = c(2,10),
-                          overwrite = TRUE)
+    RunMutationalPatterns(
+      input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
+      out.dir = out.dir,
+      CPU.cores = 10,
+      K.range = c(2,10),
+      nrun.est.K = 10,
+      nrun.extract = 200,
+      overwrite = TRUE)
   }
 }
 
