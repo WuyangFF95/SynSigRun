@@ -53,7 +53,7 @@ for(seedInUse in seedsInUse){
       out.dir = out.dir,
       CPU.cores = 10,
       K.exact = 2,
-      nun.extract = 200,
+      nrun.extract = 200,
       overwrite = TRUE)
   }
 }
