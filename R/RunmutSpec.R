@@ -156,7 +156,7 @@ RunmutSpec <-
       ## if it is already a full vector, just keep it.
       K.range <- seq.int(min(K.range),max(K.range))
       # The minum number of signatures can't be lower than 2
-      estim_r <- NMF::nmf(
+      estim_r <- NMF::nmfEstimateRank(
         convSpectra,
         rank = K.range,
         method = "brunet",
@@ -170,7 +170,7 @@ RunmutSpec <-
       # Shuffle original data
       v_random <- NMF::randomize(convSpectra)
       # Estimate quality measures from the shuffled data
-      estim_r_random <- NMF::nmf(
+      estim_r_random <- NMF::nmfEstimateRank(
         v_random,
         rank = K.range,
         method = "brunet",
