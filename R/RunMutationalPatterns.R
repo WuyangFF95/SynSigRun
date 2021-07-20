@@ -274,7 +274,7 @@ RunMutationalPatterns <-
       K.range <- seq.int(K.range[1],K.range[2]) ## Change K.range to a full vector
       gof_nmf <- NMF::nmfEstimateRank(
         convSpectra + 1e-4,
-        rank = K.range,     ## Rank specifies number of signatures you want to assess
+        range = K.range,     ## Rank specifies number of signatures you want to assess
         nrun = nrun.est.K,
         method = "brunet",  ## "brunet" is the default NMF method in NMF package.
         .options = paste0("p", CPU.cores),

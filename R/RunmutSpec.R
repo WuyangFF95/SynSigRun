@@ -158,7 +158,7 @@ RunmutSpec <-
       # The minum number of signatures can't be lower than 2
       estim_r <- NMF::nmfEstimateRank(
         convSpectra,
-        rank = K.range,
+        range = K.range,
         method = "brunet",
         seed = seedNumber,
         nrun = nrun.est.K,
@@ -172,7 +172,7 @@ RunmutSpec <-
       # Estimate quality measures from the shuffled data
       estim_r_random <- NMF::nmfEstimateRank(
         v_random,
-        rank = K.range,
+        range = K.range,
         method = "brunet",
         seed = seedNumber,
         nrun = nrun.est.K,
