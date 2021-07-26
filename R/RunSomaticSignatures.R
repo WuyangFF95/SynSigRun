@@ -205,9 +205,9 @@ RunSomaticSignatures <-
         .options = paste0("p", CPU.cores),
         seed = seedNumber,
         nrun = nrun.est.K,
-        includeFit = save.debug)
+        includeFit = save.diag)
 
-      if(save.debug){
+      if(save.diag){
         message("===============================")
         message("Saving diagnostic plots and full results for all K in K.range...")
         message("===============================")
@@ -342,9 +342,9 @@ RunSomaticSignatures <-
       .options = paste0("p", CPU.cores),
       seed = seedNumber,
       nrun = nrun.extract,
-      includeFit = save.debug)
+      includeFit = save.diag)
 
-    if(save.debug) {
+    if(save.diag) {
       message("===============================")
       message("Saving final result for all K = K.exact...")
       message("===============================")
