@@ -14,6 +14,7 @@ RunSomaticSignatures(
   nrun.est.K = 30,
   nrun.extract = 1,
   pConstant = NULL,
+  save.debug = FALSE,
   test.only = FALSE,
   overwrite = FALSE
 )
@@ -65,6 +66,20 @@ exposures.}
 to add to every entry in the \code{input.catalog}.
 Specify a value ONLY if an "non-conformable arrays error"
 is raised.}
+
+\item{save.debug}{Save object of class \code{MutationalSignatures} which
+stores full results from multiple NMF decomposition runs into files below:
+\itemize{
+  \item \code{assess.K.pdf} {RSS and explained variance at each K in \code{K.range}.
+  Used for manual selection of number of signatures (K).}
+  \item \code{assess.K.Rdata} {Full results for each K in \code{K.range}. Used for
+  diagnosing goodness of fit and stability.}
+  \item \code{extract.given.K.Rdata} {Full results when K is specified by \code{K.exact}
+  or selected by elbow-point method. Used for diagnosing accuracy of signature extraction.}
+}
+
+Set to \code{TRUE} for diagnostic purposes, set to \code{FALSE} for cleaner
+results.}
 
 \item{test.only}{If TRUE, only analyze the first 10 columns
 read in from \code{input.catalog}.

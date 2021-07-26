@@ -61,6 +61,20 @@ InstallSomaticSignatures <- function(){
 #' Specify a value ONLY if an "non-conformable arrays error"
 #' is raised.
 #'
+#' @param save.debug Save object of class \code{MutationalSignatures} which
+#' stores full results from multiple NMF decomposition runs into files below:
+#' \itemize{
+#'   \item \code{assess.K.pdf} {RSS and explained variance at each K in \code{K.range}.
+#'   Used for manual selection of number of signatures (K).}
+#'   \item \code{assess.K.Rdata} {Full results for each K in \code{K.range}. Used for
+#'   diagnosing goodness of fit and stability.}
+#'   \item \code{extract.given.K.Rdata} {Full results when K is specified by \code{K.exact}
+#'   or selected by elbow-point method. Used for diagnosing accuracy of signature extraction.}
+#' }
+#'
+#' Set to \code{TRUE} for diagnostic purposes, set to \code{FALSE} for cleaner
+#' results.
+#'
 #' @param test.only If TRUE, only analyze the first 10 columns
 #' read in from \code{input.catalog}.
 #' Default: FALSE
@@ -102,6 +116,7 @@ RunSomaticSignatures <-
            nrun.est.K = 30,
            nrun.extract = 1,
            pConstant = NULL,
+           save.debug = FALSE,
            test.only = FALSE,
            overwrite = FALSE) {
 
@@ -189,7 +204,19 @@ RunSomaticSignatures <-
         decomposition = SomaticSignatures::nmfDecomposition,
         .options = paste0("p", CPU.cores),
         seed = seedNumber,
-        nrun = nrun.est.K)
+        nrun = nrun.est.K,
+        includeFit = save.debug)
+
+      if(save.debug){
+        message("===============================")
+        message("Saving diagnostic plots and full results for all K in K.range...")
+        message("===============================")
+        grDevices::pdf(file = paste0(out.dir,"/assess.K.pdf"))
+        ggplot <- SomaticSignatures::plotNumberSignatures(assess)
+        grDevices::dev.off()
+
+        save(assess, file = paste0(out.dir,"/assess.K.Rdata"))
+      }
 
       ## Choose K.best as the smallest current.K
       ## which is an inflection point (changing sign of second derivative)
@@ -314,7 +341,16 @@ RunSomaticSignatures <-
       SomaticSignatures::nmfDecomposition,
       .options = paste0("p", CPU.cores),
       seed = seedNumber,
-      nrun = nrun.extract)
+      nrun = nrun.extract,
+      includeFit = save.debug)
+
+    if(save.debug) {
+      message("===============================")
+      message("Saving final result for all K = K.exact...")
+      message("===============================")
+      save(res, file = paste0(out.dir,"/extract.given.K.Rdata"))
+    }
+
     gc()
     gc()
     gc()
