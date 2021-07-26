@@ -14,7 +14,7 @@ RunSomaticSignatures(
   nrun.est.K = 30,
   nrun.extract = 1,
   pConstant = NULL,
-  save.debug = FALSE,
+  save.diag = FALSE,
   test.only = FALSE,
   overwrite = FALSE
 )
@@ -67,7 +67,7 @@ to add to every entry in the \code{input.catalog}.
 Specify a value ONLY if an "non-conformable arrays error"
 is raised.}
 
-\item{save.debug}{Save object of class \code{MutationalSignatures} which
+\item{save.diag}{Save object of class \code{MutationalSignatures} which
 stores full results from multiple NMF decomposition runs into files below:
 \itemize{
   \item \code{assess.K.pdf} {RSS and explained variance at each K in \code{K.range}.
