@@ -86,11 +86,13 @@ RunmutSignaturesAttributeOnly <-
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
     class(convSpectra) <- "matrix"
+    convSpectra <- mutSignatures::as.mutation.counts(convSpectra)
 
     gtSignaturesMS <- gtSignatures
     attr(gtSignaturesMS,"catalog.type") <- NULL
     attr(gtSignaturesMS,"region") <- NULL
     class(gtSignaturesMS) <- "matrix"
+    gtSignaturesMS <- mutSignatures::as.mutation.signatures(gtSignaturesMS)
 
     ## Obtain inferred exposures using resolveMutSignatures function
     run <- mutSignatures::resolveMutSignatures(mutCountData = convSpectra,
