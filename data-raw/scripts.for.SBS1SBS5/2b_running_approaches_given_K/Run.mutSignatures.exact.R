@@ -41,9 +41,8 @@ for(seedInUse in seedsInUse){
       input.catalog = paste0("0.input_datasets/",datasetName,"/ground.truth.syn.catalog.csv"),
       out.dir = paste0("3b.Original_output_K_as_2/mutSignatures.results/",datasetName,
                        "/seed.",seedInUse),
-      algorithm = "brunet",
       CPU.cores = 10,
-	  iterations = 1000,
+      nrun.exact = 1000,
       seedNumber = seedInUse,
       K.exact = 2,
       overwrite = TRUE)

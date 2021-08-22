@@ -37,7 +37,7 @@ RBasedExtrAttrToolNames <- c("hdp",
                              "mutSpec.NMF",
                              "sigfit.EMu","sigfit.NMF",
                              "sigminer","signeR",
-                             "TCSM","SomaticSignatures.NMF")
+                             "TCSM")
 # Python or other language based tools.
 # excluding maftools and MutationalPatterns (seed is hard-coded) and EMu (cannot designate seed)
 otherExtrAttrToolNames <- c("MultiModalMuSig.CTM","MultiModalMuSig.LDA")

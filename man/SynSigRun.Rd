@@ -106,7 +106,7 @@ ground-truth signature profiles: \enumerate{
 }
 }
 
-\section{Folder structure for 9cPPLUfBD0dtWrcTrAsVcWdZyL5b42gl-38- and 9cPPLUfBD0dtWrcTrAsVcWdZyL5b42gl-39-:}{
+\section{Folder structure for FBtIvNb7R9FGMnrWFUoyKXIrX8u7gbgm-38- and FBtIvNb7R9FGMnrWFUoyKXIrX8u7gbgm-39-:}{
 Summary function will fit to the new 5-level folder structure:
 
 First Level - \code{top.level.dir}: dataset folder (e.g. "S.0.1.Rsq.0.1", "syn.pancreas").

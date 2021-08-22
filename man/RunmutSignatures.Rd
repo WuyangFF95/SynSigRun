@@ -16,6 +16,19 @@ RunmutSignatures(
   test.only = FALSE,
   overwrite = FALSE
 )
+
+RunmutSignatures(
+  input.catalog,
+  out.dir,
+  algorithm = "brunet",
+  CPU.cores = NULL,
+  iterations = 1000,
+  seedNumber = 1,
+  K.exact = NULL,
+  K.range = NULL,
+  test.only = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{input.catalog}{File containing input spectra catalog.
@@ -52,6 +65,22 @@ used to run sigfit. Setting seed can make the
 attribution of sigfit repeatable.
 Default: 1.}
 
+\item{K.exact}{\code{K.exact} is the exact value for
+the number of signatures active in spectra (K).
+Specify \code{K.exact} if you know exactly how many signatures
+are active in the \code{input.catalog}, which is the
+\code{ICAMS}-formatted spectra file.}
+
+\item{test.only}{If TRUE, only analyze the first 10 columns
+read in from \code{input.catalog}.
+Default: FALSE}
+
+\item{overwrite}{If TRUE, overwrite existing output.
+Default: FALSE}
+
+\item{nrun.extract}{number of NMF runs for extracting signatures and inferring
+exposures.}
+
 \item{K.exact, K.range}{\code{K.exact} is the exact value for
 the number of signatures active in spectra (K).
 Specify \code{K.exact} if you know exactly how many signatures
@@ -68,21 +97,24 @@ K.max - K.min >= 3, otherwise an error will be thrown.
 WARNING: You must specify only one of \code{K.exact} or \code{K.range}!
 
 Default: NULL}
-
-\item{test.only}{If TRUE, only analyze the first 10 columns
-read in from \code{input.catalog}.
-Default: FALSE}
-
-\item{overwrite}{If TRUE, overwrite existing output.
-Default: FALSE}
 }
 \value{
+The inferred exposure of \code{mutSignatures}, invisibly.
+
 The inferred exposure of \code{mutSignatures}, invisibly.
 }
 \description{
 Run mutSignatures extraction and attribution on a spectra catalog file
+
+Run mutSignatures extraction and attribution on a spectra catalog file
 }
 \details{
+Creates several
+ files in \code{out.dir}. These are:
+ TODO(Steve): list the files
+
+ TODO(Wuyang)
+
 Creates several
  files in \code{out.dir}. These are:
  TODO(Steve): list the files

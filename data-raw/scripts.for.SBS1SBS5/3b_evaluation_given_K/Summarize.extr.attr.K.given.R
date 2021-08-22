@@ -33,7 +33,7 @@ for(slope in slopes){
 # R-based tools which can do both extraction and attribution,
 # excluding SignatureAnalyzer (due to special folder structure)
 # and maftools (its seed is hard-coded)
-RBasedExtrAttrToolNames <- c("hdp",
+RBasedExtrAttrToolNames <- c("hdp","mutSignatures",
                              "mutSpec.NMF",
                              "sigfit.EMu","sigfit.NMF",
                              "sigminer",
