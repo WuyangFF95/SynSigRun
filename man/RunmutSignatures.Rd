@@ -78,7 +78,7 @@ Default: FALSE}
 \item{overwrite}{If TRUE, overwrite existing output.
 Default: FALSE}
 
-\item{nrun.extract}{number of NMF runs for extracting signatures and inferring
+\item{nrun.exact}{number of NMF runs for extracting signatures and inferring
 exposures.}
 
 \item{K.exact, K.range}{\code{K.exact} is the exact value for

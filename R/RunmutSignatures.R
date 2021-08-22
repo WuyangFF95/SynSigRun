@@ -34,7 +34,7 @@ InstallmutSignatures <- function(){
 #' are active in the \code{input.catalog}, which is the
 #' \code{ICAMS}-formatted spectra file.
 #'
-#' @param nrun.extract number of NMF runs for extracting signatures and inferring
+#' @param nrun.exact number of NMF runs for extracting signatures and inferring
 #' exposures.
 #'
 #' @param test.only If TRUE, only analyze the first 10 columns
