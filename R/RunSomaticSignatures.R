@@ -211,8 +211,9 @@ RunSomaticSignatures <-
         message("===============================")
         message("Saving diagnostic plots and full results for all K in K.range...")
         message("===============================")
+        ggObj <- SomaticSignatures::plotNumberSignatures(assess)
         grDevices::pdf(file = paste0(out.dir,"/assess.K.pdf"))
-        ggplot <- SomaticSignatures::plotNumberSignatures(assess)
+        ggObj
         grDevices::dev.off()
 
         save(assess, file = paste0(out.dir,"/assess.K.Rdata"))
