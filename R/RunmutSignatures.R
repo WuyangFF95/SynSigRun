@@ -152,7 +152,7 @@ RunmutSignatures <-
     ## Output extracted signatures in ICAMS format
     ## Normalize the extracted signatures so that frequencies of each signature sums up to 1
     signatureObj <- extractionObject$Results$signatures
-    extractedSignatures <- signatureObj@mutationFreq
+    extractedSignatures <- as.matrix(signatureObj@mutationFreq)
     rownames(extractedSignatures) <- signatureObj@mutTypes
     colnames(extractedSignatures) <- signatureObj@signatureId
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
@@ -166,7 +166,7 @@ RunmutSignatures <-
     ## Derive exposure count attribution results.
     exposureObj <- extractionObject$Results$exposures
     ## Normalized exposures
-    exposureCounts <- exposureObj@exposures
+    exposureCounts <- as.matrix(exposureObj@exposures)
     rownames(exposureCounts) <- exposureObj@signatureId
     colnames(exposureCounts) <- exposureObj@sampleId
 
@@ -291,7 +291,7 @@ RunmutSignaturesAttributeOnly <-
     exposures <- run$results$count.result
 
     ## Write exposure counts in ICAMS and SynSig format.
-    exposureCounts <- exposures@exposures
+    exposureCounts <- as.matrix(exposures@exposures)
     rownames(exposureCounts) <- exposures@signatureId[,1]
     colnames(exposureCounts) <- exposures@sampleId[,1]
 
