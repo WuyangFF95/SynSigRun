@@ -29,7 +29,7 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 
 
 
-## Run approaches sigfit.EMu
+## Run approaches mutSignatures
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 

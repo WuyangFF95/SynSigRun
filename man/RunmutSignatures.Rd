@@ -7,25 +7,10 @@
 RunmutSignatures(
   input.catalog,
   out.dir,
-  algorithm = "brunet",
   CPU.cores = NULL,
-  iterations = 1000,
-  seedNumber = 1,
+  seedNumber = 12345,
   K.exact = NULL,
-  K.range = NULL,
-  test.only = FALSE,
-  overwrite = FALSE
-)
-
-RunmutSignatures(
-  input.catalog,
-  out.dir,
-  algorithm = "brunet",
-  CPU.cores = NULL,
-  iterations = 1000,
-  seedNumber = 1,
-  K.exact = NULL,
-  K.range = NULL,
+  nrun.exact = 1000,
   test.only = FALSE,
   overwrite = FALSE
 )
@@ -38,31 +23,12 @@ Columns are samples (tumors), rows are mutation types.}
 abort if it already exits.  Log files will be in
 \code{paste0(out.dir, "/tmp")}.}
 
-\item{algorithm}{NMF implementation used to to extract signatures and
-attribute exposures. Only "alexa", "brunet" or "lin" is valid.
-
-"alexa" or "brunet": Jean-Philippe Brunet's implementation.
-This is the most widely used NMF implementation for signature extraction.
-DOI: 10.1073/pnas.0308531101
-
-"lin": Chih-Jen Lin's implementation.
-DOI:10.1109/TNN.2007.895831
-
-Default: "alexa".}
-
 \item{CPU.cores}{Number of CPUs to use in running
-sigfit. For a server, 30 cores would be a good
-choice; while for a PC, you may only choose 2-4 cores.
-By default (CPU.cores = NULL), the CPU.cores would be equal
-to \code{(parallel::detectCores())/2}, total number of CPUs
-divided by 2.}
-
-\item{iterations}{Number of iterations in signature extraction.
-Default: 1000.}
+\code{\link[mutSignatures]{decipherMutationalProcesses}}.}
 
 \item{seedNumber}{Specify the pseudo-random seed number
-used to run sigfit. Setting seed can make the
-attribution of sigfit repeatable.
+used to run mutSignatures. Setting seed can make the
+attribution of mutSignatures repeatable.
 Default: 1.}
 
 \item{K.exact}{\code{K.exact} is the exact value for
@@ -71,50 +37,23 @@ Specify \code{K.exact} if you know exactly how many signatures
 are active in the \code{input.catalog}, which is the
 \code{ICAMS}-formatted spectra file.}
 
+\item{nrun.exact}{number of NMF runs for extracting signatures and inferring
+exposures.}
+
 \item{test.only}{If TRUE, only analyze the first 10 columns
 read in from \code{input.catalog}.
 Default: FALSE}
 
 \item{overwrite}{If TRUE, overwrite existing output.
 Default: FALSE}
-
-\item{nrun.exact}{number of NMF runs for extracting signatures and inferring
-exposures.}
-
-\item{K.exact, K.range}{\code{K.exact} is the exact value for
-the number of signatures active in spectra (K).
-Specify \code{K.exact} if you know exactly how many signatures
-are active in the \code{input.catalog}, which is the
-\code{ICAMS}-formatted spectra file.
-
-\code{K.range} is A numeric vector \code{(K.min,K.max)}
-of length 2 which tell sigfit to search the best
-signature number active in spectra, K, in this range of Ks.
-Specify \code{K.range} if you don't know how many signatures
-are active in the \code{input.catalog}.
-K.max - K.min >= 3, otherwise an error will be thrown.
-
-WARNING: You must specify only one of \code{K.exact} or \code{K.range}!
-
-Default: NULL}
 }
 \value{
-The inferred exposure of \code{mutSignatures}, invisibly.
-
 The inferred exposure of \code{mutSignatures}, invisibly.
 }
 \description{
 Run mutSignatures extraction and attribution on a spectra catalog file
-
-Run mutSignatures extraction and attribution on a spectra catalog file
 }
 \details{
-Creates several
- files in \code{out.dir}. These are:
- TODO(Steve): list the files
-
- TODO(Wuyang)
-
 Creates several
  files in \code{out.dir}. These are:
  TODO(Steve): list the files
