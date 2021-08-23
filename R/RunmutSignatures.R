@@ -116,6 +116,9 @@ RunmutSignatures <-
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
     dimnames(convSpectra) <- dimnames(spectra)
+    ## convSpectra must be converted to data.frame
+    ## before converting to mutation counts object.
+    convSpectra <- as.data.frame(convSpectra)
     sample.number <- dim(spectra)[2]
     convSpectra <- mutSignatures::as.mutation.counts(convSpectra)
 
@@ -267,12 +270,18 @@ RunmutSignaturesAttributeOnly <-
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
     class(convSpectra) <- "matrix"
+    ## convSpectra must be converted to data.frame
+    ## before converting to mutation counts object.
+    convSpectra <- as.data.frame(convSpectra)
     convSpectra <- mutSignatures::as.mutation.counts(convSpectra)
 
     gtSignaturesMS <- gtSignatures
     attr(gtSignaturesMS,"catalog.type") <- NULL
     attr(gtSignaturesMS,"region") <- NULL
     class(gtSignaturesMS) <- "matrix"
+    ## gtSignaturesMS must be converted to data.frame
+    ## before converting to mutation counts object.
+    gtSignaturesMS <- as.data.frame(gtSignaturesMS)
     gtSignaturesMS <- mutSignatures::as.mutation.signatures(gtSignaturesMS)
 
     ## Obtain inferred exposures using resolveMutSignatures function
