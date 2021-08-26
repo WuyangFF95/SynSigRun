@@ -44,7 +44,7 @@ for seedInUse in seedsInUse
     for datasetName in datasetNames
         outDir = string(topLevelFolder4Run,"/MultiModalMuSig.LDA.results/",datasetName,"/seed.",seedInUse)
         snv_counts = CSV.read(outDir*"/ground.truth.syn.catalog.tsv", delim='\t');
-        
+
         print("\n\n==================================\n")
         print(string("Running MultiModalMuSig.LDA in directory ",outDir,"\n"))
         print("\n==================================\n\n")
@@ -69,14 +69,14 @@ for seedInUse in seedsInUse
         ## Elbow method: Find the inflection point of log-likelihood
         ## Calculate the first derivative of likelihoods
         ## Set names of deriv1 as "2"..."10"
-        deriv1 = NamedArray( repeat([NaN],9) , (string.([2:10;])) );    
+        deriv1 = NamedArray( repeat([NaN],9) , (string.([2:10;])) );
         for K in 2:10
           if K == 2
             ## For the smallest possible K specified by user,
             ## calculate 1st-derivative using forward difference operator
             ## with spacing equals to 1.
             deriv1[string(K)] = likelihoods[string(K+1)] - likelihoods[string(K)];
-          elseif K == 10 
+          elseif K == 10
             ## For the largest possible K,
             ## calculate 1st-derivative using backward difference operator.
             deriv1[string(K)] = likelihoods[string(K)] - likelihoods[string(K-1)];
@@ -94,7 +94,7 @@ for seedInUse in seedsInUse
             ## calculate 1st-derivative of the 1st-derivative using forward difference operator
             ## with spacing equals to 1.
             deriv2[string(K)] = deriv1[string(K+1)] - deriv1[string(K)];
-          elseif K == 10 
+          elseif K == 10
             ## For the largest possible K,
             ## calculate 1st-derivative of the 1st-derivative using backward difference operator.
             deriv2[string(K)] = deriv1[string(K)] - deriv1[string(K-1)];
@@ -106,7 +106,7 @@ for seedInUse in seedsInUse
         ## Choose the smallest K where 2nd-derivative of likelihood function
         ## changes sign in its neighborhood.
         KBest = NaN; # Must declare outside of for loop
-        
+
         for K in 2:10
           ## If deriv2["2"] and deriv2["3"] have opposite sign
           ## set KBest = 2
@@ -175,14 +175,14 @@ end
 
 
 
-## Cycle for each dataset to run MultiModalMuSig.CTM
+## Cycle for each dataset to run MultiModalMuSig.MMCTM
 for seedInUse in seedsInUse
     for datasetName in datasetNames
-        outDir = string(topLevelFolder4Run,"/MultiModalMuSig.CTM.results/",datasetName,"/seed.",seedInUse)
+        outDir = string(topLevelFolder4Run,"/MultiModalMuSig.MMCTM.results/",datasetName,"/seed.",seedInUse)
         snv_counts = CSV.read(outDir*"/ground.truth.syn.catalog.tsv", delim='\t');
 
         print("\n\n==================================\n")
-        print(string("Running MultiModalMuSig.CTM in directory ",outDir,"\n"))
+        print(string("Running MultiModalMuSig.MMCTM in directory ",outDir,"\n"))
         print("\n==================================\n\n")
 
         ## Run model fitting
@@ -207,14 +207,14 @@ for seedInUse in seedsInUse
         ## Elbow method: Find the inflection point of log-likelihood
         ## Calculate the first derivative of likelihoods
         ## Set names of deriv1 as "2"..."10"
-        deriv1 = NamedArray( repeat([NaN],9) , (string.([2:10;])) );    
+        deriv1 = NamedArray( repeat([NaN],9) , (string.([2:10;])) );
         for K in 2:10
           if K == 2
             ## For the smallest possible K specified by user,
             ## calculate 1st-derivative using forward difference operator
             ## with spacing equals to 1.
             deriv1[string(K)] = likelihoods[string(K+1)] - likelihoods[string(K)];
-          elseif K == 10 
+          elseif K == 10
             ## For the largest possible K,
             ## calculate 1st-derivative using backward difference operator.
             deriv1[string(K)] = likelihoods[string(K)] - likelihoods[string(K-1)];
@@ -232,7 +232,7 @@ for seedInUse in seedsInUse
             ## calculate 1st-derivative of the 1st-derivative using forward difference operator
             ## with spacing equals to 1.
             deriv2[string(K)] = deriv1[string(K+1)] - deriv1[string(K)];
-          elseif K == 10 
+          elseif K == 10
             ## For the largest possible K,
             ## calculate 1st-derivative of the 1st-derivative using backward difference operator.
             deriv2[string(K)] = deriv1[string(K)] - deriv1[string(K-1)];
@@ -244,7 +244,7 @@ for seedInUse in seedsInUse
         ## Choose the smallest K where 2nd-derivative of likelihood function
         ## changes sign in its neighborhood.
         KBest = NaN; # Must declare outside of for loop
-        
+
         for K in 2:10
           ## If deriv2["2"] and deriv2["3"] have opposite sign
           ## set KBest = 2

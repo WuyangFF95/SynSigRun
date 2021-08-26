@@ -42,7 +42,7 @@ RBasedExtrAttrToolNames <- c("hdp","mutSignatures",
                              "TCSM")
 # Python or other language based tools.
 # excluding maftools and MutationalPatterns (seed is hard-coded) and EMu (cannot designate seed)
-otherExtrAttrToolNames <- c("MultiModalMuSig.CTM","MultiModalMuSig.LDA")
+otherExtrAttrToolNames <- c("MultiModalMuSig.MMCTM","MultiModalMuSig.LDA")
 
 # List computational approaches with hard-coded seed or do not accept seeds.
 toolNameWOSeed <- "EMu"
@@ -66,7 +66,7 @@ for(datasetName in datasetNames){
       SynSigEval::SummarizeSigOneExtrAttrSubdir(
         run.dir = paste0("2b.Full_output_K_as_2/",extrAttrToolName,
                          ".results/",datasetName,"/seed.",seedInUse,"/"),
-        ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
+        ground.truth.exposure.dir = paste0("0.Input_datasets/",datasetName,"/"),
         summarize.exp = F,
         overwrite = T)
     }
@@ -75,7 +75,7 @@ for(datasetName in datasetNames){
       SynSigEval::SummarizeSigOneExtrAttrSubdir(
         run.dir = paste0("2b.Full_output_K_as_2/",extrAttrToolName,
                          ".results/",datasetName,"/seed.",seedInUse,"/"),
-        ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
+        ground.truth.exposure.dir = paste0("0.Input_datasets/",datasetName,"/"),
         summarize.exp = F,
         overwrite = T)
     }
@@ -83,14 +83,14 @@ for(datasetName in datasetNames){
     SynSigEval::SummarizeSigOneSigProExtractorSubdir(
       run.dir = paste0("2b.Full_output_K_as_2/SigProExtractor.results/",
                        datasetName,"/seed.",seedInUse,"/"),
-      ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
+      ground.truth.exposure.dir = paste0("0.Input_datasets/",datasetName,"/"),
       summarize.exp = F,
       overwrite = T)
     ## Summarize helmsman.NMF
     SynSigEval::SummarizeSigOnehelmsmanSubdir(
       run.dir = paste0("2b.Full_output_K_as_2/helmsman.NMF.results/",
                        datasetName,"/seed.",seedInUse,"/"),
-      ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
+      ground.truth.exposure.dir = paste0("0.Input_datasets/",datasetName,"/"),
       summarize.exp = F,
       overwrite = T)
     ## Summarize SignatureAnalyzer
@@ -103,7 +103,7 @@ for(datasetName in datasetNames){
       SynSigEval:::SummarizeSigOneSASubdir(
         run.dir = paste0("2b.Full_output_K_as_2/SignatureAnalyzer.results/",
                          datasetName,"/seed.",seedInUse,"/"),
-        ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
+        ground.truth.exposure.dir = paste0("0.Input_datasets/",datasetName,"/"),
         which.run = "/best.run/",
         summarize.exp = F,
         overwrite = T)
@@ -114,7 +114,7 @@ for(datasetName in datasetNames){
     SynSigEval::SummarizeSigOneExtrAttrSubdir(
         run.dir = paste0("2b.Full_output_K_as_2/",toolName,
                          ".results/",datasetName,"/seed.123456/"),
-        ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
+        ground.truth.exposure.dir = paste0("0.Input_datasets/",datasetName,"/"),
         summarize.exp = F,
       overwrite = T)
   }
@@ -123,14 +123,14 @@ for(datasetName in datasetNames){
     SynSigEval::SummarizeSigOneExtrAttrSubdir(
       run.dir = paste0("2b.Full_output_K_as_2/EMu.results/",
                        datasetName,"/run.",nrun,"/"),
-      ground.truth.exposure.dir = paste0("0.input_datasets/",datasetName,"/"),
+      ground.truth.exposure.dir = paste0("0.Input_datasets/",datasetName,"/"),
       summarize.exp = F,
       overwrite = T)
   }
 }
 
 ## Part II: Write summary table for 20 seeds for each tool with each dataset
-otherExtrAttrToolNames <- c("helmsman.NMF","MultiModalMuSig.CTM","MultiModalMuSig.LDA","SigProExtractor","SignatureAnalyzer")
+otherExtrAttrToolNames <- c("helmsman.NMF","MultiModalMuSig.MMCTM","MultiModalMuSig.LDA","SigProExtractor","SignatureAnalyzer")
 for(datasetName in datasetNames){
   ## For each dataset, summarize 20 runs
   ## using different seeds by EMu

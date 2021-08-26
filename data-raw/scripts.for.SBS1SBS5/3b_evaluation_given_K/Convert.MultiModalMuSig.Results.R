@@ -35,7 +35,7 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 ## to SynSigEval/ICAMS-formatted csv files.
 for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
-    for(approach in c("LDA","CTM")){
+    for(approach in c("LDA","MMCTM")){
       ## Convert signatures
       signatures <- SynSigEval::MMCatalog2ICAMS(
         paste0(resultDir,"/extracted.signatures.tsv"),

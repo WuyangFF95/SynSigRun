@@ -40,7 +40,7 @@ RBasedExtrAttrToolNames <- c("hdp",
                              "TCSM")
 # Python or other language based tools.
 # excluding maftools and MutationalPatterns (seed is hard-coded) and EMu (cannot designate seed)
-otherExtrAttrToolNames <- c("MultiModalMuSig.CTM","MultiModalMuSig.LDA")
+otherExtrAttrToolNames <- c("MultiModalMuSig.MMCTM","MultiModalMuSig.LDA")
 
 # List computational approaches with hard-coded seed or do not accept seeds.
 toolNameWOSeed <- "EMu"
@@ -128,7 +128,7 @@ for(datasetName in datasetNames){
 }
 
 ## Part II: Write summary table for 20 seeds for each tool with each dataset
-otherExtrAttrToolNames <- c("helmsman.NMF","MultiModalMuSig.CTM","MultiModalMuSig.LDA","SigProExtractor","SignatureAnalyzer")
+otherExtrAttrToolNames <- c("helmsman.NMF","MultiModalMuSig.MMCTM","MultiModalMuSig.LDA","SigProExtractor","SignatureAnalyzer")
 for(datasetName in datasetNames){
   ## For each dataset, summarize 20 runs
   ## using different seeds by EMu

@@ -28,7 +28,7 @@ seedsInUse <- c(1, 691, 1999, 3511, 8009,
 
 ## Create MultimodalMuSig-formatted input-catalog under
 ## <dataset.top.level.dir>/sp.sp/ExtrAttrFromOne/MultimodalMuSig.LDA.results and
-## <dataset.top.level.dir>/sp.sp/ExtrAttrFromOne/MultimodalMuSig.CTM.results
+## <dataset.top.level.dir>/sp.sp/ExtrAttrFromOne/MultimodalMuSig.MMCTM.results
 for(datasetName in datasetNames){
   for(seedInUse in seedsInUse){
     CreateMultiModalMuSigOutput(
@@ -38,7 +38,7 @@ for(datasetName in datasetNames){
       overwrite = T)
     CreateMultiModalMuSigOutput(
       catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
-      out.dir = paste0(datasetName,"/sp.sp/ExtrAttrFromOne/MultiModalMuSig.CTM.results",
+      out.dir = paste0(datasetName,"/sp.sp/ExtrAttrFromOne/MultiModalMuSig.MMCTM.results",
                        "/seed.",seedInUse),
       overwrite = T)
   }
