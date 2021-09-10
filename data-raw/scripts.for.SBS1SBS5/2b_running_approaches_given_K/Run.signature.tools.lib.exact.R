@@ -40,7 +40,7 @@ K.exact = 2
 for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
 
-    out.dir <- paste0(topLevelFolder4Run,"/signature.tools.lib.results/",datasetName,"/seedInUse.",seedInUse)
+    out.dir <- paste0(topLevelFolder4Run,"/signature.tools.lib.results/",datasetName,"/seed.",seedInUse)
     cat("\n===========================================\n")
     cat(paste0("Running signature.tools.lib on data set ",datasetName," using seed ",seedInUse,"...\n"))
     cat("\n===========================================\n")

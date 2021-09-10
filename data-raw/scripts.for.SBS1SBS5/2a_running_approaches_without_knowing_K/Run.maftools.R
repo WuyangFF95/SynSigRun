@@ -54,7 +54,7 @@ for(seedInUse in seedsInUse){
       out.dir = out.dir,
       CPU.cores = 10,
       K.range = c(2,10),
-      run.est.K = 10,
+      nrun.est.K = 10,
       overwrite = T)
   }
 }
