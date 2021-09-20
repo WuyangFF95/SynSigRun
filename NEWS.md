@@ -1,5 +1,14 @@
-## SynSigRun 0.1.1
 
+## SynSigRun 0.1.2
+### Added
+
+* Added `4.join.combined.extraction.results.Wlicoxon.R` in folder `data-raw/scripts.for.SBS1SBS5`. This script is for combining csv files
+which summarizes extraction measures. In order to obtain such csv files,
+users should run scripts in `data-raw/scripts.for.SBS1SBS5/3a_evaluation_without_knowing_K`
+and `data-raw/scripts.for.SBS1SBS5/3b_evaluation_given_K`.
+* Fixed bugs in `RunmutSignatures()` `Runmaftools()` `RunMutationalPatterns`
+
+## SynSigRun 0.1.1
 ### Fixed
 
 In `RunSomaticSignatures()`:

@@ -51,4 +51,4 @@ Level 5: Results of runs with seeds (e.g. `seed.1`, `run.1`).
 
 ## Reference manual
 
-https://github.com/WuyangFF95/SynSigRun/blob/master/data-raw/SynSigRun_0.0.5.pdf
+https://github.com/WuyangFF95/SynSigRun/blob/master/data-raw/SynSigRun_0.1.2.pdf
