@@ -115,7 +115,7 @@ RunsigneR <-
     ## If K.exact is provided, use K.exact as the K.best.
     ## If K.range is provided, determine K.best by doing raw extraction.
     if(bool1){
-      extractionObject <- signeR::signeR(M=convSpectra,  ## M: Mutation spectra you want to decompose
+      signeR_out <- signeR::signeR(M=convSpectra,  ## M: Mutation spectra you want to decompose
                                          #Opport = NULL, ## Opport: Abundance (Opportunity) matrix for the spectra (optional)
                                          nsig=K.exact)   ## nsig: Number of signatures (K)
       K.best <- K.exact
@@ -129,22 +129,22 @@ RunsigneR <-
       ## and test sampling (1000) for possible signature numbers (N);
       ## Step 2: Compare the BIC of these Ns and determine the best number of signatures (Nbest);
       ## Step 3: do precise extraction and attribution (burn-in: 10000, sampling: 2000);
-      extractionObject <- signeR::signeR(M=convSpectra,  ## M: Mutation spectra you want to decompose
+      signeR_out <- signeR::signeR(M=convSpectra,  ## M: Mutation spectra you want to decompose
                                          #Opport = NULL, ## Opport: Abundance (Opportunity) matrix for the spectra (optional)
                                          nlim=K.range)   ## nlim: Minimal and maximal number of signatures (K.range)
 
       ## Record best number of signatures, and verify this choice using BIC-plot
-      K.best <- extractionObject$Nsign
+      K.best <- signeR_out$Nsign
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
       grDevices::pdf(paste0(out.dir,"/Nsig.BIC.plot.pdf"))
-      signeR::BICboxplot(extractionObject)
+      signeR::BICboxplot(signeR_out)
       grDevices::dev.off()
     }
 
 
     ## Output extracted signatures in Duke-NUS format
-    extractedSignaturesRaw <- extractionObject$Phat
+    extractedSignaturesRaw <- signeR_out$Phat
     colnames(extractedSignaturesRaw) <- paste("signeR",seq(1,K.best),sep = ".")
     ## Normalize the extracted signatures so that frequencies of each signature sums up to 1
     extractedSignatures <- apply(extractedSignaturesRaw,2, function(x) x/sum(x))
@@ -158,7 +158,7 @@ RunsigneR <-
 
 
     ## Derive exposure count attribution results.
-    exposureCounts <- extractionObject$Ehat ## Unnormalized exposures
+    exposureCounts <- signeR_out$Ehat ## Unnormalized exposures
     rownames(exposureCounts) <- paste("signeR",seq(1,K.best),sep = ".") ## Assign row names of exposure matrix as names of signatures
     colnames(exposureCounts) <- colnames(spectra) ## Assign column names of exposure matrix as names of tumors
     ## Normalize the inferred counts so that each column represents exposure of a signature
@@ -176,6 +176,9 @@ RunsigneR <-
     capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
     write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
     write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+
+    ## Save signeR output for de novo extracction
+    save(signeR_out, file = paste0(out.dir,"/signeR_out.RData"))
 
     ## Return a list of signatures and exposures
     invisible(list("signature" = extractedSignatures,
