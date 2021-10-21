@@ -364,8 +364,9 @@ SignatureAnalyzerOneRun <-
 #'
 #' @param overwrite If TRUE overwrite previous results in same directory tree.
 #'
-#' @param mc.cores Number of cores to use for \code{mclapply}; ignored on
-#' Windows.
+#' @param mc.cores Number of cores to use for each SignatureAnalyzer run.
+#' \code{mclapply}; ignored on Windows.
+#' The total cores used simultaneously = \code{num.runs} * \code{mc.cores}.
 #'
 #' @param verbose If TRUE cat a message regarding progress.
 #'
