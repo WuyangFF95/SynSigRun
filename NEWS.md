@@ -1,3 +1,9 @@
+## SynSigRun 1.0.0
+### Cleaned
+
+* Cleaned duplicate files already in package [SynSigGen](https://github.com/steverozen/SynSigGen)
+
+
 
 ## SynSigRun 0.1.2
 ### Added

@@ -21,7 +21,8 @@ results were assessed by
 ## Installation
 
 Install the development version of SynSigRun from
-[GitHub](https://github.com/) with the R command line:
+[GitHub](https://github.com/WuyangFF95/SynSigRun) with the R command
+line:
 
 ``` r
 install.packages("devtools")
