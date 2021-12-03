@@ -1,8 +1,8 @@
 ## SynSigRun 1.0.0
-### Cleaned
+### Cleaned in folder "data-raw/"
 
 * Cleaned duplicate files already in package [SynSigGen](https://github.com/steverozen/SynSigGen)
-
+* Sorted running scripts into folders named with authors of manuscripts.
 
 
 ## SynSigRun 0.1.2
