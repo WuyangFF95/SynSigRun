@@ -1,8 +1,16 @@
 ## SynSigRun 1.0.0
-### Cleaned in folder "data-raw/"
 
-* Cleaned duplicate files already in package [SynSigGen](https://github.com/steverozen/SynSigGen)
-* Sorted running scripts into folders named with authors of manuscripts.
+* Cleaned in folder "data-raw/"
+  + Cleaned duplicate files already in package [SynSigGen](https://github.com/steverozen/SynSigGen)
+  + Sorted and re-numbered running scripts into folders named with authors of manuscripts.
+
+* Clarified README.md. The two purposes of the package are:
+  + Wrap signature analysis package runs in R functions to simplify execution for
+  non-expert users.
+  + Contain all necessary scripts to reproduce results from earlier benchmarking
+  results in Rozen Lab.
+
+* Simplified dependencies in `DESCRIPTION`
 
 
 ## SynSigRun 0.1.2
