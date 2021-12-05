@@ -3,8 +3,6 @@ InstalldecompTumor2Sig <- function(){
   message("Installing decompTumor2Sig from Bioconductor...\n")
   if (!requireNamespace("BiocManager", quietly = TRUE))
     utils::install.packages("BiocManager")
-  # The following initializes usage of Bioc devel
-  BiocManager::install(version='devel')
   BiocManager::install("decompTumor2Sig")
 }
 #' Run decompTumor2Sig attribution on a spectra catalog file
