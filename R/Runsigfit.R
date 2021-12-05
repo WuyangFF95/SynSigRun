@@ -4,7 +4,7 @@
 #' @keywords internal
 Installsigfit <- function(){
   message("Installing sigfit from GitHub kgori/sigfit ...\n")
-  devtools::install_github(
+  remotes::install_github(
     "kgori/sigfit",
     args = "--preclean",
     build_vignettes = TRUE)

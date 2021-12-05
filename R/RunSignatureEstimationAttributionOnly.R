@@ -3,7 +3,7 @@
 #' @keywords internal
 InstallSignatureEstimation <- function(){
   message("Installing SignatureEstimation from URL source...\n")
-  devtools::install_url("https://www.ncbi.nlm.nih.gov/CBBresearch/Przytycka/software/signatureestimation/SignatureEstimation.tar.gz")
+  remotes::install_url("https://www.ncbi.nlm.nih.gov/CBBresearch/Przytycka/software/signatureestimation/SignatureEstimation.tar.gz")
 }
 
 

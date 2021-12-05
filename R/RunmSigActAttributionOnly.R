@@ -3,9 +3,9 @@
 #' @keywords internal
 InstallmSigAct <- function(){
   message("Installing mSigAct from master...\n")
-  devtools::install_github(repo = "steverozen/mSigAct",
-                           ref = "master",
-			   build_vignettes = TRUE)
+  remotes::install_github(repo = "steverozen/mSigAct",
+                          ref = "master",
+                          build_vignettes = TRUE)
 }
 
 #' Run mSigAct attribution on a spectra catalog file
