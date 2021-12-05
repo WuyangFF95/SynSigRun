@@ -86,75 +86,75 @@ Runmaftools <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Check whether ONLY ONE of K.exact or K.range is specified.
+    # Check whether ONLY ONE of K.exact or K.range is specified.
     bool1 <- is.numeric(K.exact) & is.null(K.range)
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    ## Install maftools, if not found in library
+    # Install maftools, if not found in library
     if ("maftools" %in% rownames(utils::installed.packages()) == FALSE)
       Installmaftools()
 
 
-    ## Set seed as 123456
+    # Set seed as 123456
     set.seed(123456)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
-    ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which maftools::estimateSignatures() and
-    ## matools::extractSignatures() accepts:
-    ## 1. Remove the catalog related attributes in convSpectra
-    ## 2. Transpose the catalog
-    ## The matools spectra can also be created by
-    ## matools::trinucleotideMatrix().
+    # convSpectra: convert the ICAMS-formatted spectra catalog
+    # into a matrix which maftools::estimateSignatures() and
+    # matools::extractSignatures() accepts:
+    # 1. Remove the catalog related attributes in convSpectra
+    # 2. Transpose the catalog
+    # The matools spectra can also be created by
+    # matools::trinucleotideMatrix().
     convSpectra <- spectra
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
-    ## pConstant is added to convSpectra in
-    ## functions maftools::estimateSignatures() and
-    ## maftools::extractSignatures().
+    # pConstant is added to convSpectra in
+    # functions maftools::estimateSignatures() and
+    # maftools::extractSignatures().
     convSpectra <- list("nmf_matrix" = t(convSpectra))
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
-    ## CPU.cores specifies number of CPU cores to use.
-    ## If CPU.cores is not specified, CPU.cores will
-    ## be equal to the minimum of 30 or (total cores)/2
+    # CPU.cores specifies number of CPU cores to use.
+    # If CPU.cores is not specified, CPU.cores will
+    # be equal to the minimum of 30 or (total cores)/2
     if(is.null(CPU.cores)){
       CPU.cores = min(30,(parallel::detectCores())/2)
     } else {
       stopifnot(is.numeric(CPU.cores))
     }
 
-    ## Before running NMF packge,
-    ## Load it explicitly to prevent errors.
+    # Before running NMF packge,
+    # Load it explicitly to prevent errors.
     requireNamespace("NMF")
 
-    ## Run NMF using ICAMS-formatted spectra catalog
-    ## Determine the best number of signatures (K.best).
-    ## If K.exact is provided, use K.exact as the K.best.
-    ## If K.range is provided, determine K.best by doing raw extraction
-    ## with maftools::estimateSignature
+    # Run NMF using ICAMS-formatted spectra catalog
+    # Determine the best number of signatures (K.best).
+    # If K.exact is provided, use K.exact as the K.best.
+    # If K.range is provided, determine K.best by doing raw extraction
+    # with maftools::estimateSignature
     if(bool1){
       K.best <- K.exact
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
-      ## Change K.range to a full vector
-      ## if it is already a full vector, just keep it.
+      # Change K.range to a full vector
+      # if it is already a full vector, just keep it.
       K.range <- seq.int(min(K.range),max(K.range))
 
       res <- maftools::estimateSignatures(
@@ -167,17 +167,17 @@ Runmaftools <-
 
       gof_nmf <- res$nmfObj
 
-      ## Choose the best signature number (K.best) active in the spectra
-      ## catalog (input.catalog).
+      # Choose the best signature number (K.best) active in the spectra
+      # catalog (input.catalog).
       ##
-      ## According to paper "A flexible R package for nonnegative matrix factorization"
-      ## (Gaujoux & Seoighe, 2010), the most common approach to choose number of
-      ## signature (K, a.k.a. rank in this paper) is to choose the smallest K for which
-      ## cophenetic correlation coefficient starts decreasing.
+      # According to paper "A flexible R package for nonnegative matrix factorization"
+      # (Gaujoux & Seoighe, 2010), the most common approach to choose number of
+      # signature (K, a.k.a. rank in this paper) is to choose the smallest K for which
+      # cophenetic correlation coefficient starts decreasing.
       for(current.K in K.range)
       {
-        ## Stop the cycle if current.K reaches the maximum.
-        ## At max(K.range), next.summary becomes meaningless.
+        # Stop the cycle if current.K reaches the maximum.
+        # At max(K.range), next.summary becomes meaningless.
         if(current.K == max(K.range))
           break
 
@@ -190,58 +190,58 @@ Runmaftools <-
         if(current.cophenetic.coefficient > next.cophenetic.coefficient)
           break
       }
-      K.best <- current.K ## Choose K.best as the smallest current.K whose cophenetic
-      ## is greater than cophenetic from (current.K+1).
+      K.best <- current.K # Choose K.best as the smallest current.K whose cophenetic
+      # is greater than cophenetic from (current.K+1).
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
     }
 
-    ## Extract signatures using maftools::extractSignatures
+    # Extract signatures using maftools::extractSignatures
     sigs_nmf <- maftools::extractSignatures(
       convSpectra,
       n = K.best,
       parallel = CPU.cores,
       pConstant = pConstant)
 
-    ## Generates a list contain extracted signatures
-    ## sigs_nmf$signatures is already normalized.
+    # Generates a list contain extracted signatures
+    # sigs_nmf$signatures is already normalized.
     extractedSignatures <- sigs_nmf$signatures
-    ## Add signature names for signature matrix extractedSignatures
+    # Add signature names for signature matrix extractedSignatures
     colnames(extractedSignatures) <-
       paste("maftools",1:ncol(extractedSignatures),sep=".")
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                              region = "unknown",
                                              catalog.type = "counts.signature")
-    ## Output extracted signatures in ICAMS format
+    # Output extracted signatures in ICAMS format
     ICAMS::WriteCatalog(extractedSignatures,
                         paste0(out.dir,"/extracted.signatures.csv"))
 
 
-    ## Derive exposure count attribution results.
+    # Derive exposure count attribution results.
 
 
-    ## exposure attributions (in percentage, normalized)
+    # exposure attributions (in percentage, normalized)
     exposureRaw <- (sigs_nmf$contributions)
     rownames(exposureRaw) <- paste("maftools",1:nrow(exposureRaw),sep=".")
-    ## convert exposure ratio to exposure counts
+    # convert exposure ratio to exposure counts
     exposureCounts <- exposureRaw
     for(sample in colnames(exposureCounts)){
       exposureCounts[,sample] <- exposureRaw[,sample] * sum(spectra[,sample])
     }
 
 
-    ## Write exposure counts in ICAMS and SynSig format.
+    # Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
                              paste0(out.dir,"/inferred.exposures.csv"))
 
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## Return a list of signatures and exposures
+    # Return a list of signatures and exposures
     invisible(list("signature" = extractedSignatures,
                    "exposure" = exposureCounts))
   }

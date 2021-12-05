@@ -49,7 +49,7 @@ SourceSignatureAnalyzerCode <-
 
     suppressWarnings(
       suppressPackageStartupMessages(
-        ## Store the SA functions into envSA.
+        # Store the SA functions into envSA.
         sys.source(
           paste0(signatureanalyzer.code.dir,"/SignatureAnalyzer.PCAWG.function.R"),
           envir = envSA)
@@ -195,7 +195,7 @@ RunSignatureAnalyzerOnFile <-
     rownames(exp.raw) <- new.names
     out.data[[2]] <- exp.raw
 
-    out.data[[7]] <- sigs ## Normalized sigs
+    out.data[[7]] <- sigs # Normalized sigs
 
     names(out.data) <- c("signatures.W", "exposures.H",
                          "likelihood", "evidence",
@@ -310,11 +310,11 @@ SignatureAnalyzerOneRun <-
            verbose = 0,
            overwrite = FALSE)
 {
-  ## Specify seeds, if given
+  # Specify seeds, if given
   if(!is.null(seedNumber)){
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
   }
 
   options(warn = 0)

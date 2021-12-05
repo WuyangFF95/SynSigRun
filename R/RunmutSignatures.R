@@ -66,22 +66,22 @@ RunmutSignatures <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Check whether K.exact is specified as a numeric element.
+    # Check whether K.exact is specified as a numeric element.
     stopifnot(is.numeric(K.exact) & length(K.exact) == 1)
 
-    ## Install mutSignatures, if not found in library
+    # Install mutSignatures, if not found in library
     if ("mutSignatures" %in% rownames(utils::installed.packages()) == FALSE)
       InstallmutSignatures()
 
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
-    ## CPU.cores specifies number of CPU cores to use.
-    ## If CPU.cores is not specified, CPU.cores will
-    ## be equal to the minimum of 30 or (total cores)/2
+    # CPU.cores specifies number of CPU cores to use.
+    # If CPU.cores is not specified, CPU.cores will
+    # be equal to the minimum of 30 or (total cores)/2
     if(is.null(CPU.cores)){
       CPU.cores = min(30,(parallel::detectCores())/2)
     } else {
@@ -89,42 +89,42 @@ RunmutSignatures <-
     }
 
 
-    ## Before running NMF packge,
-    ## Load it explicitly to prevent errors.
+    # Before running NMF packge,
+    # Load it explicitly to prevent errors.
     requireNamespace("NMF")
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
-    ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which mutSignatures accepts:
-    ## 1. Remove the catalog related attributes in convSpectra
-    ## 2. Transpose the catalog
+    # convSpectra: convert the ICAMS-formatted spectra catalog
+    # into a matrix which mutSignatures accepts:
+    # 1. Remove the catalog related attributes in convSpectra
+    # 2. Transpose the catalog
     convSpectra <- spectra
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
     dimnames(convSpectra) <- dimnames(spectra)
-    ## convSpectra must be converted to data.frame
-    ## before converting to mutation counts object.
+    # convSpectra must be converted to data.frame
+    # before converting to mutation counts object.
     convSpectra <- as.data.frame(convSpectra)
     sample.number <- dim(spectra)[2]
     convSpectra <- mutSignatures::as.mutation.counts(convSpectra)
 
 
 
-    #### Extract signatures when K is specified.
+    ### Extract signatures when K is specified.
     params.obj <-
       mutSignatures::setMutClusterParams(
         # num signatures to extract
@@ -149,8 +149,8 @@ RunmutSignatures <-
 
 
 
-    ## Output extracted signatures in ICAMS format
-    ## Normalize the extracted signatures so that frequencies of each signature sums up to 1
+    # Output extracted signatures in ICAMS format
+    # Normalize the extracted signatures so that frequencies of each signature sums up to 1
     signatureObj <- extractionObject$Results$signatures
     extractedSignatures <- as.matrix(signatureObj@mutationFreq)
     rownames(extractedSignatures) <- signatureObj@mutTypes[,1]
@@ -158,30 +158,30 @@ RunmutSignatures <-
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                              region = "unknown",
                                              catalog.type = "counts.signature")
-    ## Write extracted signatures
+    # Write extracted signatures
     ICAMS::WriteCatalog(extractedSignatures,
                         paste0(out.dir,"/extracted.signatures.csv"))
 
 
-    ## Derive exposure count attribution results.
+    # Derive exposure count attribution results.
     exposureObj <- extractionObject$Results$exposures
-    ## Normalized exposures
+    # Normalized exposures
     exposureCounts <- as.matrix(exposureObj@exposures)
     rownames(exposureCounts) <- exposureObj@signatureId[,1]
     colnames(exposureCounts) <- exposureObj@sampleId[,1]
 
-    ## Save exposure attribution results
+    # Save exposure attribution results
     SynSigGen::WriteExposure(exposureCounts,
                              paste0(out.dir,"/inferred.exposures.csv"))
 
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## Return a list of signatures and exposures
+    # Return a list of signatures and exposures
     invisible(list("signature" = extractedSignatures,
                    "exposure" = exposureCounts))
   }
@@ -235,43 +235,43 @@ RunmutSignaturesAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Install mutSignatures, if not found in library.
+    # Install mutSignatures, if not found in library.
     if("mutSignatures" %in% rownames(utils::installed.packages()) == FALSE)
       InstallmutSignatures()
 
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
 
-    ## Read in ground-truth signature file
+    # Read in ground-truth signature file
     gtSignatures <- ICAMS::ReadCatalog(gt.sigs.file)
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
-    ## Convert ICAMS-formatted spectra and signatures
-    ## into mutSignatures format
-    ## Requires removal of redundant attributes.
+    # Convert ICAMS-formatted spectra and signatures
+    # into mutSignatures format
+    # Requires removal of redundant attributes.
     convSpectra <- spectra
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
     class(convSpectra) <- "matrix"
-    ## convSpectra must be converted to data.frame
-    ## before converting to mutation counts object.
+    # convSpectra must be converted to data.frame
+    # before converting to mutation counts object.
     convSpectra <- as.data.frame(convSpectra)
     convSpectra <- mutSignatures::as.mutation.counts(convSpectra)
 
@@ -279,18 +279,18 @@ RunmutSignaturesAttributeOnly <-
     attr(gtSignaturesMS,"catalog.type") <- NULL
     attr(gtSignaturesMS,"region") <- NULL
     class(gtSignaturesMS) <- "matrix"
-    ## gtSignaturesMS must be converted to data.frame
-    ## before converting to mutation counts object.
+    # gtSignaturesMS must be converted to data.frame
+    # before converting to mutation counts object.
     gtSignaturesMS <- as.data.frame(gtSignaturesMS)
     gtSignaturesMS <- mutSignatures::as.mutation.signatures(gtSignaturesMS)
 
-    ## Obtain inferred exposures using resolveMutSignatures function
+    # Obtain inferred exposures using resolveMutSignatures function
     run <- mutSignatures::resolveMutSignatures(mutCountData = convSpectra,
                                                signFreqData = gtSignaturesMS)
-    ## An S4 object storing exposures, names of signatures and samples.
+    # An S4 object storing exposures, names of signatures and samples.
     exposures <- run$results$count.result
 
-    ## Write exposure counts in ICAMS and SynSig format.
+    # Write exposure counts in ICAMS and SynSig format.
     exposureCounts <- as.matrix(exposures@exposures)
     rownames(exposureCounts) <- exposures@signatureId[,1]
     colnames(exposureCounts) <- exposures@sampleId[,1]
@@ -298,17 +298,17 @@ RunmutSignaturesAttributeOnly <-
     SynSigGen::WriteExposure(exposureCounts,
                              paste0(out.dir,"/inferred.exposures.csv"))
 
-    ## Copy ground.truth.sigs to out.dir
+    # Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
               to = paste0(out.dir,"/ground.truth.signatures.csv"),
               overwrite = overwrite)
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## Return inferred exposures
+    # Return inferred exposures
     invisible(exposureCounts)
   }

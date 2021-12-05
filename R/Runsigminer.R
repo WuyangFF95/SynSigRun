@@ -72,26 +72,26 @@ Runsigminer <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Install sigminer, if not found in library
+    # Install sigminer, if not found in library
     if ("sigminer" %in% rownames(utils::installed.packages()) == FALSE)
       Installsigminer()
 
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
-    ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which sigminer accepts:
-    ## 1. Remove the catalog related attributes in convSpectra
-    ## 2. Transpose the catalog
+    # convSpectra: convert the ICAMS-formatted spectra catalog
+    # into a matrix which sigminer accepts:
+    # 1. Remove the catalog related attributes in convSpectra
+    # 2. Transpose the catalog
     convSpectra <- spectra
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
@@ -100,16 +100,16 @@ Runsigminer <-
     sample.number <- dim(spectra)[2]
     convSpectra <- t(convSpectra)
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
-    ## CPU.cores specifies number of CPU cores to use.
-    ## If CPU.cores is not specified, CPU.cores will
-    ## be equal to the minimum of 30 or (total cores)/2
+    # CPU.cores specifies number of CPU cores to use.
+    # If CPU.cores is not specified, CPU.cores will
+    # be equal to the minimum of 30 or (total cores)/2
     if(is.null(CPU.cores)){
       CPU.cores = min(30,(parallel::detectCores())/2)
     } else {
@@ -117,11 +117,11 @@ Runsigminer <-
     }
 
 
-    ## Before running NMF packge,
-    ## Load it explicitly to prevent errors.
+    # Before running NMF packge,
+    # Load it explicitly to prevent errors.
     requireNamespace("NMF")
 
-    ## Run sigminer using ICAMS-formatted spectra catalog
+    # Run sigminer using ICAMS-formatted spectra catalog
     print(paste0("Assuming there are at most ",K.max," signatures active in input spectra."))
     assess <- sigminer::sig_auto_extract(
       nmf_matrix = convSpectra,
@@ -140,35 +140,35 @@ Runsigminer <-
     gc()
     gc()
     gc()
-    ## normalized signature matrix
+    # normalized signature matrix
     extractedSignatures <- assess$Signature.norm
     colnames(extractedSignatures) <-
       paste("sigminer",1:ncol(extractedSignatures),sep=".")
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                              region = "unknown",
                                              catalog.type = "counts.signature")
-    ## Output extracted signatures in ICAMS format
+    # Output extracted signatures in ICAMS format
     ICAMS::WriteCatalog(extractedSignatures,
                         paste0(out.dir,"/extracted.signatures.csv"))
 
 
-    ## Derive exposure count attribution results.
-    ## normalized exposure matrix
+    # Derive exposure count attribution results.
+    # normalized exposure matrix
     exposureCounts <- assess$Exposure
     rownames(exposureCounts) <-
       paste("sigminer",1:nrow(exposureCounts),sep=".")
-    ## Write exposure counts in ICAMS and SynSig format.
+    # Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
                              paste0(out.dir,"/inferred.exposures.csv"))
 
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## Return a list of signatures and exposures
+    # Return a list of signatures and exposures
     invisible(list("signature" = extractedSignatures,
                    "exposure" = exposureCounts))
   }

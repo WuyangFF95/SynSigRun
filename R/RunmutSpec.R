@@ -86,65 +86,65 @@ RunmutSpec <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Check whether ONLY ONE of K or K.range is specified.
+    # Check whether ONLY ONE of K or K.range is specified.
     bool1 <- is.numeric(K.exact) & is.null(K.range)
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    ## Install NMF, if not found in library
+    # Install NMF, if not found in library
     if ("NMF" %in% rownames(utils::installed.packages()) == FALSE)
       install.packages("NMF")
 
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
-    ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which HDP accepts:
-    ## 1. Remove the catalog related attributes in convSpectra
-    ## 2. Transpose the catalog
+    # convSpectra: convert the ICAMS-formatted spectra catalog
+    # into a matrix which HDP accepts:
+    # 1. Remove the catalog related attributes in convSpectra
+    # 2. Transpose the catalog
     convSpectra <- spectra
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
-    ## Add pConstant to convSpectra.
+    # Add pConstant to convSpectra.
     if(!is.null(pConstant)) convSpectra <- convSpectra + pConstant
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
-    ## CPU.cores specifies number of CPU cores to use.
-    ## If CPU.cores is not specified, CPU.cores will
-    ## be equal to the minimum of 30 or (total cores)/2
+    # CPU.cores specifies number of CPU cores to use.
+    # If CPU.cores is not specified, CPU.cores will
+    # be equal to the minimum of 30 or (total cores)/2
     if(is.null(CPU.cores)){
       CPU.cores = min(30,(parallel::detectCores())/2)
     } else {
       stopifnot(is.numeric(CPU.cores))
     }
-    ## "P" means that if the program cannot run parallelly, the NMF will abort.
-    ## Therefore, we use "p" instead.
+    # "P" means that if the program cannot run parallelly, the NMF will abort.
+    # Therefore, we use "p" instead.
     nbCPU   <- paste0("vp", CPU.cores)
 
-    ## Before running NMF packge,
-    ## Load it explicitly to prevent errors.
+    # Before running NMF packge,
+    # Load it explicitly to prevent errors.
     requireNamespace("NMF")
 
-    ## Run NMF using ICAMS-formatted spectra catalog
-    ## Determine the best number of signatures (K.best).
-    ## If K.exact is provided, use K.exact as the K.best.
-    ## If K.range is provided, determine K.best by doing raw extraction.
+    # Run NMF using ICAMS-formatted spectra catalog
+    # Determine the best number of signatures (K.best).
+    # If K.exact is provided, use K.exact as the K.best.
+    # If K.range is provided, determine K.best by doing raw extraction.
     if(bool1){
       K.best <- K.exact
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
@@ -152,8 +152,8 @@ RunmutSpec <-
     if(bool2){
 
       # Estimate the number of signatures with our data
-      ## Change K.range to a full vector
-      ## if it is already a full vector, just keep it.
+      # Change K.range to a full vector
+      # if it is already a full vector, just keep it.
       K.range <- seq.int(min(K.range),max(K.range))
       # The minum number of signatures can't be lower than 2
       estim_r <- NMF::nmfEstimateRank(
@@ -178,7 +178,7 @@ RunmutSpec <-
         nrun = nrun.est.K,
         .opt = nbCPU)
 
-      ## Garbage collection
+      # Garbage collection
       gc()
       gc()
       gc()
@@ -193,17 +193,17 @@ RunmutSpec <-
 
 
 
-      ## Choose the best signature number (K.best) active in the spectra
-      ## catalog (input.catalog).
+      # Choose the best signature number (K.best) active in the spectra
+      # catalog (input.catalog).
       ##
-      ## According to paper "A flexible R package for nonnegative matrix factorization"
-      ## (Gaujoux & Seoighe, 2010), the most common approach to choose number of
-      ## signature (K, a.k.a. rank in this paper) is to choose the smallest K for which
-      ## cophenetic correlation coefficient starts decreasing.
+      # According to paper "A flexible R package for nonnegative matrix factorization"
+      # (Gaujoux & Seoighe, 2010), the most common approach to choose number of
+      # signature (K, a.k.a. rank in this paper) is to choose the smallest K for which
+      # cophenetic correlation coefficient starts decreasing.
       for(current.K in K.range)
       {
-        ## Stop the cycle if current.K reaches the maximum.
-        ## At max(K.range), next.summary becomes meaningless.
+        # Stop the cycle if current.K reaches the maximum.
+        # At max(K.range), next.summary becomes meaningless.
         if(current.K == max(K.range))
           break
 
@@ -216,14 +216,14 @@ RunmutSpec <-
         if(current.cophenetic.coefficient > next.cophenetic.coefficient)
           break
       }
-      K.best <- current.K ## Choose K.best as the smallest current.K whose cophenetic
-      ## is greater than cophenetic from (current.K+1).
+      K.best <- current.K # Choose K.best as the smallest current.K whose cophenetic
+      # is greater than cophenetic from (current.K+1).
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
     }
 
 
-    ## Generates a list contain extracted signatures
+    # Generates a list contain extracted signatures
     gc()
     gc()
     gc()
@@ -241,11 +241,11 @@ RunmutSpec <-
 
 
     # Recover the matrix W and H
-    matrixW <- NMF::basis(res) ## un-normalized signature matrix
+    matrixW <- NMF::basis(res) # un-normalized signature matrix
     matrixH <- NMF::coef(res)
-    ## normalize each signature's sum to 1
+    # normalize each signature's sum to 1
     extractedSignatures <- apply(matrixW,2,function(x) x/sum(x))
-    ## Add signature names for signature matrix extractedSignatures
+    # Add signature names for signature matrix extractedSignatures
     colnames(extractedSignatures) <-
       paste("mutSpec",1:ncol(extractedSignatures),sep=".")
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
@@ -253,41 +253,41 @@ RunmutSpec <-
                                              catalog.type = "counts.signature")
 
 
-    ## Output extracted signatures in ICAMS format
+    # Output extracted signatures in ICAMS format
     ICAMS::WriteCatalog(extractedSignatures,
                         paste0(out.dir,"/extracted.signatures.csv"))
 
 
-    ## Derive exposure count attribution results.
-    ## WARNING: mutSpec can only do exposure attribution
-    ## using SBS96 spectra catalog and signature catalog!
+    # Derive exposure count attribution results.
+    # WARNING: mutSpec can only do exposure attribution
+    # using SBS96 spectra catalog and signature catalog!
 
-    ## Rawexposure attributions
+    # Rawexposure attributions
     rawExposures <- matrixH
-    ## Add signature names for signature matrix extractedSignatures
+    # Add signature names for signature matrix extractedSignatures
     rownames(rawExposures) <-
       paste("mutSpec",1:nrow(rawExposures),sep=".")
-    ## normalize exposure matrix
+    # normalize exposure matrix
     exposureCounts <- apply(rawExposures,2,function(x) x/sum(x))
-    ## Make exposureCounts real exposure counts.
+    # Make exposureCounts real exposure counts.
     for (sample in seq(1,ncol(exposureCounts))){
       exposureCounts[,sample] <-
         colSums(spectra)[sample] * exposureCounts[,sample]
     }
 
 
-    ## Write exposure counts in ICAMS and SynSig format.
+    # Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
                              paste0(out.dir,"/inferred.exposures.csv"))
 
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## Return a list of signatures and exposures
+    # Return a list of signatures and exposures
     invisible(list("signature" = extractedSignatures,
                    "exposure" = exposureCounts))
   }

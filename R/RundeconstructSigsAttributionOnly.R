@@ -47,37 +47,37 @@ RundeconstructSigsAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Install deconstructSigs, if not found in library.
+    # Install deconstructSigs, if not found in library.
     if("deconstructSigs" %in% rownames(utils::installed.packages()) == FALSE)
       InstalldeconstructSigs()
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
 
-    ## Read in ground-truth signature file
-    ## gt.sigs: signature data.frame in ICAMS format
+    # Read in ground-truth signature file
+    # gt.sigs: signature data.frame in ICAMS format
     gtSignatures <- ICAMS::ReadCatalog(gt.sigs.file)
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
-    ## Convert ICAMS-formatted spectra and signatures
-    ## into deconstructSigs format
-    ## Requires removal of redundant attributes.
+    # Convert ICAMS-formatted spectra and signatures
+    # into deconstructSigs format
+    # Requires removal of redundant attributes.
     convSpectra <- spectra
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
@@ -90,52 +90,52 @@ RundeconstructSigsAttributeOnly <-
     class(gtSignaturesDS) <- "matrix"
     gtSignaturesDS <- as.data.frame(t(gtSignaturesDS))
 
-    ## Obtain inferred exposures using whichSignatures function
-    ## Note: deconstructSigs::whichSignatures() can only attribute ONE tumor at each run!
+    # Obtain inferred exposures using whichSignatures function
+    # Note: deconstructSigs::whichSignatures() can only attribute ONE tumor at each run!
     num.tumors <- nrow(convSpectra)
-    ## In each cycle, obtain inferred exposures for each tumor.
+    # In each cycle, obtain inferred exposures for each tumor.
     exposures <- data.frame()
 
     for(ii in 1:num.tumors){
       output.list <- deconstructSigs::whichSignatures(tumor.ref = convSpectra[ii,,drop = FALSE],
                                                       signatures.ref = gtSignaturesDS,
                                                       contexts.needed = TRUE)
-      ## names(output.list): [1] "weights" "tumor"   "product" "diff"    "unknown"
-      ## $weights: inferred signature exposure (in relative percentage)
-      ## Note: sum of all exposure may be smaller than 1
-      ## $tumor: input tumor spectrum
-      ## $product: Reconstructed catalog = product of signatures and exposures
-      ## = $weights %*% gtSignaturesDS
-      ## $diff: $product - $tumor
-      ## $unknown: 100% - $weights
-      ## (percentage of exposures not inferred by this program)
+      # names(output.list): [1] "weights" "tumor"   "product" "diff"    "unknown"
+      # $weights: inferred signature exposure (in relative percentage)
+      # Note: sum of all exposure may be smaller than 1
+      # $tumor: input tumor spectrum
+      # $product: Reconstructed catalog = product of signatures and exposures
+      # = $weights %*% gtSignaturesDS
+      # $diff: $product - $tumor
+      # $unknown: 100% - $weights
+      # (percentage of exposures not inferred by this program)
 
-      ## Obtain absolute exposures for current tumor
+      # Obtain absolute exposures for current tumor
       exposures.one.tumor <- output.list$weights
       exposures.one.tumor <- exposures.one.tumor * sum(convSpectra[ii,,drop = FALSE])
 
-      ## Bind exposures for current tumor to exposure data.frame
+      # Bind exposures for current tumor to exposure data.frame
       exposures <- rbind(exposures,exposures.one.tumor)
     }
 
 
 
-    ## Write exposure counts in ICAMS and SynSig format.
+    # Write exposure counts in ICAMS and SynSig format.
     exposureCounts <- t(exposures)
     SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
-    ## Copy ground.truth.sigs to out.dir
+    # Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
               to = paste0(out.dir,"/ground.truth.signatures.csv"),
               overwrite = overwrite)
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## Return inferred exposures
+    # Return inferred exposures
     invisible(exposureCounts)
   }

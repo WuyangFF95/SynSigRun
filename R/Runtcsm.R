@@ -145,26 +145,26 @@ Runtcsm <-
 		   gamma.output.file = NULL
 		   ) {
 
-    ## Check whether ONLY ONE of K or K.range is specified.
+    # Check whether ONLY ONE of K or K.range is specified.
     bool1 <- is.numeric(K.exact) & is.null(K.range)
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
 
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     }
@@ -172,25 +172,25 @@ Runtcsm <-
     # if the out.dir exists.
     dir.create(paste0(out.dir,"/other.outputs.by.tcsm"), recursive = T)
 
-    ## CPU.cores specifies number of CPU cores to use.
-    ## If CPU.cores is not specified, CPU.cores will
-    ## be equal to the minimum of 30 or (total cores)/2
+    # CPU.cores specifies number of CPU cores to use.
+    # If CPU.cores is not specified, CPU.cores will
+    # be equal to the minimum of 30 or (total cores)/2
     if(is.null(CPU.cores)){
       CPU.cores = min(30,(parallel::detectCores())/2)
     } else {
       stopifnot(is.numeric(CPU.cores))
     }
 
-    ## For faster computation, enable parallel computing.
+    # For faster computation, enable parallel computing.
     ##
 
-    ## Use CPU.cores cores for parallel computing
+    # Use CPU.cores cores for parallel computing
     options(mc.cores = CPU.cores)
 
-    ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which tcsm accepts:
-    ## 1. Remove the catalog related attributes in convSpectra
-    ## 2. Transpose the catalog
+    # convSpectra: convert the ICAMS-formatted spectra catalog
+    # into a matrix which tcsm accepts:
+    # 1. Remove the catalog related attributes in convSpectra
+    # 2. Transpose the catalog
 
     convSpectra <- spectra
     class(convSpectra) <- "matrix"
@@ -200,22 +200,22 @@ Runtcsm <-
     sample.number <- dim(spectra)[2]
     convSpectra <- t(convSpectra)
 
-    ## Determine the best number of signatures (K.best).
-    ## If K is provided, use K as the K.best.
-    ## If K.range is provided, determine K.best by running .
+    # Determine the best number of signatures (K.best).
+    # If K is provided, use K as the K.best.
+    # If K.range is provided, determine K.best by running .
     if(bool1){
       K.best <- K.exact
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
 
-      ## Choose the best signature number (K.best) active in the spectra
-      ## catalog (input.catalog).
-      ## Raw extraction: estimate most likely number of signatures
-      ## (Nsig.max + 1) number of elements in mcmc_samples_extr
-      ## The first Nsig.min number of elements are NULL elements
-      ## Nsig.min+1 to Nsig.max elements are list elements of two elements: $data and $result
-      ## The last element is the best signature number
+      # Choose the best signature number (K.best) active in the spectra
+      # catalog (input.catalog).
+      # Raw extraction: estimate most likely number of signatures
+      # (Nsig.max + 1) number of elements in mcmc_samples_extr
+      # The first Nsig.min number of elements are NULL elements
+      # Nsig.min+1 to Nsig.max elements are list elements of two elements: $data and $result
+      # The last element is the best signature number
       K.range <- seq.int(K.range[1],K.range[2])
 
       likelihoods <- numeric(0)
@@ -224,9 +224,9 @@ Runtcsm <-
         currLikelihood <- data.frame()
         portion <- ceiling(sample.number/5)
 
-        ## Do heldout training 5 times.
-        ## In each run, take ~80% of samples to train,
-        ## and take ~20% of samples to calculate likelihood of current K.
+        # Do heldout training 5 times.
+        # In each run, take ~80% of samples to train,
+        # and take ~20% of samples to calculate likelihood of current K.
         for(ii in 1:5){
 
           if(ii == 5){
@@ -256,8 +256,8 @@ Runtcsm <-
         likelihoods[as.character(K)] <- mean(currLikelihood[,1])
 	  }
 
-      if(TRUE){ ## debug
-        ## Choose the K.best if likelihood(K.best + 1) - likelihood(K.best) < 0.01
+      if(TRUE){ # debug
+        # Choose the K.best if likelihood(K.best + 1) - likelihood(K.best) < 0.01
         for(K in K.range){
           K.best <- K
           if(K == max(K.range))
@@ -266,7 +266,7 @@ Runtcsm <-
             break
         }
       } else{
-        K.best <- names(likelihoods)[which.max(likelihoods)] ## Choose K.best
+        K.best <- names(likelihoods)[which.max(likelihoods)] # Choose K.best
         K.best <- as.integer(K.best)
       }
       print(paste0("The best number of signatures is found.",
@@ -274,9 +274,9 @@ Runtcsm <-
     }
 
 
-    ## Precise extraction:
-    ## Specifying number of signatures, and iterating more times to get more precise extraction
-    ## Return a list with two elements: $data and $result
+    # Precise extraction:
+    # Specifying number of signatures, and iterating more times to get more precise extraction
+    # Return a list with two elements: $data and $result
     corpus <- stm::readCorpus(convSpectra, type="dtm")
     prep <- stm::prepDocuments(corpus$documents, corpus$vocab)
 
@@ -306,23 +306,23 @@ Runtcsm <-
   # the K-by-V matrix logbeta contains the natural log of the probability of seeing each word conditional on the topic
   mat <- stm1$beta$logbeta[[1]]
   signatures <- apply(mat, 1:2, exp)
-  ## Mutation types
+  # Mutation types
   colnames(signatures) <- stm1$vocab
-  ## Get Signature names from exposure object
+  # Get Signature names from exposure object
   dt <- stm::make.dt(stm1)
   rownames(signatures) <- colnames(dt)[-1]
-  ## signatures should be transposed to ICAMS format.
+  # signatures should be transposed to ICAMS format.
   extractedSignatures <- t(signatures)
 
-  ## Change signature names for signature matrix extractedSignatures:
-  ## E.g., replace "Signature A" with "tcsm.A".
+  # Change signature names for signature matrix extractedSignatures:
+  # E.g., replace "Signature A" with "tcsm.A".
   colnames(extractedSignatures) <-
     gsub(pattern = "Topic",replacement = "tcsm.",colnames(extractedSignatures))
   extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                            region = "unknown",
                                            catalog.type = "counts.signature")
 
-  ## Write extracted signatures into a ICAMS signature catalog file.
+  # Write extracted signatures into a ICAMS signature catalog file.
   ICAMS::WriteCatalog(extractedSignatures,
                       paste0(out.dir,"/extracted.signatures.csv"))
 
@@ -336,24 +336,24 @@ Runtcsm <-
   colnames(rawExposures) <-
     gsub(pattern = "Topic",replacement = "tcsm.",
 	colnames(rawExposures))
-  ## Calculate exposureCounts from rawExposures.
+  # Calculate exposureCounts from rawExposures.
   exposureCounts <- rawExposures * colSums(spectra)
   exposureCounts <- t(exposureCounts)
 
-  ## Write inferred exposures into a SynSig formatted exposure file.
+  # Write inferred exposures into a SynSig formatted exposure file.
 
   SynSigGen::WriteExposure(
     exposureCounts,
     paste0(out.dir,"/inferred.exposures.csv"))
 
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## Return a list of signatures and exposures
+    # Return a list of signatures and exposures
     invisible(list("signature" = extractedSignatures,
                    "exposure" = exposureCounts))
   }

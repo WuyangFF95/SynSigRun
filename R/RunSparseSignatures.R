@@ -68,31 +68,31 @@ RunSparseSignatures <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Check whether ONLY ONE of K.exact or K.range is specified.
+    # Check whether ONLY ONE of K.exact or K.range is specified.
     bool1 <- is.numeric(K.exact) & is.null(K.range)
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    ## Install SparseSignatures, if not found in library
+    # Install SparseSignatures, if not found in library
     if ("SparseSignatures" %in% rownames(utils::installed.packages()) == FALSE)
       InstallSparseSignatures()
 
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
-    ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which SparseSignatures accepts:
-    ## 1. Remove the catalog related attributes in convSpectra
-    ## 2. Transpose the catalog
+    # convSpectra: convert the ICAMS-formatted spectra catalog
+    # into a matrix which SparseSignatures accepts:
+    # 1. Remove the catalog related attributes in convSpectra
+    # 2. Transpose the catalog
     convSpectra <- spectra
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
@@ -101,7 +101,7 @@ RunSparseSignatures <-
     sample.number <- dim(spectra)[2]
     convSpectra <- t(convSpectra)
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
@@ -110,11 +110,11 @@ RunSparseSignatures <-
 
 
 
-    ## Determine the best number of signatures (K.best).
-    ## If K.exact is provided, use K.exact as the K.best.
-    ## If K.range is provided, determine K.best by doing raw extraction.
+    # Determine the best number of signatures (K.best).
+    # If K.exact is provided, use K.exact as the K.best.
+    # If K.range is provided, determine K.best by doing raw extraction.
     if(bool1){
-      ## Determine hyperparameter (Lambda) when K is given.
+      # Determine hyperparameter (Lambda) when K is given.
       K.best <- K.exact
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
       LassoCVObject <- SparseSignatures::nmf.LassoCV(
@@ -125,7 +125,7 @@ RunSparseSignatures <-
       res <- SparseSignatures::as.mean.squared.error(
         SparseSignatures::cv_example)$median
       resBest <- which(res==min(res),arr.ind=TRUE)
-      ## Record best Lambda number
+      # Record best Lambda number
       Lambda.best <- colnames(res)[resBest[2]]
       Lambda.best <- as.numeric(
         gsub(pattern="_.*",replacement = "",x = Lambda.best))
@@ -134,8 +134,8 @@ RunSparseSignatures <-
                "It equals to: ",Lambda.best))
     }
     if(bool2){
-      ## Automatically determine best number of signatures (K)
-      ## and another hyperparameter, Lambda.
+      # Automatically determine best number of signatures (K)
+      # and another hyperparameter, Lambda.
       LassoCVObject <- SparseSignatures::nmf.LassoCV(
         x = convSpectra,
         K = seq(K.range[1],K.range[2]),
@@ -143,7 +143,7 @@ RunSparseSignatures <-
         seed = seedNumber)
       res = SparseSignatures::as.mean.squared.error(SparseSignatures::cv_example)$median
       resBest = which(res==min(res),arr.ind=TRUE)
-      ## Record best number of signatures and Lambda number
+      # Record best number of signatures and Lambda number
       K.best = rownames(res)[resBest[1]]
       K.best = as.numeric(
       gsub(pattern="_.*",replacement = "",x = K.best))
@@ -157,8 +157,8 @@ RunSparseSignatures <-
     }
 
 
-    ## Output extracted signatures in Duke-NUS format
-    ## Extract signatures using the best K and best Lambda.
+    # Output extracted signatures in Duke-NUS format
+    # Extract signatures using the best K and best Lambda.
     extractionObject <- SparseSignatures::nmf.LassoK(
       x = convSpectra,
       K = K.best,
@@ -171,28 +171,28 @@ RunSparseSignatures <-
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                              region = "unknown",
                                              catalog.type = "counts.signature")
-    ## Write extracted signatures
+    # Write extracted signatures
     ICAMS::WriteCatalog(extractedSignatures,
                            paste0(out.dir,"/extracted.signatures.csv"))
 
 
-    ## Derive exposure count attribution results.
+    # Derive exposure count attribution results.
     exposureCounts <- t(extractionObject$alpha)
     rownames(exposureCounts) <- paste0("SparseSignatures.",seq(1,nrow(exposureCounts)))
-    colnames(exposureCounts) <- colnames(spectra) ## Assign column names of exposure matrix as names of tumors
+    colnames(exposureCounts) <- colnames(spectra) # Assign column names of exposure matrix as names of tumors
 
-    ## Save exposure attribution results
+    # Save exposure attribution results
     SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## Return a list of signatures and exposures
+    # Return a list of signatures and exposures
     invisible(list("signature" = extractedSignatures,
                    "exposure" = exposureCounts))
   }

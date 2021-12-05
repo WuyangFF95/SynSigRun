@@ -54,38 +54,38 @@ RunSignatureEstimationQPAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Install SignatureEstimation from Bioconductor, if not found in library.
+    # Install SignatureEstimation from Bioconductor, if not found in library.
     if("SignatureEstimation" %in% rownames(utils::installed.packages()) == FALSE)
       InstallSignatureEstimation()
 
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
 
-    ## Read in ground-truth signatures
-    ## gtSignatures: signature data.frame in ICAMS format
+    # Read in ground-truth signatures
+    # gtSignatures: signature data.frame in ICAMS format
     gtSignatures <- ICAMS::ReadCatalog(gt.sigs.file)
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
-    ## Convert ICAMS-formatted spectra and signatures
-    ## into SignatureEstimation format
-    ## Requires removal of redundant attributes.
+    # Convert ICAMS-formatted spectra and signatures
+    # into SignatureEstimation format
+    # Requires removal of redundant attributes.
     convSpectra <- spectra
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
@@ -96,7 +96,7 @@ RunSignatureEstimationQPAttributeOnly <-
     attr(gtSignaturesSE,"region") <- NULL
     class(gtSignaturesSE) <- "matrix"
 
-    ## Obtain inferred exposures using decomposeQP/decomposeSA function
+    # Obtain inferred exposures using decomposeQP/decomposeSA function
 
 
     SEoutput <- SignatureEstimation::findSigExposures(
@@ -105,45 +105,45 @@ RunSignatureEstimationQPAttributeOnly <-
         decomposition.method = SignatureEstimation::decomposeQP)
 
 
-    ## Obtain absolute exposure counts for tumos
-    ## from SEoutput$exposures which refers to relative exposures (exposure proportions)
+    # Obtain absolute exposure counts for tumos
+    # from SEoutput$exposures which refers to relative exposures (exposure proportions)
     exposureCounts <- t(SEoutput$exposures)
     exposureCounts <- exposureCounts * colSums(convSpectra)
     exposureCounts <- t(exposureCounts)
 
-    ## Obtain absolute mean squared error (MSE) for tumors
-    ## from SEoutput$errors which refers to relative MSE
+    # Obtain absolute mean squared error (MSE) for tumors
+    # from SEoutput$errors which refers to relative MSE
     exposureErrors <- t(SEoutput$errors)
     exposureErrors <- exposureErrors * colSums(convSpectra)
     exposureErrors <- t(exposureErrors)
 
 
-    ## Copy ground.truth.sigs to out.dir
+    # Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
               to = paste0(out.dir,"/ground.truth.signatures.csv"),
               overwrite = overwrite)
 
-    ## Write inferred exposures into a SynSig formatted exposure file.
+    # Write inferred exposures into a SynSig formatted exposure file.
     SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
-    ## Write inferred exposures into a SynSig formatted exposure file.
+    # Write inferred exposures into a SynSig formatted exposure file.
     SynSigGen::WriteExposure(exposureErrors,
                              paste0(out.dir,"/exposure.MSE.errors.csv"))
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## exposuresCounts: the exposure counts inferred in ICAMSxtra format,
-    ## exposureErrors: the MSE in ICAMSxtra format.
-    ## SEoutput:
-    ## $exposures: exposure proportion in SignatureEstimation format,
-    ## and errors invisibly.
-    ## $errors: mean squared error (MSE) between normalized reconstructed
-    ## spectra and normalized ground-truth mutational spectra.
+    # exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+    # exposureErrors: the MSE in ICAMSxtra format.
+    # SEoutput:
+    # $exposures: exposure proportion in SignatureEstimation format,
+    # and errors invisibly.
+    # $errors: mean squared error (MSE) between normalized reconstructed
+    # spectra and normalized ground-truth mutational spectra.
     retval <- list(
       exposureCounts = exposureCounts,
       exposureErrors = exposureErrors,
@@ -201,38 +201,38 @@ RunSignatureEstimationSAAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Install SignatureEstimation from Bioconductor, if not found in library.
+    # Install SignatureEstimation from Bioconductor, if not found in library.
     if("SignatureEstimation" %in% rownames(utils::installed.packages()) == FALSE)
       InstallSignatureEstimation()
 
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
 
-    ## Read in ground-truth signatures
-    ## gtSignatures: signature data.frame in ICAMS format
+    # Read in ground-truth signatures
+    # gtSignatures: signature data.frame in ICAMS format
     gtSignatures <- ICAMS::ReadCatalog(gt.sigs.file)
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
-    ## Convert ICAMS-formatted spectra and signatures
-    ## into SignatureEstimation format
-    ## Requires removal of redundant attributes.
+    # Convert ICAMS-formatted spectra and signatures
+    # into SignatureEstimation format
+    # Requires removal of redundant attributes.
     convSpectra <- spectra
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
@@ -243,7 +243,7 @@ RunSignatureEstimationSAAttributeOnly <-
     attr(gtSignaturesSE,"region") <- NULL
     class(gtSignaturesSE) <- "matrix"
 
-    ## Obtain inferred exposures using decomposeQP/decomposeSA function
+    # Obtain inferred exposures using decomposeQP/decomposeSA function
 
 
     SEoutput <- SignatureEstimation::findSigExposures(
@@ -252,45 +252,45 @@ RunSignatureEstimationSAAttributeOnly <-
         decomposition.method = SignatureEstimation::decomposeSA)
 
 
-    ## Obtain absolute exposure counts for tumos
-    ## from SEoutput$exposures which refers to relative exposures (exposure proportions)
+    # Obtain absolute exposure counts for tumos
+    # from SEoutput$exposures which refers to relative exposures (exposure proportions)
     exposureCounts <- t(SEoutput$exposures)
     exposureCounts <- exposureCounts * colSums(convSpectra)
     exposureCounts <- t(exposureCounts)
 
-    ## Obtain absolute mean squared error (MSE) for tumors
-    ## from SEoutput$errors which refers to relative MSE
+    # Obtain absolute mean squared error (MSE) for tumors
+    # from SEoutput$errors which refers to relative MSE
     exposureErrors <- t(SEoutput$errors)
     exposureErrors <- exposureErrors * colSums(convSpectra)
     exposureErrors <- t(exposureErrors)
 
 
-    ## Copy ground.truth.sigs to out.dir
+    # Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
               to = paste0(out.dir,"/ground.truth.signatures.csv"),
               overwrite = overwrite)
 
-    ## Write inferred exposures into a SynSig formatted exposure file.
+    # Write inferred exposures into a SynSig formatted exposure file.
     SynSigGen::WriteExposure(exposureCounts,
                              paste0(out.dir,"/inferred.exposures.csv"))
 
-    ## Write inferred exposures into a SynSig formatted exposure file.
+    # Write inferred exposures into a SynSig formatted exposure file.
     SynSigGen::WriteExposure(exposureErrors,
                              paste0(out.dir,"/exposure.MSE.errors.csv"))
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## exposuresCounts: the exposure counts inferred in ICAMSxtra format,
-    ## exposureErrors: the MSE in ICAMSxtra format.
-    ## SEoutput:
-    ## $exposures: exposure proportion in SignatureEstimation format,
-    ## and errors invisibly.
-    ## $errors: mean squared error (MSE) between normalized reconstructed
-    ## spectra and normalized ground-truth mutational spectra.
+    # exposuresCounts: the exposure counts inferred in ICAMSxtra format,
+    # exposureErrors: the MSE in ICAMSxtra format.
+    # SEoutput:
+    # $exposures: exposure proportion in SignatureEstimation format,
+    # and errors invisibly.
+    # $errors: mean squared error (MSE) between normalized reconstructed
+    # spectra and normalized ground-truth mutational spectra.
     retval <- list(
       exposureCounts = exposureCounts,
       exposureErrors = exposureErrors,

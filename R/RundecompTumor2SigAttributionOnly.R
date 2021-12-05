@@ -50,45 +50,45 @@ RundecompTumor2SigAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Install deconstructSigs, if not found in library.
+    # Install deconstructSigs, if not found in library.
     if("decompTumor2Sig" %in% rownames(utils::installed.packages()) == FALSE)
       InstalldecompTumor2Sig()
 
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                   strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
 
-    ## Read in ground-truth signature file
-    ## gt.sigs: signature data.frame in ICAMS format
+    # Read in ground-truth signature file
+    # gt.sigs: signature data.frame in ICAMS format
     gtSignatures <- ICAMS::ReadCatalog(gt.sigs.file)
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
-    ## Convert ICAMS-formatted spectra and signatures
-    ## into deconstructSigs format
-    ## Requires removal of redundant attributes.
+    # Convert ICAMS-formatted spectra and signatures
+    # into deconstructSigs format
+    # Requires removal of redundant attributes.
     convSpectra <- spectra
     attr(convSpectra,"catalog.type") <- NULL
     attr(convSpectra,"region") <- NULL
     class(convSpectra) <- "matrix"
-    ## To analyze Alexandrov-like spectra catalogs,
-    ## decompoTumor2Sig requires signatures to be a LIST of
-    ## probability vectors (sum equals to 1)
+    # To analyze Alexandrov-like spectra catalogs,
+    # decompoTumor2Sig requires signatures to be a LIST of
+    # probability vectors (sum equals to 1)
     convSpectraList <- list()
     G <- ncol(convSpectra)
     for (Gcurrent in 1:G){
@@ -103,9 +103,9 @@ RundecompTumor2SigAttributeOnly <-
     attr(gtSignaturesDT,"region") <- NULL
     class(gtSignaturesDT) <- "matrix"
 
-    ## To analyze Alexandrov-like signatures,
-    ## decompoTumor2Sig requires signatures to be a LIST of
-    ## probability vectors (sum equals to 1, tolerance is 1e-5!)
+    # To analyze Alexandrov-like signatures,
+    # decompoTumor2Sig requires signatures to be a LIST of
+    # probability vectors (sum equals to 1, tolerance is 1e-5!)
     gtSignaturesDTList <- list()
     K <- ncol(gtSignaturesDT)
     for (Kcurrent in 1:K){
@@ -117,7 +117,7 @@ RundecompTumor2SigAttributeOnly <-
 
     exposureList <- decompTumor2Sig::decomposeTumorGenomes(genomes = convSpectraList,
                                                        signatures = gtSignaturesDTList)
-    ## Convert exposureList to exposureProb.
+    # Convert exposureList to exposureProb.
     exposureProb <- matrix(nrow = K, ncol = G)
     rownames(exposureProb) <- colnames(gtSignaturesDT)
     colnames(exposureProb) <- colnames(convSpectra)
@@ -125,27 +125,27 @@ RundecompTumor2SigAttributeOnly <-
       currentSpectrumName <- names(exposureList)[Gcurrent]
       exposureProb[,Gcurrent] <- exposureList[[Gcurrent]]
     }
-    ## Convert exposureProb to exposureCounts
+    # Convert exposureProb to exposureCounts
     exposureCounts <- exposureProb
     for(Gcurrent in 1:G){
       exposureCounts[,Gcurrent] <- exposureProb[,Gcurrent] * sum(convSpectra[,Gcurrent])
     }
 
-    ## Write exposure counts in ICAMS and SynSig format.
+    # Write exposure counts in ICAMS and SynSig format.
     SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
-    ## Copy ground.truth.sigs to out.dir
+    # Copy ground.truth.sigs to out.dir
     file.copy(from = gt.sigs.file,
               to = paste0(out.dir,"/ground.truth.signatures.csv"),
               overwrite = overwrite)
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## Return inferred exposures
+    # Return inferred exposures
     invisible(exposureCounts)
   }

@@ -68,39 +68,39 @@ RunsigneR <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    ## Check whether ONLY ONE of K or K.range is specified.
+    # Check whether ONLY ONE of K or K.range is specified.
     bool1 <- is.numeric(K.exact) & is.null(K.range)
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    ## Install signeR, if not found in library
+    # Install signeR, if not found in library
     if ("signeR" %in% rownames(utils::installed.packages()) == FALSE)
       InstallsigneR()
 
 
-    ## Set seed
+    # Set seed
     set.seed(seedNumber)
-    seedInUse <- .Random.seed  ## Save the seed used so that we can restore the pseudorandom series
-    RNGInUse <- RNGkind() ## Save the random number generator (RNG) used
+    seedInUse <- .Random.seed  # Save the seed used so that we can restore the pseudorandom series
+    RNGInUse <- RNGkind() # Save the random number generator (RNG) used
 
 
-    ## Read in spectra data from input.catalog file
-    ## spectra: spectra data.frame in ICAMS format
+    # Read in spectra data from input.catalog file
+    # spectra: spectra data.frame in ICAMS format
     spectra <- ICAMS::ReadCatalog(input.catalog,
                                      strict = FALSE)
     if (test.only) spectra <- spectra[ , 1:10]
 
-    ## Create output directory
+    # Create output directory
     if (dir.exists(out.dir)) {
       if (!overwrite) stop(out.dir, " already exits")
     } else {
       dir.create(out.dir, recursive = T)
     }
 
-    ## convSpectra: convert the ICAMS-formatted spectra catalog
-    ## into a matrix which signeR accepts:
-    ## 1. Remove the catalog related attributes in convSpectra
-    ## 2. Transpose the catalog
+    # convSpectra: convert the ICAMS-formatted spectra catalog
+    # into a matrix which signeR accepts:
+    # 1. Remove the catalog related attributes in convSpectra
+    # 2. Transpose the catalog
     convSpectra <- spectra
     class(convSpectra) <- "matrix"
     attr(convSpectra,"catalog.type") <- NULL
@@ -111,29 +111,29 @@ RunsigneR <-
 
 
 
-    ## Determine the best number of signatures (K.best).
-    ## If K.exact is provided, use K.exact as the K.best.
-    ## If K.range is provided, determine K.best by doing raw extraction.
+    # Determine the best number of signatures (K.best).
+    # If K.exact is provided, use K.exact as the K.best.
+    # If K.range is provided, determine K.best by doing raw extraction.
     if(bool1){
-      signeR_out <- signeR::signeR(M=convSpectra,  ## M: Mutation spectra you want to decompose
-                                         #Opport = NULL, ## Opport: Abundance (Opportunity) matrix for the spectra (optional)
-                                         nsig=K.exact)   ## nsig: Number of signatures (K)
+      signeR_out <- signeR::signeR(M=convSpectra,  # M: Mutation spectra you want to decompose
+                                         #Opport = NULL, # Opport: Abundance (Opportunity) matrix for the spectra (optional)
+                                         nsig=K.exact)   # nsig: Number of signatures (K)
       K.best <- K.exact
       print(paste0("Assuming there are ",K.best," signatures active in input spectra."))
     }
     if(bool2){
-      ## Extraction and attribution when number of signatures (K) is not known:
-      ## automatically determine best number of signatures,
-      ## based on median Bayesian Information Criterion (BIC).
-      ## Step 1: do raw extraction and attribution to test burn-in (1000 times)
-      ## and test sampling (1000) for possible signature numbers (N);
-      ## Step 2: Compare the BIC of these Ns and determine the best number of signatures (Nbest);
-      ## Step 3: do precise extraction and attribution (burn-in: 10000, sampling: 2000);
-      signeR_out <- signeR::signeR(M=convSpectra,  ## M: Mutation spectra you want to decompose
-                                         #Opport = NULL, ## Opport: Abundance (Opportunity) matrix for the spectra (optional)
-                                         nlim=K.range)   ## nlim: Minimal and maximal number of signatures (K.range)
+      # Extraction and attribution when number of signatures (K) is not known:
+      # automatically determine best number of signatures,
+      # based on median Bayesian Information Criterion (BIC).
+      # Step 1: do raw extraction and attribution to test burn-in (1000 times)
+      # and test sampling (1000) for possible signature numbers (N);
+      # Step 2: Compare the BIC of these Ns and determine the best number of signatures (Nbest);
+      # Step 3: do precise extraction and attribution (burn-in: 10000, sampling: 2000);
+      signeR_out <- signeR::signeR(M=convSpectra,  # M: Mutation spectra you want to decompose
+                                         #Opport = NULL, # Opport: Abundance (Opportunity) matrix for the spectra (optional)
+                                         nlim=K.range)   # nlim: Minimal and maximal number of signatures (K.range)
 
-      ## Record best number of signatures, and verify this choice using BIC-plot
+      # Record best number of signatures, and verify this choice using BIC-plot
       K.best <- signeR_out$Nsign
       print(paste0("The best number of signatures is found.",
                    "It equals to: ",K.best))
@@ -143,44 +143,44 @@ RunsigneR <-
     }
 
 
-    ## Output extracted signatures in Duke-NUS format
+    # Output extracted signatures in Duke-NUS format
     extractedSignaturesRaw <- signeR_out$Phat
     colnames(extractedSignaturesRaw) <- paste("signeR",seq(1,K.best),sep = ".")
-    ## Normalize the extracted signatures so that frequencies of each signature sums up to 1
+    # Normalize the extracted signatures so that frequencies of each signature sums up to 1
     extractedSignatures <- apply(extractedSignaturesRaw,2, function(x) x/sum(x))
     rownames(extractedSignatures) <- rownames(spectra)
     extractedSignatures <- ICAMS::as.catalog(extractedSignatures,
                                              region = "unknown",
                                              catalog.type = "counts.signature")
-    ## Write extracted signatures
+    # Write extracted signatures
     ICAMS::WriteCatalog(extractedSignatures,
                            paste0(out.dir,"/extracted.signatures.csv"))
 
 
-    ## Derive exposure count attribution results.
-    exposureCounts <- signeR_out$Ehat ## Unnormalized exposures
-    rownames(exposureCounts) <- paste("signeR",seq(1,K.best),sep = ".") ## Assign row names of exposure matrix as names of signatures
-    colnames(exposureCounts) <- colnames(spectra) ## Assign column names of exposure matrix as names of tumors
-    ## Normalize the inferred counts so that each column represents exposure of a signature
+    # Derive exposure count attribution results.
+    exposureCounts <- signeR_out$Ehat # Unnormalized exposures
+    rownames(exposureCounts) <- paste("signeR",seq(1,K.best),sep = ".") # Assign row names of exposure matrix as names of signatures
+    colnames(exposureCounts) <- colnames(spectra) # Assign column names of exposure matrix as names of tumors
+    # Normalize the inferred counts so that each column represents exposure of a signature
     for(ii in 1:ncol(exposureCounts)) {
       exposureCounts[,ii] <- exposureCounts[,ii] / sum(exposureCounts[,ii])
       exposureCounts[,ii] <- exposureCounts[,ii] * colSums(spectra)[ii]
     }
-    ## Save exposure attribution results
+    # Save exposure attribution results
     SynSigGen::WriteExposure(exposureCounts,
                   paste0(out.dir,"/inferred.exposures.csv"))
 
 
-    ## Save seeds and session information
-    ## for better reproducibility
-    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) ## Save session info
-    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) ## Save seed in use to a text file
-    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) ## Save seed in use to a text file
+    # Save seeds and session information
+    # for better reproducibility
+    capture.output(sessionInfo(), file = paste0(out.dir,"/sessionInfo.txt")) # Save session info
+    write(x = seedInUse, file = paste0(out.dir,"/seedInUse.txt")) # Save seed in use to a text file
+    write(x = RNGInUse, file = paste0(out.dir,"/RNGInUse.txt")) # Save seed in use to a text file
 
-    ## Save signeR output for de novo extracction
+    # Save signeR output for de novo extracction
     save(signeR_out, file = paste0(out.dir,"/signeR_out.RData"))
 
-    ## Return a list of signatures and exposures
+    # Return a list of signatures and exposures
     invisible(list("signature" = extractedSignatures,
                    "exposure" = exposureCounts))
   }
