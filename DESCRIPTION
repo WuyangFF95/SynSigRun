@@ -21,7 +21,7 @@ Imports:
     tibble,
     utils
 Remotes:
-    github::steveorozen/ICAMS
+    github::steverozen/ICAMS,
     github::steverozen/SynSigGen
 Depends: R (>= 3.5)
 RoxygenNote: 7.1.2
