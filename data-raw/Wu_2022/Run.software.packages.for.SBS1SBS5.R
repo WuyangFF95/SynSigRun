@@ -47,7 +47,7 @@ for(seedInUse in seedsInUse){
   for(datasetName in datasetNames){
     SAMultiRunOneCatalog(
       num.runs = 20,
-      signatureanalyzer.code.dir = "~/softwares/SynSigEval/data-raw/SignatureAnalzyer.052418/",
+      signatureanalyzer.code.dir = "~/softwares/SynSigEval/data-raw/SignatureAnalyzer.052418/",
       input.catalog = paste0(datasetName,"/sp.sp/ground.truth.syn.catalog.csv"),
       out.dir = paste0(datasetName,"/sp.sp/ExtrAttr/SignatureAnalyzer.results/seed.",seedInUse),
       maxK = 10,

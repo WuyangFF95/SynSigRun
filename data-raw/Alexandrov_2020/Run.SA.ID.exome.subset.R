@@ -5,8 +5,8 @@ library(ICAMS)
 library(SynSigEval)
 
 num.runs                   <- 20 # 2 for debugging
-# signatureanalyzer.code.dir <- "SignatureAnalzyer.052418" # for debugging on Laptop
-signatureanalyzer.code.dir <- "/home/gmssgr/bin/SignatureAnalzyer.052418/" # for monster
+# signatureanalyzer.code.dir <- "SignatureAnalyzer.052418" # for debugging on Laptop
+signatureanalyzer.code.dir <- "/home/gmssgr/bin/SignatureAnalyzer.052418/" # for monster
 input.catalog              <- "sa.ID.exome.subset/pcawg-as-exome-ID.csv"
 out.dir                    <- "sa.ID.exome.subset/"
 maxK                       <- 30

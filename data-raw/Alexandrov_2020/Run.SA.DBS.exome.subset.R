@@ -6,8 +6,8 @@ library(SynSigEval)
 
 # num.runs                   <- 2 # 2 for debugging
 num.runs                   <- 20 # 20 for production
-# signatureanalyzer.code.dir <- "SignatureAnalzyer.052418" # for debugging on Laptop
-signatureanalyzer.code.dir <- "/home/gmssgr/bin/SignatureAnalzyer.052418/" # for monster
+# signatureanalyzer.code.dir <- "SignatureAnalyzer.052418" # for debugging on Laptop
+signatureanalyzer.code.dir <- "/home/gmssgr/bin/SignatureAnalyzer.052418/" # for monster
 input.catalog              <- "sa.DBS.exome.subset/pcawg-as-exome-DBS.csv"
 read.catalog.function      <- ReadCatalog
 out.dir                    <- "sa.DBS.exome.subset/"

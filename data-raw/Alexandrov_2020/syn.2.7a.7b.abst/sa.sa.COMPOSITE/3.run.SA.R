@@ -9,7 +9,7 @@ set.seed(888)
 
 reval <- SignatureAnalyzer4MatchedCatalogs(
   num.runs = 20,
-  signatureanalyzer.code.dir = "/home/gmssgr/bin/SignatureAnalzyer.052418/",
+  signatureanalyzer.code.dir = "/home/gmssgr/bin/SignatureAnalyzer.052418/",
   dir.root = "..",
   slice = 3,
   overwrite = FALSE,

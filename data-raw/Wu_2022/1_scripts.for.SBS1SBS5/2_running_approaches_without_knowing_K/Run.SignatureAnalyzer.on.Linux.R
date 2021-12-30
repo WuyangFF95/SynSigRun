@@ -50,7 +50,7 @@ for(seedInUse in seedsInUse){
 
     SynSigRun:::SAMultiRunOneCatalog(
       num.runs = 20,
-      signatureanalyzer.code.dir = paste0(usethis::proj_path(),"/data-raw/SignatureAnalzyer.052418"),
+      signatureanalyzer.code.dir = paste0(usethis::proj_path(),"/data-raw/SignatureAnalyzer.052418"),
       input.catalog = paste0(topLevelFolder4Data,"/",datasetName,"/ground.truth.syn.catalog.csv"),
       out.dir = out.dir,
       maxK = 10,
