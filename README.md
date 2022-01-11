@@ -57,7 +57,7 @@ line:
 
 ``` r
 install.packages("devtools")
-devtools::install_github("WuyangFF95/SynSigRun")
+devtools::install_github("WuyangFF95/SynSigRun", ref = "1.0.0-branch")
 ```
 
 ## Usage
@@ -77,13 +77,14 @@ codes are in `data-raw/Alexandrov_2020`.
 
 ### Re-produce benchmarking analysis in Wu et al. (2022)
 
-Manuscript accepted by *Scientific Reports*.
+[*Scientific Reports*](https://doi.org/10.1038/s41598-021-04207-6) paper
+“Accuracy of mutational signature software on correlated signatures”
+involves benchmarking signature extraction accuracy of 18 methods on 20
+synthetic datasets with correlated exposures to SBS1 and SBS5 signature.
 
-In order to reproduce benchmarking of signature extraction accruacy on
-synthetic spectra with correlated exposures to SBS1 and SBS5 signatures,
-users can go to `data-raw/Wu_2022/1_scripts.for.SBS1SBS5` to generate
-the main figure and the full data of this analysis. The sub-folders hold
-scripts for:
+In order to reproduce this benchmarking, users can go to
+`data-raw/Wu_2022/1_scripts.for.SBS1SBS5` to generate the main figure
+and the full data of this analysis. The sub-folders hold scripts for:
 
 -   `1_data_generation` - Calls `SynSigGen` generation script to
     generate 20 SBS1-SBS5 datasets at `data-raw/` or other repositories.
@@ -112,7 +113,7 @@ on real-tumor-based synthetic spectra with SBS or indel mutations.
 The benchmarking code of this study calls the wrapper function in
 `SynSigRun` to run computational approaches
 [`signeR`](https://bioconductor.org/packages/release/bioc/html/signeR.html)
-and [`SignatureAnalyzer`]().
+and `SignatureAnalyzer`.
 
 ## Reference manual
 

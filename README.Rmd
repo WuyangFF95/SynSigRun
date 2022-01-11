@@ -22,7 +22,8 @@ these packages.
 A package to 
 1. wrap R-based signature analysis packages in functions handy for non-expert users, by
 wrapping default argument values and all necessary steps in the function bodies.
-2. reproduce benchmarking analysis of signature analysis packages in papers by [Rozen Lab](https://github.com/Rozen-Lab).
+2. reproduce benchmarking analysis of signature analysis packages in papers by 
+[Rozen Lab](https://github.com/Rozen-Lab).
 
 Typically, a benchmarking analysis to evaluation accuracy of signature extraction
 and/or exposure inference involves the 3 steps below:
@@ -57,11 +58,12 @@ Many of the evaluation functions are in package [`SynSigEval`](https://github.co
 
 ## Installation
 
-Install the development version of `SynSigRun` from [GitHub](https://github.com/WuyangFF95/SynSigRun) with the R command line:
+Install the development version of `SynSigRun` from [GitHub](https://github.com/WuyangFF95/SynSigRun) 
+with the R command line:
 
 ``` r
 install.packages("devtools")
-devtools::install_github("WuyangFF95/SynSigRun")
+devtools::install_github("WuyangFF95/SynSigRun", ref = "1.0.0-branch")
 ```
 ## Usage
 
@@ -69,7 +71,8 @@ devtools::install_github("WuyangFF95/SynSigRun")
 
 _Nature_ paper "The repertoire of mutational signatures in human cancer"
 ([link](https://doi.org/10.1038/s41586-020-1943-3)) involves benchmarking
-analysis compared to [`SigProfiler`](https://www.mathworks.com/matlabcentral/fileexchange/38724-sigprofiler) (the ancestor of [`SigProfilerExtractor`](https://pypi.org/project/SigProfilerExtractor/))
+analysis compared to [`SigProfiler`](https://www.mathworks.com/matlabcentral/fileexchange/38724-sigprofiler) 
+(the ancestor of [`SigProfilerExtractor`](https://pypi.org/project/SigProfilerExtractor/))
 and `SignatureAnalyzer`.
 
 It used some functions and top-level codes in this package. Some of the codes
@@ -78,10 +81,13 @@ are in `data-raw/Alexandrov_2020`.
 
 ### Re-produce benchmarking analysis in Wu et al. (2022)
 
-Manuscript accepted by _Scientific Reports_.
+[_Scientific Reports_](https://doi.org/10.1038/s41598-021-04207-6) paper 
+"Accuracy of mutational signature software on correlated signatures" 
+involves benchmarking signature extraction accuracy 
+of 18 methods on 20 synthetic datasets with correlated exposures 
+to SBS1 and SBS5 signature.
 
-In order to reproduce benchmarking of signature extraction accruacy on synthetic
-spectra with correlated exposures to SBS1 and SBS5 signatures, users can go to
+In order to reproduce this benchmarking, users can go to
 `data-raw/Wu_2022/1_scripts.for.SBS1SBS5` to generate the main figure and the 
 full data of this analysis. The sub-folders hold scripts for:
 
@@ -111,7 +117,7 @@ on real-tumor-based synthetic spectra with SBS or indel mutations.
 
 The benchmarking code of this study calls the wrapper function in `SynSigRun`
 to run computational approaches [`signeR`](https://bioconductor.org/packages/release/bioc/html/signeR.html)
-and [`SignatureAnalyzer`]().
+and `SignatureAnalyzer`.
 
 
 ## Reference manual
