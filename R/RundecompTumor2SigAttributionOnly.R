@@ -48,8 +48,8 @@ RundecompTumor2SigAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    # Install deconstructSigs, if not found in library.
-    if("decompTumor2Sig" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install deconstructSigs, if failed to be loaded
+    if (!requireNamespace("decompTumor2Sig", quietly = TRUE))
       InstalldecompTumor2Sig()
 
 

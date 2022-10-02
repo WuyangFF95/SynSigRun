@@ -59,10 +59,10 @@ RunmSigActAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    # Install mSigAct, if not found in library.
-    if("mSigAct" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install mSigAct, if failed to be loaded
+    if (!requireNamespace("mSigAct", quietly = TRUE)) {
       InstallmSigAct()
-
+    }
 
     # Set seed
     set.seed(seedNumber)

@@ -125,10 +125,10 @@ RunSomaticSignatures <-
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    # Install SomaticSignatures, if not found in library
-    if ("SomaticSignatures" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install SomaticSignatures, if failed to be loaded
+    if (!requireNamespace("SomaticSignatures", quietly = TRUE)) {
       InstallSomaticSignatures()
-
+    }
 
     # Set seed
     set.seed(seedNumber)

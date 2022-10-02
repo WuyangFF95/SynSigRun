@@ -47,9 +47,10 @@ RundeconstructSigsAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    # Install deconstructSigs, if not found in library.
-    if("deconstructSigs" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install deconstructSigs, if failed to be loaded
+    if (!requireNamespace("deconstructSigs", quietly = TRUE)) {
       InstalldeconstructSigs()
+    }
 
     # Set seed
     set.seed(seedNumber)

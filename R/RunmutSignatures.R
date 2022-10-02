@@ -67,10 +67,10 @@ RunmutSignatures <-
     # Check whether K.exact is specified as a numeric element.
     stopifnot(is.numeric(K.exact) & length(K.exact) == 1)
 
-    # Install mutSignatures, if not found in library
-    if ("mutSignatures" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install mutSignatures, if failed to be loaded
+    if (!requireNamespace("mutSignatures", quietly = TRUE)) {
       InstallmutSignatures()
-
+    }
 
     # Set seed
     set.seed(seedNumber)
@@ -233,10 +233,10 @@ RunmutSignaturesAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    # Install mutSignatures, if not found in library.
-    if("mutSignatures" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install mutSignatures, if failed to be loaded
+    if (!requireNamespace("mutSignatures", quietly = TRUE)) {
       InstallmutSignatures()
-
+    }
 
     # Set seed
     set.seed(seedNumber)

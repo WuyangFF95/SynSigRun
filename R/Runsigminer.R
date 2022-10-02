@@ -72,10 +72,10 @@ Runsigminer <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    # Install sigminer, if not found in library
-    if ("sigminer" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install sigminer, if failed to be loaded
+    if (!requireNamespace("sigminer", quietly = TRUE)) {
       Installsigminer()
-
+    }
 
     # Set seed
     set.seed(seedNumber)

@@ -73,8 +73,8 @@ RunSparseSignatures <-
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    # Install SparseSignatures, if not found in library
-    if ("SparseSignatures" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install SparseSignatures, if failed to be loaded
+    if (!requireNamespace("SparseSignatures", quietly = TRUE)) {
       InstallSparseSignatures()
 
 

@@ -9,10 +9,11 @@ Installsigfit <- function(){
     args = "--preclean",
     build_vignettes = TRUE)
   # Install package rstan, which is required in the run.
-  if ("rstan" %in% rownames(utils::installed.packages()) == FALSE)
+  if (!requireNamespace("rstan", quietly = TRUE)) {
     utils::install.packages(
       "rstan", repos = "https://cloud.r-project.org/",
       dependencies = TRUE)
+  }
 }
 
 
@@ -64,10 +65,10 @@ RunsigfitAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    # Install MutationalPatterns, if not found in library
-    if ("sigfit" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install MutationalPatterns, if failed to be loaded
+    if (!requireNamespace("sigfit", quietly = TRUE)) {
       Installsigfit()
-
+    }
 
     # Set seed
     set.seed(seedNumber)
@@ -242,10 +243,10 @@ Runsigfit <-
     stopifnot(model %in% c("nmf","emu"))
 
 
-    # Install sigfit, if not found in library
-    if ("sigfit" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install sigfit, if failed to be loaded
+    if (!requireNamespace("sigfit", quietly = TRUE)) {
       Installsigfit()
-
+    }
 
     # Set seed
     set.seed(seedNumber)

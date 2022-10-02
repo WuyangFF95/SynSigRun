@@ -9,7 +9,7 @@ InstallMutationalPatterns <- function(){
     utils::install.packages("BiocManager")
   BiocManager::install("MutationalPatterns")
 
-  if ("NMF" %in% rownames(utils::installed.packages()) == FALSE)
+  if (!requireNamespace("NMF", quietly = TRUE))
     utils::install.packages("NMF")
 }
 
@@ -57,8 +57,8 @@ RunMutationalPatternsAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    # Install MutationalPatterns, if not found in library
-    if ("MutationalPatterns" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install MutationalPatterns, if failed to be loaded
+    if (!requireNamespace("MutationalPatterns", quietly = TRUE))
       InstallMutationalPatterns()
 
 
@@ -215,10 +215,10 @@ RunMutationalPatterns <-
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    # Install MutationalPatterns, if not found in library
-    if ("MutationalPatterns" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install MutationalPatterns, if failed to be loaded
+    if (!requireNamespace("MutationalPatterns", quietly = TRUE)) {
       InstallMutationalPatterns()
-
+    }
 
     # Set seed
     seedNumber <- 123456

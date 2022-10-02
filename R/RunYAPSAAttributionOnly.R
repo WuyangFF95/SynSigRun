@@ -59,10 +59,10 @@ RunYAPSAAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    # Install YAPSA from Bioconductor, if not found in library.
-    if("YAPSA" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install YAPSA from Bioconductor, if failed to be loaded
+    if (!requireNamespace("YAPSA", quietly = TRUE)) {
       InstallYAPSA()
-
+    }
 
     # Set seed
     set.seed(seedNumber)

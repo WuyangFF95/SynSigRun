@@ -54,8 +54,8 @@ RunSignatureEstimationQPAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    # Install SignatureEstimation from Bioconductor, if not found in library.
-    if("SignatureEstimation" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install SignatureEstimation from Bioconductor, if failed to be loaded
+    if (!requireNamespace("SignatureEstimation", quietly = TRUE))
       InstallSignatureEstimation()
 
 
@@ -201,8 +201,8 @@ RunSignatureEstimationSAAttributeOnly <-
            test.only = FALSE,
            overwrite = FALSE) {
 
-    # Install SignatureEstimation from Bioconductor, if not found in library.
-    if("SignatureEstimation" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install SignatureEstimation from Bioconductor, if failed to be loaded
+    if (!requireNamespace("SignatureEstimation", quietly = TRUE))
       InstallSignatureEstimation()
 
 

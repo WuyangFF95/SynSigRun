@@ -73,10 +73,10 @@ RunsigneR <-
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    # Install signeR, if not found in library
-    if ("signeR" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install signeR, if failed to be loaded
+    if (!requireNamespace("signeR", quietly = TRUE)) {
       InstallsigneR()
-
+    }
 
     # Set seed
     set.seed(seedNumber)

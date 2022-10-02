@@ -91,10 +91,10 @@ RunmutSpec <-
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    # Install NMF, if not found in library
-    if ("NMF" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install NMF, if failed to be loaded
+    if (!requireNamespace("NMF", quietly = TRUE)) {
       install.packages("NMF")
-
+    }
 
     # Set seed
     set.seed(seedNumber)

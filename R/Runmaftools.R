@@ -7,7 +7,7 @@ Installmaftools <- function(){
   if (!requireNamespace("BiocManager", quietly = TRUE))
     utils::install.packages("BiocManager")
   BiocManager::install("maftools")
-  if ("NMF" %in% rownames(utils::installed.packages()) == FALSE)
+  if (!requireNamespace("NMF", quietly = TRUE))
     utils::install.packages("NMF")
 }
 
@@ -91,10 +91,10 @@ Runmaftools <-
     bool2 <- is.null(K.exact) & is.numeric(K.range) & length(K.range) == 2
     stopifnot(bool1 | bool2)
 
-    # Install maftools, if not found in library
-    if ("maftools" %in% rownames(utils::installed.packages()) == FALSE)
+    # Install maftools, if failed to be loaded
+    if (!requireNamespace("maftools", quietly = TRUE)) {
       Installmaftools()
-
+    }
 
     # Set seed as 123456
     set.seed(123456)
